@@ -1,6 +1,7 @@
 ﻿'use client'
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { Plus, LogOut, X } from 'lucide-react'
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser'
 import TicketCard from '@/components/dashboard/TicketCard'
@@ -58,7 +59,7 @@ export default function DashboardClient({ user }: { user: User }) {
         }}
       >
         <div className="max-w-[1000px] mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+          <Link href="/" className="flex items-center gap-2.5">
             <Image
               src="/images/logo-badge.webp"
               alt="Sonic Pulse"
@@ -73,7 +74,7 @@ export default function DashboardClient({ user }: { user: User }) {
             >
               SONIC PULSE
             </span>
-          </div>
+          </Link>
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2">
               {user.user_metadata?.avatar_url && (
