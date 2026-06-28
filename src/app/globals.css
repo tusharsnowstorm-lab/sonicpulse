@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+/* ── Tailwind v4 custom theme tokens ─────────────────────────── */
+@theme {
+  --color-electric: #00F0FF;
+  --color-volt: #CCFF00;
+  --color-pulse: #FF2D6B;
+  --color-void: #050508;
+  --color-surface: #0D0D14;
+  --color-elevated: #16161F;
+  --color-primary: #F0F0F8;
+  --color-muted: #6B6B7E;
+  --color-border: #1E1E2E;
+  --font-display: var(--font-space-grotesk), sans-serif;
+  --font-body: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+}
+
+/* ── Design tokens ────────────────────────────────────────────── */
+:root {
+  --bg-void: #050508;
+  --bg-surface: #0D0D14;
+  --bg-elevated: #16161F;
+  --accent-electric: #00F0FF;
+  --accent-volt: #CCFF00;
+  --accent-pulse: #FF2D6B;
+  --text-primary: #F0F0F8;
+  --text-muted: #6B6B7E;
+  --border: #1E1E2E;
+}
+
+/* ── Base reset ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-inter), system-ui, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Focus ring ───────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent-electric);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-void); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-electric); }
+
+/* ── Scanline glow animation ──────────────────────────────────── */
+.glow-heading {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+.glow-heading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0,240,255,0.10) 40%,
+    rgba(0,240,255,0.22) 50%,
+    rgba(0,240,255,0.10) 60%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: scanline 2.6s ease-in-out forwards;
+  pointer-events: none;
+}
+.glow-heading:hover::after {
+  animation: scanline 1.2s ease-in-out forwards;
+}
+@keyframes scanline {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(110%); }
+}
+
+/* ── Scroll reveal ────────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Glow utilities ───────────────────────────────────────────── */
+.glow-border {
+  border: 1px solid var(--border);
+  box-shadow: 0 0 12px rgba(0,240,255,0.12);
+}
+.glow-border-volt {
+  border: 1px solid rgba(204,255,0,0.3);
+  box-shadow: 0 0 12px rgba(204,255,0,0.12);
+}
+
+/* ── Live pulse dot ───────────────────────────────────────────── */
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-pulse);
+  display: inline-block;
+  animation: pulse-ring 1.5s ease-out infinite;
+}
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(255,45,107,0.6); }
+  70%  { box-shadow: 0 0 0 8px rgba(255,45,107,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,45,107,0); }
+}
+
+/* ── Reduce motion ────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .glow-heading::after { animation: none; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
