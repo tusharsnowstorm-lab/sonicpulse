@@ -103,7 +103,7 @@ export default function TicketsGate() {
         {/* Sign in CTA */}
         <button
           onClick={handleSignIn}
-          className="w-full flex items-center justify-center gap-3 rounded px-5 py-4 text-sm font-bold transition-all duration-150 mb-4"
+          className="w-full flex items-center justify-center gap-3 rounded px-5 py-4 text-sm font-bold transition-all duration-150 mb-4 cursor-pointer"
           style={{
             background: 'var(--accent-electric)',
             color: '#050508',
@@ -118,7 +118,7 @@ export default function TicketsGate() {
           Already have an account?{' '}
           <button
             onClick={handleSignIn}
-            className="underline underline-offset-2"
+            className="underline underline-offset-2 cursor-pointer"
             style={{ color: 'var(--accent-electric)' }}
           >
             Sign in
