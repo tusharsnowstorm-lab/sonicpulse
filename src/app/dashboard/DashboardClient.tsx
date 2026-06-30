@@ -7,6 +7,7 @@ import { createSupabaseBrowserClient } from '@/lib/supabase-browser'
 import TicketCard from '@/components/dashboard/TicketCard'
 import AddTicketForm from '@/components/dashboard/AddTicketForm'
 import AccommodationSection from '@/components/dashboard/AccommodationSection'
+import ProfileSection from '@/components/dashboard/ProfileSection'
 import Button from '@/components/ui/Button'
 import type { User } from '@supabase/supabase-js'
 
@@ -166,6 +167,12 @@ export default function DashboardClient({ user }: { user: User }) {
             </div>
           ) : null}
         </section>
+
+        {/* Divider */}
+        <hr style={{ borderColor: 'var(--border)' }} />
+
+        {/* My Information */}
+        <ProfileSection />
 
         {/* Divider */}
         <hr style={{ borderColor: 'var(--border)' }} />

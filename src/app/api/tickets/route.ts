@@ -67,6 +67,7 @@ export async function POST(req: NextRequest) {
     const nidNumber   = formData.get('nidNumber') as string
     const ticketTier  = formData.get('ticketTier') as string
     const nidFile     = formData.get('nidFile') as File | null
+    const nidFilePath = formData.get('nidFilePath') as string | null
 
     if (!fullName || !phone || !nidNumber || !ticketTier) {
       return Response.json({ error: 'All fields are required.' }, { status: 400 })
@@ -78,31 +79,61 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: 'Invalid ticket tier.' }, { status: 400 })
     }
 
-    if (!nidFile || nidFile.size === 0) {
-      return Response.json({ error: 'NID document upload is required.' }, { status: 400 })
-    }
-    const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf']
-    if (!allowedTypes.includes(nidFile.type)) {
-      return Response.json({ error: 'NID file must be JPG, PNG, or PDF.' }, { status: 400 })
-    }
-    if (nidFile.size > 2 * 1024 * 1024) {
-      return Response.json({ error: 'NID file must be under 2MB. Try compressing the image or saving at a lower resolution.' }, { status: 400 })
-    }
-
     const admin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
 
-    // Upload NID
-    const ext = nidFile.name.split('.').pop()
-    const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-    const arrayBuffer = await nidFile.arrayBuffer()
-    const { error: uploadError } = await admin.storage
-      .from('nid-documents')
-      .upload(fileName, arrayBuffer, { contentType: nidFile.type, upsert: false })
-    if (uploadError) {
-      return Response.json({ error: 'Failed to upload NID document.' }, { status: 500 })
+    // Check if NID is already registered
+    const { data: existingNid } = await admin
+      .from('user_tickets')
+      .select('id')
+      .eq('nid_number', nidNumber)
+      .single()
+
+    if (existingNid) {
+      return Response.json({ error: 'This NID number is already registered for a ticket. Each person can only have one ticket.' }, { status: 409 })
+    }
+
+    // If buying for myself, check they don't already have a "for myself" ticket
+    if (nidFilePath) {
+      const { data: existingOwn } = await admin
+        .from('user_tickets')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('nid_file_path', nidFilePath)
+        .single()
+
+      if (existingOwn) {
+        return Response.json({ error: 'You already have a ticket registered for yourself. Additional tickets must be for someone else.' }, { status: 409 })
+      }
+    }
+
+    let fileName: string
+
+    if (nidFilePath) {
+      // Reuse the file already stored in the user's profile
+      fileName = nidFilePath
+    } else {
+      if (!nidFile || nidFile.size === 0) {
+        return Response.json({ error: 'NID document upload is required.' }, { status: 400 })
+      }
+      const allowedTypes = ['image/jpeg', 'image/png', 'application/pdf']
+      if (!allowedTypes.includes(nidFile.type)) {
+        return Response.json({ error: 'NID file must be JPG, PNG, or PDF.' }, { status: 400 })
+      }
+      if (nidFile.size > 2 * 1024 * 1024) {
+        return Response.json({ error: 'NID file must be under 2MB. Try compressing the image or saving at a lower resolution.' }, { status: 400 })
+      }
+      const ext = nidFile.name.split('.').pop()
+      fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+      const arrayBuffer = await nidFile.arrayBuffer()
+      const { error: uploadError } = await admin.storage
+        .from('nid-documents')
+        .upload(fileName, arrayBuffer, { contentType: nidFile.type, upsert: false })
+      if (uploadError) {
+        return Response.json({ error: 'Failed to upload NID document.' }, { status: 500 })
+      }
     }
 
     const referenceCode = generateRef()

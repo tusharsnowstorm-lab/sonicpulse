@@ -1,9 +1,9 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Instagram, X } from 'lucide-react'
+import { Instagram, X, User, Users } from 'lucide-react'
 import FileUpload from '@/components/ui/FileUpload'
 import Button from '@/components/ui/Button'
 import { CURRENT_PHASE, ticketTiers } from '@/data/tickets'
@@ -17,6 +17,13 @@ const schema = z.object({
 
 type Fields = z.infer<typeof schema>
 
+type Profile = {
+  full_name?: string
+  phone?: string
+  nid_number?: string
+  nid_file_path?: string
+}
+
 function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
   const [checked, setChecked] = useState(false)
 
@@ -29,7 +36,6 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
         className="w-full max-w-md rounded-xl overflow-hidden"
         style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
       >
-        {/* Header */}
         <div
           className="flex items-center justify-between px-5 py-4"
           style={{ borderBottom: '1px solid var(--border)', background: 'rgba(204,255,0,0.05)' }}
@@ -40,18 +46,11 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
               Important — Before you submit
             </span>
           </div>
-          <button
-            type="button"
-            onClick={onCancel}
-            className="p-1 rounded cursor-pointer"
-            style={{ color: 'var(--text-muted)' }}
-            aria-label="Close"
-          >
+          <button type="button" onClick={onCancel} className="p-1 rounded cursor-pointer" style={{ color: 'var(--text-muted)' }}>
             <X size={16} />
           </button>
         </div>
 
-        {/* Body */}
         <div className="px-5 py-5 space-y-4">
           <p className="text-sm leading-relaxed" style={{ color: 'var(--text-primary)' }}>
             As part of the ticket approval process, we verify attendees via Instagram.
@@ -63,10 +62,7 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
             <p style={{ color: 'rgba(240,240,248,0.8)' }}>
               If your Instagram account is <strong style={{ color: 'var(--text-primary)' }}>private</strong>, you will receive a follow request from:
             </p>
-            <p
-              className="text-base font-bold tracking-wide"
-              style={{ color: 'var(--accent-volt)', fontFamily: 'var(--font-jetbrains-mono)' }}
-            >
+            <p className="text-base font-bold tracking-wide" style={{ color: 'var(--accent-volt)', fontFamily: 'var(--font-jetbrains-mono)' }}>
               @dhakamusicfestival
             </p>
             <p style={{ color: 'rgba(240,240,248,0.65)' }}>
@@ -74,18 +70,9 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
             </p>
           </div>
 
-          {/* Checkbox */}
-          <label
-            className="flex items-start gap-3 cursor-pointer select-none"
-            style={{ touchAction: 'manipulation' }}
-          >
+          <label className="flex items-start gap-3 cursor-pointer select-none" style={{ touchAction: 'manipulation' }}>
             <div className="relative mt-0.5 shrink-0">
-              <input
-                type="checkbox"
-                checked={checked}
-                onChange={(e) => setChecked(e.target.checked)}
-                className="sr-only"
-              />
+              <input type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} className="sr-only" />
               <div
                 className="w-5 h-5 rounded flex items-center justify-center transition-colors"
                 style={{
@@ -106,15 +93,11 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
           </label>
         </div>
 
-        {/* Footer */}
-        <div
-          className="px-5 py-4 flex flex-col sm:flex-row gap-3"
-          style={{ borderTop: '1px solid var(--border)' }}
-        >
+        <div className="px-5 py-4 flex flex-col sm:flex-row gap-3" style={{ borderTop: '1px solid var(--border)' }}>
           <button
             type="button"
             onClick={onCancel}
-            className="w-full sm:w-auto px-4 py-3 rounded text-sm cursor-pointer transition-colors"
+            className="w-full sm:w-auto px-4 py-3 rounded text-sm cursor-pointer"
             style={{ border: '1px solid var(--border)', color: 'var(--text-muted)' }}
           >
             Go back
@@ -123,7 +106,7 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
             type="button"
             onClick={onConfirm}
             disabled={!checked}
-            className="w-full sm:flex-1 px-4 py-3 rounded text-sm font-bold transition-all cursor-pointer"
+            className="w-full sm:flex-1 px-4 py-3 rounded text-sm font-bold transition-all"
             style={{
               background: checked ? 'var(--accent-electric)' : 'rgba(0,240,255,0.15)',
               color: checked ? '#050508' : 'rgba(0,240,255,0.35)',
@@ -139,12 +122,28 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
 }
 
 export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) {
+  const [forMyself, setForMyself] = useState<boolean | null>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [profileLoading, setProfileLoading] = useState(true)
+  const [profileMissing, setProfileMissing] = useState(false)
+
   const [nidFile, setNidFile] = useState<File | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [pendingData, setPendingData] = useState<Fields | null>(null)
+
+  const currentTier = ticketTiers.find((t) => t.id === CURRENT_PHASE)
+
+  useEffect(() => {
+    fetch('/api/profile')
+      .then((r) => r.json())
+      .then(({ profile }) => {
+        setProfile(profile)
+        setProfileLoading(false)
+      })
+  }, [])
 
   const {
     register,
@@ -155,8 +154,6 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
     defaultValues: { ticketTier: CURRENT_PHASE },
   })
 
-  const currentTier = ticketTiers.find((t) => t.id === CURRENT_PHASE)
-
   const onSubmit = async (data: Fields) => {
     if (!nidFile) { setFileError('NID document is required.'); return }
     setFileError(null)
@@ -165,8 +162,22 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
     setShowModal(true)
   }
 
+  const handleMyselfSubmit = async () => {
+    if (!profile) return
+    const missing = !profile.full_name || !profile.phone || !profile.nid_number || !profile.nid_file_path
+    if (missing) { setProfileMissing(true); return }
+    setProfileMissing(false)
+    setPendingData({
+      fullName: profile.full_name!,
+      phone: profile.phone!,
+      nidNumber: profile.nid_number!,
+      ticketTier: CURRENT_PHASE,
+    })
+    setShowModal(true)
+  }
+
   const handleConfirm = async () => {
-    if (!pendingData || !nidFile) return
+    if (!pendingData) return
     setShowModal(false)
     setSubmitting(true)
 
@@ -175,7 +186,12 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
     fd.append('phone', pendingData.phone)
     fd.append('nidNumber', pendingData.nidNumber)
     fd.append('ticketTier', pendingData.ticketTier)
-    fd.append('nidFile', nidFile)
+
+    if (forMyself && profile?.nid_file_path) {
+      fd.append('nidFilePath', profile.nid_file_path)
+    } else if (nidFile) {
+      fd.append('nidFile', nidFile)
+    }
 
     const res = await fetch('/api/tickets', { method: 'POST', body: fd })
     const json = await res.json()
@@ -199,12 +215,12 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
     outline: 'none',
   }
 
-  const labelStyle = {
+  const labelStyle: React.CSSProperties = {
     display: 'block',
     fontSize: 11,
     fontWeight: 600,
     letterSpacing: '0.15em',
-    textTransform: 'uppercase' as const,
+    textTransform: 'uppercase',
     color: 'var(--text-muted)',
     marginBottom: 6,
     fontFamily: 'var(--font-jetbrains-mono)',
@@ -212,14 +228,9 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
 
   return (
     <>
-      {showModal && (
-        <InstagramWarningModal
-          onConfirm={handleConfirm}
-          onCancel={() => setShowModal(false)}
-        />
-      )}
+      {showModal && <InstagramWarningModal onConfirm={handleConfirm} onCancel={() => setShowModal(false)} />}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+      <div className="space-y-5">
         {currentTier && (
           <div
             className="rounded px-4 py-3 text-sm"
@@ -229,45 +240,148 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
           </div>
         )}
 
+        {/* Who is this for? */}
         <div>
-          <label style={labelStyle}>Full name (as on NID)</label>
-          <input {...register('fullName')} style={inputStyle} placeholder="Mohammad Rahman" />
-          {errors.fullName && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.fullName.message}</p>}
+          <p style={labelStyle}>Who is this ticket for?</p>
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => { setForMyself(true); setProfileMissing(false) }}
+              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold transition-all cursor-pointer"
+              style={{
+                background: forMyself === true ? 'rgba(0,240,255,0.12)' : 'var(--bg-surface)',
+                border: forMyself === true ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
+                color: forMyself === true ? 'var(--accent-electric)' : 'var(--text-muted)',
+              }}
+            >
+              <User size={15} />
+              For myself
+            </button>
+            <button
+              type="button"
+              onClick={() => { setForMyself(false); setProfileMissing(false) }}
+              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold transition-all cursor-pointer"
+              style={{
+                background: forMyself === false ? 'rgba(0,240,255,0.12)' : 'var(--bg-surface)',
+                border: forMyself === false ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
+                color: forMyself === false ? 'var(--accent-electric)' : 'var(--text-muted)',
+              }}
+            >
+              <Users size={15} />
+              For someone else
+            </button>
+          </div>
         </div>
 
-        <div>
-          <label style={labelStyle}>Phone number</label>
-          <input {...register('phone')} style={inputStyle} placeholder="+8801XXXXXXXXX" />
-          {errors.phone && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.phone.message}</p>}
-        </div>
+        {/* For myself flow */}
+        {forMyself === true && (
+          <div className="space-y-4">
+            {profileLoading ? (
+              <div className="h-20 rounded animate-pulse" style={{ background: 'var(--bg-surface)' }} />
+            ) : profile?.full_name ? (
+              <div
+                className="rounded-lg p-4 space-y-2"
+                style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}
+              >
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p style={{ ...labelStyle, marginBottom: 2 }}>Name</p>
+                    <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{profile.full_name}</p>
+                  </div>
+                  <div>
+                    <p style={{ ...labelStyle, marginBottom: 2 }}>Phone</p>
+                    <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{profile.phone}</p>
+                  </div>
+                  <div>
+                    <p style={{ ...labelStyle, marginBottom: 2 }}>NID</p>
+                    <p className="text-sm font-mono" style={{ color: 'var(--text-primary)' }}>
+                      {profile.nid_number?.slice(0, 4)}••••••
+                    </p>
+                  </div>
+                  <div>
+                    <p style={{ ...labelStyle, marginBottom: 2 }}>NID Doc</p>
+                    <p className="text-sm" style={{ color: profile.nid_file_path ? '#22c55e' : 'var(--accent-pulse)' }}>
+                      {profile.nid_file_path ? '✓ On file' : '✗ Missing'}
+                    </p>
+                  </div>
+                </div>
+                <p className="text-xs pt-1" style={{ color: 'var(--text-muted)' }}>
+                  Update this in the <strong>My Information</strong> section above.
+                </p>
+              </div>
+            ) : (
+              <div
+                className="rounded-lg p-4 text-sm"
+                style={{ background: 'rgba(255,45,107,0.08)', border: '1px solid rgba(255,45,107,0.25)', color: 'var(--accent-pulse)' }}
+              >
+                Your personal information is not saved yet. Please fill in the <strong>My Information</strong> section above first, then come back to add a ticket.
+              </div>
+            )}
 
-        <div>
-          <label style={labelStyle}>NID number</label>
-          <input {...register('nidNumber')} style={inputStyle} placeholder="10 or 17 digit NID" />
-          {errors.nidNumber && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.nidNumber.message}</p>}
-        </div>
+            {profileMissing && (
+              <p className="text-sm" style={{ color: 'var(--accent-pulse)' }}>
+                Your saved information is incomplete. Please update <strong>My Information</strong> above with all fields including NID document.
+              </p>
+            )}
 
-        <input type="hidden" {...register('ticketTier')} />
+            {serverError && (
+              <p className="text-sm rounded px-3 py-2" style={{ background: 'rgba(255,45,107,0.1)', border: '1px solid rgba(255,45,107,0.3)', color: 'var(--accent-pulse)' }}>
+                {serverError}
+              </p>
+            )}
 
-        <div>
-          <label style={labelStyle}>NID document</label>
-          <FileUpload
-            onChange={(f) => { setNidFile(f); if (f) setFileError(null) }}
-            error={fileError ?? undefined}
-            label="NID Document"
-          />
-        </div>
-
-        {serverError && (
-          <p className="text-sm rounded px-3 py-2" style={{ background: 'rgba(255,45,107,0.1)', border: '1px solid rgba(255,45,107,0.3)', color: 'var(--accent-pulse)' }}>
-            {serverError}
-          </p>
+            {profile?.full_name && (
+              <Button onClick={handleMyselfSubmit} disabled={submitting} className="w-full">
+                {submitting ? 'Submitting…' : 'Submit for approval'}
+              </Button>
+            )}
+          </div>
         )}
 
-        <Button type="submit" disabled={submitting} className="w-full">
-          {submitting ? 'Submitting…' : 'Submit for approval'}
-        </Button>
-      </form>
+        {/* For someone else flow */}
+        {forMyself === false && (
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <div>
+              <label style={labelStyle}>Full name (as on NID)</label>
+              <input {...register('fullName')} style={inputStyle} placeholder="Mohammad Rahman" />
+              {errors.fullName && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.fullName.message}</p>}
+            </div>
+
+            <div>
+              <label style={labelStyle}>Phone number</label>
+              <input {...register('phone')} style={inputStyle} placeholder="+8801XXXXXXXXX" />
+              {errors.phone && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.phone.message}</p>}
+            </div>
+
+            <div>
+              <label style={labelStyle}>NID number</label>
+              <input {...register('nidNumber')} style={inputStyle} placeholder="10 or 17 digit NID" />
+              {errors.nidNumber && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.nidNumber.message}</p>}
+            </div>
+
+            <input type="hidden" {...register('ticketTier')} />
+
+            <div>
+              <label style={labelStyle}>NID document</label>
+              <FileUpload
+                onChange={(f) => { setNidFile(f); if (f) setFileError(null) }}
+                error={fileError ?? undefined}
+                label="NID Document"
+              />
+            </div>
+
+            {serverError && (
+              <p className="text-sm rounded px-3 py-2" style={{ background: 'rgba(255,45,107,0.1)', border: '1px solid rgba(255,45,107,0.3)', color: 'var(--accent-pulse)' }}>
+                {serverError}
+              </p>
+            )}
+
+            <Button type="submit" disabled={submitting} className="w-full">
+              {submitting ? 'Submitting…' : 'Submit for approval'}
+            </Button>
+          </form>
+        )}
+      </div>
     </>
   )
 }
