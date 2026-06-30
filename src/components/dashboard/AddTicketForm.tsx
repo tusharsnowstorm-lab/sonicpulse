@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Instagram, X, User, Users } from 'lucide-react'
+import { X, User, Users } from 'lucide-react'
 import FileUpload from '@/components/ui/FileUpload'
 import Button from '@/components/ui/Button'
 import { CURRENT_PHASE, ticketTiers } from '@/data/tickets'
@@ -43,7 +43,7 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
           style={{ borderBottom: '1px solid var(--border)', background: 'rgba(204,255,0,0.05)' }}
         >
           <div className="flex items-center gap-2.5">
-            <Instagram size={18} style={{ color: 'var(--accent-volt)' }} />
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--accent-volt)' }}><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
             <span className="font-bold text-sm" style={{ color: 'var(--accent-volt)', fontFamily: 'var(--font-space-grotesk)' }}>
               Important — Before you submit
             </span>
