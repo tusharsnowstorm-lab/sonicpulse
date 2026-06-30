@@ -9,6 +9,7 @@ type Profile = {
   phone?: string
   nid_number?: string
   nid_file_path?: string
+  instagram_handle?: string
 }
 
 const inputStyle = {
@@ -44,6 +45,7 @@ export default function ProfileSection() {
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
   const [nidNumber, setNidNumber] = useState('')
+  const [instagramHandle, setInstagramHandle] = useState('')
   const [nidFile, setNidFile] = useState<File | null>(null)
 
   useEffect(() => {
@@ -55,6 +57,7 @@ export default function ProfileSection() {
           setFullName(profile.full_name ?? '')
           setPhone(profile.phone ?? '')
           setNidNumber(profile.nid_number ?? '')
+          setInstagramHandle(profile.instagram_handle ?? '')
         } else {
           setEditing(true)
         }
@@ -70,6 +73,7 @@ export default function ProfileSection() {
     fd.append('fullName', fullName)
     fd.append('phone', phone)
     fd.append('nidNumber', nidNumber)
+    fd.append('instagramHandle', instagramHandle.replace(/^@/, ''))
     if (nidFile) fd.append('nidFile', nidFile)
 
     const res = await fetch('/api/profile', { method: 'PUT', body: fd })
@@ -87,19 +91,14 @@ export default function ProfileSection() {
   }
 
   if (loading) {
-    return (
-      <div className="rounded-lg h-40 animate-pulse" style={{ background: 'var(--bg-elevated)' }} />
-    )
+    return <div className="rounded-lg h-40 animate-pulse" style={{ background: 'var(--bg-elevated)' }} />
   }
 
   return (
     <section>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h2
-            className="text-xl font-bold"
-            style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}
-          >
+          <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>
             My Information
           </h2>
           <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
@@ -109,7 +108,7 @@ export default function ProfileSection() {
         {profile && !editing && (
           <button
             onClick={() => setEditing(true)}
-            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded cursor-pointer transition-colors"
+            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded cursor-pointer"
             style={{ color: 'var(--text-muted)', border: '1px solid var(--border)' }}
           >
             <Pencil size={12} />
@@ -118,23 +117,15 @@ export default function ProfileSection() {
         )}
       </div>
 
-      {/* Saved confirmation */}
       {saved && (
-        <div
-          className="flex items-center gap-2 rounded px-4 py-3 mb-4 text-sm"
-          style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.25)', color: '#22c55e' }}
-        >
+        <div className="flex items-center gap-2 rounded px-4 py-3 mb-4 text-sm" style={{ background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.25)', color: '#22c55e' }}>
           <CheckCircle size={15} />
           Information saved successfully.
         </div>
       )}
 
-      <div
-        className="rounded-lg p-5 sm:p-6"
-        style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
-      >
+      <div className="rounded-lg p-5 sm:p-6" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
         {!editing && profile ? (
-          /* Read-only view */
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
               <p style={labelStyle}>Full name</p>
@@ -151,6 +142,12 @@ export default function ProfileSection() {
               </p>
             </div>
             <div>
+              <p style={labelStyle}>Instagram</p>
+              <p className="text-sm" style={{ color: 'var(--text-primary)' }}>
+                {profile.instagram_handle ? `@${profile.instagram_handle}` : '—'}
+              </p>
+            </div>
+            <div>
               <p style={labelStyle}>NID document</p>
               <p className="text-sm" style={{ color: profile.nid_file_path ? '#22c55e' : 'var(--text-muted)' }}>
                 {profile.nid_file_path ? '✓ Uploaded' : 'Not uploaded'}
@@ -158,45 +155,47 @@ export default function ProfileSection() {
             </div>
           </div>
         ) : (
-          /* Edit form */
           <div className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label style={labelStyle}>Full name (as on NID)</label>
-                <input
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  style={inputStyle}
-                  placeholder="Mohammad Rahman"
-                />
+                <input value={fullName} onChange={(e) => setFullName(e.target.value)} style={inputStyle} placeholder="Mohammad Rahman" />
               </div>
               <div>
                 <label style={labelStyle}>Phone number</label>
-                <input
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  style={inputStyle}
-                  placeholder="+8801XXXXXXXXX"
-                />
+                <input value={phone} onChange={(e) => setPhone(e.target.value)} style={inputStyle} placeholder="+8801XXXXXXXXX" />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label style={labelStyle}>NID number</label>
+                <input value={nidNumber} onChange={(e) => setNidNumber(e.target.value)} style={inputStyle} placeholder="10 or 17 digit NID" />
+              </div>
+              <div>
+                <label style={labelStyle}>Instagram handle</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: 'var(--text-muted)' }}>@</span>
+                  <input
+                    value={instagramHandle}
+                    onChange={(e) => setInstagramHandle(e.target.value.replace(/^@/, ''))}
+                    style={{ ...inputStyle, paddingLeft: 28 }}
+                    placeholder="yourhandle"
+                  />
+                </div>
               </div>
             </div>
 
             <div>
-              <label style={labelStyle}>NID number</label>
-              <input
-                value={nidNumber}
-                onChange={(e) => setNidNumber(e.target.value)}
-                style={inputStyle}
-                placeholder="10 or 17 digit NID"
-              />
-            </div>
-
-            <div>
-              <label style={labelStyle}>NID document {profile?.nid_file_path && <span style={{ color: '#22c55e', textTransform: 'none', letterSpacing: 0 }}>(already uploaded — upload again to replace)</span>}</label>
-              <FileUpload
-                onChange={(f) => setNidFile(f)}
-                label="NID Document"
-              />
+              <label style={labelStyle}>
+                NID document{' '}
+                {profile?.nid_file_path && (
+                  <span style={{ color: '#22c55e', textTransform: 'none', letterSpacing: 0 }}>
+                    (already uploaded — upload again to replace)
+                  </span>
+                )}
+              </label>
+              <FileUpload onChange={(f) => setNidFile(f)} label="NID Document" />
             </div>
 
             {error && (
@@ -214,6 +213,7 @@ export default function ProfileSection() {
                     setFullName(profile.full_name ?? '')
                     setPhone(profile.phone ?? '')
                     setNidNumber(profile.nid_number ?? '')
+                    setInstagramHandle(profile.instagram_handle ?? '')
                     setNidFile(null)
                   }}
                   className="w-full sm:w-auto px-4 py-3 rounded text-sm cursor-pointer"

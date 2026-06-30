@@ -62,14 +62,15 @@ export async function POST(req: NextRequest) {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
     const formData = await req.formData()
-    const fullName    = formData.get('fullName') as string
-    const phone       = formData.get('phone') as string
-    const nidNumber   = formData.get('nidNumber') as string
-    const ticketTier  = formData.get('ticketTier') as string
-    const nidFile     = formData.get('nidFile') as File | null
-    const nidFilePath = formData.get('nidFilePath') as string | null
+    const fullName         = formData.get('fullName') as string
+    const phone            = formData.get('phone') as string
+    const nidNumber        = formData.get('nidNumber') as string
+    const instagramHandle  = (formData.get('instagramHandle') as string | null)?.replace(/^@/, '') ?? ''
+    const ticketTier       = formData.get('ticketTier') as string
+    const nidFile          = formData.get('nidFile') as File | null
+    const nidFilePath      = formData.get('nidFilePath') as string | null
 
-    if (!fullName || !phone || !nidNumber || !ticketTier) {
+    if (!fullName || !phone || !nidNumber || !ticketTier || !instagramHandle) {
       return Response.json({ error: 'All fields are required.' }, { status: 400 })
     }
     if (!validateNid(nidNumber)) {
@@ -146,6 +147,7 @@ export async function POST(req: NextRequest) {
         phone,
         nid_number: nidNumber,
         nid_file_path: fileName,
+        instagram_handle: instagramHandle,
         ticket_tier: ticketTier,
         status: 'pending',
         reference_code: referenceCode,

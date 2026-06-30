@@ -12,6 +12,7 @@ const schema = z.object({
   fullName: z.string().min(2, 'Full name required'),
   phone: z.string().regex(/^(\+?880|0)1[3-9]\d{8}$/, 'Enter a valid Bangladesh phone number'),
   nidNumber: z.string().regex(/^\d{10}$|^\d{17}$/, 'NID must be 10 or 17 digits'),
+  instagramHandle: z.string().min(1, 'Instagram handle is required'),
   ticketTier: z.enum(['phase1', 'phase2', 'phase3']),
 })
 
@@ -22,6 +23,7 @@ type Profile = {
   phone?: string
   nid_number?: string
   nid_file_path?: string
+  instagram_handle?: string
 }
 
 function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
@@ -164,13 +166,14 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
 
   const handleMyselfSubmit = async () => {
     if (!profile) return
-    const missing = !profile.full_name || !profile.phone || !profile.nid_number || !profile.nid_file_path
+    const missing = !profile.full_name || !profile.phone || !profile.nid_number || !profile.nid_file_path || !profile.instagram_handle
     if (missing) { setProfileMissing(true); return }
     setProfileMissing(false)
     setPendingData({
       fullName: profile.full_name!,
       phone: profile.phone!,
       nidNumber: profile.nid_number!,
+      instagramHandle: profile.instagram_handle!,
       ticketTier: CURRENT_PHASE,
     })
     setShowModal(true)
@@ -185,6 +188,7 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
     fd.append('fullName', pendingData.fullName)
     fd.append('phone', pendingData.phone)
     fd.append('nidNumber', pendingData.nidNumber)
+    fd.append('instagramHandle', pendingData.instagramHandle)
     fd.append('ticketTier', pendingData.ticketTier)
 
     if (forMyself && profile?.nid_file_path) {
@@ -304,6 +308,12 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
                       {profile.nid_file_path ? '✓ On file' : '✗ Missing'}
                     </p>
                   </div>
+                  <div>
+                    <p style={{ ...labelStyle, marginBottom: 2 }}>Instagram</p>
+                    <p className="text-sm" style={{ color: profile.instagram_handle ? 'var(--text-primary)' : 'var(--accent-pulse)' }}>
+                      {profile.instagram_handle ? `@${profile.instagram_handle}` : '✗ Missing'}
+                    </p>
+                  </div>
                 </div>
                 <p className="text-xs pt-1" style={{ color: 'var(--text-muted)' }}>
                   Update this in the <strong>My Information</strong> section above.
@@ -353,10 +363,20 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
               {errors.phone && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.phone.message}</p>}
             </div>
 
-            <div>
-              <label style={labelStyle}>NID number</label>
-              <input {...register('nidNumber')} style={inputStyle} placeholder="10 or 17 digit NID" />
-              {errors.nidNumber && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.nidNumber.message}</p>}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label style={labelStyle}>NID number</label>
+                <input {...register('nidNumber')} style={inputStyle} placeholder="10 or 17 digit NID" />
+                {errors.nidNumber && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.nidNumber.message}</p>}
+              </div>
+              <div>
+                <label style={labelStyle}>Instagram handle</label>
+                <div className="relative">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: 'var(--text-muted)' }}>@</span>
+                  <input {...register('instagramHandle')} style={{ ...inputStyle, paddingLeft: 28 }} placeholder="theirhandle" />
+                </div>
+                {errors.instagramHandle && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.instagramHandle.message}</p>}
+              </div>
             </div>
 
             <input type="hidden" {...register('ticketTier')} />
