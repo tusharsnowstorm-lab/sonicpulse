@@ -33,7 +33,7 @@ export default function TicketsTeaser() {
         >
           GET YOUR SPOT
         </h2>
-        <p className="text-sm mb-10" style={{ color: 'rgba(255,255,255,0.55)' }}>
+        <p className="text-sm mb-10" style={{ color: 'rgba(255,255,255,0.85)' }}>
           Register now — approval required before payment.
         </p>
 
@@ -66,7 +66,7 @@ export default function TicketsTeaser() {
                 </p>
                 <ul className="space-y-1 mb-6 flex-1">
                   {tier.perks.map((perk) => (
-                    <li key={perk} className="flex items-center gap-2 text-xs" style={{ color: 'rgba(255,255,255,0.65)' }}>
+                    <li key={perk} className="flex items-center gap-2 text-xs" style={{ color: 'rgba(255,255,255,0.88)' }}>
                       <span style={{ color: 'var(--accent-electric)' }}>—</span>
                       {perk}
                     </li>

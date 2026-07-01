@@ -39,9 +39,9 @@ export default function Hero() {
         </p>
 
         <h1
-          className="glow-heading font-black leading-none tracking-tighter mb-6 whitespace-nowrap"
+          className="glow-heading font-black leading-none tracking-tighter mb-6"
           style={{
-            fontSize: 'clamp(4rem, 16vw, 11rem)',
+            fontSize: 'clamp(2rem, 8vw, 5.5rem)',
             fontFamily: 'var(--font-space-grotesk)',
             color: 'var(--text-primary)',
           }}
@@ -49,19 +49,23 @@ export default function Hero() {
           SONIC <span style={{ color: 'var(--accent-electric)' }}>PULSE</span>
         </h1>
 
-        <p
-          className="text-base md:text-lg font-medium tracking-widest uppercase mb-3"
-          style={{ color: 'rgba(255,255,255,0.9)', fontFamily: 'var(--font-jetbrains-mono)' }}
+        <div
+          className="inline-block rounded-lg px-5 py-3 mb-10"
+          style={{ background: 'rgba(5,5,8,0.6)', backdropFilter: 'blur(8px)' }}
         >
-          15 November 2025 · Bashundhara Open Grounds, Dhaka
-        </p>
-
-        <p
-          className="text-sm tracking-[0.2em] uppercase mb-10"
-          style={{ color: 'rgba(255,255,255,0.65)', fontFamily: 'var(--font-jetbrains-mono)' }}
-        >
-          1 Night · 17 Hours · 800+ Ravers
-        </p>
+          <p
+            className="text-base md:text-lg font-medium tracking-widest uppercase mb-1"
+            style={{ color: 'rgba(255,255,255,0.95)', fontFamily: 'var(--font-jetbrains-mono)' }}
+          >
+            15 November 2025 · Bashundhara Open Grounds, Dhaka
+          </p>
+          <p
+            className="text-sm tracking-[0.2em] uppercase"
+            style={{ color: 'rgba(255,255,255,0.75)', fontFamily: 'var(--font-jetbrains-mono)' }}
+          >
+            1 Night · 17 Hours · 800+ Ravers
+          </p>
+        </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link href="/tickets">
@@ -69,8 +73,8 @@ export default function Hero() {
           </Link>
           <Link
             href="/lineup"
-            className="text-sm font-medium tracking-widest uppercase transition-colors duration-150"
-            style={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'var(--font-jetbrains-mono)' }}
+            className="text-sm font-bold tracking-widest uppercase transition-colors duration-150"
+            style={{ color: 'rgba(255,255,255,0.95)', fontFamily: 'var(--font-jetbrains-mono)', textShadow: '0 0 20px rgba(255,255,255,0.4)' }}
           >
             VIEW LINEUP ↓
           </Link>

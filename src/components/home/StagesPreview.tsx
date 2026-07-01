@@ -67,7 +67,7 @@ export default function StagesPreview() {
                 </div>
                 <p
                   className="mt-6 text-xs tracking-widest uppercase"
-                  style={{ color: 'rgba(255,255,255,0.45)', fontFamily: 'var(--font-jetbrains-mono)' }}
+                  style={{ color: 'rgba(255,255,255,0.75)', fontFamily: 'var(--font-jetbrains-mono)' }}
                 >
                   {stage.detail}
                 </p>
