@@ -1,7 +1,7 @@
 ﻿import { artists } from '@/data/artists'
 
 const stats = [
-  { value: '800+', label: 'Expected Ravers' },
+  { value: '800+', label: 'Expected Festival-Goers' },
   { value: '2',    label: 'Stages' },
   { value: String(artists.length), label: 'Artists' },
   { value: 'Dhaka, BD', label: 'Location' },
