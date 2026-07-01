@@ -11,6 +11,7 @@ type Ticket = {
   nid_number: string
   nid_file_path: string
   instagram_handle: string
+  gender: string
   ticket_tier: string
   status: 'pending' | 'approved' | 'rejected'
   reference_code: string
@@ -192,7 +193,7 @@ function TicketRow({
 
       {/* Body */}
       <div className="px-5 py-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
           <div>
             <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Name</p>
             <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{ticket.full_name}</p>
@@ -206,8 +207,12 @@ function TicketRow({
             <p className="text-sm font-mono" style={{ color: 'var(--text-primary)' }}>{ticket.nid_number}</p>
           </div>
           <div>
+            <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Gender</p>
+            <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{ticket.gender ? ticket.gender.charAt(0).toUpperCase() + ticket.gender.slice(1) : '—'}</p>
+          </div>
+          <div>
             <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Instagram</p>
-            <a
+            <
               href={`https://instagram.com/${ticket.instagram_handle}`}
               target="_blank"
               rel="noopener noreferrer"

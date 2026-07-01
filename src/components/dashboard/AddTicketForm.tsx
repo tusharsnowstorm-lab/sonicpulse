@@ -13,6 +13,7 @@ const schema = z.object({
   phone: z.string().regex(/^(\+?880|0)1[3-9]\d{8}$/, 'Enter a valid Bangladesh phone number'),
   nidNumber: z.string().regex(/^\d{10}$|^\d{17}$/, 'NID must be 10 or 17 digits'),
   instagramHandle: z.string().min(1, 'Instagram handle is required'),
+  gender: z.enum(['male', 'female'], { error: 'Please select a gender' }),
   ticketTier: z.enum(['phase1', 'phase2', 'phase3']),
 })
 
@@ -24,6 +25,7 @@ type Profile = {
   nid_number?: string
   nid_file_path?: string
   instagram_handle?: string
+  gender?: string
 }
 
 function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
@@ -166,7 +168,7 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
 
   const handleMyselfSubmit = async () => {
     if (!profile) return
-    const missing = !profile.full_name || !profile.phone || !profile.nid_number || !profile.nid_file_path || !profile.instagram_handle
+    const missing = !profile.full_name || !profile.phone || !profile.nid_number || !profile.nid_file_path || !profile.instagram_handle || !profile.gender
     if (missing) { setProfileMissing(true); return }
     setProfileMissing(false)
     setPendingData({
@@ -174,6 +176,7 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
       phone: profile.phone!,
       nidNumber: profile.nid_number!,
       instagramHandle: profile.instagram_handle!,
+      gender: profile.gender as 'male' | 'female',
       ticketTier: CURRENT_PHASE,
     })
     setShowModal(true)
@@ -189,6 +192,7 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
     fd.append('phone', pendingData.phone)
     fd.append('nidNumber', pendingData.nidNumber)
     fd.append('instagramHandle', pendingData.instagramHandle)
+    fd.append('gender', pendingData.gender)
     fd.append('ticketTier', pendingData.ticketTier)
 
     if (forMyself && profile?.nid_file_path) {
@@ -377,6 +381,26 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
                 </div>
                 {errors.instagramHandle && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.instagramHandle.message}</p>}
               </div>
+            </div>
+
+            <div>
+              <label style={labelStyle}>Gender</label>
+              <div className="grid grid-cols-2 gap-3">
+                {(['male', 'female'] as const).map((g) => (
+                  <label
+                    key={g}
+                    className="flex items-center justify-center py-3 rounded-lg text-sm font-semibold transition-all cursor-pointer"
+                    style={{
+                      background: 'var(--bg-surface)',
+                      border: '2px solid var(--border)',
+                    }}
+                  >
+                    <input type="radio" value={g} {...register('gender')} className="sr-only" />
+                    <span>{g.charAt(0).toUpperCase() + g.slice(1)}</span>
+                  </label>
+                ))}
+              </div>
+              {errors.gender && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.gender.message}</p>}
             </div>
 
             <input type="hidden" {...register('ticketTier')} />

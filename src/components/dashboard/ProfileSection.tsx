@@ -10,6 +10,7 @@ type Profile = {
   nid_number?: string
   nid_file_path?: string
   instagram_handle?: string
+  gender?: string
 }
 
 const inputStyle = {
@@ -46,6 +47,7 @@ export default function ProfileSection() {
   const [phone, setPhone] = useState('')
   const [nidNumber, setNidNumber] = useState('')
   const [instagramHandle, setInstagramHandle] = useState('')
+  const [gender, setGender] = useState('')
   const [nidFile, setNidFile] = useState<File | null>(null)
 
   useEffect(() => {
@@ -58,6 +60,7 @@ export default function ProfileSection() {
           setPhone(profile.phone ?? '')
           setNidNumber(profile.nid_number ?? '')
           setInstagramHandle(profile.instagram_handle ?? '')
+          setGender(profile.gender ?? '')
         } else {
           setEditing(true)
         }
@@ -74,6 +77,7 @@ export default function ProfileSection() {
     fd.append('phone', phone)
     fd.append('nidNumber', nidNumber)
     fd.append('instagramHandle', instagramHandle.replace(/^@/, ''))
+    fd.append('gender', gender)
     if (nidFile) fd.append('nidFile', nidFile)
 
     const res = await fetch('/api/profile', { method: 'PUT', body: fd })
@@ -148,6 +152,12 @@ export default function ProfileSection() {
               </p>
             </div>
             <div>
+              <p style={labelStyle}>Gender</p>
+              <p className="text-sm" style={{ color: 'var(--text-primary)' }}>
+                {profile.gender ? profile.gender.charAt(0).toUpperCase() + profile.gender.slice(1) : '—'}
+              </p>
+            </div>
+            <div>
               <p style={labelStyle}>NID document</p>
               <p className="text-sm" style={{ color: profile.nid_file_path ? '#22c55e' : 'var(--text-muted)' }}>
                 {profile.nid_file_path ? '✓ Uploaded' : 'Not uploaded'}
@@ -187,6 +197,27 @@ export default function ProfileSection() {
             </div>
 
             <div>
+              <label style={labelStyle}>Gender</label>
+              <div className="grid grid-cols-2 gap-3">
+                {['male', 'female'].map((g) => (
+                  <button
+                    key={g}
+                    type="button"
+                    onClick={() => setGender(g)}
+                    className="py-3 rounded-lg text-sm font-semibold transition-all cursor-pointer"
+                    style={{
+                      background: gender === g ? 'rgba(0,240,255,0.12)' : 'var(--bg-surface)',
+                      border: gender === g ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
+                      color: gender === g ? 'var(--accent-electric)' : 'var(--text-muted)',
+                    }}
+                  >
+                    {g.charAt(0).toUpperCase() + g.slice(1)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
               <label style={labelStyle}>
                 NID document{' '}
                 {profile?.nid_file_path && (
@@ -214,6 +245,7 @@ export default function ProfileSection() {
                     setPhone(profile.phone ?? '')
                     setNidNumber(profile.nid_number ?? '')
                     setInstagramHandle(profile.instagram_handle ?? '')
+                    setGender(profile.gender ?? '')
                     setNidFile(null)
                   }}
                   className="w-full sm:w-auto px-4 py-3 rounded text-sm cursor-pointer"

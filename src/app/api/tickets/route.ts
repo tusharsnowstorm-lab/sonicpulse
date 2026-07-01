@@ -66,11 +66,12 @@ export async function POST(req: NextRequest) {
     const phone            = formData.get('phone') as string
     const nidNumber        = formData.get('nidNumber') as string
     const instagramHandle  = (formData.get('instagramHandle') as string | null)?.replace(/^@/, '') ?? ''
+    const gender           = formData.get('gender') as string | null
     const ticketTier       = formData.get('ticketTier') as string
     const nidFile          = formData.get('nidFile') as File | null
     const nidFilePath      = formData.get('nidFilePath') as string | null
 
-    if (!fullName || !phone || !nidNumber || !ticketTier || !instagramHandle) {
+    if (!fullName || !phone || !nidNumber || !ticketTier || !instagramHandle || !gender) {
       return Response.json({ error: 'All fields are required.' }, { status: 400 })
     }
     if (!validateNid(nidNumber)) {
@@ -148,6 +149,7 @@ export async function POST(req: NextRequest) {
         nid_number: nidNumber,
         nid_file_path: fileName,
         instagram_handle: instagramHandle,
+        gender: gender,
         ticket_tier: ticketTier,
         status: 'pending',
         reference_code: referenceCode,
