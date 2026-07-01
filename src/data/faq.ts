@@ -11,7 +11,7 @@ export const faqs: FAQItem[] = [
     id: 'what-is-sonic-pulse',
     category: 'Event Basics',
     question: 'What is Sonic Pulse?',
-    answer: 'Sonic Pulse is a large-scale outdoor rave organised by Dhaka Music Festival. Two stages, 800+ ravers, and music from dusk till dawn.',
+    answer: 'Sonic Pulse is a large-scale outdoor music festival organised by Dhaka Music Festival. Two stages, 800+ festival-goers, and music from dusk till dawn.',
   },
   {
     id: 'when-where',

@@ -30,7 +30,7 @@ export default function Timetable() {
       'DTSTART:20251115T220000',
       'DTEND:20251116T060000',
       'LOCATION:Bashundhara Open Grounds, Dhaka',
-      'DESCRIPTION:Two stages. 800+ ravers. Dawn till dusk.',
+      'DESCRIPTION:Two stages. 800+ festival-goers. Dawn till dusk.',
       'END:VEVENT',
       'END:VCALENDAR',
     ].join('\r\n')

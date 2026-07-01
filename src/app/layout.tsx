@@ -29,11 +29,11 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Sonic Pulse - Outdoor Rave, Dhaka',
-  description: "Two stages. 800+ ravers. Dawn till dusk. Sonic Pulse is Dhaka's largest outdoor rave, presented by Dhaka Music Festival.",
+  title: 'Sonic Pulse - Outdoor Music Festival, Dhaka',
+  description: "Two stages. 800+ festival-goers. Dawn till dusk. Sonic Pulse is Dhaka's largest outdoor music festival, presented by Dhaka Music Festival.",
   openGraph: {
-    title: 'Sonic Pulse - Outdoor Rave, Dhaka',
-    description: 'Two stages. 800+ ravers. Dawn till dusk.',
+    title: 'Sonic Pulse - Outdoor Music Festival, Dhaka',
+    description: 'Two stages. 800+ festival-goers. Dawn till dusk.',
     type: 'website',
     locale: 'en_BD',
     siteName: 'Sonic Pulse',
@@ -48,7 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-screen flex flex-col" suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col overflow-x-hidden" suppressHydrationWarning>
         {children}
       </body>
     </html>
