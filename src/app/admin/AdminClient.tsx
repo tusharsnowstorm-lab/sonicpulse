@@ -212,7 +212,7 @@ function TicketRow({
           </div>
           <div>
             <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Instagram</p>
-            <
+            <a
               href={`https://instagram.com/${ticket.instagram_handle}`}
               target="_blank"
               rel="noopener noreferrer"
