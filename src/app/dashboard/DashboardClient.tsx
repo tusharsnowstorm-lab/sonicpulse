@@ -103,6 +103,29 @@ export default function DashboardClient({ user }: { user: User }) {
         </div>
       </div>
 
+      {/* Site nav strip */}
+      <div className="border-b" style={{ borderColor: 'var(--border)', background: 'rgba(5,5,8,0.6)' }}>
+        <div className="max-w-[1000px] mx-auto px-4 h-10 flex items-center gap-6 overflow-x-auto">
+          {[
+            { href: '/', label: 'Home' },
+            { href: '/lineup', label: 'Lineup' },
+            { href: '/schedule', label: 'Schedule' },
+            { href: '/tickets', label: 'Tickets' },
+            { href: '/faq', label: 'FAQ' },
+            { href: '/contact', label: 'Contact' },
+          ].map(({ href, label }) => (
+            <Link
+              key={href}
+              href={href}
+              className="text-xs whitespace-nowrap transition-colors"
+              style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)', letterSpacing: '0.1em' }}
+            >
+              {label}
+            </Link>
+          ))}
+        </div>
+      </div>
+
       <div className="max-w-[1000px] mx-auto px-4 py-10 space-y-14">
         {/* Tickets section */}
         <section>
@@ -154,7 +177,7 @@ export default function DashboardClient({ user }: { user: User }) {
             </div>
           ) : tickets.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {tickets.map((t) => <TicketCard key={t.id} ticket={t} />)}
+              {tickets.map((t) => <TicketCard key={t.id} ticket={t} onRefresh={fetchTickets} />)}
             </div>
           ) : !showForm ? (
             <div

@@ -1,7 +1,8 @@
-﻿'use client'
+'use client'
 import { useState } from 'react'
-import { Download, CheckCircle, Clock, XCircle } from 'lucide-react'
+import { Download, CheckCircle, Clock, XCircle, ArrowRightLeft, X } from 'lucide-react'
 import { ticketTiers } from '@/data/tickets'
+import FileUpload from '@/components/ui/FileUpload'
 
 type Ticket = {
   id: string
@@ -20,8 +21,184 @@ const STATUS_CONFIG = {
   rejected: { label: 'Rejected',        icon: XCircle,     color: 'var(--accent-pulse)' },
 }
 
-export default function TicketCard({ ticket }: { ticket: Ticket }) {
+const inputStyle = {
+  background: 'var(--bg-surface)',
+  border: '1px solid var(--border)',
+  borderRadius: 4,
+  color: 'var(--text-primary)',
+  padding: '10px 12px',
+  width: '100%',
+  fontSize: 14,
+  outline: 'none',
+}
+
+const labelStyle: React.CSSProperties = {
+  display: 'block',
+  fontSize: 11,
+  fontWeight: 600,
+  letterSpacing: '0.15em',
+  textTransform: 'uppercase',
+  color: 'var(--text-muted)',
+  marginBottom: 6,
+  fontFamily: 'var(--font-jetbrains-mono)',
+}
+
+function TransferForm({ ticket, onClose, onSuccess }: { ticket: Ticket; onClose: () => void; onSuccess: () => void }) {
+  const [fullName, setFullName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [nidNumber, setNidNumber] = useState('')
+  const [instagramHandle, setInstagramHandle] = useState('')
+  const [gender, setGender] = useState('')
+  const [nidFile, setNidFile] = useState<File | null>(null)
+  const [fileError, setFileError] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [confirmed, setConfirmed] = useState(false)
+
+  const handleSubmit = async () => {
+    if (!fullName || !phone || !nidNumber || !instagramHandle || !gender) {
+      setError('All fields are required.')
+      return
+    }
+    if (!nidFile) { setFileError('NID document is required.'); return }
+    if (!confirmed) { setError('Please confirm the transfer.'); return }
+
+    setError(null)
+    setFileError(null)
+    setSubmitting(true)
+
+    const fd = new FormData()
+    fd.append('ticketId', ticket.id)
+    fd.append('fullName', fullName)
+    fd.append('phone', phone)
+    fd.append('nidNumber', nidNumber)
+    fd.append('instagramHandle', instagramHandle.replace(/^@/, ''))
+    fd.append('gender', gender)
+    fd.append('nidFile', nidFile)
+
+    const res = await fetch('/api/tickets/transfer', { method: 'POST', body: fd })
+    const json = await res.json()
+    setSubmitting(false)
+
+    if (!res.ok) {
+      setError(json.error ?? 'Something went wrong.')
+    } else {
+      onSuccess()
+    }
+  }
+
+  return (
+    <div className="mt-4 space-y-4 pt-4" style={{ borderTop: '1px solid var(--border)' }}>
+      <div className="flex items-center justify-between">
+        <p className="text-sm font-semibold" style={{ color: 'var(--accent-volt)' }}>Transfer ticket to someone else</p>
+        <button type="button" onClick={onClose} className="cursor-pointer" style={{ color: 'var(--text-muted)' }}>
+          <X size={14} />
+        </button>
+      </div>
+
+      <div
+        className="rounded px-3 py-2 text-xs"
+        style={{ background: 'rgba(204,255,0,0.06)', border: '1px solid rgba(204,255,0,0.2)', color: 'rgba(240,240,248,0.65)' }}
+      >
+        The new holder&apos;s details will go through the approval process. Your ticket slot is preserved.
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label style={labelStyle}>Full name (as on NID)</label>
+          <input value={fullName} onChange={(e) => setFullName(e.target.value)} style={inputStyle} placeholder="Mohammad Rahman" />
+        </div>
+        <div>
+          <label style={labelStyle}>Phone number</label>
+          <input value={phone} onChange={(e) => setPhone(e.target.value)} style={inputStyle} placeholder="+8801XXXXXXXXX" />
+        </div>
+        <div>
+          <label style={labelStyle}>NID number</label>
+          <input value={nidNumber} onChange={(e) => setNidNumber(e.target.value)} style={inputStyle} placeholder="10 or 17 digit NID" />
+        </div>
+        <div>
+          <label style={labelStyle}>Instagram handle</label>
+          <div className="relative">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm" style={{ color: 'var(--text-muted)' }}>@</span>
+            <input value={instagramHandle} onChange={(e) => setInstagramHandle(e.target.value.replace(/^@/, ''))} style={{ ...inputStyle, paddingLeft: 28 }} placeholder="theirhandle" />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <label style={labelStyle}>Gender</label>
+        <div className="grid grid-cols-2 gap-3">
+          {['male', 'female'].map((g) => (
+            <button
+              key={g}
+              type="button"
+              onClick={() => setGender(g)}
+              className="py-2.5 rounded text-sm font-semibold transition-all cursor-pointer"
+              style={{
+                background: gender === g ? 'rgba(0,240,255,0.12)' : 'var(--bg-surface)',
+                border: gender === g ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
+                color: gender === g ? 'var(--accent-electric)' : 'var(--text-muted)',
+              }}
+            >
+              {g.charAt(0).toUpperCase() + g.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <label style={labelStyle}>NID document</label>
+        <FileUpload onChange={(f) => { setNidFile(f); if (f) setFileError(null) }} label="NID Document" error={fileError ?? undefined} />
+      </div>
+
+      <label className="flex items-start gap-3 cursor-pointer select-none" style={{ touchAction: 'manipulation' }}>
+        <div className="relative mt-0.5 shrink-0">
+          <input type="checkbox" checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)} className="sr-only" />
+          <div
+            className="w-5 h-5 rounded flex items-center justify-center transition-colors"
+            style={{
+              background: confirmed ? 'var(--accent-electric)' : 'var(--bg-surface)',
+              border: confirmed ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
+            }}
+          >
+            {confirmed && (
+              <svg width="11" height="9" viewBox="0 0 11 9" fill="none">
+                <path d="M1 4L4 7L10 1" stroke="#050508" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
+          </div>
+        </div>
+        <span className="text-xs leading-relaxed" style={{ color: 'rgba(240,240,248,0.7)' }}>
+          I confirm I want to transfer ticket <strong style={{ color: 'var(--text-primary)' }}>{ticket.reference_code}</strong> to this person. This cannot be undone once approved.
+        </span>
+      </label>
+
+      {error && (
+        <p className="text-xs rounded px-3 py-2" style={{ background: 'rgba(255,45,107,0.1)', border: '1px solid rgba(255,45,107,0.3)', color: 'var(--accent-pulse)' }}>
+          {error}
+        </p>
+      )}
+
+      <button
+        type="button"
+        onClick={handleSubmit}
+        disabled={submitting || !confirmed}
+        className="w-full py-3 rounded text-sm font-bold transition-all cursor-pointer"
+        style={{
+          background: confirmed ? 'var(--accent-volt)' : 'rgba(204,255,0,0.1)',
+          color: confirmed ? '#050508' : 'rgba(204,255,0,0.3)',
+          cursor: confirmed ? 'pointer' : 'not-allowed',
+        }}
+      >
+        {submitting ? 'Submitting transfer…' : 'Submit transfer for approval'}
+      </button>
+    </div>
+  )
+}
+
+export default function TicketCard({ ticket, onRefresh }: { ticket: Ticket; onRefresh?: () => void }) {
   const [generating, setGenerating] = useState(false)
+  const [showTransfer, setShowTransfer] = useState(false)
   const tier = ticketTiers.find((t) => t.id === ticket.ticket_tier)
   const { label: statusLabel, icon: StatusIcon, color: statusColor } = STATUS_CONFIG[ticket.status]
 
@@ -36,7 +213,6 @@ export default function TicketCard({ ticket }: { ticket: Ticket }) {
         color: { dark: '#050508', light: '#F0F0F8' },
       })
 
-      // Build a printable HTML ticket
       const html = `<!DOCTYPE html>
 <html>
 <head>
@@ -102,10 +278,7 @@ export default function TicketCard({ ticket }: { ticket: Ticket }) {
   }
 
   return (
-    <div
-      className="rounded-lg overflow-hidden"
-      style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
-    >
+    <div className="rounded-lg overflow-hidden" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
       {/* Header stripe */}
       <div
         className="px-4 py-2 flex items-center justify-between text-xs"
@@ -138,26 +311,38 @@ export default function TicketCard({ ticket }: { ticket: Ticket }) {
             </p>
           </div>
 
-          {ticket.status === 'approved' && (
-            <button
-              onClick={downloadTicket}
-              disabled={generating}
-              className="flex items-center gap-1.5 rounded px-3 py-2 text-xs font-semibold transition-colors"
-              style={{
-                background: 'rgba(0,240,255,0.1)',
-                border: '1px solid rgba(0,240,255,0.3)',
-                color: 'var(--accent-electric)',
-                flexShrink: 0,
-              }}
-              aria-label={`Download ticket for ${ticket.full_name}`}
-            >
-              <Download size={13} />
-              {generating ? 'Building…' : 'Download'}
-            </button>
-          )}
+          <div className="flex flex-col gap-2 shrink-0">
+            {ticket.status === 'approved' && (
+              <button
+                onClick={downloadTicket}
+                disabled={generating}
+                className="flex items-center gap-1.5 rounded px-3 py-2 text-xs font-semibold transition-colors cursor-pointer"
+                style={{ background: 'rgba(0,240,255,0.1)', border: '1px solid rgba(0,240,255,0.3)', color: 'var(--accent-electric)' }}
+                aria-label={`Download ticket for ${ticket.full_name}`}
+              >
+                <Download size={13} />
+                {generating ? 'Building…' : 'Download'}
+              </button>
+            )}
+
+            {(ticket.status === 'approved' || ticket.status === 'pending') && (
+              <button
+                onClick={() => setShowTransfer((v) => !v)}
+                className="flex items-center gap-1.5 rounded px-3 py-2 text-xs font-semibold transition-colors cursor-pointer"
+                style={{
+                  background: showTransfer ? 'rgba(204,255,0,0.12)' : 'rgba(204,255,0,0.06)',
+                  border: '1px solid rgba(204,255,0,0.25)',
+                  color: 'var(--accent-volt)',
+                }}
+              >
+                <ArrowRightLeft size={13} />
+                Transfer
+              </button>
+            )}
+          </div>
         </div>
 
-        {ticket.status === 'pending' && (
+        {ticket.status === 'pending' && !showTransfer && (
           <p className="text-xs mt-3" style={{ color: 'var(--text-muted)' }}>
             Under review. You&apos;ll receive an email once approved.
           </p>
@@ -166,6 +351,14 @@ export default function TicketCard({ ticket }: { ticket: Ticket }) {
           <p className="text-xs mt-3" style={{ color: 'var(--accent-pulse)' }}>
             This ticket was not approved. Contact us for details.
           </p>
+        )}
+
+        {showTransfer && (
+          <TransferForm
+            ticket={ticket}
+            onClose={() => setShowTransfer(false)}
+            onSuccess={() => { setShowTransfer(false); onRefresh?.() }}
+          />
         )}
       </div>
     </div>
