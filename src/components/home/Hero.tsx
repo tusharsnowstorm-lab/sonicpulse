@@ -63,7 +63,7 @@ export default function Hero() {
             className="text-sm tracking-[0.2em] uppercase"
             style={{ color: 'rgba(255,255,255,0.75)', fontFamily: 'var(--font-jetbrains-mono)' }}
           >
-            1 Night · 17 Hours · 800+ Ravers
+            1 Night · 17 Hours · 800+ Festival-Goers
           </p>
         </div>
 
