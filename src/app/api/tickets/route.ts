@@ -8,8 +8,20 @@ function generateRef(): string {
   return 'SP-' + Array.from({ length: 8 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
 }
 
-function validateNid(nid: string): boolean {
-  return /^\d{10}$/.test(nid) || /^\d{17}$/.test(nid)
+function validateId(id: string, type: string): { valid: boolean; message?: string } {
+  if (type === 'nid') {
+    if (!/^\d{10}$/.test(id) && !/^\d{17}$/.test(id))
+      return { valid: false, message: 'Bangladesh NIDs are 10 or 17 digits.' }
+  } else if (type === 'passport') {
+    if (id.length < 5 || id.length > 20)
+      return { valid: false, message: 'Passport number must be 5–20 characters.' }
+  } else if (type === 'birth_certificate') {
+    if (!/^\d{8,20}$/.test(id))
+      return { valid: false, message: 'Birth certificate number must be 8–20 digits.' }
+  } else {
+    return { valid: false, message: 'Invalid ID type.' }
+  }
+  return { valid: true }
 }
 
 export async function GET() {
@@ -64,7 +76,8 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData()
     const fullName         = formData.get('fullName') as string
     const phone            = formData.get('phone') as string
-    const nidNumber        = formData.get('nidNumber') as string
+    const nidNumber        = (formData.get('idNumber') ?? formData.get('nidNumber')) as string
+    const idType           = (formData.get('idType') as string | null) ?? 'nid'
     const instagramHandle  = (formData.get('instagramHandle') as string | null)?.replace(/^@/, '') ?? ''
     const gender           = formData.get('gender') as string | null
     const ticketTier       = formData.get('ticketTier') as string
@@ -74,8 +87,9 @@ export async function POST(req: NextRequest) {
     if (!fullName || !phone || !nidNumber || !ticketTier || !instagramHandle || !gender) {
       return Response.json({ error: 'All fields are required.' }, { status: 400 })
     }
-    if (!validateNid(nidNumber)) {
-      return Response.json({ error: 'Bangladesh NIDs are 10 or 17 digits.' }, { status: 400 })
+    const idValidation = validateId(nidNumber, idType)
+    if (!idValidation.valid) {
+      return Response.json({ error: idValidation.message }, { status: 400 })
     }
     if (!['phase1', 'phase2', 'phase3'].includes(ticketTier)) {
       return Response.json({ error: 'Invalid ticket tier.' }, { status: 400 })
@@ -86,15 +100,17 @@ export async function POST(req: NextRequest) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
 
-    // Check if NID is already registered
+    // Check if this ID number + type is already registered
     const { data: existingNid } = await admin
       .from('user_tickets')
       .select('id')
       .eq('nid_number', nidNumber)
+      .eq('id_type', idType)
       .single()
 
     if (existingNid) {
-      return Response.json({ error: 'This NID number is already registered for a ticket. Each person can only have one ticket.' }, { status: 409 })
+      const idTypeLabel = idType === 'nid' ? 'NID number' : idType === 'passport' ? 'passport number' : 'birth certificate number'
+      return Response.json({ error: `This ${idTypeLabel} is already registered for a ticket. Each person can only have one ticket.` }, { status: 409 })
     }
 
     // If buying for myself, check they don't already have a "for myself" ticket
@@ -147,6 +163,7 @@ export async function POST(req: NextRequest) {
         full_name: fullName,
         phone,
         nid_number: nidNumber,
+        id_type: idType,
         nid_file_path: fileName,
         instagram_handle: instagramHandle,
         gender: gender,

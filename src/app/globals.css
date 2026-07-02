@@ -49,6 +49,9 @@ body {
   border-radius: 2px;
 }
 
+/* ── Prevent horizontal overflow on all pages ────────────────── */
+html, body { max-width: 100%; overflow-x: hidden; }
+
 /* ── Scrollbar ────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-void); }

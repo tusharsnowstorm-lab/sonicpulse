@@ -8,10 +8,18 @@ import FileUpload from '@/components/ui/FileUpload'
 import Button from '@/components/ui/Button'
 import { CURRENT_PHASE, ticketTiers } from '@/data/tickets'
 
+type IdType = 'nid' | 'passport' | 'birth_certificate'
+
+const ID_TYPE_OPTIONS: { value: IdType; label: string; short: string; placeholder: string; docLabel: string }[] = [
+  { value: 'nid',               label: 'National ID (NID)',  short: 'NID',              placeholder: '10 or 17 digit NID',         docLabel: 'NID Document' },
+  { value: 'passport',          label: 'Passport',           short: 'Passport',         placeholder: 'e.g. AB1234567',             docLabel: 'Passport Document' },
+  { value: 'birth_certificate', label: 'Birth Certificate',  short: 'Birth Certificate', placeholder: '17-digit certificate number', docLabel: 'Birth Certificate Document' },
+]
+
 const schema = z.object({
   fullName: z.string().min(2, 'Full name required'),
   phone: z.string().regex(/^(\+?880|0)1[3-9]\d{8}$/, 'Enter a valid Bangladesh phone number'),
-  nidNumber: z.string().regex(/^\d{10}$|^\d{17}$/, 'NID must be 10 or 17 digits'),
+  idNumber: z.string().min(3, 'ID number required'),
   instagramHandle: z.string().min(1, 'Instagram handle is required'),
   gender: z.enum(['male', 'female'], { error: 'Please select a gender' }),
   ticketTier: z.enum(['phase1', 'phase2', 'phase3']),
@@ -26,6 +34,7 @@ type Profile = {
   nid_file_path?: string
   instagram_handle?: string
   gender?: string
+  id_type?: string
 }
 
 function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
@@ -131,14 +140,16 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
   const [profileLoading, setProfileLoading] = useState(true)
   const [profileMissing, setProfileMissing] = useState(false)
 
+  const [idType, setIdType] = useState<IdType>('nid')
   const [nidFile, setNidFile] = useState<File | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
   const [showModal, setShowModal] = useState(false)
-  const [pendingData, setPendingData] = useState<Fields | null>(null)
+  const [pendingData, setPendingData] = useState<(Fields & { idType: IdType }) | null>(null)
 
   const currentTier = ticketTiers.find((t) => t.id === CURRENT_PHASE)
+  const selectedIdOption = ID_TYPE_OPTIONS.find((o) => o.value === idType) ?? ID_TYPE_OPTIONS[0]
 
   useEffect(() => {
     fetch('/api/profile')
@@ -159,10 +170,10 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
   })
 
   const onSubmit = async (data: Fields) => {
-    if (!nidFile) { setFileError('NID document is required.'); return }
+    if (!nidFile) { setFileError(`${selectedIdOption.docLabel} is required.`); return }
     setFileError(null)
     setServerError(null)
-    setPendingData(data)
+    setPendingData({ ...data, idType })
     setShowModal(true)
   }
 
@@ -174,10 +185,11 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
     setPendingData({
       fullName: profile.full_name!,
       phone: profile.phone!,
-      nidNumber: profile.nid_number!,
+      idNumber: profile.nid_number!,
       instagramHandle: profile.instagram_handle!,
       gender: profile.gender as 'male' | 'female',
       ticketTier: CURRENT_PHASE,
+      idType: (profile.id_type as IdType) ?? 'nid',
     })
     setShowModal(true)
   }
@@ -190,7 +202,8 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
     const fd = new FormData()
     fd.append('fullName', pendingData.fullName)
     fd.append('phone', pendingData.phone)
-    fd.append('nidNumber', pendingData.nidNumber)
+    fd.append('idNumber', pendingData.idNumber)
+    fd.append('idType', pendingData.idType)
     fd.append('instagramHandle', pendingData.instagramHandle)
     fd.append('gender', pendingData.gender)
     fd.append('ticketTier', pendingData.ticketTier)
@@ -233,6 +246,8 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
     marginBottom: 6,
     fontFamily: 'var(--font-jetbrains-mono)',
   }
+
+  const profileIdOption = ID_TYPE_OPTIONS.find((o) => o.value === (profile?.id_type ?? 'nid')) ?? ID_TYPE_OPTIONS[0]
 
   return (
     <>
@@ -301,13 +316,13 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
                     <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{profile.phone}</p>
                   </div>
                   <div>
-                    <p style={{ ...labelStyle, marginBottom: 2 }}>NID</p>
+                    <p style={{ ...labelStyle, marginBottom: 2 }}>{profileIdOption.short}</p>
                     <p className="text-sm font-mono" style={{ color: 'var(--text-primary)' }}>
                       {profile.nid_number?.slice(0, 4)}••••••
                     </p>
                   </div>
                   <div>
-                    <p style={{ ...labelStyle, marginBottom: 2 }}>NID Doc</p>
+                    <p style={{ ...labelStyle, marginBottom: 2 }}>{profileIdOption.docLabel}</p>
                     <p className="text-sm" style={{ color: profile.nid_file_path ? '#22c55e' : 'var(--accent-pulse)' }}>
                       {profile.nid_file_path ? '✓ On file' : '✗ Missing'}
                     </p>
@@ -334,7 +349,7 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
 
             {profileMissing && (
               <p className="text-sm" style={{ color: 'var(--accent-pulse)' }}>
-                Your saved information is incomplete. Please update <strong>My Information</strong> above with all fields including NID document.
+                Your saved information is incomplete. Please update <strong>My Information</strong> above with all fields including your ID document.
               </p>
             )}
 
@@ -356,7 +371,7 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
         {forMyself === false && (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
-              <label style={labelStyle}>Full name (as on NID)</label>
+              <label style={labelStyle}>Full name (as on ID document)</label>
               <input {...register('fullName')} style={inputStyle} placeholder="Mohammad Rahman" />
               {errors.fullName && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.fullName.message}</p>}
             </div>
@@ -367,11 +382,33 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
               {errors.phone && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.phone.message}</p>}
             </div>
 
+            {/* ID type selector */}
+            <div>
+              <label style={labelStyle}>ID document type</label>
+              <div className="grid grid-cols-3 gap-2">
+                {ID_TYPE_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setIdType(opt.value)}
+                    className="py-2.5 px-2 rounded text-xs font-semibold transition-all cursor-pointer"
+                    style={{
+                      background: idType === opt.value ? 'rgba(0,240,255,0.12)' : 'var(--bg-surface)',
+                      border: idType === opt.value ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
+                      color: idType === opt.value ? 'var(--accent-electric)' : 'var(--text-muted)',
+                    }}
+                  >
+                    {opt.short}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label style={labelStyle}>NID number</label>
-                <input {...register('nidNumber')} style={inputStyle} placeholder="10 or 17 digit NID" />
-                {errors.nidNumber && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.nidNumber.message}</p>}
+                <label style={labelStyle}>{selectedIdOption.short} number</label>
+                <input {...register('idNumber')} style={inputStyle} placeholder={selectedIdOption.placeholder} />
+                {errors.idNumber && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{errors.idNumber.message}</p>}
               </div>
               <div>
                 <label style={labelStyle}>Instagram handle</label>
@@ -406,11 +443,11 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
             <input type="hidden" {...register('ticketTier')} />
 
             <div>
-              <label style={labelStyle}>NID document</label>
+              <label style={labelStyle}>{selectedIdOption.docLabel}</label>
               <FileUpload
                 onChange={(f) => { setNidFile(f); if (f) setFileError(null) }}
                 error={fileError ?? undefined}
-                label="NID Document"
+                label={selectedIdOption.docLabel}
               />
             </div>
 

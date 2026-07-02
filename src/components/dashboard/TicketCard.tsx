@@ -43,24 +43,34 @@ const labelStyle: React.CSSProperties = {
   fontFamily: 'var(--font-jetbrains-mono)',
 }
 
+type IdType = 'nid' | 'passport' | 'birth_certificate'
+const ID_TYPE_OPTIONS: { value: IdType; short: string; placeholder: string; docLabel: string }[] = [
+  { value: 'nid',               short: 'NID',              placeholder: '10 or 17 digit NID',         docLabel: 'NID Document' },
+  { value: 'passport',          short: 'Passport',         placeholder: 'e.g. AB1234567',             docLabel: 'Passport Document' },
+  { value: 'birth_certificate', short: 'Birth Certificate', placeholder: '17-digit certificate number', docLabel: 'Birth Certificate Document' },
+]
+
 function TransferForm({ ticket, onClose, onSuccess }: { ticket: Ticket; onClose: () => void; onSuccess: () => void }) {
   const [fullName, setFullName] = useState('')
   const [phone, setPhone] = useState('')
   const [nidNumber, setNidNumber] = useState('')
   const [instagramHandle, setInstagramHandle] = useState('')
   const [gender, setGender] = useState('')
+  const [idType, setIdType] = useState<IdType>('nid')
   const [nidFile, setNidFile] = useState<File | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [confirmed, setConfirmed] = useState(false)
 
+  const selectedIdOption = ID_TYPE_OPTIONS.find((o) => o.value === idType) ?? ID_TYPE_OPTIONS[0]
+
   const handleSubmit = async () => {
     if (!fullName || !phone || !nidNumber || !instagramHandle || !gender) {
       setError('All fields are required.')
       return
     }
-    if (!nidFile) { setFileError('NID document is required.'); return }
+    if (!nidFile) { setFileError(`${selectedIdOption.docLabel} is required.`); return }
     if (!confirmed) { setError('Please confirm the transfer.'); return }
 
     setError(null)
@@ -72,6 +82,7 @@ function TransferForm({ ticket, onClose, onSuccess }: { ticket: Ticket; onClose:
     fd.append('fullName', fullName)
     fd.append('phone', phone)
     fd.append('nidNumber', nidNumber)
+    fd.append('idType', idType)
     fd.append('instagramHandle', instagramHandle.replace(/^@/, ''))
     fd.append('gender', gender)
     fd.append('nidFile', nidFile)
@@ -105,16 +116,40 @@ function TransferForm({ ticket, onClose, onSuccess }: { ticket: Ticket; onClose:
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label style={labelStyle}>Full name (as on NID)</label>
+          <label style={labelStyle}>Full name (as on ID document)</label>
           <input value={fullName} onChange={(e) => setFullName(e.target.value)} style={inputStyle} placeholder="Mohammad Rahman" />
         </div>
         <div>
           <label style={labelStyle}>Phone number</label>
           <input value={phone} onChange={(e) => setPhone(e.target.value)} style={inputStyle} placeholder="+8801XXXXXXXXX" />
         </div>
+      </div>
+
+      <div>
+        <label style={labelStyle}>ID document type</label>
+        <div className="grid grid-cols-3 gap-2">
+          {ID_TYPE_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setIdType(opt.value)}
+              className="py-2 px-1 rounded text-xs font-semibold transition-all cursor-pointer"
+              style={{
+                background: idType === opt.value ? 'rgba(0,240,255,0.12)' : 'var(--bg-surface)',
+                border: idType === opt.value ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
+                color: idType === opt.value ? 'var(--accent-electric)' : 'var(--text-muted)',
+              }}
+            >
+              {opt.short}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label style={labelStyle}>NID number</label>
-          <input value={nidNumber} onChange={(e) => setNidNumber(e.target.value)} style={inputStyle} placeholder="10 or 17 digit NID" />
+          <label style={labelStyle}>{selectedIdOption.short} number</label>
+          <input value={nidNumber} onChange={(e) => setNidNumber(e.target.value)} style={inputStyle} placeholder={selectedIdOption.placeholder} />
         </div>
         <div>
           <label style={labelStyle}>Instagram handle</label>
@@ -147,8 +182,8 @@ function TransferForm({ ticket, onClose, onSuccess }: { ticket: Ticket; onClose:
       </div>
 
       <div>
-        <label style={labelStyle}>NID document</label>
-        <FileUpload onChange={(f) => { setNidFile(f); if (f) setFileError(null) }} label="NID Document" error={fileError ?? undefined} />
+        <label style={labelStyle}>{selectedIdOption.docLabel}</label>
+        <FileUpload onChange={(f) => { setNidFile(f); if (f) setFileError(null) }} label={selectedIdOption.docLabel} error={fileError ?? undefined} />
       </div>
 
       <label className="flex items-start gap-3 cursor-pointer select-none" style={{ touchAction: 'manipulation' }}>

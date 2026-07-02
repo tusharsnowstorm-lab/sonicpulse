@@ -4,11 +4,18 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { CheckCircle, XCircle, Clock, ExternalLink } from 'lucide-react'
 
+const ID_TYPE_LABELS: Record<string, string> = {
+  nid: 'NID',
+  passport: 'Passport',
+  birth_certificate: 'Birth Cert.',
+}
+
 type Ticket = {
   id: string
   full_name: string
   phone: string
   nid_number: string
+  id_type?: string
   nid_file_path: string
   instagram_handle: string
   gender: string
@@ -203,7 +210,9 @@ function TicketRow({
             <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{ticket.phone}</p>
           </div>
           <div>
-            <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>NID</p>
+            <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+              {ID_TYPE_LABELS[ticket.id_type ?? 'nid'] ?? 'ID'}
+            </p>
             <p className="text-sm font-mono" style={{ color: 'var(--text-primary)' }}>{ticket.nid_number}</p>
           </div>
           <div>
@@ -238,7 +247,7 @@ function TicketRow({
             style={{ background: 'rgba(0,240,255,0.08)', border: '1px solid rgba(0,240,255,0.25)', color: 'var(--accent-electric)' }}
           >
             <ExternalLink size={12} />
-            {loadingNid ? 'Loading…' : 'View NID'}
+            {loadingNid ? 'Loading…' : `View ${ID_TYPE_LABELS[ticket.id_type ?? 'nid'] ?? 'ID'}`}
           </button>
 
           {/* Approve / Reject — only show on pending */}

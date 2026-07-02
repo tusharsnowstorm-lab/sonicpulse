@@ -11,7 +11,16 @@ type Profile = {
   nid_file_path?: string
   instagram_handle?: string
   gender?: string
+  id_type?: string
 }
+
+type IdType = 'nid' | 'passport' | 'birth_certificate'
+
+const ID_TYPE_OPTIONS: { value: IdType; label: string; short: string; placeholder: string; docLabel: string }[] = [
+  { value: 'nid',               label: 'National ID (NID)',    short: 'NID',               placeholder: '10 or 17 digit NID',         docLabel: 'NID Document' },
+  { value: 'passport',          label: 'Passport',             short: 'Passport',           placeholder: 'e.g. AB1234567',             docLabel: 'Passport Document' },
+  { value: 'birth_certificate', label: 'Birth Certificate',    short: 'Birth Certificate',  placeholder: '17-digit certificate number', docLabel: 'Birth Certificate Document' },
+]
 
 const inputStyle = {
   background: 'var(--bg-surface)',
@@ -48,6 +57,7 @@ export default function ProfileSection() {
   const [nidNumber, setNidNumber] = useState('')
   const [instagramHandle, setInstagramHandle] = useState('')
   const [gender, setGender] = useState('')
+  const [idType, setIdType] = useState<IdType>('nid')
   const [nidFile, setNidFile] = useState<File | null>(null)
 
   useEffect(() => {
@@ -61,12 +71,15 @@ export default function ProfileSection() {
           setNidNumber(profile.nid_number ?? '')
           setInstagramHandle(profile.instagram_handle ?? '')
           setGender(profile.gender ?? '')
+          setIdType((profile.id_type as IdType) ?? 'nid')
         } else {
           setEditing(true)
         }
         setLoading(false)
       })
   }, [])
+
+  const selectedIdOption = ID_TYPE_OPTIONS.find((o) => o.value === idType) ?? ID_TYPE_OPTIONS[0]
 
   const handleSave = async () => {
     setSaving(true)
@@ -78,6 +91,7 @@ export default function ProfileSection() {
     fd.append('nidNumber', nidNumber)
     fd.append('instagramHandle', instagramHandle.replace(/^@/, ''))
     fd.append('gender', gender)
+    fd.append('idType', idType)
     if (nidFile) fd.append('nidFile', nidFile)
 
     const res = await fetch('/api/profile', { method: 'PUT', body: fd })
@@ -97,6 +111,8 @@ export default function ProfileSection() {
   if (loading) {
     return <div className="rounded-lg h-40 animate-pulse" style={{ background: 'var(--bg-elevated)' }} />
   }
+
+  const profileIdOption = ID_TYPE_OPTIONS.find((o) => o.value === (profile?.id_type ?? 'nid')) ?? ID_TYPE_OPTIONS[0]
 
   return (
     <section>
@@ -140,7 +156,11 @@ export default function ProfileSection() {
               <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{profile.phone || '—'}</p>
             </div>
             <div>
-              <p style={labelStyle}>NID number</p>
+              <p style={labelStyle}>ID type</p>
+              <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{profileIdOption.label}</p>
+            </div>
+            <div>
+              <p style={labelStyle}>{profileIdOption.short} number</p>
               <p className="text-sm font-mono" style={{ color: 'var(--text-primary)' }}>
                 {profile.nid_number ? `${profile.nid_number.slice(0, 4)}••••••` : '—'}
               </p>
@@ -158,7 +178,7 @@ export default function ProfileSection() {
               </p>
             </div>
             <div>
-              <p style={labelStyle}>NID document</p>
+              <p style={labelStyle}>{profileIdOption.docLabel}</p>
               <p className="text-sm" style={{ color: profile.nid_file_path ? '#22c55e' : 'var(--text-muted)' }}>
                 {profile.nid_file_path ? '✓ Uploaded' : 'Not uploaded'}
               </p>
@@ -168,7 +188,7 @@ export default function ProfileSection() {
           <div className="space-y-5">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label style={labelStyle}>Full name (as on NID)</label>
+                <label style={labelStyle}>Full name (as on ID document)</label>
                 <input value={fullName} onChange={(e) => setFullName(e.target.value)} style={inputStyle} placeholder="Mohammad Rahman" />
               </div>
               <div>
@@ -177,10 +197,36 @@ export default function ProfileSection() {
               </div>
             </div>
 
+            <div>
+              <label style={labelStyle}>ID document type</label>
+              <div className="grid grid-cols-3 gap-2">
+                {ID_TYPE_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setIdType(opt.value)}
+                    className="py-2.5 px-2 rounded text-xs font-semibold transition-all cursor-pointer"
+                    style={{
+                      background: idType === opt.value ? 'rgba(0,240,255,0.12)' : 'var(--bg-surface)',
+                      border: idType === opt.value ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
+                      color: idType === opt.value ? 'var(--accent-electric)' : 'var(--text-muted)',
+                    }}
+                  >
+                    {opt.short}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label style={labelStyle}>NID number</label>
-                <input value={nidNumber} onChange={(e) => setNidNumber(e.target.value)} style={inputStyle} placeholder="10 or 17 digit NID" />
+                <label style={labelStyle}>{selectedIdOption.short} number</label>
+                <input
+                  value={nidNumber}
+                  onChange={(e) => setNidNumber(e.target.value)}
+                  style={inputStyle}
+                  placeholder={selectedIdOption.placeholder}
+                />
               </div>
               <div>
                 <label style={labelStyle}>Instagram handle</label>
@@ -219,14 +265,14 @@ export default function ProfileSection() {
 
             <div>
               <label style={labelStyle}>
-                NID document{' '}
+                {selectedIdOption.docLabel}{' '}
                 {profile?.nid_file_path && (
                   <span style={{ color: '#22c55e', textTransform: 'none', letterSpacing: 0 }}>
                     (already uploaded — upload again to replace)
                   </span>
                 )}
               </label>
-              <FileUpload onChange={(f) => setNidFile(f)} label="NID Document" />
+              <FileUpload onChange={(f) => setNidFile(f)} label={selectedIdOption.docLabel} />
             </div>
 
             {error && (
@@ -246,6 +292,7 @@ export default function ProfileSection() {
                     setNidNumber(profile.nid_number ?? '')
                     setInstagramHandle(profile.instagram_handle ?? '')
                     setGender(profile.gender ?? '')
+                    setIdType((profile.id_type as IdType) ?? 'nid')
                     setNidFile(null)
                   }}
                   className="w-full sm:w-auto px-4 py-3 rounded text-sm cursor-pointer"

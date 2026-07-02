@@ -38,6 +38,7 @@ export async function PUT(req: NextRequest) {
   const nidNumber = formData.get('nidNumber') as string
   const instagramHandle = formData.get('instagramHandle') as string | null
   const gender = formData.get('gender') as string | null
+  const idType = formData.get('idType') as string | null
   const nidFile = formData.get('nidFile') as File | null
 
   let nidFilePath: string | undefined
@@ -64,6 +65,7 @@ export async function PUT(req: NextRequest) {
   if (nidNumber) updateData.nid_number = nidNumber
   if (instagramHandle !== null) updateData.instagram_handle = instagramHandle
   if (gender) updateData.gender = gender
+  if (idType) updateData.id_type = idType
   if (nidFilePath) updateData.nid_file_path = nidFilePath
 
   const { data, error } = await supabase

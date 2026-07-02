@@ -9,8 +9,11 @@ function serviceClient() {
   )
 }
 
-function validateNid(nid: string): boolean {
-  return /^\d{10}$/.test(nid) || /^\d{17}$/.test(nid)
+function validateId(id: string, type: string): boolean {
+  if (type === 'nid') return /^\d{10}$/.test(id) || /^\d{17}$/.test(id)
+  if (type === 'passport') return id.length >= 5 && id.length <= 20
+  if (type === 'birth_certificate') return /^\d{8,20}$/.test(id)
+  return false
 }
 
 export async function POST(req: NextRequest) {
@@ -18,19 +21,20 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const formData = await req.formData()
-  const ticketId       = formData.get('ticketId') as string
-  const fullName       = formData.get('fullName') as string
-  const phone          = formData.get('phone') as string
-  const nidNumber      = formData.get('nidNumber') as string
+  const ticketId        = formData.get('ticketId') as string
+  const fullName        = formData.get('fullName') as string
+  const phone           = formData.get('phone') as string
+  const nidNumber       = formData.get('nidNumber') as string
+  const idType          = (formData.get('idType') as string | null) ?? 'nid'
   const instagramHandle = (formData.get('instagramHandle') as string | null)?.replace(/^@/, '') ?? ''
-  const gender         = formData.get('gender') as string
-  const nidFile        = formData.get('nidFile') as File | null
+  const gender          = formData.get('gender') as string
+  const nidFile         = formData.get('nidFile') as File | null
 
   if (!ticketId || !fullName || !phone || !nidNumber || !instagramHandle || !gender) {
     return NextResponse.json({ error: 'All fields are required.' }, { status: 400 })
   }
-  if (!validateNid(nidNumber)) {
-    return NextResponse.json({ error: 'NID must be 10 or 17 digits.' }, { status: 400 })
+  if (!validateId(nidNumber, idType)) {
+    return NextResponse.json({ error: 'Invalid ID number for the selected document type.' }, { status: 400 })
   }
   if (!nidFile || nidFile.size === 0) {
     return NextResponse.json({ error: 'NID document is required.' }, { status: 400 })
@@ -57,16 +61,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Rejected tickets cannot be transferred.' }, { status: 400 })
   }
 
-  // Check new NID isn't already registered (unless it's the current holder's NID)
-  if (nidNumber !== ticket.nid_number) {
+  // Check new ID isn't already registered (unless it's the same as current holder's)
+  if (nidNumber !== ticket.nid_number || idType !== (ticket.id_type ?? 'nid')) {
     const { data: existing } = await supabase
       .from('user_tickets')
       .select('id')
       .eq('nid_number', nidNumber)
+      .eq('id_type', idType)
       .single()
 
     if (existing) {
-      return NextResponse.json({ error: 'This NID is already registered for another ticket.' }, { status: 409 })
+      return NextResponse.json({ error: 'This ID is already registered for another ticket.' }, { status: 409 })
     }
   }
 
@@ -89,6 +94,7 @@ export async function POST(req: NextRequest) {
       full_name: fullName,
       phone,
       nid_number: nidNumber,
+      id_type: idType,
       instagram_handle: instagramHandle,
       gender,
       nid_file_path: fileName,
