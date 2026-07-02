@@ -4,6 +4,8 @@ import Cropper from 'react-easy-crop'
 
 type Area = { x: number; y: number; width: number; height: number }
 
+const OUTPUT_SIZE = 900 // px — high enough for gate staff clarity, reasonable file size
+
 async function getCroppedBlob(imageSrc: string, pixelCrop: Area): Promise<Blob> {
   const img = await new Promise<HTMLImageElement>((resolve, reject) => {
     const i = new Image()
@@ -12,8 +14,23 @@ async function getCroppedBlob(imageSrc: string, pixelCrop: Area): Promise<Blob> 
     i.src = imageSrc
   })
 
+  // react-easy-crop returns croppedAreaPixels relative to the displayed image size,
+  // not the natural image size. Scale back up to natural resolution.
+  const scaleX = img.naturalWidth / img.width
+  const scaleY = img.naturalHeight / img.height
+
+  const naturalCrop = {
+    x: pixelCrop.x * scaleX,
+    y: pixelCrop.y * scaleY,
+    width: pixelCrop.width * scaleX,
+    height: pixelCrop.height * scaleY,
+  }
+
+  // Output at full natural crop resolution, capped at OUTPUT_SIZE to keep file size sane.
+  // Never upscale — use naturalCrop size if it's smaller.
+  const size = Math.min(Math.min(naturalCrop.width, naturalCrop.height), OUTPUT_SIZE)
+
   const canvas = document.createElement('canvas')
-  const size = Math.min(pixelCrop.width, pixelCrop.height)
   canvas.width = size
   canvas.height = size
 
@@ -26,10 +43,10 @@ async function getCroppedBlob(imageSrc: string, pixelCrop: Area): Promise<Blob> 
 
   ctx.drawImage(
     img,
-    pixelCrop.x,
-    pixelCrop.y,
-    pixelCrop.width,
-    pixelCrop.height,
+    naturalCrop.x,
+    naturalCrop.y,
+    naturalCrop.width,
+    naturalCrop.height,
     0,
     0,
     size,
