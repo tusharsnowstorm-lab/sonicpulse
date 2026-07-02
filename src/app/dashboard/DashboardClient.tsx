@@ -8,6 +8,7 @@ import TicketCard from '@/components/dashboard/TicketCard'
 import AddTicketForm from '@/components/dashboard/AddTicketForm'
 import AccommodationSection from '@/components/dashboard/AccommodationSection'
 import ProfileSection from '@/components/dashboard/ProfileSection'
+import ProfileCompletionBanner from '@/components/dashboard/ProfileCompletionBanner'
 import Button from '@/components/ui/Button'
 import type { User } from '@supabase/supabase-js'
 
@@ -26,6 +27,7 @@ export default function DashboardClient({ user }: { user: User }) {
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
+  const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null)
   const supabase = createSupabaseBrowserClient()
 
   const fetchTickets = useCallback(async () => {
@@ -37,6 +39,18 @@ export default function DashboardClient({ user }: { user: User }) {
   }, [])
 
   useEffect(() => { fetchTickets() }, [fetchTickets])
+
+  useEffect(() => {
+    fetch('/api/profile')
+      .then((r) => r.json())
+      .then(({ profile }) => {
+        if (profile?.profile_picture_path) {
+          setProfilePicUrl(
+            `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${profile.profile_picture_path}`
+          )
+        }
+      })
+  }, [])
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -126,6 +140,8 @@ export default function DashboardClient({ user }: { user: User }) {
         </div>
       </div>
 
+      <ProfileCompletionBanner />
+
       <div className="max-w-[1000px] mx-auto px-4 py-10 space-y-14">
         {/* Tickets section */}
         <section>
@@ -177,7 +193,7 @@ export default function DashboardClient({ user }: { user: User }) {
             </div>
           ) : tickets.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {tickets.map((t) => <TicketCard key={t.id} ticket={t} onRefresh={fetchTickets} />)}
+              {tickets.map((t) => <TicketCard key={t.id} ticket={t} onRefresh={fetchTickets} profilePicUrl={profilePicUrl ?? undefined} />)}
             </div>
           ) : !showForm ? (
             <div

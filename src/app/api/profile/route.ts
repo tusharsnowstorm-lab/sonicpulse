@@ -40,8 +40,10 @@ export async function PUT(req: NextRequest) {
   const gender = formData.get('gender') as string | null
   const idType = formData.get('idType') as string | null
   const nidFile = formData.get('nidFile') as File | null
+  const profilePicFile = formData.get('profilePicFile') as File | null
 
   let nidFilePath: string | undefined
+  let profilePicPath: string | undefined
 
   if (nidFile && nidFile.size > 0) {
     const ext = nidFile.name.split('.').pop()
@@ -51,9 +53,30 @@ export async function PUT(req: NextRequest) {
       .upload(path, nidFile, { upsert: true })
 
     if (uploadError) {
-      return NextResponse.json({ error: 'Failed to upload NID file.' }, { status: 500 })
+      return NextResponse.json({ error: 'Failed to upload ID file.' }, { status: 500 })
     }
     nidFilePath = path
+  }
+
+  if (profilePicFile && profilePicFile.size > 0) {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+    if (!allowedTypes.includes(profilePicFile.type)) {
+      return NextResponse.json({ error: 'Profile photo must be JPG, PNG, or WebP.' }, { status: 400 })
+    }
+    if (profilePicFile.size > 5 * 1024 * 1024) {
+      return NextResponse.json({ error: 'Profile photo must be under 5MB.' }, { status: 400 })
+    }
+    const ext = profilePicFile.name.split('.').pop()
+    const path = `${user.id}/avatar.${ext}`
+    const arrayBuffer = await profilePicFile.arrayBuffer()
+    const { error: uploadError } = await supabase.storage
+      .from('profile-pictures')
+      .upload(path, arrayBuffer, { contentType: profilePicFile.type, upsert: true })
+
+    if (uploadError) {
+      return NextResponse.json({ error: 'Failed to upload profile photo.' }, { status: 500 })
+    }
+    profilePicPath = path
   }
 
   const updateData: Record<string, string> = {
@@ -67,6 +90,7 @@ export async function PUT(req: NextRequest) {
   if (gender) updateData.gender = gender
   if (idType) updateData.id_type = idType
   if (nidFilePath) updateData.nid_file_path = nidFilePath
+  if (profilePicPath) updateData.profile_picture_path = profilePicPath
 
   const { data, error } = await supabase
     .from('user_profiles')

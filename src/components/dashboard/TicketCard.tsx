@@ -231,7 +231,7 @@ function TransferForm({ ticket, onClose, onSuccess }: { ticket: Ticket; onClose:
   )
 }
 
-export default function TicketCard({ ticket, onRefresh }: { ticket: Ticket; onRefresh?: () => void }) {
+export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticket: Ticket; onRefresh?: () => void; profilePicUrl?: string }) {
   const [generating, setGenerating] = useState(false)
   const [showTransfer, setShowTransfer] = useState(false)
   const tier = ticketTiers.find((t) => t.id === ticket.ticket_tier)
@@ -261,7 +261,7 @@ export default function TicketCard({ ticket, onRefresh }: { ticket: Ticket; onRe
   .wordmark { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: 0.08em; }
   .wordmark span { color: #00F0FF; }
   .sub { font-size: 11px; color: #6B6B7E; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
-  .badge { width: 52px; height: 52px; border-radius: 50%; background: radial-gradient(ellipse at 50% 35%, #d070e8 0%, #8030b0 60%, #300050 100%); border: 2px solid rgba(255,255,255,0.4); opacity: 0.85; }
+  .badge { width: 52px; height: 52px; border-radius: 50%; background: radial-gradient(ellipse at 50% 35%, #d070e8 0%, #8030b0 60%, #300050 100%); border: 2px solid rgba(255,255,255,0.4); opacity: 0.85; object-fit: cover; }
   .mid { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
   .info { flex: 1; }
   .field-label { font-size: 10px; color: #6B6B7E; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 3px; font-family: 'JetBrains Mono', monospace; }
@@ -280,7 +280,10 @@ export default function TicketCard({ ticket, onRefresh }: { ticket: Ticket; onRe
       <div class="wordmark">SONIC<span>PULSE</span></div>
       <div class="sub" style="margin-top:4px;">15 NOV 2025 · 22:00 → 06:00</div>
     </div>
-    <div class="badge"></div>
+    ${profilePicUrl
+      ? `<img src="${profilePicUrl}" class="badge" alt="Profile" />`
+      : `<div class="badge"></div>`
+    }
   </div>
   <div class="mid">
     <div class="info">

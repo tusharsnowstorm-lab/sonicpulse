@@ -12,6 +12,7 @@ type Profile = {
   instagram_handle?: string
   gender?: string
   id_type?: string
+  profile_picture_path?: string
 }
 
 type IdType = 'nid' | 'passport' | 'birth_certificate'
@@ -59,6 +60,9 @@ export default function ProfileSection() {
   const [gender, setGender] = useState('')
   const [idType, setIdType] = useState<IdType>('nid')
   const [nidFile, setNidFile] = useState<File | null>(null)
+  const [profilePicFile, setProfilePicFile] = useState<File | null>(null)
+  const [profilePicPreview, setProfilePicPreview] = useState<string | null>(null)
+  const [profilePicError, setProfilePicError] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/profile')
@@ -81,6 +85,29 @@ export default function ProfileSection() {
 
   const selectedIdOption = ID_TYPE_OPTIONS.find((o) => o.value === idType) ?? ID_TYPE_OPTIONS[0]
 
+  const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setProfilePicError('Only JPG, PNG, or WebP allowed.')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setProfilePicError('Photo must be under 5MB.')
+      return
+    }
+    setProfilePicError(null)
+    setProfilePicFile(file)
+    const reader = new FileReader()
+    reader.onload = (ev) => setProfilePicPreview(ev.target?.result as string)
+    reader.readAsDataURL(file)
+  }
+
+  const getProfilePicUrl = (path?: string) => {
+    if (!path) return null
+    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${path}`
+  }
+
   const handleSave = async () => {
     setSaving(true)
     setError(null)
@@ -93,6 +120,7 @@ export default function ProfileSection() {
     fd.append('gender', gender)
     fd.append('idType', idType)
     if (nidFile) fd.append('nidFile', nidFile)
+    if (profilePicFile) fd.append('profilePicFile', profilePicFile)
 
     const res = await fetch('/api/profile', { method: 'PUT', body: fd })
     const json = await res.json()
@@ -146,6 +174,33 @@ export default function ProfileSection() {
 
       <div className="rounded-lg p-5 sm:p-6" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
         {!editing && profile ? (
+          <div className="space-y-5">
+          {/* Avatar */}
+          <div className="flex items-center gap-4">
+            {getProfilePicUrl(profile.profile_picture_path) ? (
+              <img
+                src={getProfilePicUrl(profile.profile_picture_path)!}
+                alt="Profile"
+                className="rounded-full object-cover shrink-0"
+                style={{ width: 72, height: 72, border: '2px solid var(--border)' }}
+              />
+            ) : (
+              <div
+                className="rounded-full flex items-center justify-center shrink-0"
+                style={{ width: 72, height: 72, background: 'var(--bg-surface)', border: '2px dashed var(--border)' }}
+              >
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: 'var(--text-muted)' }}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+            )}
+            <div>
+              <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+                {profile.full_name || 'No name set'}
+              </p>
+              <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
+                {profile.profile_picture_path ? '✓ Profile photo uploaded' : 'No profile photo — click Edit to add one'}
+              </p>
+            </div>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
               <p style={labelStyle}>Full name</p>
@@ -184,8 +239,48 @@ export default function ProfileSection() {
               </p>
             </div>
           </div>
+          </div>
         ) : (
           <div className="space-y-5">
+            {/* Profile picture upload */}
+            <div className="flex items-center gap-4">
+              <div className="relative shrink-0">
+                {profilePicPreview || getProfilePicUrl(profile?.profile_picture_path) ? (
+                  <img
+                    src={profilePicPreview ?? getProfilePicUrl(profile?.profile_picture_path)!}
+                    alt="Profile preview"
+                    className="rounded-full object-cover"
+                    style={{ width: 72, height: 72, border: '2px solid var(--accent-electric)' }}
+                  />
+                ) : (
+                  <div
+                    className="rounded-full flex items-center justify-center"
+                    style={{ width: 72, height: 72, background: 'var(--bg-surface)', border: '2px dashed var(--border)' }}
+                  >
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: 'var(--text-muted)' }}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </div>
+                )}
+                <label
+                  className="absolute -bottom-1 -right-1 rounded-full flex items-center justify-center cursor-pointer transition-colors"
+                  style={{ width: 26, height: 26, background: 'var(--accent-electric)', border: '2px solid var(--bg-elevated)' }}
+                  title="Upload profile photo"
+                >
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#050508" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <input
+                    type="file"
+                    accept=".jpg,.jpeg,.png,.webp"
+                    className="sr-only"
+                    onChange={handleProfilePicChange}
+                  />
+                </label>
+              </div>
+              <div>
+                <p className="text-sm font-medium mb-0.5" style={{ color: 'var(--text-primary)' }}>Profile photo</p>
+                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Optional — JPG, PNG or WebP, max 5MB</p>
+                {profilePicError && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{profilePicError}</p>}
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label style={labelStyle}>Full name (as on ID document)</label>
