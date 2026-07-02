@@ -9,12 +9,26 @@ import Button from '@/components/ui/Button'
 
 // Auth state is optional — if Supabase env vars aren't configured yet the
 // navbar still renders and the hamburger button still works.
-type AuthUser = { email?: string; user_metadata?: { avatar_url?: string; full_name?: string } }
+type AuthUser = { id?: string; email?: string; user_metadata?: { avatar_url?: string; full_name?: string } }
 
 export default function Navbar() {
   const pathname = usePathname()
   const [menuOpen, setMenuOpen] = useState(false)
   const [user, setUser] = useState<AuthUser | null>(null)
+  const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null)
+
+  const fetchProfilePic = async (supabase: Awaited<ReturnType<typeof import('@/lib/supabase-browser')['createSupabaseBrowserClient']>>, userId: string) => {
+    const { data } = await supabase
+      .from('user_profiles')
+      .select('profile_picture_path')
+      .eq('id', userId)
+      .maybeSingle()
+    if (data?.profile_picture_path) {
+      setProfilePicUrl(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${data.profile_picture_path}`)
+    } else {
+      setProfilePicUrl(null)
+    }
+  }
 
   useEffect(() => {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -27,10 +41,13 @@ export default function Navbar() {
         const supabase = createSupabaseBrowserClient()
         supabase.auth.getUser().then(({ data }: { data: { user: AuthUser | null } }) => {
           setUser(data.user)
+          if (data.user?.id) fetchProfilePic(supabase, data.user.id)
         })
         const { data: listener } = supabase.auth.onAuthStateChange(
           (_: string, session: { user: AuthUser } | null) => {
             setUser(session?.user ?? null)
+            if (session?.user?.id) fetchProfilePic(supabase, session.user.id)
+            else setProfilePicUrl(null)
           }
         )
         unsubscribe = () => listener.subscription.unsubscribe()
@@ -97,8 +114,8 @@ export default function Navbar() {
                 className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded"
                 style={{ color: 'var(--accent-electric)', border: '1px solid rgba(0,240,255,0.3)' }}
               >
-                {user.user_metadata?.avatar_url ? (
-                  <Image src={user.user_metadata.avatar_url} alt="Account" width={18} height={18} className="rounded-full" />
+                {profilePicUrl ?? user.user_metadata?.avatar_url ? (
+                  <Image src={profilePicUrl ?? user.user_metadata!.avatar_url!} alt="Account" width={18} height={18} className="rounded-full" style={{ objectFit: 'cover' }} />
                 ) : (
                   <User size={14} />
                 )}

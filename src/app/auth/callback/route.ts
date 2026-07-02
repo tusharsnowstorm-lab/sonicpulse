@@ -28,6 +28,12 @@ export async function GET(request: NextRequest) {
       }
     )
     await supabase.auth.exchangeCodeForSession(code)
+    const { data: { user } } = await supabase.auth.getUser()
+    const gateEmails = (process.env.GATE_STAFF_EMAILS ?? '')
+      .split(',').map((e) => e.trim().toLowerCase()).filter(Boolean)
+    if (user?.email && gateEmails.includes(user.email.toLowerCase())) {
+      return NextResponse.redirect(new URL('/gate', request.url))
+    }
   }
 
   return NextResponse.redirect(new URL(safNext, request.url))

@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
-import Image from 'next/image'
-import { CheckCircle, XCircle } from 'lucide-react'
+import { getUser } from '@/lib/supabase-server'
+import { isGateStaff } from '@/lib/gate-auth'
+import VerifyClient from './VerifyClient'
 
 export const metadata = { title: 'Ticket Verification — Sonic Pulse' }
 
@@ -14,80 +15,60 @@ export default async function VerifyPage({ params }: Props) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
-  const { data: ticket } = await admin
-    .from('user_tickets')
-    .select('full_name, nid_number, ticket_tier, status, reference_code')
-    .eq('reference_code', referenceCode.toUpperCase())
-    .maybeSingle()
+  const [userResult, ticketResult] = await Promise.all([
+    getUser(),
+    admin
+      .from('user_tickets')
+      .select('id, full_name, phone, nid_number, id_type, nid_file_path, ticket_tier, status, reference_code, profile_picture_path')
+      .eq('reference_code', referenceCode.toUpperCase())
+      .maybeSingle(),
+  ])
 
-  const approved = ticket?.status === 'approved'
+  const user = userResult
+  const ticket = ticketResult.data
+  const gateStaff = isGateStaff(user?.email)
+
+  // Fetch scan history (gate staff only)
+  let scans: { scan_type: string; scanned_at: string }[] = []
+  if (gateStaff && ticket) {
+    const { data } = await admin
+      .from('ticket_scans')
+      .select('scan_type, scanned_at')
+      .eq('ticket_id', ticket.id)
+      .order('scanned_at', { ascending: true })
+    scans = data ?? []
+  }
+
+  // Get signed URL for NID document (gate staff only)
+  let nidSignedUrl: string | null = null
+  if (gateStaff && ticket?.nid_file_path) {
+    const { data } = await admin.storage
+      .from('nid-documents')
+      .createSignedUrl(ticket.nid_file_path, 600)
+    nidSignedUrl = data?.signedUrl ?? null
+  }
+
+  // Profile picture public URL
+  const profilePicUrl = ticket?.profile_picture_path
+    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${ticket.profile_picture_path}`
+    : null
 
   return (
-    <main
-      className="min-h-screen flex flex-col items-center justify-center px-4"
-      style={{ background: 'var(--bg-void)' }}
-    >
-      <div className="w-full max-w-sm text-center">
-        <Image
-          src="/images/logo-badge.webp"
-          alt="Sonic Pulse"
-          width={56}
-          height={56}
-          className="rounded-full mx-auto mb-6"
-          style={{ border: '2px solid rgba(255,255,255,0.25)' }}
-        />
-
-        {!ticket ? (
-          <>
-            <XCircle size={40} className="mx-auto mb-4" style={{ color: 'var(--accent-pulse)' }} />
-            <h1 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>
-              Ticket not found
-            </h1>
-            <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-              Reference code <code style={{ color: 'var(--accent-electric)' }}>{referenceCode}</code> does not match any ticket.
-            </p>
-          </>
-        ) : (
-          <>
-            {approved
-              ? <CheckCircle size={40} className="mx-auto mb-4" style={{ color: '#22c55e' }} />
-              : <XCircle size={40} className="mx-auto mb-4" style={{ color: 'var(--accent-pulse)' }} />
-            }
-            <h1 className="text-xl font-bold mb-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>
-              {approved ? 'Valid ticket' : 'Ticket not approved'}
-            </h1>
-            <p className="text-xs mb-6" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)' }}>
-              {ticket.reference_code}
-            </p>
-
-            <div
-              className="rounded-lg text-left space-y-4 p-5"
-              style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
-            >
-              <div>
-                <p className="text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)' }}>Registered Name</p>
-                <p className="font-bold" style={{ color: 'var(--text-primary)' }}>{ticket.full_name}</p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)' }}>NID (masked)</p>
-                <p className="font-mono text-sm" style={{ color: 'var(--accent-electric)' }}>
-                  {ticket.nid_number.slice(0, 4)}{'•'.repeat(ticket.nid_number.length - 4)}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)' }}>Status</p>
-                <p className="text-sm font-semibold" style={{ color: approved ? '#22c55e' : 'var(--accent-pulse)' }}>
-                  {approved ? 'Approved' : ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}
-                </p>
-              </div>
-            </div>
-
-            <p className="text-xs mt-6" style={{ color: 'var(--text-muted)' }}>
-              Sonic Pulse · 15 November 2025 · Bashundhara Open Grounds, Dhaka
-            </p>
-          </>
-        )}
-      </div>
-    </main>
+    <VerifyClient
+      ticket={ticket ? {
+        id: ticket.id,
+        fullName: ticket.full_name,
+        phone: ticket.phone,
+        idNumber: ticket.nid_number,
+        idType: ticket.id_type ?? 'nid',
+        ticketTier: ticket.ticket_tier,
+        status: ticket.status,
+        referenceCode: ticket.reference_code,
+      } : null}
+      scans={scans}
+      isGateStaff={gateStaff}
+      nidSignedUrl={nidSignedUrl}
+      profilePicUrl={profilePicUrl}
+    />
   )
 }

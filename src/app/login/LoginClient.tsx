@@ -1,4 +1,5 @@
-﻿'use client'
+'use client'
+import { useState } from 'react'
 import Image from 'next/image'
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser'
 
@@ -15,14 +16,41 @@ function GoogleIcon() {
 
 export default function LoginClient() {
   const supabase = createSupabaseBrowserClient()
+  const [showGateLogin, setShowGateLogin] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [gateError, setGateError] = useState<string | null>(null)
+  const [gateLoading, setGateLoading] = useState(false)
 
   const handleGoogleSignIn = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     })
+  }
+
+  const handleGateSignIn = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setGateError(null)
+    setGateLoading(true)
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    setGateLoading(false)
+    if (error) {
+      setGateError('Invalid email or password.')
+      return
+    }
+    window.location.href = '/gate'
+  }
+
+  const inputStyle: React.CSSProperties = {
+    background: 'var(--bg-surface)',
+    border: '1px solid var(--border)',
+    borderRadius: 4,
+    color: 'var(--text-primary)',
+    padding: '10px 12px',
+    width: '100%',
+    fontSize: 14,
+    outline: 'none',
   }
 
   return (
@@ -52,7 +80,7 @@ export default function LoginClient() {
           </p>
         </div>
 
-        {/* Card */}
+        {/* Attendee login card */}
         <div
           className="rounded-lg p-8"
           style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
@@ -69,7 +97,7 @@ export default function LoginClient() {
             className="w-full flex items-center justify-center gap-3 rounded px-4 py-3 text-sm font-semibold transition-all duration-150"
             style={{
               background: 'var(--bg-surface)',
-              border: '1px solid var(--border-strong)',
+              border: '1px solid var(--border)',
               color: 'var(--text-primary)',
             }}
           >
@@ -80,6 +108,80 @@ export default function LoginClient() {
           <p className="text-xs text-center mt-6" style={{ color: 'var(--text-muted)' }}>
             By signing in you agree to our terms of service and privacy policy.
           </p>
+        </div>
+
+        {/* Gate staff login */}
+        <div className="mt-6">
+          <button
+            type="button"
+            onClick={() => setShowGateLogin((v) => !v)}
+            className="w-full text-xs py-2 transition-colors cursor-pointer"
+            style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)', letterSpacing: '0.1em' }}
+          >
+            {showGateLogin ? '▲ Hide' : '▼ Gate staff login'}
+          </button>
+
+          {showGateLogin && (
+            <form
+              onSubmit={handleGateSignIn}
+              className="mt-3 rounded-lg p-6 space-y-4"
+              style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
+            >
+              <p
+                className="text-xs font-bold tracking-widest uppercase"
+                style={{ color: 'var(--accent-volt)', fontFamily: 'var(--font-jetbrains-mono)' }}
+              >
+                Gate Staff Access
+              </p>
+
+              <div>
+                <label className="block text-xs mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-jetbrains-mono)' }}>
+                  Email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  style={inputStyle}
+                  placeholder="gate@sonicpulsefestival.com"
+                  required
+                  autoComplete="username"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-jetbrains-mono)' }}>
+                  Password
+                </label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  style={inputStyle}
+                  placeholder="••••••••"
+                  required
+                  autoComplete="current-password"
+                />
+              </div>
+
+              {gateError && (
+                <p className="text-xs" style={{ color: 'var(--accent-pulse)' }}>{gateError}</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={gateLoading}
+                className="w-full py-3 rounded text-sm font-bold transition-all cursor-pointer"
+                style={{
+                  background: 'var(--accent-volt)',
+                  color: '#050508',
+                  opacity: gateLoading ? 0.6 : 1,
+                }}
+              >
+                {gateLoading ? 'Signing in…' : 'Sign in as Gate Staff'}
+              </button>
+            </form>
+          )}
         </div>
       </div>
     </main>

@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { getUser } from '@/lib/supabase-server'
+import { isGateStaff } from '@/lib/gate-auth'
 
 const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? '').split(',').map((e) => e.trim().toLowerCase())
 
 export async function GET(req: NextRequest) {
   const user = await getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (!ADMIN_EMAILS.includes(user.email?.toLowerCase() ?? '')) {
+  const isAdmin = ADMIN_EMAILS.includes(user.email?.toLowerCase() ?? '')
+  if (!isAdmin && !isGateStaff(user.email)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
