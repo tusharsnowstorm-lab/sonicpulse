@@ -115,7 +115,8 @@ export default function Navbar() {
                 style={{ color: 'var(--accent-electric)', border: '1px solid rgba(0,240,255,0.3)' }}
               >
                 {profilePicUrl ?? user.user_metadata?.avatar_url ? (
-                  <Image src={profilePicUrl ?? user.user_metadata!.avatar_url!} alt="Account" width={18} height={18} className="rounded-full" style={{ objectFit: 'cover' }} />
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={profilePicUrl ?? user.user_metadata!.avatar_url!} alt="Account" width={18} height={18} className="rounded-full" style={{ objectFit: 'cover', width: 18, height: 18 }} />
                 ) : (
                   <User size={14} />
                 )}
