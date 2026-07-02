@@ -221,24 +221,23 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
               <div className="px-5 py-3 text-xs font-bold tracking-widest uppercase" style={{ background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid var(--border)', color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)' }}>
                 Identity Check
               </div>
-              <div className="p-5 flex gap-5 items-start">
+              <div className="p-5 flex flex-col gap-5">
                 {/* Photo */}
-                <div className="shrink-0">
+                <div className="w-full">
                   {profilePicUrl ? (
                     <img
                       src={profilePicUrl}
                       alt={ticket.fullName}
-                      className="rounded-xl object-cover"
-                      style={{ width: 100, height: 100, border: '2px solid var(--border)' }}
+                      style={{ width: '100%', maxHeight: 340, objectFit: 'cover', borderRadius: 12, border: '2px solid var(--border)' }}
                     />
                   ) : (
-                    <div className="rounded-xl flex items-center justify-center" style={{ width: 100, height: 100, background: 'var(--bg-surface)', border: '2px dashed var(--border)' }}>
-                      <p className="text-xs text-center px-2" style={{ color: 'var(--accent-pulse)' }}>No photo</p>
+                    <div className="rounded-xl flex items-center justify-center" style={{ width: '100%', height: 200, background: 'var(--bg-surface)', border: '2px dashed var(--border)' }}>
+                      <p className="text-sm text-center px-4" style={{ color: 'var(--accent-pulse)' }}>No profile photo — verify ID document manually</p>
                     </div>
                   )}
                 </div>
                 {/* Details */}
-                <div className="space-y-3 flex-1">
+                <div className="space-y-3">
                   <div>
                     <p className="text-xs uppercase tracking-widest mb-0.5" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)' }}>Name</p>
                     <p className="text-lg font-black" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>{ticket.fullName}</p>

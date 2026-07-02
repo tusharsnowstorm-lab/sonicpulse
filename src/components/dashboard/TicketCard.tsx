@@ -18,7 +18,7 @@ type Ticket = {
 const STATUS_CONFIG = {
   pending:  { label: 'Pending review', icon: Clock,       color: 'var(--accent-volt)' },
   approved: { label: 'Approved',        icon: CheckCircle, color: '#22c55e' },
-  rejected: { label: 'Rejected',        icon: XCircle,     color: 'var(--accent-pulse)' },
+  rejected: { label: 'Processing',       icon: Clock,       color: 'var(--accent-volt)' },
 }
 
 const inputStyle = {
@@ -272,7 +272,8 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
   .bottom { background: #0D0D14; padding: 14px 24px; border-top: 1px dashed rgba(0,240,255,0.15); font-family: 'JetBrains Mono', monospace; }
   .bottom-ref { font-size: 10px; color: #6B6B7E; display: flex; justify-content: space-between; margin-bottom: 10px; }
   .disclaimers { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
-  .disclaimer { font-size: 9px; color: #4a4a5a; letter-spacing: 0.05em; line-height: 1.4; display: flex; gap: 6px; }
+  .disclaimers-heading { font-size: 8px; font-weight: 700; color: #ffffff; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
+  .disclaimer { font-size: 9px; color: #c8c8d8; letter-spacing: 0.05em; line-height: 1.4; display: flex; gap: 6px; }
   .disclaimer::before { content: '—'; color: #FF2D6B; flex-shrink: 0; }
 </style>
 </head>
@@ -305,6 +306,7 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
       <span>Scan to verify at entry</span>
     </div>
     <div class="disclaimers">
+      <div class="disclaimers-heading">Please read carefully before attending the event</div>
       <div class="disclaimer">The profile photo on this ticket is used for identity verification at the gate. Only accurate, recent photos are accepted. Entry will be refused if the photo does not match the attendee.</div>
       <div class="disclaimer">This ticket is strictly non-transferable. The name on this ticket must match the ID presented at the gate.</div>
       <div class="disclaimer">This ticket is valid for one entry only. It will be scanned and marked as used upon first entry.</div>
@@ -335,7 +337,7 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
       <div
         className="px-4 py-2 flex items-center justify-between text-xs"
         style={{
-          background: ticket.status === 'approved' ? 'rgba(34,197,94,0.08)' : ticket.status === 'rejected' ? 'rgba(255,45,107,0.08)' : 'rgba(204,255,0,0.06)',
+          background: ticket.status === 'approved' ? 'rgba(34,197,94,0.08)' : 'rgba(204,255,0,0.06)',
           borderBottom: '1px solid var(--border)',
           fontFamily: 'var(--font-jetbrains-mono)',
         }}
@@ -409,8 +411,8 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
           </p>
         )}
         {ticket.status === 'rejected' && (
-          <p className="text-xs mt-3" style={{ color: 'var(--accent-pulse)' }}>
-            This ticket was not approved. Contact us for details.
+          <p className="text-xs mt-3" style={{ color: 'var(--accent-volt)' }}>
+            Your ticket is being processed. You&apos;ll receive an email once approved.
           </p>
         )}
 

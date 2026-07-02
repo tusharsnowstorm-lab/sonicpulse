@@ -114,13 +114,13 @@ export default function AdminClient() {
               onClick={() => setActiveTab(tab)}
               className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer"
               style={{
-                background: activeTab === tab ? (tab === 'pending' ? 'rgba(204,255,0,0.12)' : tab === 'approved' ? 'rgba(34,197,94,0.12)' : 'rgba(255,45,107,0.12)') : 'var(--bg-elevated)',
-                border: activeTab === tab ? (tab === 'pending' ? '1px solid rgba(204,255,0,0.4)' : tab === 'approved' ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,45,107,0.4)') : '1px solid var(--border)',
-                color: activeTab === tab ? (tab === 'pending' ? 'var(--accent-volt)' : tab === 'approved' ? '#22c55e' : 'var(--accent-pulse)') : 'var(--text-muted)',
+                background: activeTab === tab ? (tab === 'approved' ? 'rgba(34,197,94,0.12)' : 'rgba(204,255,0,0.12)') : 'var(--bg-elevated)',
+                border: activeTab === tab ? (tab === 'approved' ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(204,255,0,0.4)') : '1px solid var(--border)',
+                color: activeTab === tab ? (tab === 'approved' ? '#22c55e' : 'var(--accent-volt)') : 'var(--text-muted)',
               }}
             >
-              {tab === 'pending' ? <Clock size={13} /> : tab === 'approved' ? <CheckCircle size={13} /> : <XCircle size={13} />}
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+              {tab === 'pending' ? <Clock size={13} /> : tab === 'approved' ? <CheckCircle size={13} /> : <Clock size={13} />}
+              {tab === 'pending' ? 'Pending' : tab === 'approved' ? 'Approved' : 'Processing'}
               <span className="rounded-full px-1.5 py-0.5 text-xs" style={{ background: 'rgba(255,255,255,0.08)' }}>
                 {counts[tab]}
               </span>
@@ -283,7 +283,7 @@ function TicketRow({
                 border: ticket.status === 'approved' ? '1px solid rgba(34,197,94,0.3)' : '1px solid rgba(255,45,107,0.3)',
               }}
             >
-              {ticket.status === 'approved' ? '✓ Approved' : '✗ Rejected'}
+              {ticket.status === 'approved' ? '✓ Approved' : '⟳ Processing'}
             </span>
           )}
         </div>
