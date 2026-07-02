@@ -261,9 +261,9 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
   .wordmark { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: 0.08em; }
   .wordmark span { color: #00F0FF; }
   .sub { font-size: 11px; color: #6B6B7E; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
-  .photo-section { width: 100%; }
-  .photo-section img { width: 100%; height: 260px; object-fit: cover; object-position: top; display: block; }
-  .photo-placeholder { width: 100%; height: 260px; background: #0D0D14; display: flex; align-items: center; justify-content: center; }
+  .photo-section { width: 100%; background: #050508; padding: 24px 0 16px; display: flex; justify-content: center; }
+  .photo-section img { width: 220px; height: 220px; border-radius: 50%; object-fit: cover; display: block; border: 2px solid rgba(0,240,255,0.3); }
+  .photo-placeholder { width: 220px; height: 220px; border-radius: 50%; background: #0D0D14; border: 2px dashed rgba(0,240,255,0.2); display: flex; align-items: center; justify-content: center; }
   .photo-placeholder span { font-size: 11px; color: #6B6B7E; letter-spacing: 0.1em; font-family: 'JetBrains Mono', monospace; }
   .mid { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
   .info { flex: 1; }
