@@ -269,7 +269,11 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
   .ref { font-family: 'JetBrains Mono', monospace; color: #00F0FF; font-size: 13px; }
   .tier { font-family: 'JetBrains Mono', monospace; color: #CCFF00; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
   .qr img { width: 120px; height: 120px; border-radius: 4px; }
-  .bottom { background: #0D0D14; padding: 10px 24px; border-top: 1px dashed rgba(0,240,255,0.15); font-size: 10px; color: #6B6B7E; font-family: 'JetBrains Mono', monospace; display: flex; justify-content: space-between; }
+  .bottom { background: #0D0D14; padding: 14px 24px; border-top: 1px dashed rgba(0,240,255,0.15); font-family: 'JetBrains Mono', monospace; }
+  .bottom-ref { font-size: 10px; color: #6B6B7E; display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .disclaimers { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
+  .disclaimer { font-size: 9px; color: #4a4a5a; letter-spacing: 0.05em; line-height: 1.4; display: flex; gap: 6px; }
+  .disclaimer::before { content: '—'; color: #FF2D6B; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -296,8 +300,17 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
     <div class="qr"><img src="${qrDataUrl}" alt="Verification QR code" /></div>
   </div>
   <div class="bottom">
-    <span>NID: ${ticket.nid_number.slice(0, 4)}••••••</span>
-    <span>Non-transferable · Scan to verify</span>
+    <div class="bottom-ref">
+      <span>${ticket.reference_code}</span>
+      <span>Scan to verify at entry</span>
+    </div>
+    <div class="disclaimers">
+      <div class="disclaimer">This ticket is strictly non-transferable. The name on this ticket must match the ID presented at the gate.</div>
+      <div class="disclaimer">This ticket is valid for one entry only. It will be scanned and marked as used upon first entry.</div>
+      <div class="disclaimer">A wristband will be issued on entry. The wristband must remain on at all times and cannot be removed without cutting. It serves as proof of entry for re-admission.</div>
+      <div class="disclaimer">Your ticket QR code will be scanned each time you enter or exit the venue. Present your wristband for re-entry after exiting.</div>
+      <div class="disclaimer">Sonic Pulse reserves the right to refuse entry. No refunds will be issued for refused entry due to policy violations.</div>
+    </div>
   </div>
 </div>
 </body>
