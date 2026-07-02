@@ -92,13 +92,14 @@ export default function DashboardClient({ user }: { user: User }) {
           </Link>
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex items-center gap-2">
-              {user.user_metadata?.avatar_url && (
-                <Image
-                  src={user.user_metadata.avatar_url}
+              {(profilePicUrl || user.user_metadata?.avatar_url) && (
+                <img
+                  src={profilePicUrl ?? user.user_metadata.avatar_url}
                   alt={user.user_metadata?.full_name ?? 'User'}
                   width={28}
                   height={28}
-                  className="rounded-full"
+                  className="rounded-full object-cover shrink-0"
+                  style={{ width: 28, height: 28, border: '1.5px solid rgba(255,255,255,0.2)' }}
                 />
               )}
               <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
