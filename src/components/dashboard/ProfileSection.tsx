@@ -290,8 +290,14 @@ export default function ProfileSection() {
                 </label>
               </div>
               <div>
-                <p className="text-sm font-medium mb-0.5" style={{ color: 'var(--text-primary)' }}>Profile photo</p>
-                <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Optional — JPG, PNG or WebP, max 5MB</p>
+                <p className="text-sm font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>Profile photo</p>
+                <p className="text-xs mb-2" style={{ color: 'var(--text-muted)' }}>JPG, PNG or WebP — max 5MB</p>
+                <div
+                  className="rounded px-3 py-2 text-xs leading-relaxed"
+                  style={{ background: 'rgba(255,45,107,0.08)', border: '1px solid rgba(255,45,107,0.2)', color: 'rgba(240,240,248,0.75)' }}
+                >
+                  <strong style={{ color: 'var(--accent-pulse)' }}>Important:</strong> Your photo will be displayed on your ticket and used for identity verification at the venue gate. Please upload a clear, recent photo of your face. Entry will be refused if your photo does not match your appearance.
+                </div>
                 {profilePicError && <p className="text-xs mt-1" style={{ color: 'var(--accent-pulse)' }}>{profilePicError}</p>}
               </div>
             </div>

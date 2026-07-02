@@ -305,6 +305,7 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
       <span>Scan to verify at entry</span>
     </div>
     <div class="disclaimers">
+      <div class="disclaimer">The profile photo on this ticket is used for identity verification at the gate. Only accurate, recent photos are accepted. Entry will be refused if the photo does not match the attendee.</div>
       <div class="disclaimer">This ticket is strictly non-transferable. The name on this ticket must match the ID presented at the gate.</div>
       <div class="disclaimer">This ticket is valid for one entry only. It will be scanned and marked as used upon first entry.</div>
       <div class="disclaimer">A wristband will be issued on entry. The wristband must remain on at all times and cannot be removed without cutting. It serves as proof of entry for re-admission.</div>
@@ -364,16 +365,25 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
 
           <div className="flex flex-col gap-2 shrink-0">
             {ticket.status === 'approved' && (
-              <button
-                onClick={downloadTicket}
-                disabled={generating}
-                className="flex items-center gap-1.5 rounded px-3 py-2 text-xs font-semibold transition-colors cursor-pointer"
-                style={{ background: 'rgba(0,240,255,0.1)', border: '1px solid rgba(0,240,255,0.3)', color: 'var(--accent-electric)' }}
-                aria-label={`Download ticket for ${ticket.full_name}`}
-              >
-                <Download size={13} />
-                {generating ? 'Building…' : 'Download'}
-              </button>
+              profilePicUrl ? (
+                <button
+                  onClick={downloadTicket}
+                  disabled={generating}
+                  className="flex items-center gap-1.5 rounded px-3 py-2 text-xs font-semibold transition-colors cursor-pointer"
+                  style={{ background: 'rgba(0,240,255,0.1)', border: '1px solid rgba(0,240,255,0.3)', color: 'var(--accent-electric)' }}
+                  aria-label={`Download ticket for ${ticket.full_name}`}
+                >
+                  <Download size={13} />
+                  {generating ? 'Building…' : 'Download'}
+                </button>
+              ) : (
+                <div
+                  className="rounded px-3 py-2 text-xs"
+                  style={{ background: 'rgba(255,45,107,0.08)', border: '1px solid rgba(255,45,107,0.25)', color: 'var(--accent-pulse)', maxWidth: 160 }}
+                >
+                  Add a profile photo to download your ticket
+                </div>
+              )
             )}
 
             {(ticket.status === 'approved' || ticket.status === 'pending') && (
