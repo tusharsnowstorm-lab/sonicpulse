@@ -257,11 +257,14 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=JetBrains+Mono:wght@500&display=swap');
   body { margin: 0; background: #050508; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: Arial, sans-serif; }
   .ticket { width: 480px; background: #050508; border: 1.5px solid rgba(0,240,255,0.35); border-radius: 8px; overflow: hidden; color: #F0F0F8; }
-  .top { padding: 24px; border-bottom: 1.5px dashed rgba(0,240,255,0.2); display: flex; justify-content: space-between; align-items: flex-start; }
+  .top { padding: 24px; border-bottom: 1.5px dashed rgba(0,240,255,0.2); }
   .wordmark { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: 0.08em; }
   .wordmark span { color: #00F0FF; }
   .sub { font-size: 11px; color: #6B6B7E; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
-  .badge { width: 52px; height: 52px; border-radius: 50%; background: radial-gradient(ellipse at 50% 35%, #d070e8 0%, #8030b0 60%, #300050 100%); border: 2px solid rgba(255,255,255,0.4); opacity: 0.85; object-fit: cover; }
+  .photo-section { width: 100%; }
+  .photo-section img { width: 100%; height: 260px; object-fit: cover; object-position: top; display: block; }
+  .photo-placeholder { width: 100%; height: 260px; background: #0D0D14; display: flex; align-items: center; justify-content: center; }
+  .photo-placeholder span { font-size: 11px; color: #6B6B7E; letter-spacing: 0.1em; font-family: 'JetBrains Mono', monospace; }
   .mid { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
   .info { flex: 1; }
   .field-label { font-size: 10px; color: #6B6B7E; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 3px; font-family: 'JetBrains Mono', monospace; }
@@ -285,9 +288,11 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
       <div class="wordmark">SONIC<span>PULSE</span></div>
       <div class="sub" style="margin-top:4px;">15 NOV 2025 · 22:00 → 06:00</div>
     </div>
+  </div>
+  <div class="photo-section">
     ${profilePicUrl
-      ? `<img src="${profilePicUrl}" class="badge" alt="Profile" />`
-      : `<div class="badge"></div>`
+      ? `<img src="${profilePicUrl}" alt="Attendee photo" />`
+      : `<div class="photo-placeholder"><span>NO PHOTO ON FILE</span></div>`
     }
   </div>
   <div class="mid">
