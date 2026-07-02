@@ -102,8 +102,8 @@ export default function ImageCropModal({ imageSrc, onDone, onCancel }: Props) {
           </p>
         </div>
 
-        {/* Crop area */}
-        <div className="relative" style={{ height: 300, background: '#000' }}>
+        {/* Crop area — touch-action:none prevents iOS scroll hijack during pinch/drag */}
+        <div className="relative" style={{ height: 300, background: '#000', touchAction: 'none' }}>
           <Cropper
             image={imageSrc}
             crop={crop}

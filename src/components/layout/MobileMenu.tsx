@@ -1,9 +1,9 @@
 'use client'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
-import { X } from 'lucide-react'
-import { useEffect } from 'react'
+import { X, User } from 'lucide-react'
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -14,15 +14,45 @@ const navLinks = [
   { href: '/contact', label: 'Contact' },
 ]
 
+type AuthUser = { id?: string; email?: string; user_metadata?: { avatar_url?: string } }
 type Props = { onClose: () => void }
 
 export default function MobileMenu({ onClose }: Props) {
   const pathname = usePathname()
+  const [user, setUser] = useState<AuthUser | null>(null)
+  const [profilePicUrl, setProfilePicUrl] = useState<string | null>(null)
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
     return () => { document.body.style.overflow = '' }
   }, [])
+
+  useEffect(() => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    if (!url || !key) return
+
+    import('@/lib/supabase-browser').then(({ createSupabaseBrowserClient }) => {
+      const supabase = createSupabaseBrowserClient()
+      supabase.auth.getUser().then(({ data }) => {
+        setUser(data.user)
+        if (data.user?.id) {
+          supabase
+            .from('user_profiles')
+            .select('profile_picture_path')
+            .eq('id', data.user.id)
+            .maybeSingle()
+            .then(({ data: p }) => {
+              if (p?.profile_picture_path) {
+                setProfilePicUrl(`${url}/storage/v1/object/public/profile-pictures/${p.profile_picture_path}`)
+              }
+            })
+        }
+      })
+    }).catch(() => {})
+  }, [])
+
+  const avatar = profilePicUrl ?? user?.user_metadata?.avatar_url ?? null
 
   return (
     <div
@@ -34,11 +64,7 @@ export default function MobileMenu({ onClose }: Props) {
       }}
     >
       {/* Dark overlay */}
-      <div
-        className="absolute inset-0"
-        style={{ background: 'rgba(5,5,8,0.88)' }}
-        aria-hidden="true"
-      />
+      <div className="absolute inset-0" style={{ background: 'rgba(5,5,8,0.88)' }} aria-hidden="true" />
 
       {/* Header */}
       <div
@@ -103,8 +129,49 @@ export default function MobileMenu({ onClose }: Props) {
         })}
       </nav>
 
-      {/* Bottom CTA */}
-      <div className="relative z-10 px-6 py-8 shrink-0">
+      {/* Bottom CTAs */}
+      <div className="relative z-10 px-6 py-8 shrink-0 space-y-3">
+        {/* Auth button */}
+        {user ? (
+          <Link
+            href="/dashboard"
+            onClick={onClose}
+            className="flex items-center justify-center gap-3 w-full py-4 rounded font-bold tracking-widest uppercase"
+            style={{
+              background: 'rgba(0,240,255,0.08)',
+              border: '1.5px solid rgba(0,240,255,0.35)',
+              color: 'var(--accent-electric)',
+              fontFamily: 'var(--font-space-grotesk)',
+              fontSize: '0.9rem',
+            }}
+          >
+            {avatar ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={avatar} alt="Profile" width={26} height={26} style={{ borderRadius: '50%', objectFit: 'cover', width: 26, height: 26 }} />
+            ) : (
+              <User size={18} />
+            )}
+            My Account
+          </Link>
+        ) : (
+          <Link
+            href="/login"
+            onClick={onClose}
+            className="flex items-center justify-center gap-2 w-full py-4 rounded font-bold tracking-widest uppercase"
+            style={{
+              background: 'rgba(0,240,255,0.08)',
+              border: '1.5px solid rgba(0,240,255,0.35)',
+              color: 'var(--accent-electric)',
+              fontFamily: 'var(--font-space-grotesk)',
+              fontSize: '0.9rem',
+            }}
+          >
+            <User size={18} />
+            Sign In
+          </Link>
+        )}
+
+        {/* Get tickets */}
         <Link
           href="/tickets"
           onClick={onClose}
@@ -118,8 +185,9 @@ export default function MobileMenu({ onClose }: Props) {
         >
           GET TICKETS
         </Link>
+
         <p
-          className="text-center text-xs mt-3 tracking-widest uppercase"
+          className="text-center text-xs mt-1 tracking-widest uppercase"
           style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'var(--font-jetbrains-mono)' }}
         >
           15 Nov 2025 · Dhaka
