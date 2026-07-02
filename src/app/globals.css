@@ -124,6 +124,29 @@ html, body { max-width: 100%; overflow-x: hidden; }
   100% { box-shadow: 0 0 0 0 rgba(255,45,107,0); }
 }
 
+/* ── 3D bump effect on all interactive elements ───────────────── */
+button,
+a,
+[role="button"],
+input[type="submit"],
+input[type="button"] {
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+button:not(:disabled):hover,
+a:hover,
+[role="button"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+button:not(:disabled):active,
+a:active,
+[role="button"]:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
 /* ── Reduce motion ────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .glow-heading::after { animation: none; }
