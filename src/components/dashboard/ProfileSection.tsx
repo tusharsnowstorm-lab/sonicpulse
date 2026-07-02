@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { Save, Pencil, CheckCircle } from 'lucide-react'
 import FileUpload from '@/components/ui/FileUpload'
 import Button from '@/components/ui/Button'
+import ImageCropModal from '@/components/ui/ImageCropModal'
 
 type Profile = {
   full_name?: string
@@ -63,6 +64,7 @@ export default function ProfileSection() {
   const [profilePicFile, setProfilePicFile] = useState<File | null>(null)
   const [profilePicPreview, setProfilePicPreview] = useState<string | null>(null)
   const [profilePicError, setProfilePicError] = useState<string | null>(null)
+  const [cropSrc, setCropSrc] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/profile')
@@ -97,10 +99,19 @@ export default function ProfileSection() {
       return
     }
     setProfilePicError(null)
-    setProfilePicFile(file)
+    // Open crop modal instead of using raw file
     const reader = new FileReader()
-    reader.onload = (ev) => setProfilePicPreview(ev.target?.result as string)
+    reader.onload = (ev) => setCropSrc(ev.target?.result as string)
     reader.readAsDataURL(file)
+    // Reset input so same file can be re-selected after cancel
+    e.target.value = ''
+  }
+
+  const handleCropDone = (blob: Blob, previewUrl: string) => {
+    const croppedFile = new File([blob], 'profile.png', { type: 'image/png' })
+    setProfilePicFile(croppedFile)
+    setProfilePicPreview(previewUrl)
+    setCropSrc(null)
   }
 
   const getProfilePicUrl = (path?: string) => {
@@ -144,6 +155,13 @@ export default function ProfileSection() {
 
   return (
     <section>
+      {cropSrc && (
+        <ImageCropModal
+          imageSrc={cropSrc}
+          onDone={handleCropDone}
+          onCancel={() => setCropSrc(null)}
+        />
+      )}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-xl font-bold" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>
