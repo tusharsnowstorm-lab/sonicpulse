@@ -182,22 +182,37 @@ export default function ProfileSection() {
                 src={getProfilePicUrl(profile.profile_picture_path)!}
                 alt="Profile"
                 className="rounded-full object-cover shrink-0"
-                style={{ width: 72, height: 72, border: '2px solid var(--border)' }}
+                style={{ width: 80, height: 80, border: '2px solid var(--border)' }}
               />
             ) : (
-              <div
-                className="rounded-full flex items-center justify-center shrink-0"
-                style={{ width: 72, height: 72, background: 'var(--bg-surface)', border: '2px dashed var(--border)' }}
+              <button
+                type="button"
+                onClick={() => setEditing(true)}
+                className="rounded-full flex flex-col items-center justify-center gap-1 shrink-0 cursor-pointer transition-all group"
+                style={{
+                  width: 80, height: 80,
+                  background: 'var(--bg-surface)',
+                  border: '2px dashed rgba(0,240,255,0.35)',
+                }}
+                aria-label="Add profile photo"
               >
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ color: 'var(--text-muted)' }}><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-              </div>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
+                  className="transition-colors"
+                  style={{ color: 'var(--accent-electric)' }}>
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                </svg>
+                <span className="text-[9px] font-bold tracking-widest uppercase" style={{ color: 'var(--accent-electric)', fontFamily: 'var(--font-jetbrains-mono)' }}>
+                  Add photo
+                </span>
+              </button>
             )}
             <div>
               <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
                 {profile.full_name || 'No name set'}
               </p>
               <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
-                {profile.profile_picture_path ? '✓ Profile photo uploaded' : 'No profile photo — click Edit to add one'}
+                {profile.profile_picture_path ? '✓ Profile photo uploaded' : 'Tap the circle to add a profile photo'}
               </p>
             </div>
           </div>
