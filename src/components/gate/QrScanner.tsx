@@ -40,18 +40,23 @@ export default function QrScanner({ onClose }: Props) {
           (result, err) => {
             if (!active) return
             if (result) {
-              const text = result.getText()
-              // Extract reference code — match SP-XXXXXXXX or just the code
-              const match = text.match(/SP-[A-Z0-9]{8}/i) ?? text.match(/([A-Z0-9]{8,})/i)
-              const code = match?.[0]?.toUpperCase().replace(/^(?!SP-)/, '') ?? null
+              const text = result.getText().trim()
 
-              if (code) {
-                setDetected(code)
+              // Extract reference code from full verify URL or bare code
+              let ref: string | null = null
+              const urlMatch = text.match(/\/verify\/([^/?#\s]+)/i)
+              if (urlMatch) {
+                ref = urlMatch[1].toUpperCase()
+              } else {
+                const codeMatch = text.match(/SP-[A-Z0-9]+/i)
+                if (codeMatch) ref = codeMatch[0].toUpperCase()
+              }
+
+              if (ref) {
+                setDetected(ref)
                 controls.stop()
                 setTimeout(() => {
                   if (active) {
-                    // Navigate to verify page — strip domain if full URL
-                    const ref = code.startsWith('SP-') ? code : `SP-${code}`
                     router.push(`/verify/${ref}`)
                     onClose()
                   }
