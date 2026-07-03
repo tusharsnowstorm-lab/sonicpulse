@@ -34,6 +34,7 @@ type Props = {
   isGateStaff: boolean
   nidSignedUrl: string | null
   profilePicUrl: string | null
+  referenceCode: string
 }
 
 function formatTime(iso: string) {
@@ -51,7 +52,7 @@ function getScanState(scans: Scan[]): ScanState {
   return scans[scans.length - 1].scan_type === 'entry' ? 'inside' : 'outside'
 }
 
-export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl, profilePicUrl }: Props) {
+export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl, profilePicUrl, referenceCode }: Props) {
   const [confirming, setConfirming] = useState(false)
   const [pendingAction, setPendingAction] = useState<'entry' | 'exit' | null>(null)
   const [localScans, setLocalScans] = useState<Scan[]>(scans)
@@ -96,6 +97,7 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
               <XCircle size={40} className="mx-auto mb-4" style={{ color: 'var(--accent-pulse)' }} />
               <h1 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>Ticket not found</h1>
               <p className="text-sm" style={{ color: 'var(--text-muted)' }}>This QR code does not match any ticket.</p>
+              <p className="text-xs mt-2 font-mono" style={{ color: 'var(--text-muted)' }}>Looked up: {referenceCode}</p>
             </>
           ) : !approved ? (
             <>
@@ -174,6 +176,9 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
             <XCircle size={40} className="mx-auto mb-3" style={{ color: 'var(--accent-pulse)' }} />
             <p className="font-bold" style={{ color: 'var(--text-primary)' }}>Ticket not found</p>
             <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>This QR code does not match any ticket in the system.</p>
+            <p className="text-xs mt-3 font-mono px-3 py-1.5 rounded inline-block" style={{ background: 'var(--bg-surface)', color: 'var(--accent-electric)', border: '1px solid var(--border)' }}>
+              Looked up: {referenceCode}
+            </p>
           </div>
         )}
 

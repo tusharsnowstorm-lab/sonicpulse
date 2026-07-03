@@ -55,6 +55,7 @@ export default async function VerifyPage({ params }: Props) {
 
   return (
     <VerifyClient
+      referenceCode={referenceCode}
       ticket={ticket ? {
         id: ticket.id,
         fullName: ticket.full_name,
