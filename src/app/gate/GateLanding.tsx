@@ -3,10 +3,14 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser'
-import { LogOut, Search, QrCode } from 'lucide-react'
+import { LogOut, Search, Camera } from 'lucide-react'
+import dynamic from 'next/dynamic'
+
+const QrScanner = dynamic(() => import('@/components/gate/QrScanner'), { ssr: false })
 
 export default function GateLanding({ email }: { email: string }) {
   const [code, setCode] = useState('')
+  const [scanning, setScanning] = useState(false)
   const router = useRouter()
   const supabase = createSupabaseBrowserClient()
 
@@ -47,6 +51,8 @@ export default function GateLanding({ email }: { email: string }) {
         </div>
       </div>
 
+      {scanning && <QrScanner onClose={() => setScanning(false)} />}
+
       <div className="max-w-[600px] mx-auto px-4 py-10 space-y-8">
         {/* Status */}
         <div
@@ -60,32 +66,32 @@ export default function GateLanding({ email }: { email: string }) {
           </div>
         </div>
 
-        {/* QR instructions */}
-        <div className="rounded-lg p-6 space-y-3" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
-          <div className="flex items-center gap-2 mb-1">
-            <QrCode size={16} style={{ color: 'var(--accent-electric)' }} />
-            <p className="text-sm font-bold" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>Scanning tickets</p>
+        {/* Scan button */}
+        <button
+          type="button"
+          onClick={() => setScanning(true)}
+          className="w-full flex flex-col items-center justify-center gap-3 rounded-lg py-10"
+          style={{
+            background: 'rgba(0,240,255,0.06)',
+            border: '2px solid rgba(0,240,255,0.3)',
+            touchAction: 'manipulation',
+          }}
+        >
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center"
+            style={{ background: 'rgba(0,240,255,0.12)', border: '1.5px solid rgba(0,240,255,0.4)' }}
+          >
+            <Camera size={28} style={{ color: 'var(--accent-electric)' }} />
           </div>
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-            Use your phone camera to scan the QR code on an attendee&apos;s ticket. This opens the verification page automatically.
-          </p>
-          <ol className="text-sm space-y-1.5 list-none">
-            {[
-              'Open your phone camera and point it at the QR code.',
-              'Tap the link that appears — the verify page opens in this browser.',
-              'Check the photo and ID match the person in front of you.',
-              'Press Confirm Entry / Confirm Exit as appropriate.',
-            ].map((step, i) => (
-              <li key={i} className="flex gap-3">
-                <span className="shrink-0 w-5 h-5 rounded-full text-xs font-bold flex items-center justify-center mt-0.5"
-                  style={{ background: 'rgba(0,240,255,0.12)', color: 'var(--accent-electric)', fontFamily: 'var(--font-jetbrains-mono)' }}>
-                  {i + 1}
-                </span>
-                <span style={{ color: 'rgba(240,240,248,0.75)' }}>{step}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
+          <div className="text-center">
+            <p className="font-bold text-base" style={{ color: 'var(--accent-electric)', fontFamily: 'var(--font-space-grotesk)' }}>
+              Scan QR Code
+            </p>
+            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
+              Tap to open camera and scan attendee ticket
+            </p>
+          </div>
+        </button>
 
         {/* Manual lookup */}
         <div className="rounded-lg p-6" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
