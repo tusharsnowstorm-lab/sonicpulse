@@ -19,7 +19,7 @@ export default async function VerifyPage({ params }: Props) {
     getUser(),
     admin
       .from('user_tickets')
-      .select('id, full_name, phone, nid_number, id_type, nid_file_path, ticket_tier, status, reference_code, profile_picture_path')
+      .select('id, full_name, phone, nid_number, id_type, nid_file_path, ticket_tier, status, reference_code, user_id')
       .eq('reference_code', referenceCode.toUpperCase())
       .maybeSingle(),
   ])
@@ -52,10 +52,18 @@ export default async function VerifyPage({ params }: Props) {
     nidSignedUrl = data?.signedUrl ?? null
   }
 
-  // Profile picture public URL
-  const profilePicUrl = ticket?.profile_picture_path
-    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${ticket.profile_picture_path}`
-    : null
+  // Profile picture — stored in user_profiles, not user_tickets
+  let profilePicUrl: string | null = null
+  if (ticket?.user_id) {
+    const { data: profile } = await admin
+      .from('user_profiles')
+      .select('profile_picture_path')
+      .eq('user_id', ticket.user_id)
+      .maybeSingle()
+    if (profile?.profile_picture_path) {
+      profilePicUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${profile.profile_picture_path}`
+    }
+  }
 
   return (
     <VerifyClient
