@@ -21,7 +21,7 @@ export default function Navbar() {
     const { data } = await supabase
       .from('user_profiles')
       .select('profile_picture_path')
-      .eq('id', userId)
+      .eq('user_id', userId)
       .maybeSingle()
     if (data?.profile_picture_path) {
       setProfilePicUrl(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/profile-pictures/${data.profile_picture_path}`)

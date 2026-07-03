@@ -33,13 +33,15 @@ export default function LoginClient() {
     e.preventDefault()
     setGateError(null)
     setGateLoading(true)
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     setGateLoading(false)
     if (error) {
       setGateError('Invalid email or password.')
       return
     }
-    window.location.href = '/gate'
+    const gateEmails = (process.env.NEXT_PUBLIC_GATE_STAFF_EMAILS ?? '').split(',').map((e) => e.trim().toLowerCase()).filter(Boolean)
+    const userEmail = data.user?.email?.toLowerCase() ?? ''
+    window.location.href = gateEmails.includes(userEmail) ? '/gate' : '/dashboard'
   }
 
   const inputStyle: React.CSSProperties = {
@@ -49,7 +51,7 @@ export default function LoginClient() {
     color: 'var(--text-primary)',
     padding: '10px 12px',
     width: '100%',
-    fontSize: 14,
+    fontSize: 16,
     outline: 'none',
   }
 

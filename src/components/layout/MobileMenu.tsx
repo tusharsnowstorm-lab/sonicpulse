@@ -40,7 +40,7 @@ export default function MobileMenu({ onClose }: Props) {
           supabase
             .from('user_profiles')
             .select('profile_picture_path')
-            .eq('id', data.user.id)
+            .eq('user_id', data.user.id)
             .maybeSingle()
             .then(({ data: p }) => {
               if (p?.profile_picture_path) {

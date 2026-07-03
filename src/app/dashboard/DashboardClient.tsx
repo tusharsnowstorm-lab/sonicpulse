@@ -32,10 +32,15 @@ export default function DashboardClient({ user }: { user: User }) {
 
   const fetchTickets = useCallback(async () => {
     setLoading(true)
-    const res = await fetch('/api/tickets')
-    const json = await res.json()
-    setTickets(json.tickets ?? [])
-    setLoading(false)
+    try {
+      const res = await fetch('/api/tickets')
+      const json = await res.json()
+      setTickets(json.tickets ?? [])
+    } catch {
+      // Network error — leave existing tickets visible
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => { fetchTickets() }, [fetchTickets])
@@ -50,6 +55,7 @@ export default function DashboardClient({ user }: { user: User }) {
           )
         }
       })
+      .catch(() => {})
   }, [])
 
   const handleSignOut = async () => {

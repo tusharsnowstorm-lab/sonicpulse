@@ -27,7 +27,10 @@ export async function GET(request: NextRequest) {
         },
       }
     )
-    await supabase.auth.exchangeCodeForSession(code)
+    const { error: sessionError } = await supabase.auth.exchangeCodeForSession(code)
+    if (sessionError) {
+      return NextResponse.redirect(new URL('/login?error=auth', request.url))
+    }
     const { data: { user } } = await supabase.auth.getUser()
     const gateEmails = (process.env.GATE_STAFF_EMAILS ?? '')
       .split(',').map((e) => e.trim().toLowerCase()).filter(Boolean)

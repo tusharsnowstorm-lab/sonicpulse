@@ -4,7 +4,9 @@ import Cropper from 'react-easy-crop'
 
 type Area = { x: number; y: number; width: number; height: number }
 
-const OUTPUT_SIZE = 900 // px — high enough for gate staff clarity, reasonable file size
+// react-easy-crop's croppedAreaPixels are already in natural image pixel coordinates.
+// Cap output at 900px to keep file size sane while preserving gate-staff clarity.
+const OUTPUT_SIZE = 900
 
 async function getCroppedBlob(imageSrc: string, pixelCrop: Area): Promise<Blob> {
   const img = await new Promise<HTMLImageElement>((resolve, reject) => {
@@ -14,27 +16,15 @@ async function getCroppedBlob(imageSrc: string, pixelCrop: Area): Promise<Blob> 
     i.src = imageSrc
   })
 
-  // react-easy-crop returns croppedAreaPixels relative to the displayed image size,
-  // not the natural image size. Scale back up to natural resolution.
-  const scaleX = img.naturalWidth / img.width
-  const scaleY = img.naturalHeight / img.height
-
-  const naturalCrop = {
-    x: pixelCrop.x * scaleX,
-    y: pixelCrop.y * scaleY,
-    width: pixelCrop.width * scaleX,
-    height: pixelCrop.height * scaleY,
-  }
-
-  // Output at full natural crop resolution, capped at OUTPUT_SIZE to keep file size sane.
-  // Never upscale — use naturalCrop size if it's smaller.
-  const size = Math.min(Math.min(naturalCrop.width, naturalCrop.height), OUTPUT_SIZE)
+  // Cap at OUTPUT_SIZE; never upscale if the crop area is already smaller.
+  const size = Math.min(Math.min(pixelCrop.width, pixelCrop.height), OUTPUT_SIZE)
 
   const canvas = document.createElement('canvas')
   canvas.width = size
   canvas.height = size
 
-  const ctx = canvas.getContext('2d')!
+  const ctx = canvas.getContext('2d')
+  if (!ctx) throw new Error('Canvas 2D context unavailable on this device.')
 
   // Clip to circle
   ctx.beginPath()
@@ -43,10 +33,10 @@ async function getCroppedBlob(imageSrc: string, pixelCrop: Area): Promise<Blob> 
 
   ctx.drawImage(
     img,
-    naturalCrop.x,
-    naturalCrop.y,
-    naturalCrop.width,
-    naturalCrop.height,
+    pixelCrop.x,
+    pixelCrop.y,
+    pixelCrop.width,
+    pixelCrop.height,
     0,
     0,
     size,
@@ -74,13 +64,21 @@ export default function ImageCropModal({ imageSrc, onDone, onCancel }: Props) {
     setCroppedArea(pixelCrop)
   }, [])
 
+  const [cropError, setCropError] = useState<string | null>(null)
+
   const handleApply = async () => {
     if (!croppedArea) return
     setProcessing(true)
-    const blob = await getCroppedBlob(imageSrc, croppedArea)
-    const previewUrl = URL.createObjectURL(blob)
-    onDone(blob, previewUrl)
-    setProcessing(false)
+    setCropError(null)
+    try {
+      const blob = await getCroppedBlob(imageSrc, croppedArea)
+      const previewUrl = URL.createObjectURL(blob)
+      onDone(blob, previewUrl)
+    } catch (err) {
+      setCropError(err instanceof Error ? err.message : 'Failed to process image. Try a different photo.')
+    } finally {
+      setProcessing(false)
+    }
   }
 
   return (
@@ -137,6 +135,10 @@ export default function ImageCropModal({ imageSrc, onDone, onCancel }: Props) {
             style={{ accentColor: 'var(--accent-electric)' }}
           />
         </div>
+
+        {cropError && (
+          <p className="px-5 py-3 text-xs" style={{ color: 'var(--accent-pulse)', borderTop: '1px solid var(--border)' }}>{cropError}</p>
+        )}
 
         {/* Actions */}
         <div className="px-5 py-4 flex gap-3 border-t" style={{ borderColor: 'var(--border)' }}>

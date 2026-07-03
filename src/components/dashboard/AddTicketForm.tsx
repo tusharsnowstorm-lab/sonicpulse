@@ -232,7 +232,7 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
     color: 'var(--text-primary)',
     padding: '10px 12px',
     width: '100%',
-    fontSize: 14,
+    fontSize: 16,
     outline: 'none',
   }
 

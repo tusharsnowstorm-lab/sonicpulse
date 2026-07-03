@@ -28,7 +28,7 @@ const inputStyle = {
   color: 'var(--text-primary)',
   padding: '10px 12px',
   width: '100%',
-  fontSize: 14,
+  fontSize: 16,
   outline: 'none',
 }
 
@@ -235,7 +235,7 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
   const [generating, setGenerating] = useState(false)
   const [showTransfer, setShowTransfer] = useState(false)
   const tier = ticketTiers.find((t) => t.id === ticket.ticket_tier)
-  const { label: statusLabel, icon: StatusIcon, color: statusColor } = STATUS_CONFIG[ticket.status]
+  const { label: statusLabel, icon: StatusIcon, color: statusColor } = STATUS_CONFIG[ticket.status] ?? STATUS_CONFIG.pending
 
   const downloadTicket = async () => {
     setGenerating(true)
@@ -326,11 +326,23 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
 
       const blob = new Blob([html], { type: 'text/html' })
       const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `sonic-pulse-ticket-${ticket.reference_code}.html`
-      a.click()
-      URL.revokeObjectURL(url)
+      // iOS Safari doesn't support programmatic anchor clicks for downloads.
+      // Use window.open so the ticket opens in a new tab where the user can
+      // share/print/save it. On desktop, use the download attribute normally.
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent)
+      if (isIOS) {
+        window.open(url, '_blank')
+        // Don't revoke immediately — the new tab needs time to read the blob.
+        setTimeout(() => URL.revokeObjectURL(url), 10000)
+      } else {
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `sonic-pulse-ticket-${ticket.reference_code}.html`
+        document.body.appendChild(a)
+        a.click()
+        document.body.removeChild(a)
+        URL.revokeObjectURL(url)
+      }
     } finally {
       setGenerating(false)
     }

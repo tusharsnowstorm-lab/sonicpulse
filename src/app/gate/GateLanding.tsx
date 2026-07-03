@@ -109,7 +109,7 @@ export default function GateLanding({ email }: { email: string }) {
                 borderRadius: 4,
                 color: 'var(--text-primary)',
                 padding: '10px 12px',
-                fontSize: 14,
+                fontSize: 16,
                 outline: 'none',
                 fontFamily: 'var(--font-jetbrains-mono)',
                 letterSpacing: '0.1em',

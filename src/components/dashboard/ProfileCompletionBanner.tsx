@@ -30,16 +30,19 @@ export default function ProfileCompletionBanner() {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && sessionStorage.getItem(SESSION_KEY)) {
-      setDismissed(true)
-    }
+    try {
+      if (typeof window !== 'undefined' && sessionStorage.getItem(SESSION_KEY)) {
+        setDismissed(true)
+      }
+    } catch {}
     fetch('/api/profile')
       .then((r) => r.json())
       .then(({ profile }) => { setProfile(profile); setLoaded(true) })
+      .catch(() => setLoaded(true))
   }, [])
 
   const handleDismiss = () => {
-    sessionStorage.setItem(SESSION_KEY, '1')
+    try { sessionStorage.setItem(SESSION_KEY, '1') } catch {}
     setDismissed(true)
   }
 
