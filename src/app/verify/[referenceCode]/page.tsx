@@ -28,6 +28,10 @@ export default async function VerifyPage({ params }: Props) {
   const ticket = ticketResult.data
   const gateStaff = isGateStaff(user?.email)
 
+  if (ticketResult.error) {
+    console.error('[verify] ticket lookup error:', ticketResult.error)
+  }
+
   // Fetch scan history (gate staff only)
   let scans: { scan_type: string; scanned_at: string }[] = []
   if (gateStaff && ticket) {
@@ -56,6 +60,7 @@ export default async function VerifyPage({ params }: Props) {
   return (
     <VerifyClient
       referenceCode={referenceCode}
+      dbError={ticketResult.error?.message ?? null}
       ticket={ticket ? {
         id: ticket.id,
         fullName: ticket.full_name,

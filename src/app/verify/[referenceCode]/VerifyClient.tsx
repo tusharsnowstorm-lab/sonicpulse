@@ -35,6 +35,7 @@ type Props = {
   nidSignedUrl: string | null
   profilePicUrl: string | null
   referenceCode: string
+  dbError: string | null
 }
 
 function formatTime(iso: string) {
@@ -52,7 +53,7 @@ function getScanState(scans: Scan[]): ScanState {
   return scans[scans.length - 1].scan_type === 'entry' ? 'inside' : 'outside'
 }
 
-export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl, profilePicUrl, referenceCode }: Props) {
+export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl, profilePicUrl, referenceCode, dbError }: Props) {
   const [confirming, setConfirming] = useState(false)
   const [pendingAction, setPendingAction] = useState<'entry' | 'exit' | null>(null)
   const [localScans, setLocalScans] = useState<Scan[]>(scans)
@@ -179,6 +180,11 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
             <p className="text-xs mt-3 font-mono px-3 py-1.5 rounded inline-block" style={{ background: 'var(--bg-surface)', color: 'var(--accent-electric)', border: '1px solid var(--border)' }}>
               Looked up: {referenceCode}
             </p>
+            {dbError && (
+              <p className="text-xs mt-2 font-mono px-3 py-1.5 rounded inline-block" style={{ background: 'rgba(255,45,107,0.1)', color: 'var(--accent-pulse)', border: '1px solid rgba(255,45,107,0.3)' }}>
+                DB error: {dbError}
+              </p>
+            )}
           </div>
         )}
 
