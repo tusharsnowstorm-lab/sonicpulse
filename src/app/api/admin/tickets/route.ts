@@ -42,11 +42,32 @@ export async function PATCH(req: NextRequest) {
   }
 
   const supabase = adminClient()
+
+  // Fetch ticket details before update so we have name/email/tier for the email
+  const { data: ticket } = await supabase
+    .from('user_tickets')
+    .select('full_name, user_email, ticket_tier, reference_code')
+    .eq('id', ticketId)
+    .single()
+
   const { error } = await supabase
     .from('user_tickets')
     .update({ status })
     .eq('id', ticketId)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+
+  // Send approval email when ticket is approved
+  if (status === 'approved' && ticket?.user_email) {
+    import('@/lib/email').then(({ sendApprovalEmail }) =>
+      sendApprovalEmail(
+        ticket.user_email,
+        ticket.full_name,
+        ticket.ticket_tier,
+        ticket.reference_code,
+      )
+    ).catch(() => {})
+  }
+
   return NextResponse.json({ success: true })
 }

@@ -178,28 +178,10 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: 'Failed to save ticket.' }, { status: 500 })
     }
 
-    // Confirmation email
-    try {
-      const { Resend } = await import('resend')
-      const resend = new Resend(process.env.RESEND_API_KEY)
-      await resend.emails.send({
-        from: `${process.env.EMAIL_FROM_NAME ?? 'Sonic Pulse'} <${process.env.EMAIL_FROM ?? 'onboarding@resend.dev'}>`,
-        to: user.email!,
-        subject: `Ticket registered for ${fullName} — Sonic Pulse 2025`,
-        html: `
-          <div style="background:#050508;color:#F0F0F8;font-family:Arial,sans-serif;padding:32px;max-width:560px;margin:0 auto;">
-            <h1 style="color:#00F0FF;font-size:24px;margin:0 0 8px;">Ticket registration received.</h1>
-            <p style="color:#6B6B7E;margin:0 0 24px;">Sonic Pulse — 15 November 2025</p>
-            <p style="margin:0 0 16px;">A ticket for <strong>${fullName}</strong> has been submitted for review. We'll notify you once it's approved.</p>
-            <div style="background:#0D0D14;border:1px solid #1E1E2E;border-radius:4px;padding:16px;margin:24px 0;">
-              <p style="margin:0 0 4px;font-size:12px;color:#6B6B7E;letter-spacing:0.2em;text-transform:uppercase;">Reference Code</p>
-              <p style="margin:0;font-family:monospace;font-size:18px;color:#CCFF00;font-weight:bold;">${referenceCode}</p>
-            </div>
-            <p style="margin:24px 0 0;font-size:12px;color:#6B6B7E;">Questions? Message us on Instagram @sonicpulsefestival</p>
-          </div>
-        `,
-      })
-    } catch {}
+    // Application received email
+    import('@/lib/email').then(({ sendApplicationEmail }) =>
+      sendApplicationEmail(user.email!, fullName, ticketTier, referenceCode)
+    ).catch(() => {})
 
     return Response.json({ success: true, ticket }, { status: 201 })
   } catch {

@@ -37,6 +37,17 @@ export async function GET(request: NextRequest) {
     if (user?.email && gateEmails.includes(user.email.toLowerCase())) {
       return NextResponse.redirect(new URL('/gate', request.url))
     }
+
+    // Send welcome email on first login (account created within last 2 minutes)
+    if (user?.email && user.created_at) {
+      const ageMs = Date.now() - new Date(user.created_at).getTime()
+      if (ageMs < 2 * 60 * 1000) {
+        const name = user.user_metadata?.full_name ?? user.email.split('@')[0]
+        import('@/lib/email').then(({ sendWelcomeEmail }) =>
+          sendWelcomeEmail(user.email!, name)
+        ).catch(() => {})
+      }
+    }
   }
 
   return NextResponse.redirect(new URL(safNext, request.url))
