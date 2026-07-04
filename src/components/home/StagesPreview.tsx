@@ -4,8 +4,8 @@ const stages = [
     description: 'The centrepiece. Peak-hour techno, house, and big-room energy. Full production lighting, wall-of-sound system, and the crowd you came for.',
     detail: 'Headliners · Peak Hour · Full Production',
     accent: 'var(--accent-volt)',
-    poster: '/images/hero-poster.webp',
-    position: 'center top',
+    poster: '/images/hero-visual.jpg',
+    position: 'center center',
   },
   {
     name: 'SUNRISE STAGE',

@@ -111,7 +111,7 @@ export default function MobileMenu({ onClose }: Props) {
               className="flex items-center py-4 transition-colors duration-150"
               style={{
                 fontFamily: 'var(--font-space-grotesk)',
-                fontSize: 'clamp(1.75rem, 8vw, 2.5rem)',
+                fontSize: 'clamp(1.35rem, 5.5vw, 1.75rem)',
                 fontWeight: 700,
                 letterSpacing: '-0.01em',
                 color: active ? 'var(--accent-electric)' : 'rgba(255,255,255,0.85)',

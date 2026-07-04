@@ -1,28 +1,55 @@
+'use client'
+import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import { ChevronDown } from 'lucide-react'
 
 export default function Hero() {
+  const bgRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    // Parallax only on non-touch / desktop — skip on mobile to avoid jank
+    const mq = window.matchMedia('(hover: hover) and (min-width: 768px)')
+    if (!mq.matches) return
+
+    const onScroll = () => {
+      if (bgRef.current) {
+        bgRef.current.style.transform = `translateY(${window.scrollY * 0.35}px)`
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
     <section
-      className="relative flex flex-col items-center justify-center text-center px-4"
-      style={{
-        minHeight: '100svh',
-        backgroundImage: 'url(/images/hero-poster.webp)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center top',
-        backgroundRepeat: 'no-repeat',
-      }}
+      className="relative flex flex-col items-center justify-center text-center px-4 overflow-hidden"
+      style={{ minHeight: '100svh' }}
       aria-label="Sonic Pulse hero"
     >
+      {/* Parallax background */}
+      <div
+        ref={bgRef}
+        className="absolute inset-0 will-change-transform"
+        style={{
+          backgroundImage: 'url(/images/hero-visual.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat',
+          top: '-15%',
+          bottom: '-15%',
+        }}
+        aria-hidden="true"
+      />
+
       {/* Dark overlay */}
       <div
         className="absolute inset-0"
         style={{
           background: `linear-gradient(to bottom,
-            rgba(5,5,8,0.68) 0%,
-            rgba(5,5,8,0.50) 40%,
-            rgba(5,5,8,0.50) 60%,
+            rgba(5,5,8,0.62) 0%,
+            rgba(5,5,8,0.45) 40%,
+            rgba(5,5,8,0.45) 60%,
             rgba(5,5,8,0.80) 100%
           )`,
         }}
@@ -51,7 +78,7 @@ export default function Hero() {
 
         <div
           className="inline-block rounded-lg px-5 py-3 mb-10"
-          style={{ background: 'rgba(5,5,8,0.6)', backdropFilter: 'blur(8px)' }}
+          style={{ background: 'rgba(5,5,8,0.6)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)' }}
         >
           <p
             className="text-base md:text-lg font-medium tracking-widest uppercase mb-1"
