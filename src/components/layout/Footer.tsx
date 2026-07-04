@@ -74,13 +74,13 @@ export default function Footer() {
             <h3 className="text-xs font-bold tracking-widest uppercase text-[var(--text-muted)] mb-4">Contact</h3>
             <ul className="space-y-2 text-sm text-[var(--text-muted)]">
               <li>
-                <a href="mailto:hello@sonicpulsedhaka.com" className="hover:text-[var(--accent-electric)] transition-colors duration-150">
-                  hello@sonicpulsedhaka.com
+                <a href="mailto:hello@sonicpulsefestival.com" className="hover:text-[var(--accent-electric)] transition-colors duration-150">
+                  hello@sonicpulsefestival.com
                 </a>
               </li>
               <li>
-                <a href="mailto:press@sonicpulsedhaka.com" className="hover:text-[var(--accent-electric)] transition-colors duration-150">
-                  press@sonicpulsedhaka.com
+                <a href="mailto:press@sonicpulsefestival.com" className="hover:text-[var(--accent-electric)] transition-colors duration-150">
+                  press@sonicpulsefestival.com
                 </a>
               </li>
               <li className="text-xs pt-1">Bashundhara, Dhaka, Bangladesh</li>

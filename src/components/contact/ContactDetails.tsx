@@ -30,7 +30,7 @@ export default function ContactDetails() {
         <h3 className="text-xs font-bold tracking-[0.3em] uppercase mb-4" style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--accent-volt)' }}>
           General Inquiries
         </h3>
-        <CopyEmail email="hello@sonicpulsedhaka.com" />
+        <CopyEmail email="hello@sonicpulsefestival.com" />
         <p className="mt-2 text-xs text-[var(--text-muted)]">We typically respond within 24 hours.</p>
       </div>
 
@@ -38,7 +38,7 @@ export default function ContactDetails() {
         <h3 className="text-xs font-bold tracking-[0.3em] uppercase mb-4" style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--accent-volt)' }}>
           Press & Media
         </h3>
-        <CopyEmail email="press@sonicpulsedhaka.com" />
+        <CopyEmail email="press@sonicpulsefestival.com" />
       </div>
 
       <div>
