@@ -78,7 +78,7 @@ export default function LoginClient() {
             SONIC PULSE
           </h1>
           <p className="text-xs tracking-widest uppercase mt-1" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)' }}>
-            15 November 2025
+            25 September 2026
           </p>
         </div>
 

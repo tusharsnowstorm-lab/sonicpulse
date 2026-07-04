@@ -136,7 +136,7 @@ export default function TicketsGate() {
         </div>
 
         <p className="text-xs mt-6" style={{ color: 'rgba(240,240,248,0.3)' }}>
-          15 November 2025 · Bashundhara Open Grounds, Dhaka
+          25 September 2026 · Bashundhara Open Grounds, Dhaka
         </p>
       </div>
     </div>

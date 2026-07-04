@@ -159,5 +159,6 @@ const navLinks = [
   { href: '/schedule', label: 'Schedule' },
   { href: '/tickets', label: 'Tickets' },
   { href: '/faq', label: 'FAQ' },
+  { href: '/policy', label: 'Policy' },
   { href: '/contact', label: 'Contact' },
 ]

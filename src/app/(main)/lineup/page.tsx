@@ -25,7 +25,7 @@ export default function LineupPage() {
           THE LINEUP
         </h1>
         <p className="mt-2 text-[var(--text-muted)] text-sm">
-          {artists.length} Artists · Two Stages · 15 November 2025
+          {artists.length} Artists · Two Stages · 25 September 2026
         </p>
       </div>
 

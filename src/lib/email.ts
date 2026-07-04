@@ -25,7 +25,7 @@ function wrap(body: string) {
         <tr>
           <td style="background:#050508;padding:28px 32px;text-align:center;">
             <div style="font-size:20px;font-weight:900;letter-spacing:0.22em;color:#00f0ff;font-family:Arial,sans-serif;">⚡ SONIC PULSE</div>
-            <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;letter-spacing:0.15em;text-transform:uppercase;">15 November 2025</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;letter-spacing:0.15em;text-transform:uppercase;">25 September 2026</div>
           </td>
         </tr>
 
@@ -40,8 +40,8 @@ function wrap(body: string) {
         <tr>
           <td style="background:#f7f7fb;border-top:1px solid #ebebf0;padding:20px 32px;text-align:center;">
             <p style="margin:0;font-size:12px;color:#aaa;line-height:1.6;">
-              <strong style="color:#666;">Sonic Pulse 2025</strong><br>
-              15 November 2025<br>
+              <strong style="color:#666;">Sonic Pulse 2026</strong><br>
+              25 September 2026<br>
               <a href="https://sonicpulsefestival.com" style="color:#999;text-decoration:underline;">sonicpulsefestival.com</a>
             </p>
           </td>
@@ -85,7 +85,7 @@ export async function sendWelcomeEmail(email: string, name: string) {
   const html = wrap(`
     <h1 style="font-size:24px;font-weight:800;color:#050508;margin:0 0 12px;line-height:1.2;">Welcome, ${firstName}! 👋</h1>
     <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 14px;">
-      You're now registered for <strong style="color:#111;">Sonic Pulse</strong> — one of Dhaka's biggest outdoor music events on 15 November 2025.
+      You're now registered for <strong style="color:#111;">Sonic Pulse</strong> — one of Dhaka's biggest outdoor music events on 25 September 2026.
     </p>
     <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 20px;">
       To secure your spot, complete your profile and apply for a ticket. Make sure your <strong style="color:#111;">profile photo and NID details</strong> are ready — we verify all attendees before approval.
@@ -207,7 +207,7 @@ export async function sendApprovalEmail(
             <tr>
               <td style="padding:4px 0;">
                 <span style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;display:block;">Date</span>
-                <span style="font-size:13px;color:#ffffff;font-weight:600;">15 November 2025</span>
+                <span style="font-size:13px;color:#ffffff;font-weight:600;">25 September 2026</span>
               </td>
             </tr>
             <tr>
@@ -241,13 +241,13 @@ export async function sendApprovalEmail(
       <tr>
         <td style="padding:10px 16px;border-bottom:1px solid #ebebf5;">
           <span style="font-size:12px;color:#888;">Event</span>&nbsp;&nbsp;
-          <strong style="font-size:13px;color:#111;">Sonic Pulse 2025</strong>
+          <strong style="font-size:13px;color:#111;">Sonic Pulse 2026</strong>
         </td>
       </tr>
       <tr>
         <td style="padding:10px 16px;border-bottom:1px solid #ebebf5;">
           <span style="font-size:12px;color:#888;">Date</span>&nbsp;&nbsp;
-          <strong style="font-size:13px;color:#111;">15 November 2025</strong>
+          <strong style="font-size:13px;color:#111;">25 September 2026</strong>
         </td>
       </tr>
 

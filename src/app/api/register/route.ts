@@ -105,7 +105,7 @@ export async function POST(req: NextRequest) {
         html: `
           <div style="background:#050508;color:#F0F0F8;font-family:Arial,sans-serif;padding:32px;max-width:560px;margin:0 auto;">
             <h1 style="color:#00F0FF;font-size:28px;margin:0 0 8px;">Registration received.</h1>
-            <p style="color:#6B6B7E;margin:0 0 24px;">Sonic Pulse — 15 November 2025</p>
+            <p style="color:#6B6B7E;margin:0 0 24px;">Sonic Pulse — 25 September 2026</p>
             <p style="margin:0 0 16px;">Hi <strong>${fullName}</strong>,</p>
             <p style="margin:0 0 16px;">We've received your registration for <strong>Sonic Pulse 2025</strong>. Our team will review your details and contact you within 24 hours with payment instructions if you're approved.</p>
             <div style="background:#0D0D14;border:1px solid #1E1E2E;border-radius:4px;padding:16px;margin:24px 0;">

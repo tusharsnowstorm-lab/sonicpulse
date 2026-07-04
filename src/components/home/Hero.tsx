@@ -57,7 +57,7 @@ export default function Hero() {
             className="text-base md:text-lg font-medium tracking-widest uppercase mb-1"
             style={{ color: 'rgba(255,255,255,0.95)', fontFamily: 'var(--font-jetbrains-mono)' }}
           >
-            15 November 2025 · Bashundhara Open Grounds, Dhaka
+            25 September 2026 · Bashundhara Open Grounds, Dhaka
           </p>
           <p
             className="text-sm tracking-[0.2em] uppercase"

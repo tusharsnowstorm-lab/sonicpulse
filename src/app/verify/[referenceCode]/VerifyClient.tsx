@@ -137,7 +137,7 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
             </>
           )}
 
-          <p className="text-xs mt-8" style={{ color: 'var(--text-muted)' }}>Sonic Pulse · 15 November 2025 · Bashundhara Open Grounds, Dhaka</p>
+          <p className="text-xs mt-8" style={{ color: 'var(--text-muted)' }}>Sonic Pulse · 25 September 2026 · Bashundhara Open Grounds, Dhaka</p>
         </div>
       </main>
     )
