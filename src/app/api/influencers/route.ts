@@ -36,8 +36,8 @@ export async function POST(req: NextRequest) {
   if (!allowedTypes.includes(idFile.type)) {
     return NextResponse.json({ error: 'ID file must be JPG, PNG, or PDF.' }, { status: 400 })
   }
-  if (idFile.size > 2 * 1024 * 1024) {
-    return NextResponse.json({ error: 'ID file must be under 2MB.' }, { status: 400 })
+  if (idFile.size > 5 * 1024 * 1024) {
+    return NextResponse.json({ error: 'ID file must be under 5MB.' }, { status: 400 })
   }
 
   const supabase = adminClient()

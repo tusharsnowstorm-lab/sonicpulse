@@ -43,8 +43,8 @@ export async function POST(req: NextRequest) {
       if (!allowedTypes.includes(nidFile.type)) {
         return Response.json({ error: 'NID file must be JPG, PNG, or PDF.' }, { status: 400 })
       }
-      if (nidFile.size > 2 * 1024 * 1024) {
-        return Response.json({ error: 'NID file must be under 2MB. Try compressing the image or saving at a lower resolution.' }, { status: 400 })
+      if (nidFile.size > 5 * 1024 * 1024) {
+        return Response.json({ error: 'NID file must be under 5MB.' }, { status: 400 })
       }
     }
 

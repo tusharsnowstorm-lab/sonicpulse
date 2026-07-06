@@ -4,7 +4,7 @@ import { Upload, X, FileText } from 'lucide-react'
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'application/pdf']
 const ACCEPTED_EXT = ['.jpg', '.jpeg', '.png', '.pdf']
-const MAX_SIZE_MB = 2
+const MAX_SIZE_MB = 5
 
 type FileUploadProps = {
   onChange: (file: File | null) => void
