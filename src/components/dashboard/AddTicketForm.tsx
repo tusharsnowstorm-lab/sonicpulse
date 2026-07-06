@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -89,8 +89,8 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
               <div
                 className="w-5 h-5 rounded flex items-center justify-center transition-colors"
                 style={{
-                  background: checked ? 'var(--accent-electric)' : 'var(--bg-surface)',
-                  border: checked ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
+                  background: checked ? 'var(--accent-magenta)' : 'var(--bg-surface)',
+                  border: checked ? '2px solid var(--accent-magenta)' : '2px solid var(--border)',
                 }}
               >
                 {checked && (
@@ -121,8 +121,8 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
             disabled={!checked}
             className="w-full sm:flex-1 px-4 py-3 rounded text-sm font-bold transition-all"
             style={{
-              background: checked ? 'var(--accent-electric)' : 'rgba(0,240,255,0.15)',
-              color: checked ? '#050508' : 'rgba(0,240,255,0.35)',
+              background: checked ? 'var(--accent-magenta)' : 'rgba(255,63,194,0.15)',
+              color: checked ? '#050508' : 'rgba(255,63,194,0.35)',
               cursor: checked ? 'pointer' : 'not-allowed',
             }}
           >
@@ -257,9 +257,9 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
         {currentTier && (
           <div
             className="rounded px-4 py-3 text-sm"
-            style={{ background: 'rgba(0,240,255,0.06)', border: '1px solid rgba(0,240,255,0.2)', color: 'var(--text-muted)' }}
+            style={{ background: 'rgba(255,63,194,0.06)', border: '1px solid rgba(255,63,194,0.2)', color: 'var(--text-muted)' }}
           >
-            Adding ticket for <strong style={{ color: 'var(--accent-electric)' }}>{currentTier.label}</strong> — ৳{currentTier.price.toLocaleString()} BDT
+            Adding ticket for <strong style={{ color: 'var(--accent-magenta)' }}>{currentTier.label}</strong> — ৳{currentTier.price.toLocaleString()} BDT
           </div>
         )}
 
@@ -272,9 +272,9 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
               onClick={() => { setForMyself(true); setProfileMissing(false) }}
               className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold transition-all cursor-pointer"
               style={{
-                background: forMyself === true ? 'rgba(0,240,255,0.12)' : 'var(--bg-surface)',
-                border: forMyself === true ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
-                color: forMyself === true ? 'var(--accent-electric)' : 'var(--text-muted)',
+                background: forMyself === true ? 'rgba(255,63,194,0.12)' : 'var(--bg-surface)',
+                border: forMyself === true ? '2px solid var(--accent-magenta)' : '2px solid var(--border)',
+                color: forMyself === true ? 'var(--accent-magenta)' : 'var(--text-muted)',
               }}
             >
               <User size={15} />
@@ -285,9 +285,9 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
               onClick={() => { setForMyself(false); setProfileMissing(false) }}
               className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold transition-all cursor-pointer"
               style={{
-                background: forMyself === false ? 'rgba(0,240,255,0.12)' : 'var(--bg-surface)',
-                border: forMyself === false ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
-                color: forMyself === false ? 'var(--accent-electric)' : 'var(--text-muted)',
+                background: forMyself === false ? 'rgba(255,63,194,0.12)' : 'var(--bg-surface)',
+                border: forMyself === false ? '2px solid var(--accent-magenta)' : '2px solid var(--border)',
+                color: forMyself === false ? 'var(--accent-magenta)' : 'var(--text-muted)',
               }}
             >
               <Users size={15} />
@@ -393,9 +393,9 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
                     onClick={() => setIdType(opt.value)}
                     className="py-2.5 px-2 rounded text-xs font-semibold transition-all cursor-pointer"
                     style={{
-                      background: idType === opt.value ? 'rgba(0,240,255,0.12)' : 'var(--bg-surface)',
-                      border: idType === opt.value ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
-                      color: idType === opt.value ? 'var(--accent-electric)' : 'var(--text-muted)',
+                      background: idType === opt.value ? 'rgba(255,63,194,0.12)' : 'var(--bg-surface)',
+                      border: idType === opt.value ? '2px solid var(--accent-magenta)' : '2px solid var(--border)',
+                      color: idType === opt.value ? 'var(--accent-magenta)' : 'var(--text-muted)',
                     }}
                   >
                     {opt.short}

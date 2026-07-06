@@ -59,7 +59,7 @@ export default function FileUpload({ onChange, error, label = 'NID Document' }: 
       {!file ? (
         <div
           className={`relative border-2 border-dashed rounded-[4px] p-6 text-center cursor-pointer transition-colors duration-200
-            ${dragging ? 'border-[var(--accent-electric)] bg-[rgba(0,240,255,0.05)]' : 'border-[var(--border)] hover:border-[var(--accent-electric)]'}
+            ${dragging ? 'border-[var(--accent-magenta)] bg-[rgba(255,63,194,0.05)]' : 'border-[var(--border)] hover:border-[var(--accent-magenta)]'}
             ${displayError ? 'border-[var(--accent-pulse)]' : ''}
           `}
           onClick={() => inputRef.current?.click()}
@@ -76,8 +76,8 @@ export default function FileUpload({ onChange, error, label = 'NID Document' }: 
           onKeyDown={(e) => e.key === 'Enter' && inputRef.current?.click()}
           aria-label="Upload NID document"
         >
-          <Upload size={24} className="mx-auto mb-2" style={{ color: 'var(--accent-electric)' }} />
-          <p className="text-sm text-[var(--text-primary)]">Drag & drop or <span style={{ color: 'var(--accent-electric)' }}>browse</span></p>
+          <Upload size={24} className="mx-auto mb-2" style={{ color: 'var(--accent-magenta)' }} />
+          <p className="text-sm text-[var(--text-primary)]">Drag & drop or <span style={{ color: 'var(--accent-magenta)' }}>browse</span></p>
           <p className="text-xs text-[var(--text-muted)] mt-1">JPG, PNG or PDF — max {MAX_SIZE_MB}MB</p>
         </div>
       ) : (
@@ -85,7 +85,7 @@ export default function FileUpload({ onChange, error, label = 'NID Document' }: 
           {preview ? (
             <img src={preview} alt="NID preview" className="w-12 h-12 object-cover rounded-[2px]" />
           ) : (
-            <FileText size={32} style={{ color: 'var(--accent-electric)' }} className="shrink-0" />
+            <FileText size={32} style={{ color: 'var(--accent-magenta)' }} className="shrink-0" />
           )}
           <div className="flex-1 min-w-0">
             <p className="text-sm text-[var(--text-primary)] truncate">{file.name}</p>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState } from 'react'
 import Image from 'next/image'
 import { CheckCircle, XCircle, Clock, LogIn, LogOut, AlertTriangle, ExternalLink } from 'lucide-react'
@@ -109,7 +109,7 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
           ) : (
             <>
               {scanState === 'never_entered' && <CheckCircle size={40} className="mx-auto mb-4" style={{ color: '#22c55e' }} />}
-              {scanState === 'inside' && <LogIn size={40} className="mx-auto mb-4" style={{ color: 'var(--accent-electric)' }} />}
+              {scanState === 'inside' && <LogIn size={40} className="mx-auto mb-4" style={{ color: 'var(--accent-magenta)' }} />}
               {scanState === 'outside' && <LogOut size={40} className="mx-auto mb-4" style={{ color: 'var(--accent-volt)' }} />}
 
               <h1 className="text-xl font-bold mb-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>
@@ -154,7 +154,7 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
     ? (scanState === 'outside' ? 'Confirm Re-entry' : 'Confirm Entry')
     : 'Confirm Exit'
 
-  const actionColor = nextAction === 'entry' ? '#22c55e' : 'var(--accent-electric)'
+  const actionColor = nextAction === 'entry' ? '#22c55e' : 'var(--accent-magenta)'
 
   return (
     <main className="min-h-screen" style={{ background: 'var(--bg-void)' }}>
@@ -177,7 +177,7 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
             <XCircle size={40} className="mx-auto mb-3" style={{ color: 'var(--accent-pulse)' }} />
             <p className="font-bold" style={{ color: 'var(--text-primary)' }}>Ticket not found</p>
             <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>This QR code does not match any ticket in the system.</p>
-            <p className="text-xs mt-3 font-mono px-3 py-1.5 rounded inline-block" style={{ background: 'var(--bg-surface)', color: 'var(--accent-electric)', border: '1px solid var(--border)' }}>
+            <p className="text-xs mt-3 font-mono px-3 py-1.5 rounded inline-block" style={{ background: 'var(--bg-surface)', color: 'var(--accent-magenta)', border: '1px solid var(--border)' }}>
               Looked up: {referenceCode}
             </p>
             {dbError && (
@@ -208,10 +208,10 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
                 </div>
               </div>
             ) : scanState === 'inside' ? (
-              <div className="rounded-lg px-5 py-4 flex items-center gap-3" style={{ background: 'rgba(0,240,255,0.08)', border: '1px solid rgba(0,240,255,0.3)' }}>
-                <LogIn size={20} style={{ color: 'var(--accent-electric)' }} />
+              <div className="rounded-lg px-5 py-4 flex items-center gap-3" style={{ background: 'rgba(255,63,194,0.08)', border: '1px solid rgba(255,63,194,0.3)' }}>
+                <LogIn size={20} style={{ color: 'var(--accent-magenta)' }} />
                 <div>
-                  <p className="font-bold text-sm" style={{ color: 'var(--accent-electric)' }}>Currently inside</p>
+                  <p className="font-bold text-sm" style={{ color: 'var(--accent-magenta)' }}>Currently inside</p>
                   <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Entered at {formatTime(lastScan.scanned_at)}</p>
                 </div>
               </div>
@@ -255,7 +255,7 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
                   </div>
                   <div>
                     <p className="text-xs uppercase tracking-widest mb-0.5" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)' }}>{ID_TYPE_LABELS[ticket.idType] ?? 'ID'}</p>
-                    <p className="font-mono text-sm" style={{ color: 'var(--accent-electric)' }}>{ticket.idNumber}</p>
+                    <p className="font-mono text-sm" style={{ color: 'var(--accent-magenta)' }}>{ticket.idNumber}</p>
                   </div>
                   <div>
                     <p className="text-xs uppercase tracking-widest mb-0.5" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)' }}>Tier</p>
@@ -267,7 +267,7 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded"
-                      style={{ background: 'rgba(0,240,255,0.08)', border: '1px solid rgba(0,240,255,0.25)', color: 'var(--accent-electric)' }}
+                      style={{ background: 'rgba(255,63,194,0.08)', border: '1px solid rgba(255,63,194,0.25)', color: 'var(--accent-magenta)' }}
                     >
                       <ExternalLink size={11} />
                       View ID document
@@ -289,9 +289,9 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
                       <div className="flex items-center gap-2.5">
                         {scan.scan_type === 'entry'
                           ? <LogIn size={14} style={{ color: '#22c55e' }} />
-                          : <LogOut size={14} style={{ color: 'var(--accent-electric)' }} />
+                          : <LogOut size={14} style={{ color: 'var(--accent-magenta)' }} />
                         }
-                        <span className="text-sm font-semibold" style={{ color: scan.scan_type === 'entry' ? '#22c55e' : 'var(--accent-electric)' }}>
+                        <span className="text-sm font-semibold" style={{ color: scan.scan_type === 'entry' ? '#22c55e' : 'var(--accent-magenta)' }}>
                           {scan.scan_type === 'entry' ? 'Entry' : 'Exit'}
                           {i === 0 && scan.scan_type === 'entry' && <span className="ml-2 text-xs font-normal" style={{ color: 'var(--text-muted)' }}>— first entry</span>}
                         </span>

@@ -17,13 +17,13 @@ export const faqs: FAQItem[] = [
     id: 'when-where',
     category: 'Event Basics',
     question: 'When and where is it?',
-    answer: '25 September 2026, starting at 8:30 PM. Venue is TBA — full address will be sent to registered attendees via email closer to the event.',
+    answer: '25 September 2026 (Friday) at 4:30 PM through to 9 AM Saturday morning. Venue is TBA — full address will be sent to registered attendees via email closer to the event.',
   },
   {
     id: 'event-hours',
     category: 'Event Basics',
     question: 'Is this an all-night event? What are the hours?',
-    answer: 'Yes. Doors open at 10 PM and music runs until 6 AM. Both stages operate simultaneously through the night.',
+    answer: 'Yes. Doors open at 4:30 PM on Friday and the event runs through the night until 9 AM Saturday morning — 16.5 hours of music. Both stages operate simultaneously.',
   },
   {
     id: 'rain-policy',

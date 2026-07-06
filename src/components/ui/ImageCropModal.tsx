@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useCallback } from 'react'
 import Cropper from 'react-easy-crop'
 
@@ -114,7 +114,7 @@ export default function ImageCropModal({ imageSrc, onDone, onCancel }: Props) {
             onCropComplete={onCropComplete}
             style={{
               containerStyle: { borderRadius: 0 },
-              cropAreaStyle: { border: '2px solid var(--accent-electric)', boxShadow: '0 0 0 9999px rgba(5,5,8,0.7)' },
+              cropAreaStyle: { border: '2px solid var(--accent-magenta)', boxShadow: '0 0 0 9999px rgba(5,5,8,0.7)' },
             }}
           />
         </div>
@@ -132,7 +132,7 @@ export default function ImageCropModal({ imageSrc, onDone, onCancel }: Props) {
             value={zoom}
             onChange={(e) => setZoom(Number(e.target.value))}
             className="w-full"
-            style={{ accentColor: 'var(--accent-electric)' }}
+            style={{ accentColor: 'var(--accent-magenta)' }}
           />
         </div>
 
@@ -155,7 +155,7 @@ export default function ImageCropModal({ imageSrc, onDone, onCancel }: Props) {
             onClick={handleApply}
             disabled={processing}
             className="flex-1 py-2.5 rounded text-sm font-bold cursor-pointer"
-            style={{ background: 'var(--accent-electric)', color: '#050508', opacity: processing ? 0.6 : 1 }}
+            style={{ background: 'var(--accent-magenta)', color: '#050508', opacity: processing ? 0.6 : 1 }}
           >
             {processing ? 'Applying…' : 'Apply'}
           </button>

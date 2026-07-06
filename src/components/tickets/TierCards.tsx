@@ -25,12 +25,12 @@ export default function TierCards({ onSelect, selectedTier }: Props) {
             style={{
               background: 'var(--bg-surface)',
               border: selected
-                ? '1px solid var(--accent-electric)'
+                ? '1px solid var(--accent-magenta)'
                 : tier.highlight
                 ? '1px solid rgba(204,255,0,0.3)'
                 : '1px solid var(--border)',
               boxShadow: selected
-                ? '0 0 20px rgba(0,240,255,0.2)'
+                ? '0 0 20px rgba(255,63,194,0.2)'
                 : tier.highlight
                 ? '0 0 12px rgba(204,255,0,0.1)'
                 : 'none',
@@ -64,7 +64,7 @@ export default function TierCards({ onSelect, selectedTier }: Props) {
             <ul className="space-y-2 mb-6 flex-1">
               {tier.perks.map((perk) => (
                 <li key={perk} className="flex items-start gap-2 text-sm text-[var(--text-muted)]">
-                  <span style={{ color: 'var(--accent-electric)' }} className="mt-0.5">—</span>
+                  <span style={{ color: 'var(--accent-magenta)' }} className="mt-0.5">—</span>
                   {perk}
                 </li>
               ))}

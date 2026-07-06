@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
@@ -72,19 +72,19 @@ export default function GateLanding({ email }: { email: string }) {
           onClick={() => setScanning(true)}
           className="w-full flex flex-col items-center justify-center gap-3 rounded-lg py-10"
           style={{
-            background: 'rgba(0,240,255,0.06)',
-            border: '2px solid rgba(0,240,255,0.3)',
+            background: 'rgba(255,63,194,0.06)',
+            border: '2px solid rgba(255,63,194,0.3)',
             touchAction: 'manipulation',
           }}
         >
           <div
             className="w-16 h-16 rounded-full flex items-center justify-center"
-            style={{ background: 'rgba(0,240,255,0.12)', border: '1.5px solid rgba(0,240,255,0.4)' }}
+            style={{ background: 'rgba(255,63,194,0.12)', border: '1.5px solid rgba(255,63,194,0.4)' }}
           >
-            <Camera size={28} style={{ color: 'var(--accent-electric)' }} />
+            <Camera size={28} style={{ color: 'var(--accent-magenta)' }} />
           </div>
           <div className="text-center">
-            <p className="font-bold text-base" style={{ color: 'var(--accent-electric)', fontFamily: 'var(--font-space-grotesk)' }}>
+            <p className="font-bold text-base" style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-space-grotesk)' }}>
               Scan QR Code
             </p>
             <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
@@ -96,7 +96,7 @@ export default function GateLanding({ email }: { email: string }) {
         {/* Manual lookup */}
         <div className="rounded-lg p-6" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
           <div className="flex items-center gap-2 mb-4">
-            <Search size={16} style={{ color: 'var(--accent-electric)' }} />
+            <Search size={16} style={{ color: 'var(--accent-magenta)' }} />
             <p className="text-sm font-bold" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>Manual lookup</p>
           </div>
           <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>
@@ -124,7 +124,7 @@ export default function GateLanding({ email }: { email: string }) {
             <button
               type="submit"
               className="px-4 py-2 rounded text-sm font-bold cursor-pointer"
-              style={{ background: 'var(--accent-electric)', color: '#050508' }}
+              style={{ background: 'var(--accent-magenta)', color: '#050508' }}
             >
               Look up
             </button>

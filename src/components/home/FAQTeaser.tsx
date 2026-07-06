@@ -26,7 +26,7 @@ export default function FAQTeaser() {
           <Link
             href="/faq"
             className="text-xs tracking-widest uppercase transition-colors duration-150 whitespace-nowrap"
-            style={{ color: 'var(--accent-electric)', fontFamily: 'var(--font-jetbrains-mono)' }}
+            style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-jetbrains-mono)' }}
           >
             See all FAQs →
           </Link>

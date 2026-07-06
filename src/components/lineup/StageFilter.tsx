@@ -25,9 +25,9 @@ export default function StageFilter({ active, onChange }: Props) {
           className="px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-200 cursor-pointer"
           style={{
             fontFamily: 'var(--font-jetbrains-mono)',
-            background: active === value ? 'var(--accent-electric)' : 'var(--bg-surface)',
+            background: active === value ? 'var(--accent-magenta)' : 'var(--bg-surface)',
             color: active === value ? 'var(--bg-void)' : 'var(--text-muted)',
-            border: active === value ? '1px solid var(--accent-electric)' : '1px solid var(--border)',
+            border: active === value ? '1px solid var(--accent-magenta)' : '1px solid var(--border)',
           }}
         >
           {label}

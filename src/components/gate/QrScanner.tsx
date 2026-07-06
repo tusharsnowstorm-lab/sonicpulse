@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { X, Camera, AlertCircle } from 'lucide-react'
@@ -97,7 +97,7 @@ export default function QrScanner({ onClose }: Props) {
         className="flex items-center justify-between px-5 h-16 shrink-0"
         style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
       >
-        <p className="font-bold text-sm" style={{ color: 'var(--accent-electric)', fontFamily: 'var(--font-space-grotesk)', letterSpacing: '0.1em' }}>
+        <p className="font-bold text-sm" style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-space-grotesk)', letterSpacing: '0.1em' }}>
           SCAN TICKET QR CODE
         </p>
         <button
@@ -160,14 +160,14 @@ export default function QrScanner({ onClose }: Props) {
                 <div
                   key={i}
                   className={`absolute w-8 h-8 ${cls}`}
-                  style={{ borderColor: 'var(--accent-electric)' }}
+                  style={{ borderColor: 'var(--accent-magenta)' }}
                 />
               ))}
             </div>
 
             <div className="text-center space-y-1">
               <div className="flex items-center justify-center gap-2">
-                <Camera size={14} style={{ color: 'var(--accent-electric)' }} />
+                <Camera size={14} style={{ color: 'var(--accent-magenta)' }} />
                 <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
                   Point camera at the QR code on the ticket
                 </p>

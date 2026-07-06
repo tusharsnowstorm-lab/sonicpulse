@@ -1,4 +1,4 @@
-export default function HoldBackTheVoid() {
+﻿export default function HoldBackTheVoid() {
   return (
     <section
       className="relative py-28 md:py-40 text-center overflow-hidden"
@@ -43,7 +43,7 @@ export default function HoldBackTheVoid() {
           HOLD{' '}
           <span style={{ color: 'var(--accent-pulse)' }}>BACK</span>
           {' '}THE{' '}
-          <span style={{ color: 'var(--accent-electric)' }}>VOID.</span>
+          <span style={{ color: 'var(--accent-magenta)' }}>VOID.</span>
         </h2>
 
         <p

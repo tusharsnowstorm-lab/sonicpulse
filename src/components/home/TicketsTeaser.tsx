@@ -67,7 +67,7 @@ export default function TicketsTeaser() {
                 <ul className="space-y-1 mb-6 flex-1">
                   {tier.perks.map((perk) => (
                     <li key={perk} className="flex items-center gap-2 text-xs" style={{ color: 'rgba(255,255,255,0.88)' }}>
-                      <span style={{ color: 'var(--accent-electric)' }}>—</span>
+                      <span style={{ color: 'var(--accent-magenta)' }}>—</span>
                       {perk}
                     </li>
                   ))}

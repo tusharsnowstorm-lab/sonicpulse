@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 import { X, CheckCircle, Circle } from 'lucide-react'
 
@@ -62,12 +62,12 @@ export default function ProfileCompletionBanner() {
       {/* Header row */}
       <div
         className="px-4 py-3 flex items-center justify-between gap-4"
-        style={{ borderBottom: '1px solid var(--border)', background: 'rgba(0,240,255,0.04)' }}
+        style={{ borderBottom: '1px solid var(--border)', background: 'rgba(255,63,194,0.04)' }}
       >
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <span
             className="text-xs font-bold tracking-widest uppercase shrink-0"
-            style={{ color: 'var(--accent-electric)', fontFamily: 'var(--font-jetbrains-mono)' }}
+            style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-jetbrains-mono)' }}
           >
             Profile {percent}% complete
           </span>
@@ -81,7 +81,7 @@ export default function ProfileCompletionBanner() {
                 background: percent === 100
                   ? '#22c55e'
                   : percent >= 70
-                  ? 'var(--accent-electric)'
+                  ? 'var(--accent-magenta)'
                   : 'var(--accent-volt)',
               }}
             />

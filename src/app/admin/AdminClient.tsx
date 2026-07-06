@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect, useCallback } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -176,8 +176,8 @@ export default function AdminClient() {
             className="px-5 py-2.5 rounded-lg text-sm font-bold cursor-pointer transition-all"
             style={{
               background: section === 'tickets' ? 'var(--bg-elevated)' : 'transparent',
-              border: section === 'tickets' ? '1px solid var(--accent-electric)' : '1px solid var(--border)',
-              color: section === 'tickets' ? 'var(--accent-electric)' : 'var(--text-muted)',
+              border: section === 'tickets' ? '1px solid var(--accent-magenta)' : '1px solid var(--border)',
+              color: section === 'tickets' ? 'var(--accent-magenta)' : 'var(--text-muted)',
             }}
           >
             🎫 Ticket Reviews
@@ -319,8 +319,8 @@ function TicketRow({
     <div className="rounded-xl overflow-hidden" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
       <div className="px-5 py-3 flex items-center justify-between flex-wrap gap-2" style={{ background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid var(--border)' }}>
         <div className="flex items-center gap-3 flex-wrap">
-          <span className="font-mono text-xs" style={{ color: 'var(--accent-electric)' }}>{ticket.reference_code}</span>
-          <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(0,240,255,0.08)', color: 'var(--text-muted)' }}>{tierLabel}</span>
+          <span className="font-mono text-xs" style={{ color: 'var(--accent-magenta)' }}>{ticket.reference_code}</span>
+          <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(255,63,194,0.08)', color: 'var(--text-muted)' }}>{tierLabel}</span>
         </div>
         <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{date}</span>
       </div>
@@ -345,7 +345,7 @@ function TicketRow({
           </div>
           <div>
             <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Instagram</p>
-            <a href={`https://instagram.com/${ticket.instagram_handle}`} target="_blank" rel="noopener noreferrer" className="text-sm flex items-center gap-1 hover:underline" style={{ color: 'var(--accent-electric)' }}>
+            <a href={`https://instagram.com/${ticket.instagram_handle}`} target="_blank" rel="noopener noreferrer" className="text-sm flex items-center gap-1 hover:underline" style={{ color: 'var(--accent-magenta)' }}>
               @{ticket.instagram_handle}
             </a>
           </div>
@@ -353,7 +353,7 @@ function TicketRow({
 
         <div className="flex items-center gap-3 flex-wrap">
           <p className="text-xs mr-2" style={{ color: 'var(--text-muted)' }}>Account: <span style={{ color: 'var(--text-primary)' }}>{ticket.user_email}</span></p>
-          <button onClick={handleViewNid} disabled={loadingNid} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded cursor-pointer" style={{ background: 'rgba(0,240,255,0.08)', border: '1px solid rgba(0,240,255,0.25)', color: 'var(--accent-electric)' }}>
+          <button onClick={handleViewNid} disabled={loadingNid} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded cursor-pointer" style={{ background: 'rgba(255,63,194,0.08)', border: '1px solid rgba(255,63,194,0.25)', color: 'var(--accent-magenta)' }}>
             <ExternalLink size={12} />
             {loadingNid ? 'Loading…' : `View ${ID_TYPE_LABELS[ticket.id_type ?? 'nid'] ?? 'ID'}`}
           </button>
@@ -455,7 +455,7 @@ function InfluencerRow({
 
         <div className="flex items-center gap-3 flex-wrap">
           {app.nid_file_path && (
-            <button onClick={handleViewId} disabled={loadingNid} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded cursor-pointer" style={{ background: 'rgba(0,240,255,0.08)', border: '1px solid rgba(0,240,255,0.25)', color: 'var(--accent-electric)' }}>
+            <button onClick={handleViewId} disabled={loadingNid} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded cursor-pointer" style={{ background: 'rgba(255,63,194,0.08)', border: '1px solid rgba(255,63,194,0.25)', color: 'var(--accent-magenta)' }}>
               <ExternalLink size={12} />
               {loadingNid ? 'Loading…' : `View ${ID_TYPE_LABELS[app.id_type] ?? 'ID'}`}
             </button>

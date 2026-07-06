@@ -28,9 +28,9 @@ export default function Timetable() {
       'VERSION:2.0',
       'BEGIN:VEVENT',
       'SUMMARY:Sonic Pulse — Dhaka Music Festival',
-      'DTSTART:20251115T220000',
-      'DTEND:20251116T060000',
-      'DESCRIPTION:Two stages. 800+ festival-goers. Dawn till dusk.',
+      'DTSTART:20260925T163000',
+      'DTEND:20260926T090000',
+      'DESCRIPTION:Two stages. 800+ festival-goers. 4:30 PM Friday to 9 AM Saturday.',
       'END:VEVENT',
       'END:VCALENDAR',
     ].join('\r\n')

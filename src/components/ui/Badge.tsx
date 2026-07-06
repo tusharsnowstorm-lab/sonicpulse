@@ -2,10 +2,10 @@
 
 const styles: Record<BadgeVariant, string> = {
   'stage-main':      'bg-[rgba(204,255,0,0.12)] text-[var(--accent-volt)] border border-[rgba(204,255,0,0.3)]',
-  'stage-sunrise':   'bg-[rgba(0,240,255,0.12)] text-[var(--accent-electric)] border border-[rgba(0,240,255,0.3)]',
+  'stage-sunrise':   'bg-[rgba(255,63,194,0.12)] text-[var(--accent-magenta)] border border-[rgba(255,63,194,0.3)]',
   'tier-highlight':  'bg-[var(--accent-volt)] text-[var(--bg-void)]',
   'tier-last':       'bg-[var(--accent-pulse)] text-white',
-  'status-available':'bg-[rgba(0,240,255,0.1)] text-[var(--accent-electric)]',
+  'status-available':'bg-[rgba(255,63,194,0.1)] text-[var(--accent-magenta)]',
   'status-selling':  'bg-[rgba(255,45,107,0.1)] text-[var(--accent-pulse)]',
   'status-sold':     'bg-[rgba(107,107,126,0.2)] text-[var(--text-muted)]',
   'live':            'bg-[var(--accent-pulse)] text-white',

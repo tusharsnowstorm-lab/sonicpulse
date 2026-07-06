@@ -1,4 +1,4 @@
-const stages = [
+﻿const stages = [
   {
     name: 'MAIN STAGE',
     description: 'The centrepiece. Peak-hour techno, house, and big-room energy. Full production lighting, wall-of-sound system, and the crowd you came for.',
@@ -11,7 +11,7 @@ const stages = [
     name: 'SUNRISE STAGE',
     description: 'Intimate. Melodic. The sun rises directly behind the decks. This is where the night ends and the morning begins.',
     detail: 'Melodic · Ambient · Sunrise Facing',
-    accent: 'var(--accent-electric)',
+    accent: 'var(--accent-magenta)',
     poster: '/images/poster-2.webp',
     position: 'center center',
   },

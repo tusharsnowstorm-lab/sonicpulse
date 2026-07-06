@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState } from 'react'
 import { Download, CheckCircle, Clock, XCircle, ArrowRightLeft, X } from 'lucide-react'
 import { ticketTiers } from '@/data/tickets'
@@ -135,9 +135,9 @@ function TransferForm({ ticket, onClose, onSuccess }: { ticket: Ticket; onClose:
               onClick={() => setIdType(opt.value)}
               className="py-2 px-1 rounded text-xs font-semibold transition-all cursor-pointer"
               style={{
-                background: idType === opt.value ? 'rgba(0,240,255,0.12)' : 'var(--bg-surface)',
-                border: idType === opt.value ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
-                color: idType === opt.value ? 'var(--accent-electric)' : 'var(--text-muted)',
+                background: idType === opt.value ? 'rgba(255,63,194,0.12)' : 'var(--bg-surface)',
+                border: idType === opt.value ? '2px solid var(--accent-magenta)' : '2px solid var(--border)',
+                color: idType === opt.value ? 'var(--accent-magenta)' : 'var(--text-muted)',
               }}
             >
               {opt.short}
@@ -170,9 +170,9 @@ function TransferForm({ ticket, onClose, onSuccess }: { ticket: Ticket; onClose:
               onClick={() => setGender(g)}
               className="py-2.5 rounded text-sm font-semibold transition-all cursor-pointer"
               style={{
-                background: gender === g ? 'rgba(0,240,255,0.12)' : 'var(--bg-surface)',
-                border: gender === g ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
-                color: gender === g ? 'var(--accent-electric)' : 'var(--text-muted)',
+                background: gender === g ? 'rgba(255,63,194,0.12)' : 'var(--bg-surface)',
+                border: gender === g ? '2px solid var(--accent-magenta)' : '2px solid var(--border)',
+                color: gender === g ? 'var(--accent-magenta)' : 'var(--text-muted)',
               }}
             >
               {g.charAt(0).toUpperCase() + g.slice(1)}
@@ -192,8 +192,8 @@ function TransferForm({ ticket, onClose, onSuccess }: { ticket: Ticket; onClose:
           <div
             className="w-5 h-5 rounded flex items-center justify-center transition-colors"
             style={{
-              background: confirmed ? 'var(--accent-electric)' : 'var(--bg-surface)',
-              border: confirmed ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
+              background: confirmed ? 'var(--accent-magenta)' : 'var(--bg-surface)',
+              border: confirmed ? '2px solid var(--accent-magenta)' : '2px solid var(--border)',
             }}
           >
             {confirmed && (
@@ -256,14 +256,14 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=JetBrains+Mono:wght@500&display=swap');
   body { margin: 0; background: #050508; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: Arial, sans-serif; }
-  .ticket { width: 480px; background: #050508; border: 1.5px solid rgba(0,240,255,0.35); border-radius: 8px; overflow: hidden; color: #F0F0F8; }
-  .top { padding: 24px; border-bottom: 1.5px dashed rgba(0,240,255,0.2); }
+  .ticket { width: 480px; background: #050508; border: 1.5px solid rgba(255,63,194,0.35); border-radius: 8px; overflow: hidden; color: #F0F0F8; }
+  .top { padding: 24px; border-bottom: 1.5px dashed rgba(255,63,194,0.2); }
   .wordmark { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: 0.08em; }
   .wordmark span { color: #00F0FF; }
   .sub { font-size: 11px; color: #6B6B7E; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
   .photo-section { width: 100%; background: #050508; padding: 24px 0 16px; display: flex; justify-content: center; }
-  .photo-section img { width: 220px; height: 220px; border-radius: 50%; object-fit: cover; display: block; border: 2px solid rgba(0,240,255,0.3); }
-  .photo-placeholder { width: 220px; height: 220px; border-radius: 50%; background: #0D0D14; border: 2px dashed rgba(0,240,255,0.2); display: flex; align-items: center; justify-content: center; }
+  .photo-section img { width: 220px; height: 220px; border-radius: 50%; object-fit: cover; display: block; border: 2px solid rgba(255,63,194,0.3); }
+  .photo-placeholder { width: 220px; height: 220px; border-radius: 50%; background: #0D0D14; border: 2px dashed rgba(255,63,194,0.2); display: flex; align-items: center; justify-content: center; }
   .photo-placeholder span { font-size: 11px; color: #6B6B7E; letter-spacing: 0.1em; font-family: 'JetBrains Mono', monospace; }
   .mid { padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; }
   .info { flex: 1; }
@@ -272,7 +272,7 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
   .ref { font-family: 'JetBrains Mono', monospace; color: #00F0FF; font-size: 13px; }
   .tier { font-family: 'JetBrains Mono', monospace; color: #CCFF00; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
   .qr img { width: 120px; height: 120px; border-radius: 4px; }
-  .bottom { background: #0D0D14; padding: 14px 24px; border-top: 1px dashed rgba(0,240,255,0.15); font-family: 'JetBrains Mono', monospace; }
+  .bottom { background: #0D0D14; padding: 14px 24px; border-top: 1px dashed rgba(255,63,194,0.15); font-family: 'JetBrains Mono', monospace; }
   .bottom-ref { font-size: 10px; color: #6B6B7E; display: flex; justify-content: space-between; margin-bottom: 10px; }
   .disclaimers { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 10px; display: flex; flex-direction: column; gap: 4px; }
   .disclaimers-heading { font-size: 8px; font-weight: 700; color: #ffffff; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 6px; }
@@ -286,7 +286,7 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
     <div>
       <div class="sub">Dhaka Music Festival</div>
       <div class="wordmark">SONIC<span>PULSE</span></div>
-      <div class="sub" style="margin-top:4px;">15 NOV 2025 · 22:00 → 06:00</div>
+      <div class="sub" style="margin-top:4px;">25 SEP 2026 · 16:30 FRI → 09:00 SAT</div>
     </div>
   </div>
   <div class="photo-section">
@@ -390,7 +390,7 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
                   onClick={downloadTicket}
                   disabled={generating}
                   className="flex items-center gap-1.5 rounded px-3 py-2 text-xs font-semibold transition-colors cursor-pointer"
-                  style={{ background: 'rgba(0,240,255,0.1)', border: '1px solid rgba(0,240,255,0.3)', color: 'var(--accent-electric)' }}
+                  style={{ background: 'rgba(255,63,194,0.1)', border: '1px solid rgba(255,63,194,0.3)', color: 'var(--accent-magenta)' }}
                   aria-label={`Download ticket for ${ticket.full_name}`}
                 >
                   <Download size={13} />

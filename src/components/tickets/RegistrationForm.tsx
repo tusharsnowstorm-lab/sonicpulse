@@ -60,7 +60,7 @@ function FormField({
 const inputClass = `
   w-full px-4 py-3 rounded-[4px] text-sm bg-[var(--bg-elevated)]
   border border-[var(--border)] text-[var(--text-primary)]
-  focus:outline-none focus:border-[var(--accent-electric)]
+  focus:outline-none focus:border-[var(--accent-magenta)]
   transition-colors duration-150 placeholder:text-[var(--text-muted)]
 `
 
@@ -117,13 +117,13 @@ export default function RegistrationForm({ selectedTier }: Props) {
     return (
       <div
         className="p-8 rounded-[4px] text-center"
-        style={{ background: 'var(--bg-surface)', border: '1px solid var(--accent-electric)' }}
+        style={{ background: 'var(--bg-surface)', border: '1px solid var(--accent-magenta)' }}
         aria-live="polite"
       >
         <div className="text-4xl mb-4">âš¡</div>
         <h3
           className="text-2xl font-black mb-2"
-          style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-electric)' }}
+          style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-magenta)' }}
         >
           Registration Submitted.
         </h3>
@@ -160,7 +160,7 @@ export default function RegistrationForm({ selectedTier }: Props) {
           ))}
         </select>
         {currentTierData && (
-          <p className="mt-1.5 text-xs" style={{ color: 'var(--accent-electric)', fontFamily: 'var(--font-jetbrains-mono)' }}>
+          <p className="mt-1.5 text-xs" style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-jetbrains-mono)' }}>
             ৳{currentTierData.price.toLocaleString()} BDT per ticket
           </p>
         )}
@@ -255,7 +255,7 @@ export default function RegistrationForm({ selectedTier }: Props) {
       {/* Privacy notice */}
       <div
         className="p-4 rounded-[4px] text-xs text-[var(--text-muted)] leading-relaxed"
-        style={{ background: 'var(--bg-elevated)', borderLeft: '2px solid var(--accent-electric)' }}
+        style={{ background: 'var(--bg-elevated)', borderLeft: '2px solid var(--accent-magenta)' }}
       >
         <strong style={{ color: 'var(--text-primary)' }}>Privacy Notice:</strong> Your NID is stored encrypted in a private, access-controlled vault. It is used only to verify your identity for this event and is accessible only to authorised staff. We comply with Bangladesh Digital Security Act obligations.
       </div>
@@ -266,13 +266,13 @@ export default function RegistrationForm({ selectedTier }: Props) {
           <input
             {...register('terms')}
             type="checkbox"
-            className="mt-1 w-4 h-4 shrink-0 accent-[var(--accent-electric)]"
+            className="mt-1 w-4 h-4 shrink-0 accent-[var(--accent-magenta)]"
           />
           <span className="text-sm text-[var(--text-muted)]">
             I agree to the{' '}
-            <a href="#" style={{ color: 'var(--accent-electric)' }}>Terms & Conditions</a>
+            <a href="#" style={{ color: 'var(--accent-magenta)' }}>Terms & Conditions</a>
             {' '}and{' '}
-            <a href="#" style={{ color: 'var(--accent-electric)' }}>Privacy Policy</a>.
+            <a href="#" style={{ color: 'var(--accent-magenta)' }}>Privacy Policy</a>.
             I understand tickets are non-transferable and non-refundable.
           </span>
         </label>

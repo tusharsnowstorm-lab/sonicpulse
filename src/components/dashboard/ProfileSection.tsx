@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 import { useState, useEffect } from 'react'
 import { Save, Pencil, CheckCircle } from 'lucide-react'
 import FileUpload from '@/components/ui/FileUpload'
@@ -210,17 +210,17 @@ export default function ProfileSection() {
                 style={{
                   width: 80, height: 80,
                   background: 'var(--bg-surface)',
-                  border: '2px dashed rgba(0,240,255,0.35)',
+                  border: '2px dashed rgba(255,63,194,0.35)',
                 }}
                 aria-label="Add profile photo"
               >
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
                   className="transition-colors"
-                  style={{ color: 'var(--accent-electric)' }}>
+                  style={{ color: 'var(--accent-magenta)' }}>
                   <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
                   <circle cx="12" cy="13" r="4"/>
                 </svg>
-                <span className="text-[9px] font-bold tracking-widest uppercase" style={{ color: 'var(--accent-electric)', fontFamily: 'var(--font-jetbrains-mono)' }}>
+                <span className="text-[9px] font-bold tracking-widest uppercase" style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-jetbrains-mono)' }}>
                   Add photo
                 </span>
               </button>
@@ -283,7 +283,7 @@ export default function ProfileSection() {
                     src={profilePicPreview ?? getProfilePicUrl(profile?.profile_picture_path)!}
                     alt="Profile preview"
                     className="rounded-full object-cover"
-                    style={{ width: 72, height: 72, border: '2px solid var(--accent-electric)' }}
+                    style={{ width: 72, height: 72, border: '2px solid var(--accent-magenta)' }}
                   />
                 ) : (
                   <div
@@ -295,7 +295,7 @@ export default function ProfileSection() {
                 )}
                 <label
                   className="absolute -bottom-1 -right-1 rounded-full flex items-center justify-center cursor-pointer transition-colors"
-                  style={{ width: 26, height: 26, background: 'var(--accent-electric)', border: '2px solid var(--bg-elevated)' }}
+                  style={{ width: 26, height: 26, background: 'var(--accent-magenta)', border: '2px solid var(--bg-elevated)' }}
                   title="Upload profile photo"
                 >
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#050508" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -341,9 +341,9 @@ export default function ProfileSection() {
                     onClick={() => setIdType(opt.value)}
                     className="py-2.5 px-2 rounded text-xs font-semibold transition-all cursor-pointer"
                     style={{
-                      background: idType === opt.value ? 'rgba(0,240,255,0.12)' : 'var(--bg-surface)',
-                      border: idType === opt.value ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
-                      color: idType === opt.value ? 'var(--accent-electric)' : 'var(--text-muted)',
+                      background: idType === opt.value ? 'rgba(255,63,194,0.12)' : 'var(--bg-surface)',
+                      border: idType === opt.value ? '2px solid var(--accent-magenta)' : '2px solid var(--border)',
+                      color: idType === opt.value ? 'var(--accent-magenta)' : 'var(--text-muted)',
                     }}
                   >
                     {opt.short}
@@ -386,9 +386,9 @@ export default function ProfileSection() {
                     onClick={() => setGender(g)}
                     className="py-3 rounded-lg text-sm font-semibold transition-all cursor-pointer"
                     style={{
-                      background: gender === g ? 'rgba(0,240,255,0.12)' : 'var(--bg-surface)',
-                      border: gender === g ? '2px solid var(--accent-electric)' : '2px solid var(--border)',
-                      color: gender === g ? 'var(--accent-electric)' : 'var(--text-muted)',
+                      background: gender === g ? 'rgba(255,63,194,0.12)' : 'var(--bg-surface)',
+                      border: gender === g ? '2px solid var(--accent-magenta)' : '2px solid var(--border)',
+                      color: gender === g ? 'var(--accent-magenta)' : 'var(--text-muted)',
                     }}
                   >
                     {g.charAt(0).toUpperCase() + g.slice(1)}

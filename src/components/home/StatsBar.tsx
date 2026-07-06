@@ -19,7 +19,7 @@ export default function StatsBar() {
             <div key={label} className="flex flex-col items-center text-center px-4">
               <span
                 className="text-2xl md:text-3xl font-black leading-none"
-                style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--accent-electric)' }}
+                style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--accent-magenta)' }}
               >
                 {value}
               </span>

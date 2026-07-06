@@ -27,7 +27,7 @@ export default function FAQSearch({ value, onChange }: Props) {
           color: 'var(--text-primary)',
           outline: 'none',
         }}
-        onFocus={(e) => (e.target.style.borderColor = 'var(--accent-electric)')}
+        onFocus={(e) => (e.target.style.borderColor = 'var(--accent-magenta)')}
         onBlur={(e) => (e.target.style.borderColor = 'var(--border)')}
         aria-label="Search FAQ"
       />

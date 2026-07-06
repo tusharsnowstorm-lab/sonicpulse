@@ -92,7 +92,7 @@ export default function TicketsGate() {
             <ul className="space-y-1">
               {tier.perks.map((perk) => (
                 <li key={perk} className="flex items-center gap-2 text-xs" style={{ color: 'rgba(240,240,248,0.6)' }}>
-                  <span style={{ color: 'var(--accent-electric)' }}>—</span>
+                  <span style={{ color: 'var(--accent-magenta)' }}>—</span>
                   {perk}
                 </li>
               ))}
@@ -105,7 +105,7 @@ export default function TicketsGate() {
           onClick={handleSignIn}
           className="w-full flex items-center justify-center gap-3 rounded px-5 py-4 text-sm font-bold transition-all duration-150 mb-4 cursor-pointer"
           style={{
-            background: 'var(--accent-electric)',
+            background: 'var(--accent-magenta)',
             color: '#050508',
             letterSpacing: '0.05em',
           }}
@@ -119,7 +119,7 @@ export default function TicketsGate() {
           <button
             onClick={handleSignIn}
             className="underline underline-offset-2 cursor-pointer"
-            style={{ color: 'var(--accent-electric)' }}
+            style={{ color: 'var(--accent-magenta)' }}
           >
             Sign in
           </button>
@@ -129,7 +129,7 @@ export default function TicketsGate() {
         {/* How it works */}
         <div
           className="mt-10 p-4 rounded-[4px] text-sm text-left"
-          style={{ background: 'var(--bg-elevated)', borderLeft: '3px solid var(--accent-electric)', color: 'rgba(240,240,248,0.55)' }}
+          style={{ background: 'var(--bg-elevated)', borderLeft: '3px solid var(--accent-magenta)', color: 'rgba(240,240,248,0.55)' }}
         >
           <strong style={{ color: 'var(--text-primary)' }}>How it works: </strong>
           Sign up → Register ticket with your NID → We review within 24h → Approved tickets can be downloaded with QR code.
