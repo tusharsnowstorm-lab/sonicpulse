@@ -44,7 +44,6 @@ type FormState = {
   primary_platform: string
   follower_count: string
   content_type: string
-  message: string
 }
 
 const EMPTY: FormState = {
@@ -59,7 +58,6 @@ const EMPTY: FormState = {
   primary_platform: 'instagram',
   follower_count: '',
   content_type: '',
-  message: '',
 }
 
 const inputStyle: React.CSSProperties = {
@@ -254,21 +252,6 @@ export default function InfluencersPage() {
                   <option value="" disabled style={{ background: '#16161F' }}>Select category</option>
                   {CONTENT_TYPES.map((c) => <option key={c.value} value={c.value} style={{ background: '#16161F' }}>{c.label}</option>)}
                 </select>
-              </Field>
-            </div>
-
-            {/* Pitch */}
-            <div className="rounded-2xl p-6 space-y-5" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
-              <p className="text-xs font-bold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>Your Pitch</p>
-              <Field label="How will you cover the event?">
-                <textarea
-                  style={{ ...inputStyle, minHeight: 100, resize: 'vertical', lineHeight: 1.6 }}
-                  value={form.message}
-                  onChange={set('message')}
-                  placeholder="Tell us how you plan to cover Sonic Pulse — live stories, reels, blog post, etc. (2–3 sentences)"
-                  maxLength={500}
-                />
-                <p className="text-xs mt-1 text-right" style={{ color: 'var(--text-muted)' }}>{form.message.length}/500</p>
               </Field>
             </div>
 
