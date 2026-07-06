@@ -1,10 +1,11 @@
-﻿import Link from 'next/link'
-import { artists } from '@/data/artists'
+import Link from 'next/link'
+import Image from 'next/image'
+import { publishedArtists } from '@/data/artists'
 import Badge from '@/components/ui/Badge'
 
-const featured = artists.slice(0, 4)
-
 export default function ArtistTeaser() {
+  const featured = publishedArtists.slice(0, 4)
+
   return (
     <section className="py-12 md:py-20 px-4" style={{ background: 'var(--bg-surface)' }}>
       <div className="max-w-[1200px] mx-auto">
@@ -26,7 +27,7 @@ export default function ArtistTeaser() {
           <Link
             href="/lineup"
             className="text-xs tracking-widest uppercase transition-colors duration-150 whitespace-nowrap"
-            style={{ color: 'var(--accent-electric)', fontFamily: 'var(--font-jetbrains-mono)' }}
+            style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-jetbrains-mono)' }}
           >
             See Full Lineup →
           </Link>
@@ -41,18 +42,29 @@ export default function ArtistTeaser() {
               className="shrink-0 w-48 md:w-auto group"
             >
               <div
-                className="aspect-square rounded-[4px] flex items-center justify-center mb-3 transition-all duration-200 group-hover:scale-[1.02] group-hover:shadow-[0_0_20px_rgba(0,240,255,0.15)]"
+                className="aspect-square rounded-xl overflow-hidden flex items-center justify-center mb-3 transition-all duration-200 group-hover:scale-[1.02] group-hover:shadow-[0_0_20px_rgba(255,63,194,0.15)]"
                 style={{
                   background: 'var(--bg-elevated)',
                   border: '1px solid var(--border)',
+                  position: 'relative',
                 }}
               >
-                <span
-                  className="text-3xl font-black"
-                  style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-electric)', opacity: 0.6 }}
-                >
-                  {artist.name.slice(0, 2).toUpperCase()}
-                </span>
+                {artist.image ? (
+                  <Image
+                    src={artist.image}
+                    alt={artist.name}
+                    fill
+                    sizes="(max-width:768px) 192px, 25vw"
+                    style={{ objectFit: 'cover' }}
+                  />
+                ) : (
+                  <span
+                    className="text-3xl font-black"
+                    style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-magenta)', opacity: 0.6 }}
+                  >
+                    {artist.name.slice(0, 2).toUpperCase()}
+                  </span>
+                )}
               </div>
               <p className="font-bold text-sm text-[var(--text-primary)] mb-1">{artist.name}</p>
               <div className="flex items-center gap-2">

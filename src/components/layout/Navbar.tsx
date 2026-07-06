@@ -98,8 +98,9 @@ export default function Navbar() {
                   href={href}
                   className="text-sm font-medium transition-colors duration-150 pb-0.5"
                   style={{
-                    color: active ? 'var(--accent-electric)' : 'var(--text-muted)',
-                    borderBottom: active ? '2px solid var(--accent-electric)' : '2px solid transparent',
+                    color: active ? 'var(--accent-magenta)' : 'var(--text-muted)',
+                    borderBottom: active ? '2px solid var(--accent-magenta)' : '2px solid transparent',
+                    fontFamily: 'var(--font-montserrat)',
                   }}
                 >
                   {label}
@@ -113,7 +114,7 @@ export default function Navbar() {
               <Link
                 href="/dashboard"
                 className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded"
-                style={{ color: 'var(--accent-electric)', border: '1px solid rgba(0,240,255,0.3)' }}
+                style={{ color: 'var(--accent-magenta)', border: '1px solid rgba(255,63,194,0.3)', fontFamily: 'var(--font-montserrat)' }}
               >
                 {profilePicUrl ?? user.user_metadata?.avatar_url ? (
                   // eslint-disable-next-line @next/next/no-img-element

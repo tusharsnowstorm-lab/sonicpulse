@@ -3,11 +3,12 @@ import { useState, useEffect } from 'react'
 import { schedule, EVENT_DATE } from '@/data/schedule'
 import SetRow from './SetRow'
 
-function isSlotLive(time: string, duration: number): boolean {
+function isSlotLive(time: string, duration: number, nextDay?: boolean): boolean {
   const now = new Date()
   const [h, m] = time.split(':').map(Number)
   const [year, month, day] = EVENT_DATE.split('-').map(Number)
-  const start = new Date(year, month - 1, day, h, m)
+  const dayOffset = nextDay ? 1 : 0
+  const start = new Date(year, month - 1, day + dayOffset, h, m)
   const end = new Date(start.getTime() + duration * 60 * 1000)
   return now >= start && now < end
 }
@@ -58,7 +59,7 @@ export default function Timetable() {
             className="flex-1 py-2.5 text-xs font-bold tracking-widest uppercase rounded-[4px] transition-all duration-200 cursor-pointer"
             style={{
               fontFamily: 'var(--font-jetbrains-mono)',
-              background: activeTab === stage ? 'var(--accent-electric)' : 'var(--bg-surface)',
+              background: activeTab === stage ? 'var(--accent-magenta)' : 'var(--bg-surface)',
               color: activeTab === stage ? 'var(--bg-void)' : 'var(--text-muted)',
               border: '1px solid var(--border)',
             }}
@@ -76,7 +77,7 @@ export default function Timetable() {
               className="text-xs font-bold tracking-[0.3em] uppercase mb-4 pb-3 border-b"
               style={{
                 fontFamily: 'var(--font-jetbrains-mono)',
-                color: stage === 'main' ? 'var(--accent-volt)' : 'var(--accent-electric)',
+                color: stage === 'main' ? 'var(--accent-magenta)' : 'var(--accent-volt)',
                 borderColor: 'var(--border)',
               }}
             >
@@ -84,7 +85,7 @@ export default function Timetable() {
             </h3>
             <div className="divide-y divide-[var(--border)]">
               {(stage === 'main' ? schedule.mainStage : schedule.sunriseStage).map((slot) => (
-                <SetRow key={slot.artistId} slot={slot} isLive={isSlotLive(slot.time, slot.duration)} />
+                <SetRow key={slot.artistId} slot={slot} isLive={isSlotLive(slot.time, slot.duration, slot.nextDay)} />
               ))}
             </div>
           </div>
@@ -94,7 +95,7 @@ export default function Timetable() {
       {/* Mobile: single active tab */}
       <div className="md:hidden divide-y divide-[var(--border)]">
         {(activeTab === 'main' ? schedule.mainStage : schedule.sunriseStage).map((slot) => (
-          <SetRow key={slot.artistId} slot={slot} isLive={isSlotLive(slot.time, slot.duration)} />
+          <SetRow key={slot.artistId} slot={slot} isLive={isSlotLive(slot.time, slot.duration, slot.nextDay)} />
         ))}
       </div>
 
@@ -106,8 +107,8 @@ export default function Timetable() {
           style={{
             fontFamily: 'var(--font-jetbrains-mono)',
             background: 'var(--bg-surface)',
-            color: 'var(--accent-electric)',
-            border: '1px solid var(--accent-electric)',
+            color: 'var(--accent-magenta)',
+            border: '1px solid var(--accent-magenta)',
           }}
         >
           + Add to Calendar

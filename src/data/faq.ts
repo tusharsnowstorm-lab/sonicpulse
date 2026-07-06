@@ -17,7 +17,7 @@ export const faqs: FAQItem[] = [
     id: 'when-where',
     category: 'Event Basics',
     question: 'When and where is it?',
-    answer: '25 September 2026, starting at 10 PM. The venue is Bashundhara Open Grounds, Dhaka. Full address will be sent to registered attendees via email.',
+    answer: '25 September 2026, starting at 8:30 PM. Venue is TBA — full address will be sent to registered attendees via email closer to the event.',
   },
   {
     id: 'event-hours',

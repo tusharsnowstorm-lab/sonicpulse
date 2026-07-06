@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <defs>
+    <radialGradient id="bg" cx="60%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#0a001a"/>
+      <stop offset="100%" stop-color="#050508"/>
+    </radialGradient>
+    <radialGradient id="glow1" cx="60%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#7C3AED" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="35%" cy="65%" r="40%">
+      <stop offset="0%" stop-color="#FF3FC2" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#FF3FC2" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="30"/></filter>
+  </defs>
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <ellipse cx="520" cy="320" rx="320" ry="260" fill="url(#glow1)" filter="url(#blur)"/>
+  <ellipse cx="280" cy="540" rx="260" ry="200" fill="url(#glow2)" filter="url(#blur)"/>
+  <!-- Grid lines -->
+  <line x1="0" y1="200" x2="800" y2="200" stroke="#7C3AED" stroke-opacity="0.05" stroke-width="1"/>
+  <line x1="0" y1="400" x2="800" y2="400" stroke="#7C3AED" stroke-opacity="0.05" stroke-width="1"/>
+  <line x1="0" y1="600" x2="800" y2="600" stroke="#7C3AED" stroke-opacity="0.05" stroke-width="1"/>
+  <line x1="200" y1="0" x2="200" y2="800" stroke="#7C3AED" stroke-opacity="0.04" stroke-width="1"/>
+  <line x1="400" y1="0" x2="400" y2="800" stroke="#7C3AED" stroke-opacity="0.04" stroke-width="1"/>
+  <line x1="600" y1="0" x2="600" y2="800" stroke="#7C3AED" stroke-opacity="0.04" stroke-width="1"/>
+  <!-- Waveform -->
+  <g opacity="0.16" transform="translate(80,680)">
+    <rect x="0" y="-55" width="9" height="55" fill="#7C3AED" rx="4"/>
+    <rect x="16" y="-40" width="9" height="40" fill="#7C3AED" rx="4"/>
+    <rect x="32" y="-70" width="9" height="70" fill="#7C3AED" rx="4"/>
+    <rect x="48" y="-45" width="9" height="45" fill="#FF3FC2" rx="4"/>
+    <rect x="64" y="-80" width="9" height="80" fill="#7C3AED" rx="4"/>
+    <rect x="80" y="-60" width="9" height="60" fill="#7C3AED" rx="4"/>
+    <rect x="96" y="-35" width="9" height="35" fill="#FF3FC2" rx="4"/>
+    <rect x="112" y="-65" width="9" height="65" fill="#7C3AED" rx="4"/>
+    <rect x="128" y="-50" width="9" height="50" fill="#7C3AED" rx="4"/>
+    <rect x="144" y="-75" width="9" height="75" fill="#FF3FC2" rx="4"/>
+  </g>
+  <text x="400" y="420" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="110" letter-spacing="-2" fill="#F0F0F8" opacity="0.95">IZHAQO</text>
+  <rect x="155" y="440" width="490" height="3" fill="#7C3AED" opacity="0.7" rx="2"/>
+  <text x="400" y="492" text-anchor="middle" font-family="monospace" font-size="17" letter-spacing="8" fill="#FF3FC2" opacity="0.75">HEADLINER · MAIN STAGE</text>
+</svg>

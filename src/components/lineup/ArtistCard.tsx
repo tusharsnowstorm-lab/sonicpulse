@@ -1,4 +1,4 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import Image from 'next/image'
 import { Artist } from '@/data/artists'
 import Badge from '@/components/ui/Badge'
@@ -8,8 +8,9 @@ type Props = { artist: Artist; large?: boolean }
 export default function ArtistCard({ artist, large = false }: Props) {
   return (
     <div
-      className={`group rounded-[4px] overflow-hidden transition-all duration-200 cursor-pointer
-        hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(0,240,255,0.15)]`}
+      id={artist.id}
+      className={`group rounded-2xl overflow-hidden transition-all duration-200 cursor-pointer
+        hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(255,63,194,0.15)]`}
       style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}
     >
       {/* Photo */}
@@ -29,7 +30,7 @@ export default function ArtistCard({ artist, large = false }: Props) {
           <div className="flex items-center justify-center w-full h-full">
             <span
               className={`font-black ${large ? 'text-6xl' : 'text-4xl'} opacity-40`}
-              style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--accent-electric)' }}
+              style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--accent-magenta)' }}
             >
               {artist.name.slice(0, 2).toUpperCase()}
             </span>
@@ -61,7 +62,7 @@ export default function ArtistCard({ artist, large = false }: Props) {
         {artist.setTime && (
           <p
             className="mt-2 text-[10px] tracking-widest"
-            style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--accent-electric)' }}
+            style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--accent-magenta)' }}
           >
             {artist.setTime}
           </p>
@@ -71,13 +72,15 @@ export default function ArtistCard({ artist, large = false }: Props) {
           <p className="mt-3 text-sm text-[var(--text-muted)] leading-relaxed">{artist.bio}</p>
         )}
 
-        {large && artist.socialLink && (
+        {large && artist.socialLink && artist.socialLink !== '#' && (
           <Link
             href={artist.socialLink}
-            className="inline-block mt-3 text-xs tracking-widest uppercase transition-colors duration-150"
-            style={{ color: 'var(--accent-electric)', fontFamily: 'var(--font-jetbrains-mono)' }}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block mt-3 text-xs tracking-widest uppercase transition-colors duration-150 hover:opacity-80"
+            style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-jetbrains-mono)' }}
           >
-            Follow →
+            Follow on Instagram →
           </Link>
         )}
       </div>

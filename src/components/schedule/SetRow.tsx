@@ -1,23 +1,25 @@
-﻿import Link from 'next/link'
+import Link from 'next/link'
 import Badge from '@/components/ui/Badge'
 import { SetSlot } from '@/data/schedule'
 
 type Props = { slot: SetSlot; isLive?: boolean }
 
 export default function SetRow({ slot, isLive }: Props) {
-  return (
-    <Link
-      href={`/lineup#${slot.artistId}`}
+  const isTba = !slot.published || slot.artistId.startsWith('tba')
+
+  const inner = (
+    <div
       className="flex items-center gap-4 py-4 px-4 rounded-[4px] transition-colors duration-150 group"
       style={{
-        background: isLive ? 'rgba(0,240,255,0.05)' : 'transparent',
-        borderLeft: isLive ? '2px solid var(--accent-electric)' : '2px solid transparent',
+        background: isLive ? 'rgba(255,63,194,0.06)' : 'transparent',
+        borderLeft: isLive ? '2px solid var(--accent-magenta)' : '2px solid transparent',
+        opacity: isTba ? 0.45 : 1,
       }}
     >
       {/* Time */}
       <span
         className="w-14 shrink-0 text-sm font-bold tabular-nums"
-        style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--accent-electric)' }}
+        style={{ fontFamily: 'var(--font-jetbrains-mono)', color: isTba ? 'var(--text-muted)' : 'var(--accent-magenta)' }}
       >
         {slot.time}
       </span>
@@ -27,13 +29,18 @@ export default function SetRow({ slot, isLive }: Props) {
         <div className="flex items-center gap-2">
           {isLive && <Badge variant="live">LIVE</Badge>}
           <span
-            className="font-bold text-[var(--text-primary)] text-sm truncate group-hover:text-[var(--accent-electric)] transition-colors duration-150"
-            style={{ fontFamily: 'var(--font-space-grotesk)' }}
+            className="font-bold text-sm truncate"
+            style={{
+              fontFamily: 'var(--font-space-grotesk)',
+              color: isTba ? 'var(--text-muted)' : 'var(--text-primary)',
+            }}
           >
-            {slot.artist}
+            {isTba ? 'TBA' : slot.artist}
           </span>
         </div>
-        <span className="text-xs text-[var(--text-muted)]">{slot.genre}</span>
+        {!isTba && slot.genre && (
+          <span className="text-xs text-[var(--text-muted)]">{slot.genre}</span>
+        )}
       </div>
 
       {/* Duration */}
@@ -43,6 +50,17 @@ export default function SetRow({ slot, isLive }: Props) {
       >
         {slot.duration}m
       </span>
+    </div>
+  )
+
+  if (isTba) return inner
+
+  return (
+    <Link
+      href={`/lineup#${slot.artistId}`}
+      className="block hover:bg-[rgba(255,63,194,0.04)] rounded-[4px] transition-colors duration-150"
+    >
+      {inner}
     </Link>
   )
 }

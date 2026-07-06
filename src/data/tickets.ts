@@ -12,7 +12,7 @@ export const ticketTiers: TicketTier[] = [
   {
     id: 'phase1',
     label: 'PHASE 1 — EARLY BIRD',
-    price: 3500,
+    price: 4500,
     badge: 'BEST VALUE',
     perks: [
       'General admission',
@@ -26,7 +26,7 @@ export const ticketTiers: TicketTier[] = [
   {
     id: 'phase2',
     label: 'PHASE 2 — STANDARD',
-    price: 4500,
+    price: 5500,
     perks: [
       'General admission',
       'Wristband included',
@@ -37,7 +37,7 @@ export const ticketTiers: TicketTier[] = [
   {
     id: 'phase3',
     label: 'PHASE 3 — FINAL',
-    price: 5500,
+    price: 6500,
     badge: 'LAST CHANCE',
     perks: [
       'General admission',

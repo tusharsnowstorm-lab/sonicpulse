@@ -113,18 +113,18 @@ export default function MobileMenu({ onClose }: Props) {
               onClick={onClose}
               className="flex items-center py-4 transition-colors duration-150"
               style={{
-                fontFamily: 'var(--font-space-grotesk)',
+                fontFamily: 'var(--font-montserrat)',
                 fontSize: 'clamp(1.35rem, 5.5vw, 1.75rem)',
                 fontWeight: 700,
-                letterSpacing: '-0.01em',
-                color: active ? 'var(--accent-electric)' : 'rgba(255,255,255,0.85)',
+                letterSpacing: '0.04em',
+                color: active ? 'var(--accent-magenta)' : 'rgba(255,255,255,0.85)',
                 borderBottom: '1px solid rgba(255,255,255,0.06)',
               }}
             >
               {active && (
                 <span
                   className="inline-block w-1.5 h-1.5 rounded-full mr-3 shrink-0"
-                  style={{ background: 'var(--accent-electric)', marginBottom: 2 }}
+                  style={{ background: 'var(--accent-magenta)', marginBottom: 2 }}
                 />
               )}
               {label}
@@ -142,10 +142,10 @@ export default function MobileMenu({ onClose }: Props) {
             onClick={onClose}
             className="flex items-center justify-center gap-3 w-full py-4 rounded font-bold tracking-widest uppercase"
             style={{
-              background: 'rgba(0,240,255,0.08)',
-              border: '1.5px solid rgba(0,240,255,0.35)',
-              color: 'var(--accent-electric)',
-              fontFamily: 'var(--font-space-grotesk)',
+              background: 'rgba(255,63,194,0.08)',
+              border: '1.5px solid rgba(255,63,194,0.35)',
+              color: 'var(--accent-magenta)',
+              fontFamily: 'var(--font-montserrat)',
               fontSize: '0.9rem',
             }}
           >
@@ -163,10 +163,10 @@ export default function MobileMenu({ onClose }: Props) {
             onClick={onClose}
             className="flex items-center justify-center gap-2 w-full py-4 rounded font-bold tracking-widest uppercase"
             style={{
-              background: 'rgba(0,240,255,0.08)',
-              border: '1.5px solid rgba(0,240,255,0.35)',
-              color: 'var(--accent-electric)',
-              fontFamily: 'var(--font-space-grotesk)',
+              background: 'rgba(255,63,194,0.08)',
+              border: '1.5px solid rgba(255,63,194,0.35)',
+              color: 'var(--accent-magenta)',
+              fontFamily: 'var(--font-montserrat)',
               fontSize: '0.9rem',
             }}
           >
@@ -181,9 +181,9 @@ export default function MobileMenu({ onClose }: Props) {
           onClick={onClose}
           className="flex items-center justify-center w-full py-4 rounded font-bold tracking-widest uppercase"
           style={{
-            background: 'var(--accent-electric)',
-            color: '#050508',
-            fontFamily: 'var(--font-space-grotesk)',
+            background: 'var(--accent-magenta)',
+            color: '#fff',
+            fontFamily: 'var(--font-montserrat)',
             fontSize: '1rem',
           }}
         >

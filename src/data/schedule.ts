@@ -4,6 +4,8 @@ export type SetSlot = {
   artistId: string
   duration: number
   genre: string
+  published: boolean
+  nextDay?: boolean
 }
 
 export type Schedule = {
@@ -13,20 +15,22 @@ export type Schedule = {
 
 export const schedule: Schedule = {
   mainStage: [
-    { time: '22:00', artist: 'Volta Dhaka',    artistId: 'volta-dhaka',    duration: 60, genre: 'Techno' },
-    { time: '23:00', artist: 'Subzero FX',     artistId: 'subzero-fx',     duration: 120, genre: 'House' },
-    { time: '01:00', artist: 'Ravemaster 9000', artistId: 'ravemaster-9000', duration: 120, genre: 'Techno' },
-    { time: '03:00', artist: 'Neon Dhaka',     artistId: 'neon-dhaka',     duration: 120, genre: 'Hard Techno' },
+    { time: '20:30', artist: 'Izhaqo',   artistId: 'izhaqo',   duration: 90,  genre: 'Hip-Hop / Electronic', published: true },
+    { time: '22:00', artist: 'TBA',       artistId: 'tba-1',    duration: 90,  genre: '',                    published: false },
+    { time: '23:30', artist: 'Ra Tao',    artistId: 'ra-tao',   duration: 90,  genre: 'Electronic',          published: false },
+    { time: '01:00', artist: 'Psytaraa',  artistId: 'psytaraa', duration: 90,  genre: 'Electronic / Fusion', published: true,  nextDay: true },
+    { time: '05:00', artist: 'Rii',       artistId: 'rii',      duration: 90,  genre: 'Electronic / DJ',     published: false, nextDay: true },
+    { time: '06:30', artist: 'Elyna',     artistId: 'elyna',    duration: 120, genre: 'Electronic / Ambient',published: false, nextDay: true },
   ],
   sunriseStage: [
-    { time: '22:00', artist: 'Aurora Wave',  artistId: 'aurora-wave',  duration: 120, genre: 'Melodic Techno' },
-    { time: '00:00', artist: 'Pulse Echo',   artistId: 'pulse-echo',   duration: 120, genre: 'Ambient House' },
-    { time: '02:00', artist: 'Solar Drift',  artistId: 'solar-drift',  duration: 120, genre: 'Deep House' },
-    { time: '04:00', artist: 'Dawnbreak',    artistId: 'dawnbreak',    duration: 120, genre: 'Melodic House' },
+    { time: '04:00', artist: 'Aurora Wave',  artistId: 'aurora-wave',  duration: 75,  genre: 'Melodic Techno', published: false, nextDay: true },
+    { time: '05:15', artist: 'Pulse Echo',   artistId: 'pulse-echo',   duration: 75,  genre: 'Ambient House',  published: false, nextDay: true },
+    { time: '06:30', artist: 'Solar Drift',  artistId: 'solar-drift',  duration: 60,  genre: 'Deep House',     published: false, nextDay: true },
+    { time: '07:30', artist: 'Dawnbreak',    artistId: 'dawnbreak',    duration: 60,  genre: 'Melodic House',  published: false, nextDay: true },
   ],
 }
 
-export const EVENT_DATE = '2025-11-15'
-export const EVENT_DATE_DISPLAY = '15 NOVEMBER 2025'
-export const EVENT_VENUE = 'BASHUNDHARA OPEN GROUNDS, DHAKA'
-export const EVENT_START = '22:00'
+export const EVENT_DATE = '2026-09-25'
+export const EVENT_DATE_DISPLAY = '25 SEPTEMBER 2026'
+export const EVENT_VENUE = 'TBA'
+export const EVENT_START = '20:30'

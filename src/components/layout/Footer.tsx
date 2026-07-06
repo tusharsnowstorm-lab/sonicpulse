@@ -61,7 +61,7 @@ export default function Footer() {
                 <li key={href}>
                   <Link
                     href={href}
-                    className="text-sm text-[var(--text-muted)] hover:text-[var(--accent-electric)] transition-colors duration-150"
+                    className="text-sm text-[var(--text-muted)] hover:text-[var(--accent-magenta)] transition-colors duration-150"
                   >
                     {label}
                   </Link>
@@ -75,12 +75,12 @@ export default function Footer() {
             <h3 className="text-xs font-bold tracking-widest uppercase text-[var(--text-muted)] mb-4">Contact</h3>
             <ul className="space-y-2 text-sm text-[var(--text-muted)]">
               <li>
-                <a href="mailto:hello@sonicpulsefestival.com" className="hover:text-[var(--accent-electric)] transition-colors duration-150">
+                <a href="mailto:hello@sonicpulsefestival.com" className="hover:text-[var(--accent-magenta)] transition-colors duration-150">
                   hello@sonicpulsefestival.com
                 </a>
               </li>
               <li>
-                <a href="mailto:press@sonicpulsefestival.com" className="hover:text-[var(--accent-electric)] transition-colors duration-150">
+                <a href="mailto:press@sonicpulsefestival.com" className="hover:text-[var(--accent-magenta)] transition-colors duration-150">
                   press@sonicpulsefestival.com
                 </a>
               </li>
@@ -91,13 +91,13 @@ export default function Footer() {
           <div>
             <h3 className="text-xs font-bold tracking-widest uppercase text-[var(--text-muted)] mb-4">Follow Us</h3>
             <div className="flex items-center gap-4">
-              <a href="https://instagram.com/sonicpulsefestival" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-[var(--text-muted)] hover:text-[var(--accent-electric)] transition-colors duration-150">
+              <a href="https://instagram.com/sonicpulsefestival" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-[var(--text-muted)] hover:text-[var(--accent-magenta)] transition-colors duration-150">
                 <InstagramIcon />
               </a>
-              <a href="#" aria-label="Facebook" className="text-[var(--text-muted)] hover:text-[var(--accent-electric)] transition-colors duration-150">
+              <a href="#" aria-label="Facebook" className="text-[var(--text-muted)] hover:text-[var(--accent-magenta)] transition-colors duration-150">
                 <FacebookIcon />
               </a>
-              <a href="#" aria-label="TikTok" className="text-[var(--text-muted)] hover:text-[var(--accent-electric)] transition-colors duration-150">
+              <a href="#" aria-label="TikTok" className="text-[var(--text-muted)] hover:text-[var(--accent-magenta)] transition-colors duration-150">
                 <TikTokIcon />
               </a>
             </div>

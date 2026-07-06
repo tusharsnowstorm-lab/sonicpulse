@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0010"/>
+      <stop offset="50%" stop-color="#050508"/>
+      <stop offset="100%" stop-color="#100a00"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="30%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#FF3FC2" stop-opacity="0.13"/>
+      <stop offset="100%" stop-color="#FF3FC2" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="70%" cy="65%" r="45%">
+      <stop offset="0%" stop-color="#FFB800" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#FFB800" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="32"/></filter>
+  </defs>
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <ellipse cx="280" cy="340" rx="300" ry="240" fill="url(#glow1)" filter="url(#blur)"/>
+  <ellipse cx="560" cy="520" rx="260" ry="200" fill="url(#glow2)" filter="url(#blur)"/>
+  <!-- Flowing curve lines -->
+  <path d="M0,350 Q200,250 400,350 Q600,450 800,350" fill="none" stroke="#FF3FC2" stroke-opacity="0.07" stroke-width="1.5"/>
+  <path d="M0,400 Q200,300 400,400 Q600,500 800,400" fill="none" stroke="#FF3FC2" stroke-opacity="0.05" stroke-width="1"/>
+  <path d="M0,450 Q200,350 400,450 Q600,550 800,450" fill="none" stroke="#FFB800" stroke-opacity="0.05" stroke-width="1"/>
+  <path d="M0,500 Q200,400 400,500 Q600,600 800,500" fill="none" stroke="#FFB800" stroke-opacity="0.04" stroke-width="1"/>
+  <text x="400" y="420" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="120" letter-spacing="4" fill="#F0F0F8" opacity="0.95">ELYNA</text>
+  <rect x="175" y="440" width="450" height="3" fill="#FF3FC2" opacity="0.55" rx="2"/>
+  <text x="400" y="482" text-anchor="middle" font-family="monospace" font-size="15" letter-spacing="7" fill="#FF3FC2" opacity="0.6">MAIN STAGE</text>
+</svg>
