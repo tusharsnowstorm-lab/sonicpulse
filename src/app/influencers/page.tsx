@@ -101,10 +101,32 @@ export default function InfluencersPage() {
   const [form, setForm] = useState<FormState>(EMPTY)
   const [idFile, setIdFile] = useState<File | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
+  const [profilePic, setProfilePic] = useState<File | null>(null)
+  const [profilePicPreview, setProfilePicPreview] = useState<string | null>(null)
+  const [profilePicError, setProfilePicError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
   const topRef = useRef<HTMLDivElement>(null)
+  const profilePicRef = useRef<HTMLInputElement>(null)
+
+  const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null
+    if (!file) return
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setProfilePicError('Photo must be JPG, PNG, or WebP.')
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setProfilePicError('Photo must be under 5MB.')
+      return
+    }
+    setProfilePic(file)
+    setProfilePicError(null)
+    const reader = new FileReader()
+    reader.onload = (ev) => setProfilePicPreview(ev.target?.result as string)
+    reader.readAsDataURL(file)
+  }
 
   const set = (key: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }))
@@ -118,6 +140,10 @@ export default function InfluencersPage() {
 
     if (!form.full_name.trim() || !form.email.trim() || !form.phone.trim() || !form.id_number.trim() || !form.gender || !form.instagram_handle.trim() || !form.follower_count || !form.content_type) {
       setError('Please fill in all required fields.')
+      return
+    }
+    if (!profilePic) {
+      setProfilePicError('A profile photo is required.')
       return
     }
     if (!idFile) {
@@ -141,6 +167,7 @@ export default function InfluencersPage() {
       fd.append('follower_count', form.follower_count)
       fd.append('content_type', form.content_type)
       fd.append('id_file', idFile)
+      if (profilePic) fd.append('profile_pic', profilePic)
 
       const res = await fetch('/api/influencers', { method: 'POST', body: fd })
       const json = await res.json()
@@ -204,6 +231,73 @@ export default function InfluencersPage() {
             {/* Personal info */}
             <div className="rounded-2xl p-6 space-y-5" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
               <p className="text-xs font-bold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>Personal Info</p>
+
+              {/* Profile picture */}
+              <div>
+                <label style={labelStyle}>
+                  Profile photo <span style={{ color: 'var(--accent-magenta)', marginLeft: 3 }}>*</span>
+                </label>
+
+                {/* Warning banner */}
+                <div
+                  className="rounded-xl px-4 py-3 mb-4 flex gap-3 items-start"
+                  style={{ background: 'rgba(255,63,194,0.06)', border: '1px solid rgba(255,63,194,0.25)' }}
+                >
+                  <span style={{ fontSize: 16, flexShrink: 0, marginTop: 1 }}>📸</span>
+                  <p className="text-xs leading-relaxed" style={{ color: 'rgba(240,240,248,0.75)' }}>
+                    Your photo will appear on your media pass and is used for <strong style={{ color: 'var(--text-primary)' }}>identity verification at the gate</strong>. Upload a clear, recent photo of your face. Entry will be refused if your photo does not match your appearance.
+                  </p>
+                </div>
+
+                {/* Upload zone */}
+                <input
+                  ref={profilePicRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleProfilePicChange}
+                  className="sr-only"
+                  aria-label="Upload profile photo"
+                />
+                <button
+                  type="button"
+                  onClick={() => profilePicRef.current?.click()}
+                  className="w-full rounded-xl transition-all"
+                  style={{
+                    background: 'rgba(255,255,255,0.03)',
+                    border: profilePicError ? '2px dashed rgba(255,45,107,0.6)' : profilePic ? '2px solid rgba(255,63,194,0.4)' : '2px dashed rgba(255,255,255,0.15)',
+                    cursor: 'pointer',
+                    padding: 0,
+                    overflow: 'hidden',
+                    touchAction: 'manipulation',
+                  }}
+                >
+                  {profilePicPreview ? (
+                    <div className="flex items-center gap-4 p-4">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={profilePicPreview}
+                        alt="Profile preview"
+                        style={{ width: 72, height: 72, borderRadius: '50%', objectFit: 'cover', border: '2px solid rgba(255,63,194,0.5)', flexShrink: 0 }}
+                      />
+                      <div className="text-left">
+                        <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{profilePic?.name}</p>
+                        <p className="text-xs mt-0.5" style={{ color: 'var(--accent-magenta)' }}>Tap to change</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-8 gap-2">
+                      <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'rgba(255,63,194,0.08)', border: '2px dashed rgba(255,63,194,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: 22 }}>🤳</span>
+                      </div>
+                      <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>Upload profile photo</p>
+                      <p className="text-xs" style={{ color: 'var(--text-muted)' }}>JPG, PNG or WebP · Max 5MB</p>
+                    </div>
+                  )}
+                </button>
+                {profilePicError && (
+                  <p className="mt-2 text-xs" style={{ color: '#ff6b8a' }}>{profilePicError}</p>
+                )}
+              </div>
 
               <Field label="Full name" required>
                 <input style={inputStyle} type="text" autoComplete="name" value={form.full_name} onChange={set('full_name')} placeholder="As it appears on your ID" />
