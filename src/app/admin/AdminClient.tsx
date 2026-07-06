@@ -88,7 +88,7 @@ export default function AdminClient() {
           <div className="flex items-center gap-2.5">
             <Link href="/" className="flex items-center gap-2.5">
               <Image src="/images/logo-badge.webp" alt="Sonic Pulse" width={30} height={30} className="rounded-full" style={{ border: '1.5px solid rgba(255,255,255,0.3)' }} />
-              <span className="font-black tracking-[0.15em] text-sm" style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-electric)' }}>SONIC PULSE</span>
+              <span className="font-black tracking-[0.15em] text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--text-primary)' }}>SONIC <span style={{ color: 'var(--accent-magenta)' }}>PULSE</span></span>
             </Link>
             <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(255,45,107,0.15)', border: '1px solid rgba(255,45,107,0.3)', color: 'var(--accent-pulse)', fontFamily: 'var(--font-jetbrains-mono)' }}>
               ADMIN

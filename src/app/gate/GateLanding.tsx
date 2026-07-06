@@ -35,7 +35,7 @@ export default function GateLanding({ email }: { email: string }) {
         <div className="max-w-[600px] mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <Image src="/images/logo-badge.webp" alt="Sonic Pulse" width={30} height={30} className="rounded-full" style={{ border: '1.5px solid rgba(255,255,255,0.3)' }} />
-            <span className="font-black tracking-[0.15em] text-sm" style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-electric)' }}>SONIC PULSE</span>
+            <span className="font-black tracking-[0.15em] text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--text-primary)' }}>SONIC <span style={{ color: 'var(--accent-magenta)' }}>PULSE</span></span>
             <span className="text-xs px-2 py-0.5 rounded font-bold" style={{ background: 'rgba(204,255,0,0.12)', border: '1px solid rgba(204,255,0,0.3)', color: 'var(--accent-volt)', fontFamily: 'var(--font-jetbrains-mono)' }}>
               GATE
             </span>

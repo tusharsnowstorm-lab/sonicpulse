@@ -24,7 +24,7 @@ function wrap(body: string) {
         <!-- Header -->
         <tr>
           <td style="background:#050508;padding:28px 32px;text-align:center;">
-            <div style="font-size:20px;font-weight:900;letter-spacing:0.22em;color:#00f0ff;font-family:Arial,sans-serif;">⚡ SONIC PULSE</div>
+            <div style="font-size:20px;font-weight:900;letter-spacing:0.22em;color:#FF3FC2;font-family:Arial,sans-serif;">⚡ SONIC PULSE</div>
             <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:4px;letter-spacing:0.15em;text-transform:uppercase;">25 September 2026</div>
           </td>
         </tr>
@@ -196,7 +196,7 @@ export async function sendApprovalEmail(
     <table width="100%" cellpadding="0" cellspacing="0" style="background:#050508;border-radius:10px;overflow:hidden;margin:0 0 20px;">
       <tr>
         <td style="background:linear-gradient(135deg,#0d0d1a 0%,#1a0a2e 100%);padding:20px;text-align:center;border-bottom:1px solid #1e1e3e;">
-          <div style="font-size:13px;font-weight:900;letter-spacing:0.22em;color:#00f0ff;">⚡ SONIC PULSE</div>
+          <div style="font-size:13px;font-weight:900;letter-spacing:0.22em;color:#FF3FC2;">⚡ SONIC PULSE</div>
           <div style="font-size:20px;font-weight:800;color:#ffffff;margin:8px 0 4px;">${name}</div>
           <div style="font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;">${tierLabel(tier)}</div>
         </td>
@@ -219,7 +219,7 @@ export async function sendApprovalEmail(
             <tr>
               <td style="padding:4px 0;">
                 <span style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;display:block;">Reference</span>
-                <span style="font-size:14px;color:#00f0ff;font-weight:900;font-family:monospace;letter-spacing:0.12em;">${referenceCode}</span>
+                <span style="font-size:14px;color:#FF3FC2;font-weight:900;font-family:monospace;letter-spacing:0.12em;">${referenceCode}</span>
               </td>
             </tr>
           </table>

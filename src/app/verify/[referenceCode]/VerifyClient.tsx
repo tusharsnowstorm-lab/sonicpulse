@@ -163,7 +163,7 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
         <div className="max-w-[640px] mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Image src="/images/logo-badge.webp" alt="Sonic Pulse" width={26} height={26} className="rounded-full" style={{ border: '1px solid rgba(255,255,255,0.2)' }} />
-            <span className="font-black tracking-[0.15em] text-sm" style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-electric)' }}>SONIC PULSE</span>
+            <span className="font-black tracking-[0.15em] text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--text-primary)' }}>SONIC <span style={{ color: 'var(--accent-magenta)' }}>PULSE</span></span>
             <span className="text-xs px-2 py-0.5 rounded font-bold" style={{ background: 'rgba(204,255,0,0.12)', border: '1px solid rgba(204,255,0,0.3)', color: 'var(--accent-volt)', fontFamily: 'var(--font-jetbrains-mono)' }}>GATE</span>
           </div>
           <a href="/gate" className="text-xs px-3 py-1.5 rounded" style={{ color: 'var(--text-muted)', border: '1px solid var(--border)' }}>← Back</a>

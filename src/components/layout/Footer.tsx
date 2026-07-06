@@ -43,9 +43,9 @@ export default function Footer() {
           <div>
             <span
               className="block text-base font-black tracking-[0.2em] mb-3"
-              style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-electric)' }}
+              style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--text-primary)' }}
             >
-              SONIC PULSE
+              SONIC <span style={{ color: 'var(--accent-magenta)' }}>PULSE</span>
             </span>
             <p className="text-sm text-[var(--text-muted)] leading-relaxed">
               Presented by Dhaka Music Festival. Bringing the underground to the open skies of Bangladesh.

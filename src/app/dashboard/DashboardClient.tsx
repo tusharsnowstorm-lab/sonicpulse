@@ -91,9 +91,9 @@ export default function DashboardClient({ user }: { user: User }) {
             />
             <span
               className="font-black tracking-[0.15em] text-base"
-              style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-electric)' }}
+              style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--text-primary)' }}
             >
-              SONIC PULSE
+              SONIC <span style={{ color: 'var(--accent-magenta)' }}>PULSE</span>
             </span>
           </Link>
           <div className="flex items-center gap-3">

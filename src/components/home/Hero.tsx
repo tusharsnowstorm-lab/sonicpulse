@@ -71,11 +71,11 @@ export default function Hero() {
           className="glow-heading font-black leading-none tracking-tighter mb-6"
           style={{
             fontSize: 'clamp(2rem, 8vw, 5.5rem)',
-            fontFamily: 'var(--font-space-grotesk)',
+            fontFamily: 'var(--font-montserrat)',
             color: 'var(--text-primary)',
           }}
         >
-          SONIC <span style={{ color: 'var(--accent-electric)' }}>PULSE</span>
+          SONIC <span style={{ color: 'var(--accent-magenta)' }}>PULSE</span>
         </h1>
 
         <div

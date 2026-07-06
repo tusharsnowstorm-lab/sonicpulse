@@ -82,9 +82,9 @@ export default function Navbar() {
             />
             <span
               className="text-lg font-black tracking-[0.2em]"
-              style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-electric)' }}
+              style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--text-primary)' }}
             >
-              SONIC PULSE
+              SONIC <span style={{ color: 'var(--accent-magenta)' }}>PULSE</span>
             </span>
           </Link>
 

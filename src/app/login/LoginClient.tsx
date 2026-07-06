@@ -73,9 +73,9 @@ export default function LoginClient() {
           />
           <h1
             className="text-2xl font-black tracking-[0.2em]"
-            style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-electric)' }}
+            style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--text-primary)' }}
           >
-            SONIC PULSE
+            SONIC <span style={{ color: 'var(--accent-magenta)' }}>PULSE</span>
           </h1>
           <p className="text-xs tracking-widest uppercase mt-1" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)' }}>
             25 September 2026
