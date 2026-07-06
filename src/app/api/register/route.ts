@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
     const nidNumber      = formData.get('nidNumber') as string
     const ticketTier     = formData.get('ticketTier') as string
     const ticketQty      = parseInt(formData.get('ticketQty') as string, 10)
+    const shuttle        = formData.get('shuttle') === 'yes'
     const nidFile        = formData.get('nidFile') as File | null
 
     // Server-side validation
@@ -84,6 +85,7 @@ export async function POST(req: NextRequest) {
       nid_file_path: nidFilePath,
       ticket_tier: ticketTier,
       ticket_qty: ticketQty,
+      shuttle,
       status: 'pending',
       reference_code: referenceCode,
     })

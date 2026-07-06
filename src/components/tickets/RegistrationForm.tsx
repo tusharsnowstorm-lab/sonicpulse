@@ -70,6 +70,7 @@ export default function RegistrationForm({ selectedTier }: Props) {
   const [nidFile, setNidFile] = useState<File | null>(null)
   const [nidFileError, setNidFileError] = useState<string>('')
   const [serverError, setServerError] = useState<string>('')
+  const [shuttle, setShuttle] = useState(false)
 
   const {
     register,
@@ -100,6 +101,7 @@ export default function RegistrationForm({ selectedTier }: Props) {
     const formData = new FormData()
     Object.entries(data).forEach(([k, v]) => formData.append(k, String(v)))
     formData.append('nidFile', nidFile)
+    formData.append('shuttle', shuttle ? 'yes' : 'no')
 
     try {
       const res = await fetch('/api/register', { method: 'POST', body: formData })
@@ -251,6 +253,45 @@ export default function RegistrationForm({ selectedTier }: Props) {
         error={nidFileError}
         label="NID Document (photo or scan)"
       />
+
+      {/* Shuttle add-on */}
+      <button
+        type="button"
+        onClick={() => setShuttle((s) => !s)}
+        className="w-full flex items-start gap-4 p-4 rounded-[4px] text-left transition-all duration-200 cursor-pointer"
+        style={{
+          background: shuttle ? 'rgba(255,63,194,0.06)' : 'var(--bg-elevated)',
+          border: shuttle ? '1px solid rgba(255,63,194,0.4)' : '1px solid var(--border)',
+          touchAction: 'manipulation',
+        }}
+      >
+        <div
+          className="shrink-0 mt-0.5 w-5 h-5 rounded flex items-center justify-center transition-all duration-150"
+          style={{
+            background: shuttle ? 'var(--accent-magenta)' : 'transparent',
+            border: shuttle ? '2px solid var(--accent-magenta)' : '2px solid var(--border)',
+          }}
+        >
+          {shuttle && (
+            <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+              <path d="M1 4l3 3 5-6" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
+        </div>
+        <div className="flex-1">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <span className="text-sm font-bold" style={{ color: shuttle ? 'var(--text-primary)' : 'var(--text-muted)', fontFamily: 'var(--font-space-grotesk)' }}>
+              🚌 Add shuttle transport
+            </span>
+            <span className="text-sm font-bold" style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-jetbrains-mono)' }}>
+              +৳800
+            </span>
+          </div>
+          <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
+            Round-trip shuttle service to and from the venue. Pickup point and schedule will be emailed closer to the event.
+          </p>
+        </div>
+      </button>
 
       {/* Privacy notice */}
       <div

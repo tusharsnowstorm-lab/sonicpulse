@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
   const content_type    = (formData.get('content_type') as string | null) ?? ''
   const idFile          = formData.get('id_file') as File | null
   const profilePicFile  = formData.get('profile_pic') as File | null
+  const shuttle         = formData.get('shuttle') === 'yes'
 
   if (!full_name || !email || !phone || !id_number || !gender || !instagram_handle || !follower_count || !content_type) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -106,6 +107,7 @@ export async function POST(req: NextRequest) {
     content_type,
     nid_file_path: fileName,
     profile_picture_path: picFileName,
+    shuttle,
     status: 'pending',
   })
 

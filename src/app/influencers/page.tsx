@@ -104,6 +104,7 @@ export default function InfluencersPage() {
   const [profilePic, setProfilePic] = useState<File | null>(null)
   const [profilePicPreview, setProfilePicPreview] = useState<string | null>(null)
   const [profilePicError, setProfilePicError] = useState<string | null>(null)
+  const [shuttle, setShuttle] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
@@ -168,6 +169,7 @@ export default function InfluencersPage() {
       fd.append('content_type', form.content_type)
       fd.append('id_file', idFile)
       if (profilePic) fd.append('profile_pic', profilePic)
+      fd.append('shuttle', shuttle ? 'yes' : 'no')
 
       const res = await fetch('/api/influencers', { method: 'POST', body: fd })
       const json = await res.json()
@@ -408,6 +410,46 @@ export default function InfluencersPage() {
                 </select>
               </Field>
             </div>
+
+            {/* Shuttle add-on */}
+            <button
+              type="button"
+              onClick={() => setShuttle((s) => !s)}
+              className="w-full flex items-start gap-4 rounded-2xl text-left transition-all duration-200 cursor-pointer"
+              style={{
+                background: shuttle ? 'rgba(255,63,194,0.06)' : 'var(--bg-elevated)',
+                border: shuttle ? '1px solid rgba(255,63,194,0.4)' : '1px solid var(--border)',
+                padding: '20px',
+                touchAction: 'manipulation',
+              }}
+            >
+              <div
+                className="shrink-0 mt-0.5 w-5 h-5 rounded flex items-center justify-center transition-all duration-150"
+                style={{
+                  background: shuttle ? 'var(--accent-magenta)' : 'transparent',
+                  border: shuttle ? '2px solid var(--accent-magenta)' : '2px solid rgba(255,255,255,0.2)',
+                }}
+              >
+                {shuttle && (
+                  <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                    <path d="M1 4l3 3 5-6" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <span className="text-sm font-bold" style={{ color: shuttle ? 'var(--text-primary)' : 'var(--text-muted)', fontFamily: 'var(--font-montserrat)' }}>
+                    🚌 Add shuttle transport
+                  </span>
+                  <span className="text-sm font-bold" style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-montserrat)' }}>
+                    +৳800
+                  </span>
+                </div>
+                <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
+                  Round-trip shuttle service to and from the venue. Pickup point and schedule will be emailed closer to the event.
+                </p>
+              </div>
+            </button>
 
             {error && (
               <div className="rounded-xl px-4 py-3 text-sm" style={{ background: 'rgba(255,45,107,0.1)', border: '1px solid rgba(255,45,107,0.3)', color: '#ff6b8a' }}>
