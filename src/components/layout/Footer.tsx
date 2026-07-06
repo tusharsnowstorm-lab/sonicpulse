@@ -83,7 +83,6 @@ export default function Footer() {
                   press@sonicpulsefestival.com
                 </a>
               </li>
-              <li className="text-xs pt-1">Bashundhara, Dhaka, Bangladesh</li>
             </ul>
           </div>
 
@@ -107,7 +106,7 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 pt-6 border-t border-[var(--border)] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-[var(--text-muted)]">
           <span>© 2025 Dhaka Music Festival. All rights reserved.</span>
-          <span>Sonic Pulse — 25 September 2026 · Dhaka, BD</span>
+          <span>Sonic Pulse — 25 September 2026</span>
         </div>
       </div>
     </footer>

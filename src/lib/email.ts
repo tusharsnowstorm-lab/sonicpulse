@@ -85,7 +85,7 @@ export async function sendWelcomeEmail(email: string, name: string) {
   const html = wrap(`
     <h1 style="font-size:24px;font-weight:800;color:#050508;margin:0 0 12px;line-height:1.2;">Welcome, ${firstName}! 👋</h1>
     <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 14px;">
-      You're now registered for <strong style="color:#111;">Sonic Pulse</strong> — one of Dhaka's biggest outdoor music events on 25 September 2026.
+      You're now registered for <strong style="color:#111;">Sonic Pulse</strong> — Bangladesh's biggest outdoor music festival on 25 September 2026.
     </p>
     <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 20px;">
       To secure your spot, complete your profile and apply for a ticket. Make sure your <strong style="color:#111;">profile photo and NID details</strong> are ready — we verify all attendees before approval.
@@ -213,7 +213,7 @@ export async function sendApprovalEmail(
             <tr>
               <td style="padding:4px 0;">
                 <span style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;display:block;">Venue</span>
-                <span style="font-size:13px;color:#ffffff;font-weight:600;">Dhaka</span>
+                <span style="font-size:13px;color:#ffffff;font-weight:600;">Bangladesh</span>
               </td>
             </tr>
             <tr>

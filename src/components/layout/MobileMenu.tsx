@@ -194,7 +194,7 @@ export default function MobileMenu({ onClose }: Props) {
           className="text-center text-xs mt-1 tracking-widest uppercase"
           style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'var(--font-jetbrains-mono)' }}
         >
-          25 Sep 2026 · Dhaka
+          25 Sep 2026
         </p>
       </div>
     </div>

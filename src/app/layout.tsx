@@ -38,10 +38,10 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Sonic Pulse - Outdoor Music Festival, Dhaka',
-  description: "Two stages. 800+ festival-goers. Dawn till dusk. Sonic Pulse is Dhaka's largest outdoor music festival, presented by Dhaka Music Festival.",
+  title: 'Sonic Pulse - Outdoor Music Festival',
+  description: "Two stages. 800+ festival-goers. Dawn till dusk. Sonic Pulse is Bangladesh's largest outdoor music festival, presented by Dhaka Music Festival.",
   openGraph: {
-    title: 'Sonic Pulse - Outdoor Music Festival, Dhaka',
+    title: 'Sonic Pulse - Outdoor Music Festival',
     description: 'Two stages. 800+ festival-goers. Dawn till dusk.',
     type: 'website',
     locale: 'en_BD',

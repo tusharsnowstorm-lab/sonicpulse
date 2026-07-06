@@ -29,7 +29,6 @@ export default function Timetable() {
       'SUMMARY:Sonic Pulse — Dhaka Music Festival',
       'DTSTART:20251115T220000',
       'DTEND:20251116T060000',
-      'LOCATION:Bashundhara Open Grounds, Dhaka',
       'DESCRIPTION:Two stages. 800+ festival-goers. Dawn till dusk.',
       'END:VEVENT',
       'END:VCALENDAR',
