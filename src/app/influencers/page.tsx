@@ -238,16 +238,30 @@ export default function InfluencersPage() {
                 </div>
               </Field>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <Field label="ID type" required>
-                  <select style={inputStyle} value={form.id_type} onChange={set('id_type')}>
-                    {ID_TYPES.map((t) => <option key={t.value} value={t.value} style={{ background: '#16161F' }}>{t.label}</option>)}
-                  </select>
-                </Field>
-                <Field label="ID number" required>
-                  <input style={inputStyle} type="text" inputMode="numeric" value={form.id_number} onChange={set('id_number')} placeholder="Your ID number" />
-                </Field>
-              </div>
+              <Field label="ID type" required>
+                <div className="grid grid-cols-3 gap-2">
+                  {ID_TYPES.map((t) => (
+                    <button
+                      key={t.value}
+                      type="button"
+                      onClick={() => setForm((f) => ({ ...f, id_type: t.value }))}
+                      className="py-3 px-2 rounded-lg text-xs font-bold cursor-pointer transition-all"
+                      style={{
+                        background: form.id_type === t.value ? 'rgba(255,63,194,0.12)' : 'rgba(255,255,255,0.04)',
+                        border: form.id_type === t.value ? '2px solid var(--accent-magenta)' : '2px solid rgba(255,255,255,0.1)',
+                        color: form.id_type === t.value ? 'var(--accent-magenta)' : 'var(--text-muted)',
+                        letterSpacing: '0.03em',
+                      }}
+                    >
+                      {t.short}
+                    </button>
+                  ))}
+                </div>
+              </Field>
+
+              <Field label="ID number" required>
+                <input style={inputStyle} type="text" inputMode="numeric" value={form.id_number} onChange={set('id_number')} placeholder={selectedIdType.value === 'nid' ? '10 or 17 digit NID' : selectedIdType.value === 'passport' ? 'Passport number' : 'Certificate number'} />
+              </Field>
 
               <FileUpload
                 onChange={(f) => { setIdFile(f); if (f) setFileError(null) }}
