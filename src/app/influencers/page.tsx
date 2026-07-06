@@ -220,7 +220,7 @@ export default function InfluencersPage() {
 
               <Field label="Gender" required>
                 <div className="grid grid-cols-2 gap-3">
-                  {(['male', 'female'] as const).map((g) => (
+                  {(['female', 'male'] as const).map((g) => (
                     <button
                       key={g}
                       type="button"
