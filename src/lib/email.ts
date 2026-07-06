@@ -267,3 +267,91 @@ export async function sendApprovalEmail(
     html,
   })
 }
+
+// ── EMAIL 4: INFLUENCER APPLICATION RECEIVED ───────────────────────────────
+
+export async function sendInfluencerReceivedEmail(email: string, name: string) {
+  const firstName = name.split(' ')[0]
+  const html = wrap(`
+    <h1 style="font-size:24px;font-weight:800;color:#050508;margin:0 0 12px;line-height:1.2;">Application received ✅</h1>
+    <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 20px;">
+      Hi <strong style="color:#111;">${firstName}</strong>, we've received your media/influencer application for Sonic Pulse 2026. Our team will review it within <strong style="color:#111;">48 hours</strong>.
+    </p>
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#fff5fc;border:1px solid #ffd6f0;border-radius:8px;margin:0 0 20px;">
+      <tr><td style="padding:14px 16px;">
+        <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#9b1c7a;">🎤 Media Pass</p>
+        <p style="margin:0;font-size:13px;color:#555;line-height:1.6;">If approved, you'll receive a complimentary pass with your reference code by email. No payment required.</p>
+      </td></tr>
+    </table>
+    <p style="font-size:12px;color:#aaa;margin:0;">If you didn't submit this application, you can safely ignore this email.</p>
+  `)
+
+  await resend().emails.send({
+    from: FROM,
+    to: email,
+    subject: 'Your Sonic Pulse media application is under review',
+    html,
+  })
+}
+
+// ── EMAIL 5: INFLUENCER APPROVED ────────────────────────────────────────────
+
+export async function sendInfluencerApprovalEmail(email: string, name: string, referenceCode: string) {
+  const firstName = name.split(' ')[0]
+  const html = wrap(`
+    <h1 style="font-size:24px;font-weight:800;color:#050508;margin:0 0 12px;line-height:1.2;">You're approved, ${firstName}! 🎉</h1>
+    <p style="font-size:15px;color:#444;line-height:1.7;margin:0 0 20px;">
+      Your media/influencer pass for <strong style="color:#111;">Sonic Pulse 2026</strong> has been approved. Here's your complimentary ticket.
+    </p>
+
+    <!-- Ticket card -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#050508;border-radius:10px;overflow:hidden;margin:0 0 20px;">
+      <tr>
+        <td style="background:linear-gradient(135deg,#1a0021 0%,#2d0040 100%);padding:20px;text-align:center;border-bottom:1px solid #3d1060;">
+          <div style="font-size:13px;font-weight:900;letter-spacing:0.22em;color:#FF3FC2;">⚡ SONIC PULSE</div>
+          <div style="font-size:20px;font-weight:800;color:#ffffff;margin:8px 0 4px;">${name}</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;">Media / Influencer Pass</div>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:16px 20px;">
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="padding:4px 0;">
+                <span style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;display:block;">Date</span>
+                <span style="font-size:13px;color:#ffffff;font-weight:600;">25 September 2026</span>
+              </td>
+            </tr>
+            <tr>
+              <td style="padding:4px 0;">
+                <span style="font-size:10px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;display:block;">Reference Code</span>
+                <span style="font-size:14px;color:#FF3FC2;font-weight:900;font-family:monospace;letter-spacing:0.12em;">${referenceCode}</span>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0fff4;border:1px solid #86efac;border-radius:8px;margin:0 0 20px;">
+      <tr><td style="padding:14px 16px;">
+        <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#166534;">📋 At the gate</p>
+        <p style="margin:0;font-size:13px;color:#555;line-height:1.6;">Show this reference code to gate staff along with a valid photo ID matching your registration name.</p>
+      </td></tr>
+    </table>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#fff5fc;border:1px solid #ffd6f0;border-radius:8px;margin:0;">
+      <tr><td style="padding:14px 16px;">
+        <p style="margin:0 0 4px;font-size:13px;font-weight:700;color:#9b1c7a;">📸 Coverage guidelines</p>
+        <p style="margin:0;font-size:13px;color:#555;line-height:1.6;">Please tag <strong>@sonicpulsefestival</strong> in your content and let us know when you post. We'd love to share your coverage!</p>
+      </td></tr>
+    </table>
+  `)
+
+  await resend().emails.send({
+    from: FROM,
+    to: email,
+    subject: `✅ Media pass confirmed — Sonic Pulse 2026 · ${referenceCode}`,
+    html,
+  })
+}

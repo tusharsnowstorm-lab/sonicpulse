@@ -30,6 +30,7 @@ const quickLinks = [
   { href: '/lineup', label: 'Lineup' },
   { href: '/schedule', label: 'Schedule' },
   { href: '/tickets', label: 'Tickets' },
+  { href: '/influencers', label: 'Media Pass' },
   { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },
 ]
