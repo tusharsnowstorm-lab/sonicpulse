@@ -11,13 +11,17 @@
   --color-primary: #F0F0F8;
   --color-muted: #6B6B7E;
   --color-border: #1E1E2E;
-  --font-display: var(--font-space-grotesk), sans-serif;
-  --font-body: var(--font-inter), system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), monospace;
+  --font-display: var(--font-montserrat), sans-serif;
+  --font-body: var(--font-montserrat), system-ui, sans-serif;
+  --font-mono: var(--font-montserrat), monospace;
 }
 
 /* ── Design tokens ────────────────────────────────────────────── */
 :root {
+  /* All font roles map to Montserrat — weights handle visual hierarchy */
+  --font-inter: var(--font-montserrat);
+  --font-space-grotesk: var(--font-montserrat);
+  --font-jetbrains-mono: var(--font-montserrat);
   --bg-void: #050508;
   --bg-surface: #0D0D14;
   --bg-elevated: #16161F;
@@ -43,7 +47,7 @@ html {
 body {
   background-color: var(--bg-void);
   color: var(--text-primary);
-  font-family: var(--font-inter), system-ui, sans-serif;
+  font-family: var(--font-montserrat), system-ui, sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   /* Prevent horizontal overflow without breaking sticky/fixed elements */

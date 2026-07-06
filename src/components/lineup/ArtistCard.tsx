@@ -1,4 +1,5 @@
 ﻿import Link from 'next/link'
+import Image from 'next/image'
 import { Artist } from '@/data/artists'
 import Badge from '@/components/ui/Badge'
 
@@ -11,17 +12,29 @@ export default function ArtistCard({ artist, large = false }: Props) {
         hover:scale-[1.02] hover:shadow-[0_0_24px_rgba(0,240,255,0.15)]`}
       style={{ background: 'var(--bg-surface)', border: '1px solid var(--border)' }}
     >
-      {/* Photo placeholder */}
+      {/* Photo */}
       <div
-        className={`flex items-center justify-center ${large ? 'aspect-[4/3]' : 'aspect-square'} bg-[var(--bg-elevated)]`}
+        className={`relative ${large ? 'aspect-[4/3]' : 'aspect-square'} bg-[var(--bg-elevated)]`}
         style={{ borderBottom: '1px solid var(--border)' }}
       >
-        <span
-          className={`font-black ${large ? 'text-6xl' : 'text-4xl'} opacity-40`}
-          style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-electric)' }}
-        >
-          {artist.name.slice(0, 2).toUpperCase()}
-        </span>
+        {artist.image ? (
+          <Image
+            src={artist.image}
+            alt={artist.name}
+            fill
+            sizes={large ? '(max-width:768px) 100vw, 50vw' : '(max-width:768px) 50vw, 25vw'}
+            style={{ objectFit: 'cover' }}
+          />
+        ) : (
+          <div className="flex items-center justify-center w-full h-full">
+            <span
+              className={`font-black ${large ? 'text-6xl' : 'text-4xl'} opacity-40`}
+              style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--accent-electric)' }}
+            >
+              {artist.name.slice(0, 2).toUpperCase()}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Info */}

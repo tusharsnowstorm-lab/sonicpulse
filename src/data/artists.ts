@@ -6,10 +6,44 @@ export type Artist = {
   isHeadliner: boolean
   setTime: string
   bio?: string
+  image?: string
   socialLink?: string
 }
 
 export const artists: Artist[] = [
+  {
+    id: 'paytaraa',
+    name: 'Paytaraa',
+    stage: 'main',
+    genre: 'Electronic / Fusion',
+    isHeadliner: true,
+    setTime: '22:00–00:00',
+    bio: 'Raw emotion meets electronic architecture. Paytaraa blurs the line between folk memory and club culture — her sets move through silence and surge without warning.',
+    image: '/images/artists/paytaraa.svg',
+    socialLink: '#',
+  },
+  {
+    id: 'ishaqo',
+    name: 'Ishaqo',
+    stage: 'main',
+    genre: 'Hip-Hop / Electronic',
+    isHeadliner: true,
+    setTime: '00:00–02:00',
+    bio: 'Dense, layered, uncompromising. Ishaqo constructs sonic worlds from the ground up — rhythms that hit like architecture, hooks that linger for days.',
+    image: '/images/artists/ishaqo.svg',
+    socialLink: '#',
+  },
+  {
+    id: 'drip',
+    name: 'Drip',
+    stage: 'main',
+    genre: 'Trap / Electronic',
+    isHeadliner: true,
+    setTime: '02:00–04:00',
+    bio: 'Minimal in form, maximal in impact. Drip turns open air into a pressure chamber — every drop lands exactly where it needs to.',
+    image: '/images/artists/drip.svg',
+    socialLink: '#',
+  },
   {
     id: 'ravemaster-9000',
     name: 'Ravemaster 9000',
