@@ -49,6 +49,8 @@ type InfluencerApp = {
   phone: string
   id_type: string
   id_number: string
+  gender?: string
+  nid_file_path?: string
   instagram_handle: string
   tiktok_handle?: string
   youtube_channel?: string
@@ -387,6 +389,19 @@ function InfluencerRow({
   actionLoading: string | null
   onAction: (id: string, action: 'approved' | 'rejected') => void
 }) {
+  const [nidUrl, setNidUrl] = useState<string | null>(null)
+  const [loadingNid, setLoadingNid] = useState(false)
+
+  const handleViewId = async () => {
+    if (nidUrl) { window.open(nidUrl, '_blank'); return }
+    if (!app.nid_file_path) return
+    setLoadingNid(true)
+    const res = await fetch(`/api/admin/nid-url?path=${encodeURIComponent(app.nid_file_path)}`)
+    const json = await res.json()
+    if (json.url) { setNidUrl(json.url); window.open(json.url, '_blank') }
+    setLoadingNid(false)
+  }
+
   const date = new Date(app.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
 
   return (
@@ -419,15 +434,13 @@ function InfluencerRow({
             <p className="text-sm font-mono" style={{ color: 'var(--text-primary)' }}>{app.id_number}</p>
           </div>
           <div>
+            <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Gender</p>
+            <p className="text-sm capitalize" style={{ color: 'var(--text-primary)' }}>{app.gender || '—'}</p>
+          </div>
+          <div>
             <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Instagram</p>
             <a href={`https://instagram.com/${app.instagram_handle}`} target="_blank" rel="noopener noreferrer" className="text-sm hover:underline" style={{ color: 'var(--accent-magenta)' }}>@{app.instagram_handle}</a>
           </div>
-          {app.tiktok_handle && (
-            <div>
-              <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>TikTok</p>
-              <a href={`https://tiktok.com/@${app.tiktok_handle}`} target="_blank" rel="noopener noreferrer" className="text-sm hover:underline" style={{ color: 'var(--accent-magenta)' }}>@{app.tiktok_handle}</a>
-            </div>
-          )}
           <div>
             <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Platform</p>
             <p className="text-sm capitalize" style={{ color: 'var(--text-primary)' }}>{app.primary_platform}</p>
@@ -441,6 +454,12 @@ function InfluencerRow({
         )}
 
         <div className="flex items-center gap-3 flex-wrap">
+          {app.nid_file_path && (
+            <button onClick={handleViewId} disabled={loadingNid} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded cursor-pointer" style={{ background: 'rgba(0,240,255,0.08)', border: '1px solid rgba(0,240,255,0.25)', color: 'var(--accent-electric)' }}>
+              <ExternalLink size={12} />
+              {loadingNid ? 'Loading…' : `View ${ID_TYPE_LABELS[app.id_type] ?? 'ID'}`}
+            </button>
+          )}
           {app.status === 'pending' && (
             <>
               <button onClick={() => onAction(app.id, 'approved')} disabled={!!actionLoading} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded cursor-pointer font-semibold" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.35)', color: '#22c55e' }}>

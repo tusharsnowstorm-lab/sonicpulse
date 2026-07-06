@@ -2,11 +2,12 @@
 import React, { useState, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import FileUpload from '@/components/ui/FileUpload'
 
 const ID_TYPES = [
-  { value: 'nid', label: 'National ID (NID)' },
-  { value: 'passport', label: 'Passport' },
-  { value: 'birth_certificate', label: 'Birth Certificate' },
+  { value: 'nid', label: 'National ID (NID)', short: 'NID', docLabel: 'NID Document' },
+  { value: 'passport', label: 'Passport', short: 'Passport', docLabel: 'Passport Document' },
+  { value: 'birth_certificate', label: 'Birth Certificate', short: 'Birth Cert.', docLabel: 'Birth Certificate' },
 ]
 
 const PLATFORMS = [
@@ -38,6 +39,7 @@ type FormState = {
   phone: string
   id_type: string
   id_number: string
+  gender: string
   instagram_handle: string
   tiktok_handle: string
   youtube_channel: string
@@ -52,6 +54,7 @@ const EMPTY: FormState = {
   phone: '',
   id_type: 'nid',
   id_number: '',
+  gender: '',
   instagram_handle: '',
   tiktok_handle: '',
   youtube_channel: '',
@@ -96,6 +99,8 @@ function Field({ label, required, children }: { label: string; required?: boolea
 
 export default function InfluencersPage() {
   const [form, setForm] = useState<FormState>(EMPTY)
+  const [idFile, setIdFile] = useState<File | null>(null)
+  const [fileError, setFileError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
@@ -104,22 +109,40 @@ export default function InfluencersPage() {
   const set = (key: keyof FormState) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [key]: e.target.value }))
 
+  const selectedIdType = ID_TYPES.find((t) => t.value === form.id_type) ?? ID_TYPES[0]
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setFileError(null)
 
-    if (!form.full_name.trim() || !form.email.trim() || !form.phone.trim() || !form.id_number.trim() || !form.instagram_handle.trim() || !form.follower_count || !form.content_type) {
+    if (!form.full_name.trim() || !form.email.trim() || !form.phone.trim() || !form.id_number.trim() || !form.gender || !form.instagram_handle.trim() || !form.follower_count || !form.content_type) {
       setError('Please fill in all required fields.')
+      return
+    }
+    if (!idFile) {
+      setFileError(`${selectedIdType.docLabel} is required.`)
       return
     }
 
     setSubmitting(true)
     try {
-      const res = await fetch('/api/influencers', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      })
+      const fd = new FormData()
+      fd.append('full_name', form.full_name.trim())
+      fd.append('email', form.email.trim())
+      fd.append('phone', form.phone.trim())
+      fd.append('id_type', form.id_type)
+      fd.append('id_number', form.id_number.trim())
+      fd.append('gender', form.gender)
+      fd.append('instagram_handle', form.instagram_handle.trim().replace('@', ''))
+      fd.append('tiktok_handle', form.tiktok_handle.trim().replace('@', ''))
+      fd.append('youtube_channel', form.youtube_channel.trim())
+      fd.append('primary_platform', form.primary_platform)
+      fd.append('follower_count', form.follower_count)
+      fd.append('content_type', form.content_type)
+      fd.append('id_file', idFile)
+
+      const res = await fetch('/api/influencers', { method: 'POST', body: fd })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error ?? 'Submission failed')
       setSubmitted(true)
@@ -159,7 +182,7 @@ export default function InfluencersPage() {
             Cover Sonic <span style={{ color: 'var(--accent-magenta)' }}>Pulse</span>
           </h1>
           <p className="text-sm sm:text-base leading-relaxed max-w-[480px] mx-auto" style={{ color: 'var(--text-muted)' }}>
-            We partner with a select group of creators to share the experience. If you cover music, nightlife, or culture — apply for a complimentary media pass.
+            We partner with a select group of creators to share the experience. Apply for a complimentary media pass below.
           </p>
         </div>
 
@@ -171,16 +194,13 @@ export default function InfluencersPage() {
             <p className="text-sm leading-relaxed mb-6" style={{ color: 'var(--text-muted)' }}>
               We&apos;ve received your application and will review it within 48 hours. If approved, your media pass will be emailed to <strong style={{ color: 'var(--text-primary)' }}>{form.email}</strong>.
             </p>
-            <Link
-              href="/"
-              className="inline-block px-6 py-3 rounded-xl text-sm font-bold"
-              style={{ background: 'var(--accent-magenta)', color: '#fff' }}
-            >
+            <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-bold" style={{ background: 'var(--accent-magenta)', color: '#fff' }}>
               Back to homepage
             </Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6" noValidate>
+
             {/* Personal info */}
             <div className="rounded-2xl p-6 space-y-5" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
               <p className="text-xs font-bold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>Personal Info</p>
@@ -198,6 +218,26 @@ export default function InfluencersPage() {
                 </Field>
               </div>
 
+              <Field label="Gender" required>
+                <div className="grid grid-cols-2 gap-3">
+                  {(['male', 'female'] as const).map((g) => (
+                    <button
+                      key={g}
+                      type="button"
+                      onClick={() => setForm((f) => ({ ...f, gender: g }))}
+                      className="py-3 rounded-lg text-sm font-semibold cursor-pointer transition-all"
+                      style={{
+                        background: form.gender === g ? 'rgba(255,63,194,0.12)' : 'rgba(255,255,255,0.04)',
+                        border: form.gender === g ? '2px solid var(--accent-magenta)' : '2px solid rgba(255,255,255,0.1)',
+                        color: form.gender === g ? 'var(--accent-magenta)' : 'var(--text-muted)',
+                      }}
+                    >
+                      {g.charAt(0).toUpperCase() + g.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </Field>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                 <Field label="ID type" required>
                   <select style={inputStyle} value={form.id_type} onChange={set('id_type')}>
@@ -208,6 +248,12 @@ export default function InfluencersPage() {
                   <input style={inputStyle} type="text" inputMode="numeric" value={form.id_number} onChange={set('id_number')} placeholder="Your ID number" />
                 </Field>
               </div>
+
+              <FileUpload
+                onChange={(f) => { setIdFile(f); if (f) setFileError(null) }}
+                error={fileError ?? undefined}
+                label={selectedIdType.docLabel}
+              />
             </div>
 
             {/* Social media */}
