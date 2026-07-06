@@ -18,6 +18,12 @@ const policies = [
     section: 'Prohibited',
     items: [
       {
+        icon: '🔊',
+        title: 'No personal speakers allowed',
+        body: 'All kinds of personal speakers are banned inside the venue. The festival provides a professional sound system — bringing your own disrupts the experience for everyone around you.',
+        tag: { label: 'Not permitted', variant: 'warning' as const },
+      },
+      {
         icon: '🚫',
         title: 'No narcotics or alcohol',
         body: 'Bringing or consuming narcotics, illegal substances, or alcohol anywhere on the premises is strictly prohibited. Attendees suspected of being intoxicated may be denied entry or removed.',
