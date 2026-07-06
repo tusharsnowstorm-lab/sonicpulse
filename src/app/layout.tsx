@@ -26,6 +26,8 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
+  viewportFit: 'cover',
+  themeColor: '#050508',
 }
 
 export const metadata: Metadata = {
@@ -39,6 +41,16 @@ export const metadata: Metadata = {
     siteName: 'Sonic Pulse',
   },
   robots: { index: true, follow: true },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Sonic Pulse',
+  },
+  formatDetection: {
+    telephone: false,
+    email: false,
+    address: false,
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -48,7 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-screen flex flex-col overflow-x-hidden" suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col" suppressHydrationWarning>
         {children}
       </body>
     </html>

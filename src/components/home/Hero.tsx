@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useRef } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import { ChevronDown } from 'lucide-react'
@@ -8,7 +9,6 @@ export default function Hero() {
   const bgRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    // Parallax only on non-touch / desktop — skip on mobile to avoid jank
     const mq = window.matchMedia('(hover: hover) and (min-width: 768px)')
     if (!mq.matches) return
 
@@ -27,20 +27,22 @@ export default function Hero() {
       style={{ minHeight: '100svh' }}
       aria-label="Sonic Pulse hero"
     >
-      {/* Parallax background */}
+      {/* Parallax background — Next.js Image handles WebP conversion + preload */}
       <div
         ref={bgRef}
         className="absolute inset-0 will-change-transform"
-        style={{
-          backgroundImage: 'url(/images/hero-visual.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center center',
-          backgroundRepeat: 'no-repeat',
-          top: '-15%',
-          bottom: '-15%',
-        }}
+        style={{ top: '-15%', bottom: '-15%' }}
         aria-hidden="true"
-      />
+      >
+        <Image
+          src="/images/hero-visual.jpg"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          style={{ objectFit: 'cover', objectPosition: 'center' }}
+        />
+      </div>
 
       {/* Dark overlay */}
       <div
@@ -50,7 +52,7 @@ export default function Hero() {
             rgba(5,5,8,0.62) 0%,
             rgba(5,5,8,0.45) 40%,
             rgba(5,5,8,0.45) 60%,
-            rgba(5,5,8,0.80) 100%
+            rgba(5,5,8,0.82) 100%
           )`,
         }}
         aria-hidden="true"
@@ -100,7 +102,7 @@ export default function Hero() {
           </Link>
           <Link
             href="/lineup"
-            className="text-sm font-bold tracking-widest uppercase transition-colors duration-150"
+            className="text-sm font-bold tracking-widest uppercase"
             style={{ color: 'rgba(255,255,255,0.95)', fontFamily: 'var(--font-jetbrains-mono)', textShadow: '0 0 20px rgba(255,255,255,0.4)' }}
           >
             VIEW LINEUP ↓

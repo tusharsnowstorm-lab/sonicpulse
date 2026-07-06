@@ -62,6 +62,9 @@ export default function MobileMenu({ onClose }: Props) {
         backgroundImage: 'url(/images/hero-poster.webp)',
         backgroundSize: 'cover',
         backgroundPosition: 'center top',
+        overscrollBehavior: 'none',
+        paddingTop: 'env(safe-area-inset-top)',
+        paddingBottom: 'env(safe-area-inset-bottom)',
       }}
     >
       {/* Dark overlay */}
@@ -69,8 +72,8 @@ export default function MobileMenu({ onClose }: Props) {
 
       {/* Header */}
       <div
-        className="relative z-10 flex items-center justify-between px-5 h-16 shrink-0"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
+        className="relative z-10 flex items-center justify-between px-5 shrink-0"
+        style={{ height: '4rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}
       >
         <div className="flex items-center gap-2.5">
           <Image

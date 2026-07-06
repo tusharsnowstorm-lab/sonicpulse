@@ -60,15 +60,16 @@ export default function Navbar() {
   return (
     <>
       <header
-        className="fixed top-0 left-0 right-0 z-40 h-16"
+        className="fixed top-0 left-0 right-0 z-40"
         style={{
           background: 'rgba(5,5,8,0.85)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
           borderBottom: '1px solid var(--border)',
+          paddingTop: 'env(safe-area-inset-top)',
         }}
       >
-        <div className="max-w-[1200px] mx-auto px-4 h-full flex items-center justify-between">
+        <div className="max-w-[1200px] mx-auto px-4 h-16 flex items-center justify-between">
           {/* Logo */}
           <Link href="/" className="shrink-0 flex items-center gap-2.5">
             <Image
@@ -146,7 +147,7 @@ export default function Navbar() {
         </div>
       </header>
 
-      <div className="h-16" aria-hidden="true" />
+      <div style={{ height: 'calc(4rem + env(safe-area-inset-top))' }} aria-hidden="true" />
 
       {menuOpen && <MobileMenu onClose={() => setMenuOpen(false)} />}
     </>

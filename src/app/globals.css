@@ -32,7 +32,12 @@
 /* ── Base reset ───────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  /* Prevent iOS from inflating font sizes on rotation */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
 
 body {
   background-color: var(--bg-void);
@@ -40,6 +45,16 @@ body {
   font-family: var(--font-inter), system-ui, sans-serif;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  /* Prevent horizontal overflow without breaking sticky/fixed elements */
+  overflow-x: clip;
+}
+
+/* Remove grey tap flash on Android and iOS */
+* { -webkit-tap-highlight-color: transparent; }
+
+/* Kill 300ms tap delay on all interactive elements */
+button, a, [role="button"], input, select, textarea, label {
+  touch-action: manipulation;
 }
 
 /* ── Focus ring ───────────────────────────────────────────────── */
@@ -50,7 +65,7 @@ body {
 }
 
 /* ── Prevent horizontal overflow on all pages ────────────────── */
-html, body { max-width: 100%; overflow-x: hidden; }
+html, body { max-width: 100%; }
 
 /* ── Scrollbar ────────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
