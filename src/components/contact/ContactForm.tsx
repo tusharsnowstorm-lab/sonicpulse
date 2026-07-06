@@ -15,9 +15,9 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 const inputClass = `
-  w-full px-4 py-3 rounded-[4px] text-sm
+  w-full px-4 py-3 rounded-xl text-sm
   bg-[var(--bg-elevated)] border border-[var(--border)]
-  text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-electric)]
+  text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent-magenta)]
   transition-colors duration-150 placeholder:text-[var(--text-muted)]
 `
 
@@ -47,13 +47,13 @@ export default function ContactForm() {
   if (submitState === 'success') {
     return (
       <div
-        className="p-8 rounded-[4px] text-center"
-        style={{ background: 'var(--bg-surface)', border: '1px solid var(--accent-electric)' }}
+        className="p-8 rounded-2xl text-center"
+        style={{ background: 'var(--bg-surface)', border: '1px solid var(--accent-magenta)' }}
         aria-live="polite"
       >
         <p
           className="text-xl font-black mb-2"
-          style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-electric)' }}
+          style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-magenta)' }}
         >
           Message sent.
         </p>

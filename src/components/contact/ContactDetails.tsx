@@ -13,10 +13,10 @@ function CopyEmail({ email }: { email: string }) {
 
   return (
     <div className="flex items-center gap-2">
-      <a href={`mailto:${email}`} className="text-sm hover:text-[var(--accent-electric)] transition-colors" style={{ color: 'var(--text-primary)' }}>
+      <a href={`mailto:${email}`} className="text-sm hover:text-[var(--accent-magenta)] transition-colors" style={{ color: 'var(--text-primary)' }}>
         {email}
       </a>
-      <button onClick={copy} className="p-1 text-[var(--text-muted)] hover:text-[var(--accent-electric)] transition-colors" aria-label="Copy email">
+      <button onClick={copy} className="p-1 text-[var(--text-muted)] hover:text-[var(--accent-magenta)] transition-colors" aria-label="Copy email">
         {copied ? <Check size={14} /> : <Copy size={14} />}
       </button>
     </div>
@@ -27,7 +27,7 @@ export default function ContactDetails() {
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="text-xs font-bold tracking-[0.3em] uppercase mb-4" style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--accent-volt)' }}>
+        <h3 className="text-xs font-bold tracking-[0.3em] uppercase mb-4" style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--text-muted)' }}>
           General Inquiries
         </h3>
         <CopyEmail email="hello@sonicpulsefestival.com" />
@@ -35,14 +35,14 @@ export default function ContactDetails() {
       </div>
 
       <div>
-        <h3 className="text-xs font-bold tracking-[0.3em] uppercase mb-4" style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--accent-volt)' }}>
+        <h3 className="text-xs font-bold tracking-[0.3em] uppercase mb-4" style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--text-muted)' }}>
           Press & Media
         </h3>
         <CopyEmail email="press@sonicpulsefestival.com" />
       </div>
 
       <div>
-        <h3 className="text-xs font-bold tracking-[0.3em] uppercase mb-4" style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--accent-volt)' }}>
+        <h3 className="text-xs font-bold tracking-[0.3em] uppercase mb-4" style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--text-muted)' }}>
           WhatsApp
         </h3>
         <a
@@ -50,7 +50,7 @@ export default function ContactDetails() {
           target="_blank"
           rel="noopener noreferrer"
           className="text-sm transition-colors"
-          style={{ color: 'var(--accent-electric)' }}
+          style={{ color: 'var(--accent-magenta)' }}
         >
           +880 1700 000 000 →
         </a>
@@ -58,7 +58,7 @@ export default function ContactDetails() {
       </div>
 
       <div>
-        <h3 className="text-xs font-bold tracking-[0.3em] uppercase mb-4" style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--accent-volt)' }}>
+        <h3 className="text-xs font-bold tracking-[0.3em] uppercase mb-4" style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--text-muted)' }}>
           Instagram
         </h3>
         <a
@@ -66,7 +66,7 @@ export default function ContactDetails() {
           target="_blank"
           rel="noopener noreferrer"
           className="text-sm transition-colors"
-          style={{ color: 'var(--accent-electric)' }}
+          style={{ color: 'var(--accent-magenta)' }}
         >
           @sonicpulsefestival →
         </a>

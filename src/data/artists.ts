@@ -12,14 +12,14 @@ export type Artist = {
 
 export const artists: Artist[] = [
   {
-    id: 'paytaraa',
-    name: 'Paytaraa',
+    id: 'psytaraa',
+    name: 'Psytaraa',
     stage: 'main',
     genre: 'Electronic / Fusion',
     isHeadliner: true,
     setTime: '22:00–00:00',
-    bio: 'Raw emotion meets electronic architecture. Paytaraa blurs the line between folk memory and club culture — her sets move through silence and surge without warning.',
-    image: '/images/artists/paytaraa.svg',
+    bio: 'Raw emotion meets electronic architecture. Psytaraa blurs the line between folk memory and club culture — her sets move through silence and surge without warning.',
+    image: '/images/artists/psytaraa.svg',
     socialLink: '#',
   },
   {
@@ -52,6 +52,7 @@ export const artists: Artist[] = [
     isHeadliner: true,
     setTime: '01:00–03:00',
     bio: 'Berlin-trained, Dhaka-born. Peak-hour techno built for open skies.',
+    image: '/images/artists/ravemaster-9000.svg',
     socialLink: '#',
   },
   {
@@ -62,6 +63,7 @@ export const artists: Artist[] = [
     isHeadliner: true,
     setTime: '03:00–05:00',
     bio: 'The closing set you will not forget. Industrial rhythms meet acid basslines.',
+    image: '/images/artists/neon-dhaka.svg',
     socialLink: '#',
   },
   {
@@ -71,6 +73,7 @@ export const artists: Artist[] = [
     genre: 'House',
     isHeadliner: false,
     setTime: '23:00–01:00',
+    image: '/images/artists/subzero-fx.svg',
     socialLink: '#',
   },
   {
@@ -80,6 +83,7 @@ export const artists: Artist[] = [
     genre: 'Techno',
     isHeadliner: false,
     setTime: '22:00–23:00',
+    image: '/images/artists/volta-dhaka.svg',
     socialLink: '#',
   },
   {
@@ -89,6 +93,7 @@ export const artists: Artist[] = [
     genre: 'Melodic Techno',
     isHeadliner: false,
     setTime: '22:00–00:00',
+    image: '/images/artists/aurora-wave.svg',
     socialLink: '#',
   },
   {
@@ -98,6 +103,7 @@ export const artists: Artist[] = [
     genre: 'Ambient House',
     isHeadliner: false,
     setTime: '00:00–02:00',
+    image: '/images/artists/pulse-echo.svg',
     socialLink: '#',
   },
   {
@@ -107,6 +113,7 @@ export const artists: Artist[] = [
     genre: 'Deep House',
     isHeadliner: false,
     setTime: '02:00–04:00',
+    image: '/images/artists/solar-drift.svg',
     socialLink: '#',
   },
   {
@@ -116,6 +123,7 @@ export const artists: Artist[] = [
     genre: 'Melodic House',
     isHeadliner: false,
     setTime: '04:00–06:00',
+    image: '/images/artists/dawnbreak.svg',
     socialLink: '#',
   },
 ]

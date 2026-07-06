@@ -38,7 +38,7 @@ export default function FAQList() {
           <section key={category}>
             <h2
               className="text-xs font-bold tracking-[0.3em] uppercase mb-4"
-              style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--accent-volt)' }}
+              style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--text-muted)' }}
             >
               {category}
             </h2>

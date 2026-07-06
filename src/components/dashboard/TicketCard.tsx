@@ -317,6 +317,7 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
       <div class="disclaimer">This ticket is valid for one entry only. It will be scanned and marked as used upon first entry.</div>
       <div class="disclaimer">A wristband will be issued on entry. The wristband must remain on at all times and cannot be removed without cutting. It serves as proof of entry for re-admission.</div>
       <div class="disclaimer">Your ticket QR code will be scanned each time you enter or exit the venue. Present your wristband for re-entry after exiting.</div>
+      <div class="disclaimer">Parking is not available inside the venue. All vehicles must be parked outside the venue premises. Sonic Pulse is not responsible for any loss or damage to vehicles.</div>
       <div class="disclaimer">Sonic Pulse reserves the right to refuse entry. No refunds will be issued for refused entry due to policy violations.</div>
     </div>
   </div>

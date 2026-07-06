@@ -101,7 +101,7 @@ function PolicyRow({ icon, title, body, tag }: {
           size={16}
           className="shrink-0 transition-transform duration-200"
           style={{
-            color: open ? 'var(--accent-electric)' : 'var(--text-muted)',
+            color: open ? 'var(--accent-magenta)' : 'var(--text-muted)',
             transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
           }}
         />

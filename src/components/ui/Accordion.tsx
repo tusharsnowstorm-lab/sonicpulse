@@ -14,7 +14,7 @@ export function AccordionItem({ question, answer, defaultOpen = false }: Accordi
   return (
     <div
       className="border-b border-[var(--border)]"
-      style={open ? { borderLeft: '2px solid var(--accent-electric)', paddingLeft: '12px' } : {}}
+      style={open ? { borderLeft: '2px solid var(--accent-magenta)', paddingLeft: '12px' } : {}}
     >
       <button
         className="w-full flex items-center justify-between gap-4 py-5 text-left cursor-pointer"
@@ -28,7 +28,7 @@ export function AccordionItem({ question, answer, defaultOpen = false }: Accordi
           size={18}
           className="shrink-0 transition-transform duration-250"
           style={{
-            color: open ? 'var(--accent-electric)' : 'var(--text-muted)',
+            color: open ? 'var(--accent-magenta)' : 'var(--text-muted)',
             transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
           }}
         />

@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <defs>
+    <radialGradient id="bg-p" cx="40%" cy="60%" r="70%">
+      <stop offset="0%" stop-color="#1a0520"/>
+      <stop offset="100%" stop-color="#050508"/>
+    </radialGradient>
+    <radialGradient id="glow-p" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FF3FC2" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#FF3FC2" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="spot-p" cx="50%" cy="35%" r="40%">
+      <stop offset="0%" stop-color="#D633E0" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#D633E0" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur-p">
+      <feGaussianBlur stdDeviation="32"/>
+    </filter>
+  </defs>
+  <rect width="800" height="800" fill="url(#bg-p)"/>
+  <ellipse cx="400" cy="580" rx="340" ry="220" fill="url(#glow-p)" filter="url(#blur-p)"/>
+  <ellipse cx="320" cy="220" rx="260" ry="200" fill="url(#spot-p)" filter="url(#blur-p)"/>
+  <line x1="0" y1="400" x2="800" y2="400" stroke="#FF3FC2" stroke-opacity="0.06" stroke-width="1"/>
+  <line x1="400" y1="0" x2="400" y2="800" stroke="#FF3FC2" stroke-opacity="0.06" stroke-width="1"/>
+  <circle cx="400" cy="400" r="280" fill="none" stroke="#FF3FC2" stroke-opacity="0.07" stroke-width="1"/>
+  <circle cx="400" cy="400" r="180" fill="none" stroke="#D633E0" stroke-opacity="0.09" stroke-width="1"/>
+  <circle cx="400" cy="400" r="90" fill="none" stroke="#FF3FC2" stroke-opacity="0.12" stroke-width="1"/>
+  <g opacity="0.18">
+    <rect x="60" y="700" width="8" height="40" fill="#FF3FC2" rx="4"/>
+    <rect x="78" y="685" width="8" height="55" fill="#FF3FC2" rx="4"/>
+    <rect x="96" y="695" width="8" height="45" fill="#FF3FC2" rx="4"/>
+    <rect x="114" y="675" width="8" height="65" fill="#FF3FC2" rx="4"/>
+    <rect x="132" y="690" width="8" height="50" fill="#FF3FC2" rx="4"/>
+    <rect x="150" y="680" width="8" height="60" fill="#FF3FC2" rx="4"/>
+    <rect x="168" y="700" width="8" height="40" fill="#FF3FC2" rx="4"/>
+    <rect x="186" y="688" width="8" height="52" fill="#FF3FC2" rx="4"/>
+    <rect x="204" y="705" width="8" height="35" fill="#FF3FC2" rx="4"/>
+    <rect x="222" y="678" width="8" height="62" fill="#FF3FC2" rx="4"/>
+  </g>
+  <text x="400" y="420" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="100" letter-spacing="-2" fill="#F0F0F8" opacity="0.95">PSYTARAA</text>
+  <rect x="160" y="440" width="480" height="3" fill="#FF3FC2" opacity="0.7" rx="2"/>
+  <text x="400" y="490" text-anchor="middle" font-family="monospace" font-size="18" letter-spacing="8" fill="#FF3FC2" opacity="0.75">HEADLINER · MAIN STAGE</text>
+</svg>

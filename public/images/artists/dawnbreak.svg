@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#050508"/>
+      <stop offset="60%" stop-color="#0a0a10"/>
+      <stop offset="100%" stop-color="#1a0e05"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="50%" cy="55%" r="35%">
+      <stop offset="0%" stop-color="#FFD700" stop-opacity="0.18"/>
+      <stop offset="60%" stop-color="#FF8C00" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#FF8C00" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="28"/></filter>
+  </defs>
+  <rect width="800" height="800" fill="url(#bg)"/>
+  <ellipse cx="400" cy="460" rx="280" ry="200" fill="url(#sun)" filter="url(#blur)"/>
+  <line x1="0" y1="480" x2="800" y2="480" stroke="#FFD700" stroke-opacity="0.08" stroke-width="1"/>
+  <path d="M100,480 Q250,360 400,480 Q550,360 700,480" fill="none" stroke="#FFD700" stroke-opacity="0.07" stroke-width="1.5"/>
+  <path d="M100,520 Q250,400 400,520 Q550,400 700,520" fill="none" stroke="#FF8C00" stroke-opacity="0.06" stroke-width="1"/>
+  <circle cx="400" cy="460" r="60" fill="none" stroke="#FFD700" stroke-opacity="0.12" stroke-width="1.5"/>
+  <circle cx="400" cy="460" r="30" fill="none" stroke="#FFD700" stroke-opacity="0.18" stroke-width="1.5"/>
+  <text x="400" y="390" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="88" letter-spacing="-1" fill="#F0F0F8" opacity="0.95">DAWN</text>
+  <text x="400" y="475" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="88" letter-spacing="2" fill="#FFD700" opacity="0.85">BREAK</text>
+  <rect x="195" y="493" width="410" height="2" fill="#FFD700" opacity="0.4" rx="1"/>
+  <text x="400" y="529" text-anchor="middle" font-family="monospace" font-size="14" letter-spacing="7" fill="#FFD700" opacity="0.55">SUNRISE STAGE</text>
+</svg>
