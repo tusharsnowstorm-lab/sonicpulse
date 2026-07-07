@@ -54,8 +54,8 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
           style={{ borderBottom: '1px solid var(--border)', background: 'rgba(255,63,194,0.05)' }}
         >
           <div className="flex items-center gap-2.5">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--accent-volt)' }}><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-            <span className="font-bold text-sm" style={{ color: 'var(--accent-volt)', fontFamily: 'var(--font-space-grotesk)' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--accent-magenta)' }}><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            <span className="font-bold text-sm" style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-montserrat)' }}>
               Important — Before you submit
             </span>
           </div>
@@ -75,7 +75,7 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
             <p style={{ color: 'rgba(240,240,248,0.8)' }}>
               If your Instagram account is <strong style={{ color: 'var(--text-primary)' }}>private</strong>, you will receive a follow request from:
             </p>
-            <p className="text-base font-bold tracking-wide" style={{ color: 'var(--accent-volt)', fontFamily: 'var(--font-jetbrains-mono)' }}>
+            <p className="text-base font-bold tracking-wide" style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-montserrat)' }}>
               @dhakamusicfestival
             </p>
             <p style={{ color: 'rgba(240,240,248,0.65)' }}>
@@ -111,7 +111,7 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
             type="button"
             onClick={onCancel}
             className="w-full sm:w-auto px-4 py-3 rounded text-sm cursor-pointer"
-            style={{ border: '1px solid var(--border)', color: 'var(--text-muted)' }}
+            style={{ border: '1px solid var(--border)', color: 'var(--text-muted)', fontFamily: 'var(--font-montserrat)' }}
           >
             Go back
           </button>
@@ -124,6 +124,7 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
               background: checked ? 'var(--accent-magenta)' : 'rgba(255,63,194,0.15)',
               color: checked ? '#050508' : 'rgba(255,63,194,0.35)',
               cursor: checked ? 'pointer' : 'not-allowed',
+              fontFamily: 'var(--font-montserrat)',
             }}
           >
             I understand — Submit ticket
@@ -244,7 +245,7 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
     textTransform: 'uppercase',
     color: 'var(--text-muted)',
     marginBottom: 6,
-    fontFamily: 'var(--font-jetbrains-mono)',
+    fontFamily: 'var(--font-montserrat)',
   }
 
   const profileIdOption = ID_TYPE_OPTIONS.find((o) => o.value === (profile?.id_type ?? 'nid')) ?? ID_TYPE_OPTIONS[0]
