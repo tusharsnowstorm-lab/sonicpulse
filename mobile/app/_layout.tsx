@@ -4,7 +4,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
-import { theme } from '@/theme';
+import { fonts, theme } from '@/theme';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -17,6 +17,11 @@ export const unstable_settings = {
 
 // The whole brand is a single dark identity (void background, magenta accent) —
 // the website has no light mode, so the app doesn't adapt to system scheme either.
+//
+// React Navigation renders native headers (e.g. the Verify screen's title)
+// through its own theme.fonts, bypassing AppText entirely — every weight
+// here has to be overridden or that one title silently falls back to the
+// system font while everything else is Montserrat.
 const navigationTheme = {
   ...DarkTheme,
   colors: {
@@ -26,6 +31,12 @@ const navigationTheme = {
     card: theme.surface,
     text: theme.primary,
     border: theme.border,
+  },
+  fonts: {
+    regular: { fontFamily: fonts.regular, fontWeight: '400' as const },
+    medium: { fontFamily: fonts.medium, fontWeight: '400' as const },
+    bold: { fontFamily: fonts.bold, fontWeight: '400' as const },
+    heavy: { fontFamily: fonts.black, fontWeight: '400' as const },
   },
 };
 
