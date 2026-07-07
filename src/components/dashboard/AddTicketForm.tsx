@@ -39,6 +39,7 @@ type Profile = {
 
 function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
   const [checked, setChecked] = useState(false)
+  const [expanded, setExpanded] = useState(false)
 
   return (
     <div
@@ -46,45 +47,48 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
       style={{ background: 'rgba(5,5,8,0.85)', backdropFilter: 'blur(8px)' }}
     >
       <div
-        className="w-full max-w-md rounded-xl overflow-hidden"
+        className="w-full max-w-sm rounded-2xl overflow-hidden"
         style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
       >
-        <div
-          className="flex items-center justify-between px-5 py-4"
-          style={{ borderBottom: '1px solid var(--border)', background: 'rgba(255,63,194,0.05)' }}
-        >
-          <div className="flex items-center gap-2.5">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: 'var(--accent-magenta)' }}><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-            <span className="font-bold text-sm" style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-montserrat)' }}>
-              Important — Before you submit
-            </span>
-          </div>
-          <button type="button" onClick={onCancel} className="p-1 rounded cursor-pointer" style={{ color: 'var(--text-muted)' }}>
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid var(--border)' }}>
+          <span className="font-bold text-sm" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-montserrat)' }}>
+            Private Instagram?
+          </span>
+          <button type="button" onClick={onCancel} className="p-1 rounded cursor-pointer" style={{ color: 'var(--text-muted)', touchAction: 'manipulation' }}>
             <X size={16} />
           </button>
         </div>
 
+        {/* Body */}
         <div className="px-5 py-5 space-y-4">
-          <p className="text-sm leading-relaxed" style={{ color: 'var(--text-primary)' }}>
-            As part of the ticket approval process, we verify attendees via Instagram.
+          {/* Core message */}
+          <p className="text-sm" style={{ color: 'rgba(240,240,248,0.8)', fontFamily: 'var(--font-montserrat)', lineHeight: 1.5 }}>
+            Accept <strong style={{ color: 'var(--accent-magenta)' }}>@dhakamusicfestival</strong>'s follow request or your ticket won't be approved.
           </p>
-          <div
-            className="rounded-lg px-4 py-4 text-sm space-y-2"
-            style={{ background: 'rgba(255,63,194,0.06)', border: '1px solid rgba(255,63,194,0.2)' }}
-          >
-            <p style={{ color: 'rgba(240,240,248,0.8)' }}>
-              If your Instagram account is <strong style={{ color: 'var(--text-primary)' }}>private</strong>, you will receive a follow request from:
-            </p>
-            <p className="text-base font-bold tracking-wide" style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-montserrat)' }}>
-              @dhakamusicfestival
-            </p>
-            <p style={{ color: 'rgba(240,240,248,0.65)' }}>
-              You <strong style={{ color: 'var(--text-primary)' }}>must accept</strong> this follow request for your ticket to be approved. Ignoring it will result in your ticket not being verified.
-            </p>
-          </div>
 
-          <label className="flex items-start gap-3 cursor-pointer select-none" style={{ touchAction: 'manipulation' }}>
-            <div className="relative mt-0.5 shrink-0">
+          {/* Expandable detail */}
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="text-xs flex items-center gap-1.5 cursor-pointer"
+            style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-montserrat)', touchAction: 'manipulation', background: 'none', border: 'none', padding: 0 }}
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style={{ transform: expanded ? 'rotate(90deg)' : 'none', transition: 'transform 0.15s' }}>
+              <path d="M4 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            How does this work?
+          </button>
+
+          {expanded && (
+            <p className="text-xs leading-relaxed" style={{ color: 'rgba(240,240,248,0.5)', fontFamily: 'var(--font-montserrat)' }}>
+              We verify attendees via Instagram. Private accounts receive a follow request from <strong style={{ color: 'var(--text-primary)' }}>@dhakamusicfestival</strong> — accept it to complete approval.
+            </p>
+          )}
+
+          {/* Checkbox */}
+          <label className="flex items-center gap-3 cursor-pointer select-none" style={{ touchAction: 'manipulation' }}>
+            <div className="shrink-0">
               <input type="checkbox" checked={checked} onChange={(e) => setChecked(e.target.checked)} className="sr-only" />
               <div
                 className="w-5 h-5 rounded flex items-center justify-center transition-colors"
@@ -100,34 +104,37 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
                 )}
               </div>
             </div>
-            <span className="text-sm leading-relaxed" style={{ color: 'rgba(240,240,248,0.7)' }}>
-              I understand that if my Instagram is private, I must accept the follow request from <strong style={{ color: 'var(--text-primary)' }}>@dhakamusicfestival</strong> to complete my ticket approval.
+            <span className="text-sm" style={{ color: 'rgba(240,240,248,0.75)', fontFamily: 'var(--font-montserrat)' }}>
+              I understand
             </span>
           </label>
         </div>
 
-        <div className="px-5 py-4 flex flex-col sm:flex-row gap-3" style={{ borderTop: '1px solid var(--border)' }}>
+        {/* Actions */}
+        <div className="px-5 pb-5 flex gap-3">
           <button
             type="button"
             onClick={onCancel}
-            className="w-full sm:w-auto px-4 py-3 rounded text-sm cursor-pointer"
-            style={{ border: '1px solid var(--border)', color: 'var(--text-muted)', fontFamily: 'var(--font-montserrat)' }}
+            className="flex-1 py-3 rounded-xl text-sm cursor-pointer"
+            style={{ border: '1px solid var(--border)', color: 'var(--text-muted)', fontFamily: 'var(--font-montserrat)', background: 'transparent', touchAction: 'manipulation' }}
           >
-            Go back
+            Back
           </button>
           <button
             type="button"
             onClick={onConfirm}
             disabled={!checked}
-            className="w-full sm:flex-1 px-4 py-3 rounded text-sm font-bold transition-all"
+            className="flex-1 py-3 rounded-xl text-sm font-bold transition-all"
             style={{
               background: checked ? 'var(--accent-magenta)' : 'rgba(255,63,194,0.15)',
               color: checked ? '#050508' : 'rgba(255,63,194,0.35)',
               cursor: checked ? 'pointer' : 'not-allowed',
               fontFamily: 'var(--font-montserrat)',
+              border: 'none',
+              touchAction: 'manipulation',
             }}
           >
-            I understand — Submit ticket
+            Submit Application
           </button>
         </div>
       </div>
