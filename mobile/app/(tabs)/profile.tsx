@@ -7,7 +7,8 @@ import { Screen } from '@/components/Screen';
 import { AppShellHeader } from '@/components/Headers';
 import { AppText } from '@/components/AppText';
 import { SectionLabel, Segmented, InputBox, Button } from '@/components/ui';
-import { ID_TYPE_OPTIONS, GENDER_OPTIONS, initialProfile, maskIdNumber, type Profile } from '@/data/profile';
+import { ID_TYPE_OPTIONS, GENDER_OPTIONS, maskIdNumber, type Profile } from '@/data/profile';
+import { useAppStore } from '@/store/AppStore';
 import { theme } from '@/theme';
 
 async function pickImage(onPicked: (uri: string) => void) {
@@ -25,8 +26,8 @@ async function pickImage(onPicked: (uri: string) => void) {
 }
 
 export default function ProfileScreen() {
-  const [saved, setSaved] = useState(initialProfile);
-  const [draft, setDraft] = useState(initialProfile);
+  const { profile: saved, updateProfile } = useAppStore();
+  const [draft, setDraft] = useState(saved);
   const [editing, setEditing] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
 
@@ -39,7 +40,7 @@ export default function ProfileScreen() {
   function save() {
     // Phase 03/04: PUT the same fields to /api/profile once Supabase auth
     // is wired in — this only updates local state for now.
-    setSaved(draft);
+    updateProfile(draft);
     setEditing(false);
     setJustSaved(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -117,6 +118,7 @@ function ViewMode({ profile }: { profile: Profile }) {
         <Field label="ID Type" value={idOption.label} />
         <Field label={`${idOption.short} Number`} value={maskIdNumber(profile.idNumber)} mono />
         <Field label="Instagram" value={profile.instagramHandle ? `@${profile.instagramHandle}` : '—'} />
+        <Field label="Other Social Media" value={profile.otherSocial || '—'} />
         <Field label="Gender" value={genderLabel} />
         <View style={{ width: '100%' }}>
           <AppText weight="medium" style={styles.fieldLabel}>
@@ -214,6 +216,10 @@ function EditForm({
 
       <FormRow label="Instagram">
         <InputBox value={draft.instagramHandle} onChangeText={(v) => set('instagramHandle', v.replace(/^@/, ''))} placeholder="yourhandle" autoCapitalize="none" />
+      </FormRow>
+
+      <FormRow label="Other Social Media (optional)">
+        <InputBox value={draft.otherSocial} onChangeText={(v) => set('otherSocial', v)} placeholder="TikTok, X, Facebook…" autoCapitalize="none" />
       </FormRow>
 
       <FormRow label="Gender">

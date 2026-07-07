@@ -1,37 +1,47 @@
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { SymbolView } from 'expo-symbols';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Screen } from '@/components/Screen';
 import { EventHeader } from '@/components/Headers';
 import { AppText } from '@/components/AppText';
 import { SearchInput } from '@/components/SearchInput';
 import { Radar } from '@/components/Radar';
-import { nightOwls, FOUND_DISTANCE_METERS, type CliqueMember } from '@/data/clique';
+import { FOUND_DISTANCE_METERS, type CliqueMember } from '@/data/clique';
+import { useAppStore } from '@/store/AppStore';
 import { theme } from '@/theme';
 
 export default function WyaScreen() {
+  const { cliqueId } = useLocalSearchParams<{ cliqueId?: string }>();
+  const { cliques } = useAppStore();
+  const clique = cliques.find((c) => c.id === cliqueId) ?? cliques[0];
   const [query, setQuery] = useState('');
 
+  const members = clique?.members ?? [];
   const normalized = query.trim().toLowerCase();
   const dimmedSlugs = useMemo(
-    () =>
-      normalized
-        ? nightOwls.members.filter((m) => !m.name.toLowerCase().includes(normalized)).map((m) => m.slug)
-        : [],
-    [normalized]
+    () => (normalized ? members.filter((m) => !m.name.toLowerCase().includes(normalized)).map((m) => m.slug) : []),
+    [normalized, members]
   );
-  const visibleMembers = normalized
-    ? nightOwls.members.filter((m) => m.name.toLowerCase().includes(normalized))
-    : nightOwls.members;
+  const visibleMembers = normalized ? members.filter((m) => m.name.toLowerCase().includes(normalized)) : members;
 
   function openMember(member: CliqueMember) {
-    router.push(`/(tabs)/cliques/wya/${member.slug}`);
+    router.push({ pathname: '/(tabs)/cliques/wya/[slug]', params: { slug: member.slug, cliqueId: clique?.id ?? '' } });
+  }
+
+  if (!clique) {
+    return (
+      <Screen>
+        <AppText weight="medium" style={{ color: theme.muted }}>
+          Join a clique to use wya?
+        </AppText>
+      </Screen>
+    );
   }
 
   return (
     <Screen>
-      <EventHeader back={nightOwls.name} />
+      <EventHeader back={clique.name} />
 
       <View style={styles.sharePill}>
         <SymbolView name={{ ios: 'location.fill', android: 'location_on', web: 'location_on' }} tintColor={theme.accent} size={11} />
@@ -42,7 +52,7 @@ export default function WyaScreen() {
 
       <SearchInput value={query} onChangeText={setQuery} />
 
-      <Radar members={nightOwls.members} dimmedSlugs={dimmedSlugs} onSelectMember={openMember} />
+      <Radar members={members} dimmedSlugs={dimmedSlugs} onSelectMember={openMember} />
 
       <View style={styles.legend}>
         {visibleMembers.length === 0 ? (

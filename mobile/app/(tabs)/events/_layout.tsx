@@ -5,6 +5,8 @@ export default function EventsLayout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="sonic-pulse" />
+      <Stack.Screen name="register" />
+      <Stack.Screen name="accommodation" />
     </Stack>
   );
 }

@@ -13,16 +13,19 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Screen } from '@/components/Screen';
 import { AppText } from '@/components/AppText';
-import { nightOwls, getMemberBySlug, FOUND_DISTANCE_METERS } from '@/data/clique';
+import { getMemberBySlug, FOUND_DISTANCE_METERS } from '@/data/clique';
+import { useAppStore } from '@/store/AppStore';
 import { theme } from '@/theme';
 
 const AnimatedPolygon = Animated.createAnimatedComponent(Polygon);
 
 export default function MemberFinderScreen() {
-  const { slug } = useLocalSearchParams<{ slug: string }>();
-  const member = getMemberBySlug(slug);
+  const { slug, cliqueId } = useLocalSearchParams<{ slug: string; cliqueId?: string }>();
+  const { cliques } = useAppStore();
+  const clique = cliques.find((c) => c.id === cliqueId) ?? cliques[0];
+  const member = getMemberBySlug(clique, slug);
 
-  if (!member) {
+  if (!clique || !member) {
     return (
       <Screen>
         <AppText weight="medium" style={{ color: theme.muted }}>
@@ -39,12 +42,12 @@ export default function MemberFinderScreen() {
       <Pressable onPress={() => router.back()} style={styles.backRow} hitSlop={8}>
         <SymbolView name={{ ios: 'chevron.left', android: 'arrow_back', web: 'arrow_back' }} tintColor={theme.muted} size={13} />
         <AppText weight="medium" style={styles.backLabel}>
-          {nightOwls.name}
+          {clique.name}
         </AppText>
       </Pressable>
 
       <View style={styles.chipRow}>
-        {nightOwls.members.map((m) => (
+        {clique.members.map((m) => (
           <Pressable
             key={m.slug}
             onPress={() => router.setParams({ slug: m.slug })}

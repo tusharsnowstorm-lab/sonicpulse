@@ -10,12 +10,13 @@ export const ID_TYPE_OPTIONS: { value: IdType; label: string; short: string }[] 
   { value: 'birth_certificate', label: 'Birth Cert.', short: 'Birth Certificate' },
 ];
 
-export type Gender = 'female' | 'male' | 'other';
+// Matches the website's field — src/components/dashboard/ProfileSection.tsx.
+export type Gender = 'male' | 'female' | 'non-binary';
 
 export const GENDER_OPTIONS: { value: Gender; label: string }[] = [
-  { value: 'female', label: 'Female' },
   { value: 'male', label: 'Male' },
-  { value: 'other', label: 'Other' },
+  { value: 'female', label: 'Female' },
+  { value: 'non-binary', label: 'Non-binary' },
 ];
 
 export type Profile = {
@@ -24,9 +25,24 @@ export type Profile = {
   idType: IdType;
   idNumber: string;
   instagramHandle: string;
+  otherSocial: string;
   gender: Gender;
   photoUri: string | null;
   idDocumentUri: string | null;
+};
+
+// Collected during onboarding — Phase 03/04 of the build guide swaps this
+// for a real Supabase session started at first launch instead of a blank form.
+export const emptyProfile: Profile = {
+  fullName: '',
+  phone: '',
+  idType: 'nid',
+  idNumber: '',
+  instagramHandle: '',
+  otherSocial: '',
+  gender: 'male',
+  photoUri: null,
+  idDocumentUri: null,
 };
 
 export const initialProfile: Profile = {
@@ -35,6 +51,7 @@ export const initialProfile: Profile = {
   idType: 'nid',
   idNumber: '4829106673201',
   instagramHandle: 'tanvir.ahmed',
+  otherSocial: '',
   gender: 'male',
   photoUri: null,
   idDocumentUri: null,

@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { fonts, theme } from '@/theme';
+import { AppStoreProvider } from '@/store/AppStore';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -12,7 +13,7 @@ export {
 } from 'expo-router';
 
 export const unstable_settings = {
-  initialRouteName: '(tabs)',
+  initialRouteName: 'index',
 };
 
 // The whole brand is a single dark identity (void background, magenta accent) —
@@ -69,11 +70,15 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={navigationTheme}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="gate/index" options={{ headerShown: false }} />
-        <Stack.Screen name="verify/[code]" options={{ headerShown: true, title: 'Verify Ticket' }} />
-      </Stack>
+      <AppStoreProvider>
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" />
+          <Stack.Screen name="onboarding/index" />
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="gate/index" options={{ headerShown: false }} />
+          <Stack.Screen name="verify/[code]" options={{ headerShown: true, title: 'Verify Ticket' }} />
+        </Stack>
+      </AppStoreProvider>
     </ThemeProvider>
   );
 }

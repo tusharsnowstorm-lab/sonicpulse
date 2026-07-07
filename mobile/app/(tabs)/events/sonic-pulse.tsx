@@ -1,12 +1,17 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
+import { router } from 'expo-router';
 import { EventHeader } from '@/components/Headers';
 import { Screen } from '@/components/Screen';
 import { AppText } from '@/components/AppText';
 import { Card, SectionLabel, Button } from '@/components/ui';
 import { sonicPulse } from '@/data/event';
+import { useAppStore, getRegistration } from '@/store/AppStore';
 import { fonts, theme } from '@/theme';
 
 export default function SonicPulseScreen() {
+  const { registrations } = useAppStore();
+  const registration = getRegistration(registrations, sonicPulse.id);
+
   return (
     <Screen>
       <ScrollView showsVerticalScrollIndicator={false}>
@@ -45,7 +50,19 @@ export default function SonicPulseScreen() {
           ))}
         </View>
 
-        <Button label="Sign Up" />
+        {registration.status === 'none' && (
+          <Button label="Register" onPress={() => router.push('/(tabs)/events/register')} />
+        )}
+        {registration.status === 'pending' && (
+          <View style={styles.pendingNote}>
+            <AppText weight="medium" style={styles.pendingNoteText}>
+              Registration submitted — we'll notify you once it's reviewed.
+            </AppText>
+          </View>
+        )}
+        {registration.status === 'approved' && (
+          <Button label={registration.paid ? 'View Ticket' : 'Continue to Payment'} onPress={() => router.push('/(tabs)/tickets')} />
+        )}
         <View style={{ height: 32 }} />
       </ScrollView>
     </Screen>
@@ -67,4 +84,12 @@ const styles = StyleSheet.create({
   lineupTime: { fontFamily: fonts.medium, fontSize: 12, color: theme.accent, width: 42 },
   lineupName: { fontSize: 14 },
   lineupGenre: { fontSize: 11, color: theme.muted, marginTop: 2 },
+  pendingNote: {
+    borderWidth: 1,
+    borderColor: theme.border,
+    borderRadius: 12,
+    paddingVertical: 13,
+    paddingHorizontal: 14,
+  },
+  pendingNoteText: { fontSize: 12, color: theme.muted, lineHeight: 17 },
 });
