@@ -36,12 +36,24 @@ export async function PATCH(req: NextRequest) {
   const user = await checkAdmin()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { ticketId, status } = await req.json()
-  if (!ticketId || !['approved', 'rejected'].includes(status)) {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
-  }
+  const body = await req.json()
+  const { ticketId, status, gender } = body
+
+  if (!ticketId) return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
 
   const supabase = adminClient()
+
+  // Gender-only update
+  if (gender !== undefined) {
+    if (!['male', 'female'].includes(gender)) return NextResponse.json({ error: 'Invalid gender' }, { status: 400 })
+    const { error } = await supabase.from('user_tickets').update({ gender }).eq('id', ticketId)
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ success: true })
+  }
+
+  if (!['approved', 'rejected'].includes(status)) {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+  }
 
   // Fetch ticket details before update so we have name/email/tier for the email
   const { data: ticket } = await supabase

@@ -43,12 +43,24 @@ export async function PATCH(req: NextRequest) {
   const user = await checkAdmin()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { applicationId, status } = await req.json()
-  if (!applicationId || !['approved', 'rejected'].includes(status)) {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
-  }
+  const body = await req.json()
+  const { applicationId, status, gender } = body
+
+  if (!applicationId) return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
 
   const supabase = adminClient()
+
+  // Gender-only update
+  if (gender !== undefined) {
+    if (!['male', 'female'].includes(gender)) return NextResponse.json({ error: 'Invalid gender' }, { status: 400 })
+    const { error } = await supabase.from('influencer_applications').update({ gender }).eq('id', applicationId)
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    return NextResponse.json({ success: true })
+  }
+
+  if (!['approved', 'rejected'].includes(status)) {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+  }
 
   // Fetch the application
   const { data: app, error: fetchErr } = await supabase

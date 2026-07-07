@@ -112,6 +112,24 @@ export default function AdminClient() {
     return null
   }
 
+  const handleTicketGender = async (ticketId: string, gender: 'male' | 'female') => {
+    await fetch('/api/admin/tickets', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ticketId, gender }),
+    })
+    await fetchTickets()
+  }
+
+  const handleInfluencerGender = async (applicationId: string, gender: 'male' | 'female') => {
+    await fetch('/api/admin/influencers', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ applicationId, gender }),
+    })
+    await fetchInfluencers()
+  }
+
   const handleAction = async (ticketId: string, action: 'approved' | 'rejected') => {
     setActionLoading(ticketId + action)
     await fetch('/api/admin/tickets', {
@@ -236,7 +254,7 @@ export default function AdminClient() {
             ) : (
               <div className="space-y-4">
                 {filtered.map((ticket) => (
-                  <TicketRow key={ticket.id} ticket={ticket} actionLoading={actionLoading} onAction={handleAction} onGetNidUrl={() => getNidUrl(ticket)} cachedUrl={nidUrls[ticket.id]} />
+                  <TicketRow key={ticket.id} ticket={ticket} actionLoading={actionLoading} onAction={handleAction} onGenderUpdate={handleTicketGender} onGetNidUrl={() => getNidUrl(ticket)} cachedUrl={nidUrls[ticket.id]} />
                 ))}
               </div>
             )}
@@ -277,7 +295,7 @@ export default function AdminClient() {
             ) : (
               <div className="space-y-4">
                 {filteredInf.map((app) => (
-                  <InfluencerRow key={app.id} app={app} actionLoading={actionLoading} onAction={handleInfluencerAction} />
+                  <InfluencerRow key={app.id} app={app} actionLoading={actionLoading} onAction={handleInfluencerAction} onGenderUpdate={handleInfluencerGender} />
                 ))}
               </div>
             )}
@@ -292,17 +310,26 @@ function TicketRow({
   ticket,
   actionLoading,
   onAction,
+  onGenderUpdate,
   onGetNidUrl,
   cachedUrl,
 }: {
   ticket: Ticket
   actionLoading: string | null
   onAction: (id: string, action: 'approved' | 'rejected') => void
+  onGenderUpdate: (id: string, gender: 'male' | 'female') => void
   onGetNidUrl: () => Promise<string | null>
   cachedUrl?: string
 }) {
   const [nidUrl, setNidUrl] = useState<string | null>(cachedUrl ?? null)
   const [loadingNid, setLoadingNid] = useState(false)
+  const [genderLoading, setGenderLoading] = useState(false)
+
+  const handleGender = async (g: 'male' | 'female') => {
+    setGenderLoading(true)
+    await onGenderUpdate(ticket.id, g)
+    setGenderLoading(false)
+  }
 
   const handleViewNid = async () => {
     if (nidUrl) { window.open(nidUrl, '_blank'); return }
@@ -341,7 +368,25 @@ function TicketRow({
           </div>
           <div>
             <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Gender</p>
-            <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{ticket.gender ? ticket.gender.charAt(0).toUpperCase() + ticket.gender.slice(1) : '—'}</p>
+            <div className="flex gap-1.5">
+              {(['male', 'female'] as const).map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  disabled={genderLoading}
+                  onClick={() => handleGender(g)}
+                  className="text-xs px-2.5 py-1 rounded cursor-pointer transition-all"
+                  style={{
+                    background: ticket.gender === g ? 'rgba(255,63,194,0.15)' : 'rgba(255,255,255,0.05)',
+                    border: ticket.gender === g ? '1px solid rgba(255,63,194,0.5)' : '1px solid var(--border)',
+                    color: ticket.gender === g ? 'var(--accent-magenta)' : 'var(--text-muted)',
+                    fontFamily: 'var(--font-montserrat)',
+                  }}
+                >
+                  {g === 'male' ? 'M' : 'F'}
+                </button>
+              ))}
+            </div>
           </div>
           <div>
             <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Instagram</p>
@@ -384,13 +429,22 @@ function InfluencerRow({
   app,
   actionLoading,
   onAction,
+  onGenderUpdate,
 }: {
   app: InfluencerApp
   actionLoading: string | null
   onAction: (id: string, action: 'approved' | 'rejected') => void
+  onGenderUpdate: (id: string, gender: 'male' | 'female') => void
 }) {
   const [nidUrl, setNidUrl] = useState<string | null>(null)
   const [loadingNid, setLoadingNid] = useState(false)
+  const [genderLoading, setGenderLoading] = useState(false)
+
+  const handleGender = async (g: 'male' | 'female') => {
+    setGenderLoading(true)
+    await onGenderUpdate(app.id, g)
+    setGenderLoading(false)
+  }
 
   const handleViewId = async () => {
     if (nidUrl) { window.open(nidUrl, '_blank'); return }
@@ -435,7 +489,25 @@ function InfluencerRow({
           </div>
           <div>
             <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Gender</p>
-            <p className="text-sm capitalize" style={{ color: 'var(--text-primary)' }}>{app.gender || '—'}</p>
+            <div className="flex gap-1.5">
+              {(['male', 'female'] as const).map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  disabled={genderLoading}
+                  onClick={() => handleGender(g)}
+                  className="text-xs px-2.5 py-1 rounded cursor-pointer transition-all"
+                  style={{
+                    background: app.gender === g ? 'rgba(255,63,194,0.15)' : 'rgba(255,255,255,0.05)',
+                    border: app.gender === g ? '1px solid rgba(255,63,194,0.5)' : '1px solid var(--border)',
+                    color: app.gender === g ? 'var(--accent-magenta)' : 'var(--text-muted)',
+                    fontFamily: 'var(--font-montserrat)',
+                  }}
+                >
+                  {g === 'male' ? 'M' : 'F'}
+                </button>
+              ))}
+            </div>
           </div>
           <div>
             <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Instagram</p>
