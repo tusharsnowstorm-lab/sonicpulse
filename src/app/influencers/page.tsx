@@ -226,6 +226,12 @@ export default function InfluencersPage() {
             <Link href="/" className="inline-block px-6 py-3 rounded-xl text-sm font-bold" style={{ background: 'var(--accent-magenta)', color: '#fff' }}>
               Back to homepage
             </Link>
+            <p className="text-xs mt-4" style={{ color: 'var(--text-muted)' }}>
+              Need to transfer your pass to someone else?{' '}
+              <Link href="/influencers/transfer" style={{ color: 'var(--accent-magenta)', textDecoration: 'underline' }}>
+                Transfer media pass
+              </Link>
+            </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6" noValidate>
