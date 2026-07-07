@@ -1,19 +1,19 @@
 {
   "expo": {
-    "name": "Dhaka Music Festival",
-    "slug": "dhaka-music-festival",
+    "name": "Poshh",
+    "slug": "poshh",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "dhakamusicfestival",
+    "scheme": "poshh",
     "userInterfaceStyle": "dark",
     "backgroundColor": "#050508",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.dhakamusicfestival.app"
+      "bundleIdentifier": "com.poshh.app"
     },
     "android": {
-      "package": "com.dhakamusicfestival.app",
+      "package": "com.poshh.app",
       "adaptiveIcon": {
         "backgroundColor": "#050508",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
