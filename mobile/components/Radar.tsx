@@ -19,6 +19,7 @@ const CENTER = SIZE / 2;
 const MAX_RADIUS = 96;
 const MIN_RADIUS = 34;
 const FAR_CAP_METERS = 160;
+const DIMMED_OPACITY = 0.22;
 
 // Distance maps to how close the arrow sits to the center; bearing maps to
 // angle around it. This is a placeholder mapping — Phase 07 of the build
@@ -29,18 +30,27 @@ function radiusForDistance(distanceMeters: number) {
   return MIN_RADIUS + (clamped / FAR_CAP_METERS) * (MAX_RADIUS - MIN_RADIUS);
 }
 
-function ArrowMarker({ member }: { member: CliqueMember }) {
+function ArrowMarker({
+  member,
+  dimmed,
+  onPress,
+}: {
+  member: CliqueMember;
+  dimmed: boolean;
+  onPress?: () => void;
+}) {
   const found = member.distanceMeters <= FOUND_DISTANCE_METERS;
   const pulse = useSharedValue(1);
 
   useEffect(() => {
-    if (found) {
+    if (found && !dimmed) {
       pulse.value = withRepeat(withTiming(0.4, { duration: 550, easing: Easing.inOut(Easing.ease) }), -1, true);
     }
-  }, [found, pulse]);
+  }, [found, dimmed, pulse]);
 
-  const glowProps = useAnimatedProps(() => ({ opacity: pulse.value * 0.35 }));
-  const arrowProps = useAnimatedProps(() => ({ opacity: found ? pulse.value : 1 }));
+  const baseOpacity = dimmed ? DIMMED_OPACITY : 1;
+  const glowProps = useAnimatedProps(() => ({ opacity: (found && !dimmed ? pulse.value : 1) * 0.35 * baseOpacity }));
+  const arrowProps = useAnimatedProps(() => ({ opacity: (found && !dimmed ? pulse.value : 1) * baseOpacity }));
 
   const radius = radiusForDistance(member.distanceMeters);
   const rad = (member.bearingDeg * Math.PI) / 180;
@@ -49,15 +59,21 @@ function ArrowMarker({ member }: { member: CliqueMember }) {
 
   return (
     <>
-      {found && (
-        <AnimatedCircle cx={x} cy={y} r={15} fill={member.color} animatedProps={glowProps} />
-      )}
-      <AnimatedCircle cx={x} cy={y} r={9} fill={member.color} animatedProps={arrowProps} />
+      {found && <AnimatedCircle cx={x} cy={y} r={15} fill={member.color} animatedProps={glowProps} />}
+      {/* Wider invisible hit target so a small dot stays easy to tap */}
+      <Circle cx={x} cy={y} r={16} fill="transparent" onPress={onPress} />
+      <AnimatedCircle cx={x} cy={y} r={9} fill={member.color} animatedProps={arrowProps} onPress={onPress} />
     </>
   );
 }
 
-export function Radar({ members }: { members: CliqueMember[] }) {
+type RadarProps = {
+  members: CliqueMember[];
+  dimmedSlugs?: string[];
+  onSelectMember?: (member: CliqueMember) => void;
+};
+
+export function Radar({ members, dimmedSlugs, onSelectMember }: RadarProps) {
   return (
     <View style={styles.wrap}>
       <Svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
@@ -65,7 +81,12 @@ export function Radar({ members }: { members: CliqueMember[] }) {
         <Circle cx={CENTER} cy={CENTER} r={(MAX_RADIUS + MIN_RADIUS) / 2} stroke={theme.border} fill="none" />
         <Circle cx={CENTER} cy={CENTER} r={MIN_RADIUS} stroke={theme.border} strokeDasharray="2 5" fill="none" />
         {members.map((m) => (
-          <ArrowMarker key={m.name} member={m} />
+          <ArrowMarker
+            key={m.slug}
+            member={m}
+            dimmed={!!dimmedSlugs?.includes(m.slug)}
+            onPress={onSelectMember ? () => onSelectMember(m) : undefined}
+          />
         ))}
         <Circle cx={CENTER} cy={CENTER} r={13} stroke={theme.accent} strokeWidth={2} fill="none" opacity={0.7} />
         <Circle cx={CENTER} cy={CENTER} r={7} fill={theme.primary} />
