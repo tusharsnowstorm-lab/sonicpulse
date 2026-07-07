@@ -36,7 +36,7 @@ export default function GateLanding({ email }: { email: string }) {
           <div className="flex items-center gap-2.5">
             <Image src="/images/logo-badge.webp" alt="Sonic Pulse" width={30} height={30} className="rounded-full" style={{ border: '1.5px solid rgba(255,255,255,0.3)' }} />
             <span className="font-black tracking-[0.15em] text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--text-primary)' }}>SONIC <span style={{ color: 'var(--accent-magenta)' }}>PULSE</span></span>
-            <span className="text-xs px-2 py-0.5 rounded font-bold" style={{ background: 'rgba(204,255,0,0.12)', border: '1px solid rgba(204,255,0,0.3)', color: 'var(--accent-volt)', fontFamily: 'var(--font-jetbrains-mono)' }}>
+            <span className="text-xs px-2 py-0.5 rounded font-bold" style={{ background: 'rgba(255,63,194,0.12)', border: '1px solid rgba(255,63,194,0.3)', color: 'var(--accent-volt)', fontFamily: 'var(--font-jetbrains-mono)' }}>
               GATE
             </span>
           </div>
@@ -57,7 +57,7 @@ export default function GateLanding({ email }: { email: string }) {
         {/* Status */}
         <div
           className="rounded-lg px-5 py-4 flex items-center gap-3"
-          style={{ background: 'rgba(204,255,0,0.06)', border: '1px solid rgba(204,255,0,0.2)' }}
+          style={{ background: 'rgba(255,63,194,0.06)', border: '1px solid rgba(255,63,194,0.2)' }}
         >
           <div className="w-2 h-2 rounded-full shrink-0" style={{ background: 'var(--accent-volt)', boxShadow: '0 0 6px var(--accent-volt)' }} />
           <div>

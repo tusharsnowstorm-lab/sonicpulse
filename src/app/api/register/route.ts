@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+﻿import { createClient } from '@supabase/supabase-js'
 import { NextRequest } from 'next/server'
 
 function generateRef(): string {
@@ -112,7 +112,7 @@ export async function POST(req: NextRequest) {
             <p style="margin:0 0 16px;">We've received your registration for <strong>Sonic Pulse 2025</strong>. Our team will review your details and contact you within 24 hours with payment instructions if you're approved.</p>
             <div style="background:#0D0D14;border:1px solid #1E1E2E;border-radius:4px;padding:16px;margin:24px 0;">
               <p style="margin:0 0 8px;font-size:12px;color:#6B6B7E;letter-spacing:0.2em;text-transform:uppercase;">Reference Code</p>
-              <p style="margin:0;font-family:monospace;font-size:18px;color:#CCFF00;font-weight:bold;">${referenceCode}</p>
+              <p style="margin:0;font-family:monospace;font-size:18px;color:#FF3FC2;font-weight:bold;">${referenceCode}</p>
             </div>
             <p style="margin:0 0 8px;font-size:12px;color:#6B6B7E;">Ticket tier: ${ticketTier.toUpperCase()} · Qty: ${ticketQty}</p>
             <p style="margin:24px 0 0;font-size:12px;color:#6B6B7E;">Questions? Reply to this email or message us on Instagram @sonicpulsefestival</p>

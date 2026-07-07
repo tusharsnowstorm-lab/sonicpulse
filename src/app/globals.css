@@ -1,9 +1,9 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 /* ── Tailwind v4 custom theme tokens ─────────────────────────── */
 @theme {
   --color-electric: #00F0FF;
-  --color-volt: #CCFF00;
+  --color-volt: #FF3FC2;
   --color-pulse: #FF2D6B;
   --color-void: #050508;
   --color-surface: #0D0D14;
@@ -26,7 +26,7 @@
   --bg-surface: #0D0D14;
   --bg-elevated: #16161F;
   --accent-electric: #00F0FF;
-  --accent-volt: #CCFF00;
+  --accent-volt: #FF3FC2;
   --accent-pulse: #FF2D6B;
   --accent-magenta: #FF3FC2;
   --accent-brand: #FF3FC2;
@@ -40,6 +40,7 @@
   :root {
     --accent-magenta: color(display-p3 0.918 0.149 0.694);
     --accent-brand:   color(display-p3 0.918 0.149 0.694);
+    --accent-volt:    color(display-p3 0.918 0.149 0.694);
   }
 }
 
@@ -134,8 +135,8 @@ html, body { max-width: 100%; }
   box-shadow: 0 0 12px rgba(255,63,194,0.12);
 }
 .glow-border-volt {
-  border: 1px solid rgba(204,255,0,0.3);
-  box-shadow: 0 0 12px rgba(204,255,0,0.12);
+  border: 1px solid rgba(255,63,194,0.3);
+  box-shadow: 0 0 12px rgba(255,63,194,0.12);
 }
 
 /* ── Live pulse dot ───────────────────────────────────────────── */

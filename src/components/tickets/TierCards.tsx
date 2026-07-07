@@ -27,12 +27,12 @@ export default function TierCards({ onSelect, selectedTier }: Props) {
               border: selected
                 ? '1px solid var(--accent-magenta)'
                 : tier.highlight
-                ? '1px solid rgba(204,255,0,0.3)'
+                ? '1px solid rgba(255,63,194,0.3)'
                 : '1px solid var(--border)',
               boxShadow: selected
                 ? '0 0 20px rgba(255,63,194,0.2)'
                 : tier.highlight
-                ? '0 0 12px rgba(204,255,0,0.1)'
+                ? '0 0 12px rgba(255,63,194,0.1)'
                 : 'none',
             }}
           >

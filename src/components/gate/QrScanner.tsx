@@ -129,7 +129,7 @@ export default function QrScanner({ onClose }: Props) {
           <div className="text-center space-y-3">
             <div
               className="w-16 h-16 rounded-full flex items-center justify-center mx-auto"
-              style={{ background: 'rgba(204,255,0,0.15)', border: '2px solid var(--accent-volt)' }}
+              style={{ background: 'rgba(255,63,194,0.15)', border: '2px solid var(--accent-volt)' }}
             >
               <span style={{ fontSize: 28 }}>✓</span>
             </div>

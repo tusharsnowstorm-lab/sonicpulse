@@ -1,7 +1,7 @@
 ﻿type BadgeVariant = 'stage-main' | 'stage-sunrise' | 'tier-highlight' | 'tier-last' | 'status-available' | 'status-selling' | 'status-sold' | 'live'
 
 const styles: Record<BadgeVariant, string> = {
-  'stage-main':      'bg-[rgba(204,255,0,0.12)] text-[var(--accent-volt)] border border-[rgba(204,255,0,0.3)]',
+  'stage-main':      'bg-[rgba(255,63,194,0.12)] text-[var(--accent-volt)] border border-[rgba(255,63,194,0.3)]',
   'stage-sunrise':   'bg-[rgba(255,63,194,0.12)] text-[var(--accent-magenta)] border border-[rgba(255,63,194,0.3)]',
   'tier-highlight':  'bg-[var(--accent-volt)] text-[var(--bg-void)]',
   'tier-last':       'bg-[var(--accent-pulse)] text-white',

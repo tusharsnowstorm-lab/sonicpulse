@@ -215,8 +215,8 @@ export default function AdminClient() {
                   onClick={() => setActiveTab(tab)}
                   className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer"
                   style={{
-                    background: activeTab === tab ? (tab === 'approved' ? 'rgba(34,197,94,0.12)' : 'rgba(204,255,0,0.12)') : 'var(--bg-elevated)',
-                    border: activeTab === tab ? (tab === 'approved' ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(204,255,0,0.4)') : '1px solid var(--border)',
+                    background: activeTab === tab ? (tab === 'approved' ? 'rgba(34,197,94,0.12)' : 'rgba(255,63,194,0.12)') : 'var(--bg-elevated)',
+                    border: activeTab === tab ? (tab === 'approved' ? '1px solid rgba(34,197,94,0.4)' : '1px solid rgba(255,63,194,0.4)') : '1px solid var(--border)',
                     color: activeTab === tab ? (tab === 'approved' ? '#22c55e' : 'var(--accent-volt)') : 'var(--text-muted)',
                   }}
                 >

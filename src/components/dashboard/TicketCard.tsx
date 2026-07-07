@@ -109,7 +109,7 @@ function TransferForm({ ticket, onClose, onSuccess }: { ticket: Ticket; onClose:
 
       <div
         className="rounded px-3 py-2 text-xs"
-        style={{ background: 'rgba(204,255,0,0.06)', border: '1px solid rgba(204,255,0,0.2)', color: 'rgba(240,240,248,0.65)' }}
+        style={{ background: 'rgba(255,63,194,0.06)', border: '1px solid rgba(255,63,194,0.2)', color: 'rgba(240,240,248,0.65)' }}
       >
         The new holder&apos;s details will go through the approval process. Your ticket slot is preserved.
       </div>
@@ -220,8 +220,8 @@ function TransferForm({ ticket, onClose, onSuccess }: { ticket: Ticket; onClose:
         disabled={submitting || !confirmed}
         className="w-full py-3 rounded text-sm font-bold transition-all cursor-pointer"
         style={{
-          background: confirmed ? 'var(--accent-volt)' : 'rgba(204,255,0,0.1)',
-          color: confirmed ? '#050508' : 'rgba(204,255,0,0.3)',
+          background: confirmed ? 'var(--accent-volt)' : 'rgba(255,63,194,0.1)',
+          color: confirmed ? '#050508' : 'rgba(255,63,194,0.3)',
           cursor: confirmed ? 'pointer' : 'not-allowed',
         }}
       >
@@ -270,7 +270,7 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
   .field-label { font-size: 10px; color: #6B6B7E; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 3px; font-family: 'JetBrains Mono', monospace; }
   .field-val { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
   .ref { font-family: 'JetBrains Mono', monospace; color: #00F0FF; font-size: 13px; }
-  .tier { font-family: 'JetBrains Mono', monospace; color: #CCFF00; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
+  .tier { font-family: 'JetBrains Mono', monospace; color: #FF3FC2; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
   .qr img { width: 120px; height: 120px; border-radius: 4px; }
   .bottom { background: #0D0D14; padding: 14px 24px; border-top: 1px dashed rgba(255,63,194,0.15); font-family: 'JetBrains Mono', monospace; }
   .bottom-ref { font-size: 10px; color: #6B6B7E; display: flex; justify-content: space-between; margin-bottom: 10px; }
@@ -355,7 +355,7 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
       <div
         className="px-4 py-2 flex items-center justify-between text-xs"
         style={{
-          background: ticket.status === 'approved' ? 'rgba(34,197,94,0.08)' : 'rgba(204,255,0,0.06)',
+          background: ticket.status === 'approved' ? 'rgba(34,197,94,0.08)' : 'rgba(255,63,194,0.06)',
           borderBottom: '1px solid var(--border)',
           fontFamily: 'var(--font-jetbrains-mono)',
         }}
@@ -411,8 +411,8 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
                 onClick={() => setShowTransfer((v) => !v)}
                 className="flex items-center gap-1.5 rounded px-3 py-2 text-xs font-semibold transition-colors cursor-pointer"
                 style={{
-                  background: showTransfer ? 'rgba(204,255,0,0.12)' : 'rgba(204,255,0,0.06)',
-                  border: '1px solid rgba(204,255,0,0.25)',
+                  background: showTransfer ? 'rgba(255,63,194,0.12)' : 'rgba(255,63,194,0.06)',
+                  border: '1px solid rgba(255,63,194,0.25)',
                   color: 'var(--accent-volt)',
                 }}
               >

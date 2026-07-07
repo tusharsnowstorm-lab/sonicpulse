@@ -22,8 +22,8 @@ export default function AccommodationSection() {
         <span
           className="text-xs px-2 py-1 rounded"
           style={{
-            background: 'rgba(204,255,0,0.08)',
-            border: '1px solid rgba(204,255,0,0.2)',
+            background: 'rgba(255,63,194,0.08)',
+            border: '1px solid rgba(255,63,194,0.2)',
             color: 'var(--accent-volt)',
             fontFamily: 'var(--font-jetbrains-mono)',
           }}
