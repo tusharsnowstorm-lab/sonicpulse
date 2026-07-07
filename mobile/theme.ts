@@ -8,6 +8,7 @@ export const theme = {
   mutedDim: '#4C4C5C',
   border: '#1E1E2E',
   accent: '#FF3FC2',
+  magentaSoft: 'rgba(255, 63, 194, 0.14)',
   good: '#3ED598',
 } as const;
 

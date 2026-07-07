@@ -36,6 +36,12 @@
           "resizeMode": "contain",
           "backgroundColor": "#050508"
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Used for your profile photo and ID document — both are shown on your ticket and checked at the gate."
+        }
       ]
     ],
     "experiments": {
