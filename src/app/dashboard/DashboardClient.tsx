@@ -8,7 +8,6 @@ import TicketCard from '@/components/dashboard/TicketCard'
 import AddTicketForm from '@/components/dashboard/AddTicketForm'
 import AccommodationSection from '@/components/dashboard/AccommodationSection'
 import ProfileSection from '@/components/dashboard/ProfileSection'
-import ProfileCompletionBanner from '@/components/dashboard/ProfileCompletionBanner'
 import Button from '@/components/ui/Button'
 import type { User } from '@supabase/supabase-js'
 
@@ -147,9 +146,7 @@ export default function DashboardClient({ user }: { user: User }) {
         </div>
       </div>
 
-      <ProfileCompletionBanner />
-
-      <div className="max-w-[1000px] mx-auto px-4 py-10 space-y-14">
+<div className="max-w-[1000px] mx-auto px-4 py-10 space-y-14">
         {/* Tickets section */}
         <section>
           <div className="flex items-center justify-between mb-6">
