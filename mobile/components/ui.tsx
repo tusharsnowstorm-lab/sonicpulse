@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
   },
   buttonLabel: {
     fontSize: 13,
+    textAlign: 'center',
   },
   segmentedRow: {
     flexDirection: 'row',
