@@ -258,8 +258,8 @@ export default function InfluencerTransferPage() {
               </div>
 
               <Field label="Gender" required>
-                <div className="grid grid-cols-2 gap-3">
-                  {(['female', 'male'] as const).map((g) => (
+                <div className="grid grid-cols-3 gap-3">
+                  {(['female', 'male', 'non-binary'] as const).map((g) => (
                     <button
                       key={g}
                       type="button"

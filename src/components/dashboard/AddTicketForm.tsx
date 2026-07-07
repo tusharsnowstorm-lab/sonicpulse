@@ -21,7 +21,7 @@ const schema = z.object({
   phone: z.string().regex(/^(\+?880|0)1[3-9]\d{8}$/, 'Enter a valid Bangladesh phone number'),
   idNumber: z.string().min(3, 'ID number required'),
   instagramHandle: z.string().min(1, 'Instagram handle is required'),
-  gender: z.enum(['male', 'female'], { error: 'Please select a gender' }),
+  gender: z.enum(['male', 'female', 'non-binary'], { error: 'Please select a gender' }),
   ticketTier: z.enum(['phase1', 'phase2', 'phase3']),
 })
 
@@ -188,7 +188,7 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
       phone: profile.phone!,
       idNumber: profile.nid_number!,
       instagramHandle: profile.instagram_handle!,
-      gender: profile.gender as 'male' | 'female',
+      gender: profile.gender as 'male' | 'female' | 'non-binary',
       ticketTier: CURRENT_PHASE,
       idType: (profile.id_type as IdType) ?? 'nid',
     })
@@ -423,8 +423,8 @@ export default function AddTicketForm({ onSuccess }: { onSuccess: () => void }) 
 
             <div>
               <label style={labelStyle}>Gender</label>
-              <div className="grid grid-cols-2 gap-3">
-                {(['male', 'female'] as const).map((g) => (
+              <div className="grid grid-cols-3 gap-3">
+                {(['male', 'female', 'non-binary'] as const).map((g) => (
                   <label
                     key={g}
                     className="flex items-center justify-center py-3 rounded-lg text-sm font-semibold transition-all cursor-pointer"
