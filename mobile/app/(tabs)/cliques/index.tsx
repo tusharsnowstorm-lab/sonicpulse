@@ -29,7 +29,7 @@ export default function CliquesScreen() {
           ))}
         </View>
         <Button
-          label="WYA"
+          label="wya?"
           variant="outline"
           onPress={() => router.push('/(tabs)/cliques/wya')}
         />
