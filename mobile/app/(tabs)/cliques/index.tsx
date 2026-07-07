@@ -29,9 +29,9 @@ export default function CliquesScreen() {
           ))}
         </View>
         <Button
-          label="Where U At"
+          label="WYA"
           variant="outline"
-          onPress={() => router.push('/(tabs)/cliques/where-u-at')}
+          onPress={() => router.push('/(tabs)/cliques/wya')}
         />
       </Card>
     </Screen>

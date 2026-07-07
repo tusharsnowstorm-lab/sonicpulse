@@ -7,7 +7,7 @@ import { Radar } from '@/components/Radar';
 import { nightOwls, FOUND_DISTANCE_METERS } from '@/data/clique';
 import { theme } from '@/theme';
 
-export default function WhereUAtScreen() {
+export default function WyaScreen() {
   return (
     <Screen>
       <EventHeader back={nightOwls.name} />

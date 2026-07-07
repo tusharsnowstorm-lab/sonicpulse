@@ -8,7 +8,7 @@ guide for the full phased plan.
 
 - `app/(tabs)/` — the five tabs: Events, Cliques, Tickets, Updates, Profile
 - `app/(tabs)/events/` — Events list + the Sonic Pulse event page (own stack, so the tab bar stays visible)
-- `app/(tabs)/cliques/` — the clique card + the Where U At radar (own stack)
+- `app/(tabs)/cliques/` — the clique card + the WYA radar (own stack)
 - `app/gate/`, `app/verify/[code]` — staff-only routes, outside the tab bar
 - `theme.ts` — color tokens and clique palette, copied verbatim from the website's `globals.css`
 - `data/` — placeholder event/clique data; real data wiring to Supabase comes in later build phases
@@ -26,10 +26,10 @@ npm run android   # requires Android Studio, or use Expo Go
 ## What's real vs. placeholder right now
 
 Real: navigation structure, theme tokens, bundled Montserrat font, app
-icon/splash generated from the website's actual logo, the Where U At radar's
+icon/splash generated from the website's actual logo, the WYA radar's
 distance→radius / bearing→angle math and its pulsing "found" state.
 
 Placeholder, pending their dedicated build-guide phases: ticket/event/clique
 data (hardcoded, not yet from Supabase), the gate camera scanner (static UI,
-not yet wired to `expo-camera`), and Where U At's GPS/compass input (fixed
+not yet wired to `expo-camera`), and WYA's GPS/compass input (fixed
 sample distances/bearings, not yet live).
