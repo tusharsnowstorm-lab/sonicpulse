@@ -128,7 +128,7 @@ export default function Navbar() {
               <Link
                 href="/login"
                 className="text-xs px-3 py-1.5 rounded"
-                style={{ color: 'var(--text-muted)', border: '1px solid var(--border)' }}
+                style={{ color: 'var(--text-muted)', border: '1px solid var(--border)', fontFamily: 'var(--font-montserrat)' }}
               >
                 Sign in
               </Link>

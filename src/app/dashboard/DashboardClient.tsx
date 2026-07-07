@@ -115,7 +115,7 @@ export default function DashboardClient({ user }: { user: User }) {
             <button
               onClick={handleSignOut}
               className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded transition-colors"
-              style={{ color: 'var(--text-muted)', border: '1px solid var(--border)' }}
+              style={{ color: 'var(--text-muted)', border: '1px solid var(--border)', fontFamily: 'var(--font-montserrat)' }}
             >
               <LogOut size={13} />
               Sign out

@@ -43,7 +43,7 @@ export default function GateLanding({ email }: { email: string }) {
           <button
             onClick={handleSignOut}
             className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded cursor-pointer"
-            style={{ color: 'var(--text-muted)', border: '1px solid var(--border)' }}
+            style={{ color: 'var(--text-muted)', border: '1px solid var(--border)', fontFamily: 'var(--font-montserrat)' }}
           >
             <LogOut size={13} />
             Sign out
