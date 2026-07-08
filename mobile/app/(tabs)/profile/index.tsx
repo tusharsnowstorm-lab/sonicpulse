@@ -1,13 +1,21 @@
 import { useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { router } from 'expo-router';
 import { SymbolView } from 'expo-symbols';
 import * as ImagePicker from 'expo-image-picker';
 import * as Haptics from 'expo-haptics';
 import { Screen } from '@/components/Screen';
 import { AppShellHeader } from '@/components/Headers';
 import { AppText } from '@/components/AppText';
-import { SectionLabel, Segmented, InputBox, Button } from '@/components/ui';
-import { ID_TYPE_OPTIONS, GENDER_OPTIONS, maskIdNumber, type Profile } from '@/data/profile';
+import { Card, SectionLabel, Segmented, InputBox, Button } from '@/components/ui';
+import {
+  ID_TYPE_OPTIONS,
+  GENDER_OPTIONS,
+  FOLLOWER_BUCKET_OPTIONS,
+  maskIdNumber,
+  type Profile,
+  type InfluencerProfile,
+} from '@/data/profile';
 import { useAppStore } from '@/store/AppStore';
 import { theme } from '@/theme';
 
@@ -26,7 +34,7 @@ async function pickImage(onPicked: (uri: string) => void) {
 }
 
 export default function ProfileScreen() {
-  const { profile: saved, updateProfile } = useAppStore();
+  const { profile: saved, updateProfile, influencerProfile } = useAppStore();
   const [draft, setDraft] = useState(saved);
   const [editing, setEditing] = useState(false);
   const [justSaved, setJustSaved] = useState(false);
@@ -78,19 +86,46 @@ export default function ProfileScreen() {
         {editing ? (
           <EditForm draft={draft} set={set} onSave={save} onCancel={() => setEditing(false)} />
         ) : (
-          <ViewMode profile={saved} />
+          <ViewMode profile={saved} influencerProfile={influencerProfile} />
         )}
       </ScrollView>
     </Screen>
   );
 }
 
-function ViewMode({ profile }: { profile: Profile }) {
+function ViewMode({ profile, influencerProfile }: { profile: Profile; influencerProfile: InfluencerProfile | null }) {
   const idOption = ID_TYPE_OPTIONS.find((o) => o.value === profile.idType) ?? ID_TYPE_OPTIONS[0];
   const genderLabel = GENDER_OPTIONS.find((g) => g.value === profile.gender)?.label ?? '—';
 
   return (
     <>
+      {influencerProfile ? (
+        <Pressable onPress={() => router.push('/(tabs)/profile/become-influencer')}>
+          <Card style={styles.influencerRow}>
+            <AppText style={styles.influencerBadge}>🎤</AppText>
+            <AppText weight="bold" style={styles.influencerRowText}>
+              Influencer · {FOLLOWER_BUCKET_OPTIONS.find((o) => o.value === influencerProfile.followerCount)?.label}
+            </AppText>
+            <SymbolView name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }} tintColor={theme.muted} size={11} />
+          </Card>
+        </Pressable>
+      ) : (
+        <Pressable onPress={() => router.push('/(tabs)/profile/become-influencer')}>
+          <Card style={styles.becomeInfluencerCard}>
+            <AppText style={styles.influencerBadge}>🎤</AppText>
+            <View style={{ flex: 1 }}>
+              <AppText weight="bold" style={styles.becomeInfluencerTitle}>
+                Become an Influencer
+              </AppText>
+              <AppText weight="regular" style={styles.becomeInfluencerSub}>
+                Promote events, get a free ticket on approval.
+              </AppText>
+            </View>
+            <SymbolView name={{ ios: 'chevron.right', android: 'chevron_right', web: 'chevron_right' }} tintColor={theme.accent} size={11} />
+          </Card>
+        </Pressable>
+      )}
+
       <View style={styles.avatarRow}>
         {profile.photoUri ? (
           <Image source={{ uri: profile.photoUri }} style={styles.avatarPhoto} />
@@ -274,6 +309,25 @@ const styles = StyleSheet.create({
   },
   savedText: { fontSize: 11, color: theme.good },
 
+  becomeInfluencerCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderColor: theme.accent,
+    backgroundColor: theme.magentaSoft,
+    marginBottom: 20,
+  },
+  becomeInfluencerTitle: { fontSize: 13, color: theme.primary },
+  becomeInfluencerSub: { fontSize: 11, color: theme.muted, marginTop: 2 },
+  influencerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 12,
+    marginBottom: 20,
+  },
+  influencerRowText: { fontSize: 12.5, color: theme.primary, flex: 1 },
+  influencerBadge: { fontSize: 20 },
   avatarRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 20 },
   avatarPhoto: { width: 58, height: 58, borderRadius: 29, borderWidth: 2, borderColor: theme.border },
   avatarPlaceholder: {
