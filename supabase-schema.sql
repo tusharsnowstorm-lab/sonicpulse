@@ -314,3 +314,56 @@ alter table public.payments enable row level security;
 drop policy if exists "own payments readable" on public.payments;
 create policy "own payments readable" on public.payments for select using (auth.uid() = user_id);
 -- inserts/updates: service role only (no user policy) — all writes go through the API routes.
+
+-- ── Influencer segment (Phase 14) — profile once, apply per event ──
+create table if not exists public.influencer_profiles (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  primary_platform text not null default 'instagram'
+    check (primary_platform in ('instagram','tiktok','youtube','other')),
+  tiktok_handle text,
+  youtube_channel text,
+  follower_count text not null
+    check (follower_count in ('under_1k','1k_5k','5k_10k','10k_15k','15k_plus')),
+  content_type text not null
+    check (content_type in ('music_nightlife','lifestyle','fashion_beauty','entertainment','general')),
+  created_at timestamptz default now()
+);
+alter table public.influencer_profiles enable row level security;
+drop policy if exists "read own influencer profile" on public.influencer_profiles;
+create policy "read own influencer profile" on public.influencer_profiles
+  for select using (auth.uid() = user_id);
+drop policy if exists "insert own influencer profile" on public.influencer_profiles;
+create policy "insert own influencer profile" on public.influencer_profiles
+  for insert with check (auth.uid() = user_id);
+drop policy if exists "update own influencer profile" on public.influencer_profiles;
+create policy "update own influencer profile" on public.influencer_profiles
+  for update using (auth.uid() = user_id);
+
+create table if not exists public.promotion_applications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  event_id text not null,
+  status text not null default 'pending' check (status in ('pending','approved','rejected')),
+  reference_code text unique,
+  created_at timestamptz default now(),
+  unique (user_id, event_id)
+);
+alter table public.promotion_applications enable row level security;
+drop policy if exists "read own promotion applications" on public.promotion_applications;
+create policy "read own promotion applications" on public.promotion_applications
+  for select using (auth.uid() = user_id);
+drop policy if exists "insert own promotion applications" on public.promotion_applications;
+create policy "insert own promotion applications" on public.promotion_applications
+  for insert with check (auth.uid() = user_id);
+-- status/reference_code updates are service-role only (approved via the
+-- website admin dashboard) — deliberately no user update policy here.
+
+-- `user_tickets.ticket_tier` is currently `check (... in ('phase1','phase2','phase3'))`
+-- but src/app/api/admin/influencers/route.ts already inserts 'influencer' —
+-- the schema file and production disagree (same class of drift as the
+-- gender constraint above). Widen it the same way: find the constraint
+-- name —
+--   select conname from pg_constraint where conrelid = 'public.user_tickets'::regclass;
+-- then:
+--   alter table public.user_tickets drop constraint <constraint_name>;
+--   alter table public.user_tickets add check (ticket_tier in ('phase1','phase2','phase3','influencer'));
