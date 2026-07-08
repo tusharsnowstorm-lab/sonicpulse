@@ -71,6 +71,35 @@ export function Segmented<T extends string>({ options, value, onChange }: Segmen
   );
 }
 
+type ChipGroupProps<T extends string> = {
+  options: { value: T; label: string }[];
+  value: T;
+  onChange: (value: T) => void;
+};
+
+// Same visual language as Segmented, but wraps onto multiple rows — for
+// option sets too long for a single horizontal strip (follower buckets,
+// content types).
+export function ChipGroup<T extends string>({ options, value, onChange }: ChipGroupProps<T>) {
+  return (
+    <View style={styles.chipGroup}>
+      {options.map((opt) => {
+        const active = opt.value === value;
+        return (
+          <Pressable
+            key={opt.value}
+            onPress={() => onChange(opt.value)}
+            style={[styles.chip, active && styles.chipActive]}>
+            <AppText weight="medium" style={[styles.chipLabel, active && styles.chipLabelActive]}>
+              {opt.label}
+            </AppText>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
 export function InputBox({
   value,
   onChangeText,
@@ -146,6 +175,30 @@ const styles = StyleSheet.create({
     color: theme.muted,
   },
   segmentLabelActive: {
+    color: theme.accent,
+  },
+  chipGroup: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+  },
+  chip: {
+    paddingVertical: 9,
+    paddingHorizontal: 12,
+    borderRadius: 9,
+    borderWidth: 1,
+    borderColor: theme.border,
+    backgroundColor: theme.elevated,
+  },
+  chipActive: {
+    borderColor: theme.accent,
+    backgroundColor: theme.magentaSoft,
+  },
+  chipLabel: {
+    fontSize: 11,
+    color: theme.muted,
+  },
+  chipLabelActive: {
     color: theme.accent,
   },
   inputBox: {
