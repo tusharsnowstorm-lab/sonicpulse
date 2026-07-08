@@ -8,7 +8,61 @@ import { AppText } from '@/components/AppText';
 import { Segmented, InputBox, Button } from '@/components/ui';
 import { ID_TYPE_OPTIONS, GENDER_OPTIONS, emptyProfile, type Profile } from '@/data/profile';
 import { useAppStore } from '@/store/AppStore';
+import { useAuth } from '@/store/AuthContext';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { fonts, theme } from '@/theme';
+
+function extAndContentType(uri: string) {
+  const ext = (uri.split('.').pop() ?? 'jpg').split('?')[0].toLowerCase();
+  const contentType = ext === 'png' ? 'image/png' : ext === 'webp' ? 'image/webp' : 'image/jpeg';
+  return { ext, contentType };
+}
+
+async function uploadLocalFile(bucket: string, path: string, uri: string, contentType: string) {
+  const response = await fetch(uri);
+  const arrayBuffer = await response.arrayBuffer();
+  const { error } = await supabase!.storage.from(bucket).upload(path, arrayBuffer, { contentType, upsert: true });
+  if (error) throw error;
+}
+
+// Mirrors src/app/api/profile/route.ts's field names and storage paths so
+// the website and app read/write the exact same profile row and files.
+async function syncProfileToSupabase(userId: string, profile: Profile) {
+  let nidFilePath: string | undefined;
+  let profilePicturePath: string | undefined;
+
+  if (profile.idDocumentUri) {
+    const { ext, contentType } = extAndContentType(profile.idDocumentUri);
+    const path = `profiles/${userId}/nid.${ext}`;
+    await uploadLocalFile('nid-documents', path, profile.idDocumentUri, contentType);
+    nidFilePath = path;
+  }
+  if (profile.photoUri) {
+    const { ext, contentType } = extAndContentType(profile.photoUri);
+    const path = `${userId}/avatar.${ext}`;
+    await uploadLocalFile('profile-pictures', path, profile.photoUri, contentType);
+    profilePicturePath = path;
+  }
+
+  const { error } = await supabase!
+    .from('user_profiles')
+    .upsert(
+      {
+        user_id: userId,
+        full_name: profile.fullName,
+        phone: profile.phone,
+        nid_number: profile.idNumber,
+        instagram_handle: profile.instagramHandle,
+        other_social_handle: profile.otherSocial,
+        gender: profile.gender,
+        id_type: profile.idType,
+        ...(nidFilePath ? { nid_file_path: nidFilePath } : {}),
+        ...(profilePicturePath ? { profile_picture_path: profilePicturePath } : {}),
+      },
+      { onConflict: 'user_id' }
+    );
+  if (error) throw error;
+}
 
 const TOTAL_STEPS = 6;
 
@@ -28,16 +82,28 @@ async function pickImage(onPicked: (uri: string) => void) {
 
 export default function OnboardingScreen() {
   const { completeOnboarding } = useAppStore();
+  const { session } = useAuth();
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<Profile>(emptyProfile);
+  const [saving, setSaving] = useState(false);
 
   function set<K extends keyof Profile>(key: K, value: Profile[K]) {
     setDraft((d) => ({ ...d, [key]: value }));
   }
 
-  function next() {
+  async function next() {
     if (step === TOTAL_STEPS - 1) {
       completeOnboarding(draft);
+      if (isSupabaseConfigured && supabase && session) {
+        setSaving(true);
+        try {
+          await syncProfileToSupabase(session.user.id, draft);
+        } catch (err) {
+          console.warn('Failed to sync profile to Supabase', err);
+        } finally {
+          setSaving(false);
+        }
+      }
       router.replace('/(tabs)/events');
       return;
     }
@@ -150,7 +216,12 @@ export default function OnboardingScreen() {
         )}
       </View>
 
-      <Button label={step === TOTAL_STEPS - 1 ? "Let's go" : 'Continue'} onPress={next} disabled={!canContinue} style={!canContinue && { opacity: 0.4 }} />
+      <Button
+        label={saving ? 'Saving…' : step === TOTAL_STEPS - 1 ? "Let's go" : 'Continue'}
+        onPress={next}
+        disabled={!canContinue || saving}
+        style={(!canContinue || saving) && { opacity: 0.4 }}
+      />
     </Screen>
   );
 }

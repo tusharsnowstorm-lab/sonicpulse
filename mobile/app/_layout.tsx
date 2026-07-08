@@ -6,6 +6,7 @@ import 'react-native-reanimated';
 
 import { fonts, theme } from '@/theme';
 import { AppStoreProvider } from '@/store/AppStore';
+import { AuthProvider } from '@/store/AuthContext';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -70,15 +71,18 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={navigationTheme}>
-      <AppStoreProvider>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="onboarding/index" />
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="gate/index" options={{ headerShown: false }} />
-          <Stack.Screen name="verify/[code]" options={{ headerShown: true, title: 'Verify Ticket' }} />
-        </Stack>
-      </AppStoreProvider>
+      <AuthProvider>
+        <AppStoreProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" />
+            <Stack.Screen name="sign-in" />
+            <Stack.Screen name="onboarding/index" />
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="gate/index" options={{ headerShown: false }} />
+            <Stack.Screen name="verify/[code]" options={{ headerShown: true, title: 'Verify Ticket' }} />
+          </Stack>
+        </AppStoreProvider>
+      </AuthProvider>
     </ThemeProvider>
   );
 }
