@@ -298,8 +298,48 @@ function useRemoteStore(): AppStoreValue {
       .catch((err) => console.warn('Failed to warm user directory', err));
   }, [userId, refreshCliquesAndInvites, refreshRegistration, refreshReservation]);
 
-  function registerForEvent(_eventId: string) {}
-  function toggleShuttle(_eventId: string) {}
+  useEffect(() => {
+    if (!userId) return;
+    // WALRUS: a table left out of the supabase_realtime publication means
+    // postgres_changes silently delivers nothing, no error — the schema's
+    // publication additions are what make this subscription do anything.
+    return api.subscribeToMyTickets(userId, () => {
+      refreshRegistration();
+    });
+  }, [userId, refreshRegistration]);
+
+  function registerForEvent(eventId: string) {
+    if (!userId || !session) return;
+    api
+      .submitRegistration(userId, session.user.email ?? '')
+      .then((result) => {
+        if (!result.ok) {
+          console.warn(
+            'Cannot register: no ID document is on file for this account yet. Add one from Profile, then try again.'
+          );
+          return;
+        }
+        ticketIds.current[eventId] = result.ticketId;
+        setRegistrations((r) => ({
+          ...r,
+          [eventId]: { status: 'pending', shuttle: false, paid: false, referenceCode: result.referenceCode },
+        }));
+      })
+      .catch((err) => console.warn('Failed to register', err));
+  }
+
+  function toggleShuttle(eventId: string) {
+    const ticketId = ticketIds.current[eventId];
+    if (!ticketId) return;
+    const current = registrations[eventId] ?? { status: 'none' as const, shuttle: false, paid: false };
+    const next = !current.shuttle;
+    setRegistrations((r) => ({ ...r, [eventId]: { ...current, shuttle: next } }));
+    api.setShuttle(ticketId, next).catch((err) => {
+      console.warn('Failed to toggle shuttle', err);
+      setRegistrations((r) => ({ ...r, [eventId]: current }));
+    });
+  }
+
   function payTicket(_eventId: string) {}
   function reserveAccommodation(_eventId: string) {}
   function payReservation(_eventId: string) {}

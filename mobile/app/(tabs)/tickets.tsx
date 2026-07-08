@@ -143,7 +143,7 @@ export default function TicketsScreen() {
                 <QrPlaceholder />
               </View>
               <AppText weight="regular" style={styles.reference}>
-                {REFERENCE_CODE}
+                {registration.referenceCode ?? REFERENCE_CODE}
               </AppText>
             </Card>
             <Button label="Add to Wallet" variant="dark" style={{ marginTop: 14, flexDirection: 'row', gap: 8 }} />

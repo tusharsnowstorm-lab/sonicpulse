@@ -234,6 +234,71 @@ export async function fetchMyRegistration(userId: string): Promise<RemoteRegistr
   };
 }
 
+export type SubmitRegistrationResult =
+  | { ok: true; ticketId: string; referenceCode: string }
+  | { ok: false; reason: 'missing-nid' };
+
+// user_tickets.nid_file_path is NOT NULL — refuse rather than insert '' to
+// sneak past it (the admin actually opens these files at the gate).
+export async function submitRegistration(userId: string, email: string): Promise<SubmitRegistrationResult> {
+  const db = client();
+  const { data: prof, error: profErr } = await db
+    .from('user_profiles')
+    .select('full_name, phone, nid_number, nid_file_path')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (profErr) throw profErr;
+  if (!prof?.nid_file_path || !prof.full_name || !prof.phone || !prof.nid_number) {
+    return { ok: false, reason: 'missing-nid' };
+  }
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const referenceCode = generateReferenceCode();
+    const { data, error } = await db
+      .from('user_tickets')
+      .insert({
+        user_id: userId,
+        user_email: email,
+        full_name: prof.full_name,
+        phone: prof.phone,
+        nid_number: prof.nid_number,
+        nid_file_path: prof.nid_file_path,
+        ticket_tier: 'phase1',
+        status: 'pending',
+        reference_code: referenceCode,
+      })
+      .select('id, reference_code')
+      .single();
+    if (!error) return { ok: true, ticketId: data.id, referenceCode: data.reference_code };
+    if (error.code !== '23505') throw error;
+    // Unique violation on reference_code — retry once with a fresh code.
+  }
+  throw new Error('Failed to generate a unique reference code after retry');
+}
+
+export async function setShuttle(ticketId: string, value: boolean): Promise<void> {
+  const db = client();
+  // Absolute boolean, not a DB-side NOT — an optimistic toggle racing a
+  // slow network must not flip the wrong way.
+  const { error } = await db.from('user_tickets').update({ includes_shuttle: value }).eq('id', ticketId);
+  if (error) throw error;
+}
+
+export function subscribeToMyTickets(userId: string, onChange: () => void): () => void {
+  const db = client();
+  const channel = db
+    .channel('me-tickets')
+    .on(
+      'postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'user_tickets', filter: `user_id=eq.${userId}` },
+      onChange
+    )
+    .subscribe();
+  return () => {
+    db.removeChannel(channel);
+  };
+}
+
 export type RemoteReservation = { reservation: Reservation; reservationId: string | null };
 
 export async function fetchMyReservation(userId: string, eventId: string): Promise<RemoteReservation> {
