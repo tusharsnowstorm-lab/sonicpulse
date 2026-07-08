@@ -13,6 +13,15 @@ function client() {
   return supabase;
 }
 
+// Env name only — never commit values. The deployed website origin; the
+// mobile app has no shared cookie jar with it, so payment routes are
+// called with the Supabase access token as a bearer header instead.
+function siteUrl() {
+  const url = process.env.EXPO_PUBLIC_SITE_URL;
+  if (!url) throw new Error('EXPO_PUBLIC_SITE_URL is not set — cannot reach the website payment API');
+  return url;
+}
+
 const REF_CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 function generateReferenceCode(): string {
   let code = 'SP-';
@@ -365,6 +374,34 @@ export function subscribeToMyReservations(userId: string, onChange: () => void):
   return () => {
     db.removeChannel(channel);
   };
+}
+
+// ---- Payments (website API, bearer-token authed) --------------------------
+
+export async function createPaymentSession(
+  accessToken: string,
+  kind: 'ticket' | 'reservation',
+  provider: 'bkash' | 'sslcommerz'
+): Promise<{ url: string; paymentId: string }> {
+  const res = await fetch(`${siteUrl()}/api/payments/create`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+    body: JSON.stringify({ kind, provider }),
+  });
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.error ?? `createPaymentSession failed: ${res.status}`);
+  }
+  return res.json();
+}
+
+export async function fetchPaymentStatus(accessToken: string, paymentId: string): Promise<string> {
+  const res = await fetch(`${siteUrl()}/api/payments/status?id=${encodeURIComponent(paymentId)}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (!res.ok) throw new Error(`fetchPaymentStatus failed: ${res.status}`);
+  const data = await res.json();
+  return data.status as string;
 }
 
 // ---- Directory search (read) ------------------------------------------------

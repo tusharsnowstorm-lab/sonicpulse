@@ -113,8 +113,20 @@ export default function TicketsScreen() {
               </AppText>
             </View>
 
-            <Button label="Pay with bKash" style={{ marginBottom: 10 }} onPress={() => payTicket(sonicPulse.id)} />
-            <Button label="Pay with Card" variant="dark" onPress={() => payTicket(sonicPulse.id)} />
+            {registration.confirming ? (
+              <View style={styles.confirmingRow}>
+                <StatusPill label="CONFIRMING PAYMENT" tone="pending" />
+              </View>
+            ) : (
+              <>
+                <Button
+                  label="Pay with bKash"
+                  style={{ marginBottom: 10 }}
+                  onPress={() => payTicket(sonicPulse.id, 'bkash')}
+                />
+                <Button label="Pay with Card" variant="dark" onPress={() => payTicket(sonicPulse.id, 'sslcommerz')} />
+              </>
+            )}
           </>
         )}
 
@@ -222,6 +234,7 @@ const styles = StyleSheet.create({
   },
   totalLabel: { fontSize: 10, color: theme.muted, letterSpacing: 0.6 },
   totalPrice: { fontSize: 17, color: theme.primary },
+  confirmingRow: { alignItems: 'center', paddingVertical: 4 },
 
   top: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
   brand: { fontSize: 12, letterSpacing: 0.4 },

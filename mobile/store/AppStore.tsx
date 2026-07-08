@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import type { ImageSourcePropType } from 'react-native';
+import * as WebBrowser from 'expo-web-browser';
 import { emptyProfile, type Profile } from '@/data/profile';
 import {
   seedCliques,
@@ -14,6 +15,8 @@ import { isSupabaseConfigured } from '@/lib/supabase';
 import { useAuth } from '@/store/AuthContext';
 import * as api from '@/lib/api';
 
+export type PaymentProvider = 'bkash' | 'sslcommerz';
+
 export type RegistrationStatus = 'none' | 'pending' | 'approved';
 export type Registration = {
   status: RegistrationStatus;
@@ -22,12 +25,16 @@ export type Registration = {
   // Real reference code once a remote registration exists; absent in demo
   // mode, where tickets.tsx falls back to its own placeholder constant.
   referenceCode?: string;
+  // True while a real checkout is polling for a server-verified result;
+  // always absent/false in demo mode.
+  confirming?: boolean;
 };
 
 export type ReservationStatus = 'none' | 'pending' | 'approved';
 export type Reservation = {
   status: ReservationStatus;
   paid: boolean;
+  confirming?: boolean;
 };
 
 const APPROVAL_DELAY_MS = 3500;
@@ -43,13 +50,13 @@ type AppStoreValue = {
   registrations: Record<string, Registration>;
   registerForEvent: (eventId: string) => void;
   toggleShuttle: (eventId: string) => void;
-  payTicket: (eventId: string) => void;
+  payTicket: (eventId: string, provider?: PaymentProvider) => void;
 
   // Accommodation reservation, keyed by eventId — its own lifecycle,
   // entirely separate from the ticket above.
   reservations: Record<string, Reservation>;
   reserveAccommodation: (eventId: string) => void;
-  payReservation: (eventId: string) => void;
+  payReservation: (eventId: string, provider?: PaymentProvider) => void;
 
   // Cliques
   cliques: Clique[];
@@ -70,6 +77,28 @@ function emptyRegistration(): Registration {
 
 function emptyReservation(): Reservation {
   return { status: 'none', paid: false };
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Opens the hosted checkout, then polls the server for the real outcome —
+// never trusts the redirect. openAuthSessionAsync's own result is ignored:
+// on Android it can report {type:'dismiss'} even after a genuinely
+// successful redirect, which is why polling happens regardless of it.
+async function runPaymentFlow(kind: 'ticket' | 'reservation', provider: PaymentProvider, accessToken: string): Promise<boolean> {
+  const { url, paymentId } = await api.createPaymentSession(accessToken, kind, provider);
+  await WebBrowser.openAuthSessionAsync(url, 'connect://payment/result');
+
+  const deadline = Date.now() + 90_000;
+  while (Date.now() < deadline) {
+    await sleep(2000);
+    const status = await api.fetchPaymentStatus(accessToken, paymentId);
+    if (status === 'success') return true;
+    if (status === 'failed' || status === 'refunded') return false;
+  }
+  return false;
 }
 
 // Today's seeded, in-memory behavior — used whenever Supabase isn't
@@ -347,7 +376,26 @@ function useRemoteStore(): AppStoreValue {
     });
   }
 
-  function payTicket(_eventId: string) {}
+  function payTicket(eventId: string, provider: PaymentProvider = 'bkash') {
+    if (!session) return;
+    const current = registrations[eventId];
+    if (!current) return;
+    setRegistrations((r) => ({ ...r, [eventId]: { ...current, confirming: true } }));
+    runPaymentFlow('ticket', provider, session.access_token)
+      .then((paid) => {
+        setRegistrations((r) => {
+          const latest = r[eventId] ?? current;
+          return { ...r, [eventId]: { ...latest, confirming: false, paid: paid || latest.paid } };
+        });
+      })
+      .catch((err) => {
+        console.warn('Ticket payment failed', err);
+        setRegistrations((r) => {
+          const latest = r[eventId] ?? current;
+          return { ...r, [eventId]: { ...latest, confirming: false } };
+        });
+      });
+  }
   function reserveAccommodation(eventId: string) {
     if (!userId) return;
     setReservations((r) => ({ ...r, [eventId]: { status: 'pending', paid: false } }));
@@ -362,7 +410,26 @@ function useRemoteStore(): AppStoreValue {
       });
   }
 
-  function payReservation(_eventId: string) {}
+  function payReservation(eventId: string, provider: PaymentProvider = 'bkash') {
+    if (!session) return;
+    const current = reservations[eventId];
+    if (!current) return;
+    setReservations((r) => ({ ...r, [eventId]: { ...current, confirming: true } }));
+    runPaymentFlow('reservation', provider, session.access_token)
+      .then((paid) => {
+        setReservations((r) => {
+          const latest = r[eventId] ?? current;
+          return { ...r, [eventId]: { ...latest, confirming: false, paid: paid || latest.paid } };
+        });
+      })
+      .catch((err) => {
+        console.warn('Reservation payment failed', err);
+        setReservations((r) => {
+          const latest = r[eventId] ?? current;
+          return { ...r, [eventId]: { ...latest, confirming: false } };
+        });
+      });
+  }
 
   function sendInvite(cliqueId: string, inviteeId: string) {
     if (!userId) return;

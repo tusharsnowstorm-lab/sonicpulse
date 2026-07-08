@@ -133,10 +133,18 @@ export default function AccommodationScreen() {
                 Paid in full
               </AppText>
             </View>
+          ) : reservation.confirming ? (
+            <View style={styles.confirmingRow}>
+              <StatusPill label="CONFIRMING PAYMENT" tone="pending" />
+            </View>
           ) : (
             <>
-              <Button label="Pay with bKash" style={{ marginBottom: 10 }} onPress={() => payReservation(sonicPulse.id)} />
-              <Button label="Pay with Card" variant="dark" onPress={() => payReservation(sonicPulse.id)} />
+              <Button
+                label="Pay with bKash"
+                style={{ marginBottom: 10 }}
+                onPress={() => payReservation(sonicPulse.id, 'bkash')}
+              />
+              <Button label="Pay with Card" variant="dark" onPress={() => payReservation(sonicPulse.id, 'sslcommerz')} />
             </>
           )}
         </>
@@ -190,4 +198,5 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   paidText: { fontSize: 12, color: theme.good },
+  confirmingRow: { alignItems: 'center', paddingVertical: 4 },
 });
