@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import type { ImageSourcePropType } from 'react-native';
 import { emptyProfile, type Profile } from '@/data/profile';
 import {
@@ -8,8 +8,11 @@ import {
   type Clique,
   type CliqueInvite,
 } from '@/data/clique';
-import { CURRENT_USER_ID, getUserById } from '@/data/users';
+import { CURRENT_USER_ID, getUserById, setRemoteDirectory, markRemoteDirectoryLoaded } from '@/data/users';
+import { sonicPulse } from '@/data/event';
 import { isSupabaseConfigured } from '@/lib/supabase';
+import { useAuth } from '@/store/AuthContext';
+import * as api from '@/lib/api';
 
 export type RegistrationStatus = 'none' | 'pending' | 'approved';
 export type Registration = {
@@ -212,18 +215,26 @@ function useLocalStore(): AppStoreValue {
   };
 }
 
-// Step-2 checkpoint skeleton — same shape as useLocalStore, filled in over
-// the following steps with real mobile/lib/api.ts-backed reads/writes.
-// Profile/onboarding stays local React state here too: PLAN-mobile-auth's
-// app/index.tsx and onboarding screen already own syncing that to Supabase
-// directly via their own completeOnboarding()/updateProfile() calls.
+// Real Supabase-backed store. Profile/onboarding stays local React state
+// here too: PLAN-mobile-auth's app/index.tsx and onboarding screen already
+// own syncing that to Supabase directly via their own
+// completeOnboarding()/updateProfile() calls — this hook doesn't duplicate it.
 function useRemoteStore(): AppStoreValue {
+  const { session } = useAuth();
+  const userId = session?.user.id ?? null;
+
   const [profile, setProfile] = useState<Profile>(emptyProfile);
   const [hasOnboarded, setHasOnboarded] = useState(false);
   const [registrations, setRegistrations] = useState<Record<string, Registration>>({});
   const [reservations, setReservations] = useState<Record<string, Reservation>>({});
   const [cliques, setCliques] = useState<Clique[]>([]);
   const [invites, setInvites] = useState<CliqueInvite[]>([]);
+
+  // Raw DB row ids behind the current registration/reservation — the
+  // public Registration/Reservation shapes never carry an id (no screen
+  // needs one), but writes (setShuttle, future payments) target a row.
+  const ticketIds = useRef<Record<string, string>>({});
+  const reservationIds = useRef<Record<string, string>>({});
 
   function completeOnboarding(next: Profile) {
     setProfile(next);
@@ -233,6 +244,55 @@ function useRemoteStore(): AppStoreValue {
   function updateProfile(next: Profile) {
     setProfile(next);
   }
+
+  const refreshCliquesAndInvites = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const [nextCliques, nextInvites] = await Promise.all([api.fetchMyCliques(userId), api.fetchMyInvites(userId)]);
+      setCliques(nextCliques);
+      setInvites(nextInvites);
+    } catch (err) {
+      console.warn('Failed to refresh cliques/invites', err);
+    }
+  }, [userId]);
+
+  const refreshRegistration = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const { registration, ticketId } = await api.fetchMyRegistration(userId);
+      setRegistrations((r) => ({ ...r, [sonicPulse.id]: registration }));
+      if (ticketId) ticketIds.current[sonicPulse.id] = ticketId;
+    } catch (err) {
+      console.warn('Failed to refresh registration', err);
+    }
+  }, [userId]);
+
+  const refreshReservation = useCallback(async () => {
+    if (!userId) return;
+    try {
+      const { reservation, reservationId } = await api.fetchMyReservation(userId, sonicPulse.id);
+      setReservations((r) => ({ ...r, [sonicPulse.id]: reservation }));
+      if (reservationId) reservationIds.current[sonicPulse.id] = reservationId;
+    } catch (err) {
+      console.warn('Failed to refresh reservation', err);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    if (!userId) return;
+    refreshCliquesAndInvites();
+    refreshRegistration();
+    refreshReservation();
+    // Warms data/users.ts's synchronous search cache — see its comment for
+    // why remote search can't just be an async replacement for searchUsers.
+    api
+      .searchUsersRemote('', [userId])
+      .then((users) => {
+        setRemoteDirectory(users);
+        markRemoteDirectoryLoaded();
+      })
+      .catch((err) => console.warn('Failed to warm user directory', err));
+  }, [userId, refreshCliquesAndInvites, refreshRegistration, refreshReservation]);
 
   function registerForEvent(_eventId: string) {}
   function toggleShuttle(_eventId: string) {}
