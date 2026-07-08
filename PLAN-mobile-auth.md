@@ -13,13 +13,13 @@ A user opening the app signs in with Google (same Supabase project as sonicpulse
 
 ## Environment contract
 - `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` — same values as the website's `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`. Read via `process.env.EXPO_PUBLIC_*` (Expo inlines these at build time).
-- Google Cloud console: the existing OAuth client (already used by the website) must gain the app redirect. Supabase dashboard → Auth → URL Configuration → add `poshh://auth/callback` to Redirect URLs. (`scheme: "poshh"` already exists in `mobile/app.json`.)
+- Google Cloud console: the existing OAuth client (already used by the website) must gain the app redirect. Supabase dashboard → Auth → URL Configuration → add `connect://auth/callback` to Redirect URLs. (`scheme: "connect"` already exists in `mobile/app.json`.)
 
 ## Exact files
 Create:
 - `mobile/lib/supabase.ts` — client factory + `isSupabaseConfigured` flag
 - `mobile/lib/sessionStorage.ts` — chunked SecureStore adapter (see edge cases)
-- `mobile/app/sign-in.tsx` — sign-in screen (POSHH wordmark, one "Continue with Google" button, `variant="dark"` Button with the Google G as inline SVG via react-native-svg)
+- `mobile/app/sign-in.tsx` — sign-in screen (CONNECT wordmark, one "Continue with Google" button, `variant="dark"` Button with the Google G as inline SVG via react-native-svg)
 - `mobile/store/AuthContext.tsx` — session state provider
 
 Modify:
@@ -50,7 +50,7 @@ Modify:
    ```
 4. Write `AuthContext.tsx`: holds `session | null | 'loading'`; on mount `supabase.auth.getSession()` then `onAuthStateChange`; expose `signInWithGoogle()` and `signOut()`. Native Google flow:
    ```ts
-   const redirectTo = 'poshh://auth/callback';
+   const redirectTo = 'connect://auth/callback';
    const { data } = await supabase.auth.signInWithOAuth({ provider: 'google',
      options: { redirectTo, skipBrowserRedirect: true }});
    const res = await WebBrowser.openAuthSessionAsync(data.url!, redirectTo);

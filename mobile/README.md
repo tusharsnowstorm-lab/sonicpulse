@@ -1,4 +1,4 @@
-# Poshh — mobile app
+# Connect — mobile app
 
 Expo (React Native) app, kept separate from the website in `src/` and `public/`
 at the repo root. Sonic Pulse is the first event inside it; see the build

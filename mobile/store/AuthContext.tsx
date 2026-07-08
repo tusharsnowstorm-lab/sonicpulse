@@ -17,7 +17,7 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-const REDIRECT_TO = 'poshh://auth/callback';
+const REDIRECT_TO = 'connect://auth/callback';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [status, setStatus] = useState<AuthStatus>(isSupabaseConfigured ? 'loading' : 'signed-out');

@@ -137,7 +137,7 @@ export default function OnboardingScreen() {
       </View>
 
       <AppText weight="medium" style={styles.eyebrow}>
-        WELCOME TO POSHH · STEP {step + 1} OF {TOTAL_STEPS}
+        WELCOME TO CONNECT · STEP {step + 1} OF {TOTAL_STEPS}
       </AppText>
 
       <View style={styles.body}>

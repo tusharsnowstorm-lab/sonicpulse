@@ -38,12 +38,12 @@ Create (website):
 - `src/lib/payments/bkash.ts` — token cache + `createPayment`, `executePayment`, `queryPayment`
 - `src/lib/payments/sslcommerz.ts` — `createSession`, `validateTransaction`
 - `src/app/api/payments/create/route.ts` — POST `{kind:'ticket'|'reservation', provider}` (auth: `getUser()` from `src/lib/supabase-server.ts`); computes amount **server-side from DB** (ticket: 4500 + 800 if `includes_shuttle` requested and recorded; reservation: its `price` column); inserts `payments` row status `initiated`; returns the gateway redirect URL
-- `src/app/api/payments/bkash/callback/route.ts` — GET (bKash redirects here with `paymentID` + `status`); on `status=success` → `executePayment`, verify `transactionStatus === 'Completed'` AND amount matches; update row; then redirect to `poshh://payment/result?ref=<payment id>`
+- `src/app/api/payments/bkash/callback/route.ts` — GET (bKash redirects here with `paymentID` + `status`); on `status=success` → `executePayment`, verify `transactionStatus === 'Completed'` AND amount matches; update row; then redirect to `connect://payment/result?ref=<payment id>`
 - `src/app/api/payments/sslcommerz/ipn/route.ts` — POST (server-to-server); validate `val_id` via validator API; idempotent upsert
 - `src/app/api/payments/status/route.ts` — GET `?id=` returns `{status}` for the authed owner (the app polls this)
 Modify:
 - `supabase-schema.sql` (DDL above)
-- `mobile/store/AppStore.tsx` — remote-mode `payTicket`/`payReservation` become `startPayment(kind, provider)`: call `create`, open URL via `WebBrowser.openAuthSessionAsync(url, 'poshh://payment/result')`, then poll `status` every 2s up to 90s
+- `mobile/store/AppStore.tsx` — remote-mode `payTicket`/`payReservation` become `startPayment(kind, provider)`: call `create`, open URL via `WebBrowser.openAuthSessionAsync(url, 'connect://payment/result')`, then poll `status` every 2s up to 90s
 - `mobile/app/(tabs)/tickets.tsx` + `mobile/app/(tabs)/events/accommodation.tsx` — a small "Confirming payment…" pending state while polling (reuse `StatusPill` with tone `pending`); no other layout changes
 
 ## Steps in order
@@ -56,7 +56,7 @@ Modify:
 7. Verify (below), then hand a written smoke checklist for sandbox creds into the PR description.
 
 ## Edge cases a weaker model would miss
-- **Never trust the redirect.** A user can hand-craft `poshh://payment/result`. The app only ever renders "paid" from the `status` endpoint, which only ever reflects server-verified gateway responses. Similarly the SSLCommerz `success_url` GET carries POST data you must ignore — the IPN + validator call is authoritative.
+- **Never trust the redirect.** A user can hand-craft `connect://payment/result`. The app only ever renders "paid" from the `status` endpoint, which only ever reflects server-verified gateway responses. Similarly the SSLCommerz `success_url` GET carries POST data you must ignore — the IPN + validator call is authoritative.
 - **Amount tampering & float traps.** Compute price server-side from the DB, never from a client-posted total. SSLCommerz validator returns amounts as decimal strings (`"4500.00"`); compare with `Math.round(parseFloat(x) * 100) === amount * 100`, never `===` on floats or strings.
 - **IPN idempotency + ordering.** Gateways retry IPNs and the IPN can land *before* the user's browser redirect. The unique `provider_txn_id` index plus "only update rows currently `initiated`" makes duplicates a no-op returning 200 (returning non-200 causes infinite gateway retries).
 - **bKash token expiry** (~1h): cache with early refresh; on a 401 from any call, drop cache and retry exactly once.

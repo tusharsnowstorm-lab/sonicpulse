@@ -21,7 +21,7 @@ Create:
 Modify:
 - `mobile/app/(tabs)/cliques/wya/index.tsx` and `[slug].tsx` — swap `clique.members` for `useLiveClique(clique).members`; the "Sharing until 09:00" pill becomes real (shows `status`, tap = `stopSharing()`); a `denied` state renders a short explainer + "Open Settings" (`Linking.openSettings()`)
 - `mobile/data/clique.ts` — export `EVENT_END_HOUR = 9`; seeds untouched
-- `mobile/app.json` — `expo-location` plugin entry with `locationWhenInUsePermission: "Poshh shows your clique roughly where you are, only while wya? is open, only tonight."`
+- `mobile/app.json` — `expo-location` plugin entry with `locationWhenInUsePermission: "Connect shows your clique roughly where you are, only while wya? is open, only tonight."`
 - `mobile/package.json` — `npx expo install expo-location`; add `tsx` to devDependencies
 
 ## Steps in order

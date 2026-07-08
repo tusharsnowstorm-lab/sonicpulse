@@ -49,7 +49,7 @@ export default function SignInScreen() {
     <Screen style={styles.screen}>
       <View style={styles.center}>
         <AppText weight="black" style={styles.wordmark}>
-          POSHH
+          CONNECT
         </AppText>
         <AppText weight="regular" style={styles.tagline}>
           Sonic Pulse · Dhaka

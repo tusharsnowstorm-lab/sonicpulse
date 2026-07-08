@@ -4,14 +4,14 @@ import { router } from 'expo-router';
 import { AppText } from '@/components/AppText';
 import { fonts, theme } from '@/theme';
 
-// App-level chrome — belongs to "Poshh", the container.
+// App-level chrome — belongs to "Connect", the container.
 // Used on every tab except the event's own page.
 export function AppShellHeader() {
   return (
     <View style={styles.shellRow}>
       <View style={styles.dot} />
       <AppText weight="black" style={styles.shellWordmark}>
-        POSHH
+        CONNECT
       </AppText>
     </View>
   );
