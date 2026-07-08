@@ -321,8 +321,8 @@ export default function InfluencersPage() {
               </div>
 
               <Field label="Gender" required>
-                <div className="grid grid-cols-2 gap-3">
-                  {(['female', 'male'] as const).map((g) => (
+                <div className="grid grid-cols-3 gap-3">
+                  {(['female', 'male', 'others'] as const).map((g) => (
                     <button
                       key={g}
                       type="button"
@@ -332,6 +332,7 @@ export default function InfluencersPage() {
                         background: form.gender === g ? 'rgba(255,63,194,0.12)' : 'rgba(255,255,255,0.04)',
                         border: form.gender === g ? '2px solid var(--accent-magenta)' : '2px solid rgba(255,255,255,0.1)',
                         color: form.gender === g ? 'var(--accent-magenta)' : 'var(--text-muted)',
+                        touchAction: 'manipulation',
                       }}
                     >
                       {g.charAt(0).toUpperCase() + g.slice(1)}

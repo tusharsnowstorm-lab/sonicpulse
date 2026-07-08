@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   const gender          = (formData.get('gender') as string | null) ?? ''
   const nidFile         = formData.get('nidFile') as File | null
 
-  if (!applicationId || !currentEmail || !fullName || !phone || !nidNumber || !instagramHandle || !gender) {
+  if (!applicationId || !currentEmail || !fullName || !phone || !nidNumber || !instagramHandle || !gender || !['male', 'female', 'others'].includes(gender)) {
     return NextResponse.json({ error: 'All fields are required.' }, { status: 400 })
   }
   if (!validateId(nidNumber, idType)) {

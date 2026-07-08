@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   if (!full_name || !email || !phone || !id_number || !gender || !instagram_handle || !follower_count || !content_type) {
     return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
   }
-  if (!['male', 'female'].includes(gender)) {
+  if (!['male', 'female', 'others'].includes(gender)) {
     return NextResponse.json({ error: 'Invalid gender value.' }, { status: 400 })
   }
   if (!profilePicFile || profilePicFile.size === 0) {
