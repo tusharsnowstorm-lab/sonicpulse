@@ -101,3 +101,49 @@ create policy "service role can update tickets"
 -- Then add this policy in Storage → nid-documents → Policies:
 -- INSERT: allow all (so the API route can upload)
 -- SELECT: allow authenticated only
+
+-- ── User profiles (saved info, reused across ticket purchases) ──
+-- NOTE: this table already exists in production (see src/app/api/profile/
+-- route.ts) but was never added to this schema file. Safe to run as-is —
+-- `create table if not exists` and `add column if not exists` are both
+-- no-ops against a table that already has these columns.
+create table if not exists public.user_profiles (
+  user_id               uuid primary key references auth.users(id) on delete cascade,
+  full_name             text,
+  phone                 text,
+  nid_number            text,
+  nid_file_path         text,
+  instagram_handle      text,
+  other_social_handle   text,
+  gender                text check (gender in ('male','female','non-binary')),
+  id_type               text check (id_type in ('nid','passport','birth_certificate')),
+  profile_picture_path  text,
+  updated_at            timestamptz default now()
+);
+
+alter table public.user_profiles add column if not exists other_social_handle text;
+
+alter table public.user_profiles enable row level security;
+
+create policy "users can read own profile"
+  on public.user_profiles for select
+  using (auth.uid() = user_id);
+
+create policy "users can upsert own profile"
+  on public.user_profiles for insert
+  with check (auth.uid() = user_id);
+
+create policy "users can update own profile"
+  on public.user_profiles for update
+  using (auth.uid() = user_id);
+
+-- If `gender` already exists on user_profiles, user_tickets, or
+-- influencer_applications with an older ('male','female')-only check
+-- constraint, widen it — the app now submits 'non-binary' too. Find the
+-- constraint name in Supabase Studio → Table Editor → (table) → gender
+-- column, or query:
+--   select conname from pg_constraint where conrelid = 'public.user_profiles'::regclass;
+-- then:
+--   alter table public.user_profiles drop constraint <constraint_name>;
+--   alter table public.user_profiles add check (gender in ('male','female','non-binary'));
+-- (repeat for user_tickets and influencer_applications if they have the same constraint)

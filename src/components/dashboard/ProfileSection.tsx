@@ -11,6 +11,7 @@ type Profile = {
   nid_number?: string
   nid_file_path?: string
   instagram_handle?: string
+  other_social_handle?: string
   gender?: string
   id_type?: string
   profile_picture_path?: string
@@ -58,6 +59,7 @@ export default function ProfileSection() {
   const [phone, setPhone] = useState('')
   const [nidNumber, setNidNumber] = useState('')
   const [instagramHandle, setInstagramHandle] = useState('')
+  const [otherSocial, setOtherSocial] = useState('')
   const [gender, setGender] = useState('')
   const [idType, setIdType] = useState<IdType>('nid')
   const [nidFile, setNidFile] = useState<File | null>(null)
@@ -76,6 +78,7 @@ export default function ProfileSection() {
           setPhone(profile.phone ?? '')
           setNidNumber(profile.nid_number ?? '')
           setInstagramHandle(profile.instagram_handle ?? '')
+          setOtherSocial(profile.other_social_handle ?? '')
           setGender(profile.gender ?? '')
           setIdType((profile.id_type as IdType) ?? 'nid')
         } else {
@@ -128,6 +131,7 @@ export default function ProfileSection() {
     fd.append('phone', phone)
     fd.append('nidNumber', nidNumber)
     fd.append('instagramHandle', instagramHandle.replace(/^@/, ''))
+    fd.append('otherSocial', otherSocial)
     fd.append('gender', gender)
     fd.append('idType', idType)
     if (nidFile) fd.append('nidFile', nidFile)
@@ -260,6 +264,12 @@ export default function ProfileSection() {
               </p>
             </div>
             <div>
+              <p style={labelStyle}>Other social media</p>
+              <p className="text-sm" style={{ color: 'var(--text-primary)' }}>
+                {profile.other_social_handle || '—'}
+              </p>
+            </div>
+            <div>
               <p style={labelStyle}>Gender</p>
               <p className="text-sm" style={{ color: 'var(--text-primary)' }}>
                 {profile.gender ? profile.gender.charAt(0).toUpperCase() + profile.gender.slice(1) : '—'}
@@ -377,9 +387,21 @@ export default function ProfileSection() {
             </div>
 
             <div>
+              <label style={labelStyle}>
+                Other social media <span style={{ textTransform: 'none', letterSpacing: 0, fontWeight: 400 }}>(optional)</span>
+              </label>
+              <input
+                value={otherSocial}
+                onChange={(e) => setOtherSocial(e.target.value)}
+                style={inputStyle}
+                placeholder="TikTok, X, anything"
+              />
+            </div>
+
+            <div>
               <label style={labelStyle}>Gender</label>
-              <div className="grid grid-cols-2 gap-3">
-                {['male', 'female'].map((g) => (
+              <div className="grid grid-cols-3 gap-3">
+                {['male', 'female', 'non-binary'].map((g) => (
                   <button
                     key={g}
                     type="button"
@@ -425,6 +447,7 @@ export default function ProfileSection() {
                     setPhone(profile.phone ?? '')
                     setNidNumber(profile.nid_number ?? '')
                     setInstagramHandle(profile.instagram_handle ?? '')
+                    setOtherSocial(profile.other_social_handle ?? '')
                     setGender(profile.gender ?? '')
                     setIdType((profile.id_type as IdType) ?? 'nid')
                     setNidFile(null)

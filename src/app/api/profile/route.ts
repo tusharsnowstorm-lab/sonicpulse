@@ -37,6 +37,7 @@ export async function PUT(req: NextRequest) {
   const phone = formData.get('phone') as string
   const nidNumber = formData.get('nidNumber') as string
   const instagramHandle = formData.get('instagramHandle') as string | null
+  const otherSocial = formData.get('otherSocial') as string | null
   const gender = formData.get('gender') as string | null
   const idType = formData.get('idType') as string | null
   const nidFile = formData.get('nidFile') as File | null
@@ -87,6 +88,7 @@ export async function PUT(req: NextRequest) {
   if (phone) updateData.phone = phone
   if (nidNumber) updateData.nid_number = nidNumber
   if (instagramHandle !== null) updateData.instagram_handle = instagramHandle
+  if (otherSocial !== null) updateData.other_social_handle = otherSocial
   if (gender) updateData.gender = gender
   if (idType) updateData.id_type = idType
   if (nidFilePath) updateData.nid_file_path = nidFilePath

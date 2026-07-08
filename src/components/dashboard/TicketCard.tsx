@@ -162,8 +162,8 @@ function TransferForm({ ticket, onClose, onSuccess }: { ticket: Ticket; onClose:
 
       <div>
         <label style={labelStyle}>Gender</label>
-        <div className="grid grid-cols-2 gap-3">
-          {['male', 'female'].map((g) => (
+        <div className="grid grid-cols-3 gap-3">
+          {['male', 'female', 'non-binary'].map((g) => (
             <button
               key={g}
               type="button"
