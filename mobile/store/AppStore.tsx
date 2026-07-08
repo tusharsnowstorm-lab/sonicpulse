@@ -9,12 +9,16 @@ import {
   type CliqueInvite,
 } from '@/data/clique';
 import { CURRENT_USER_ID, getUserById } from '@/data/users';
+import { isSupabaseConfigured } from '@/lib/supabase';
 
 export type RegistrationStatus = 'none' | 'pending' | 'approved';
 export type Registration = {
   status: RegistrationStatus;
   shuttle: boolean;
   paid: boolean;
+  // Real reference code once a remote registration exists; absent in demo
+  // mode, where tickets.tsx falls back to its own placeholder constant.
+  referenceCode?: string;
 };
 
 export type ReservationStatus = 'none' | 'pending' | 'approved';
@@ -65,7 +69,10 @@ function emptyReservation(): Reservation {
   return { status: 'none', paid: false };
 }
 
-export function AppStoreProvider({ children }: { children: ReactNode }) {
+// Today's seeded, in-memory behavior — used whenever Supabase isn't
+// configured (demo mode, CI, the web export) so those keep working exactly
+// as before. Byte-for-byte the pre-backend-wiring AppStoreProvider body.
+function useLocalStore(): AppStoreValue {
   const [profile, setProfile] = useState<Profile>(emptyProfile);
   const [hasOnboarded, setHasOnboarded] = useState(false);
   const [registrations, setRegistrations] = useState<Record<string, Registration>>({});
@@ -85,9 +92,9 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
 
   function registerForEvent(eventId: string) {
     setRegistrations((r) => ({ ...r, [eventId]: { ...emptyRegistration(), status: 'pending' } }));
-    // Phase 04 of the build guide: real admin review replaces this timer —
-    // it exists here only so the approved-and-pay states are reachable
-    // without a backend to approve anything.
+    // CI/Playwright flows depend on this auto-approval timer to reach the
+    // payment screen (see repo history: /tmp/flow4.js). Only the remote
+    // path (useRemoteStore) drops it in favor of real admin review.
     setTimeout(() => {
       setRegistrations((r) => {
         const current = r[eventId];
@@ -182,32 +189,95 @@ export function AppStoreProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const value = useMemo<AppStoreValue>(
-    () => ({
-      profile,
-      hasOnboarded,
-      completeOnboarding,
-      updateProfile,
-      registrations,
-      registerForEvent,
-      toggleShuttle,
-      payTicket,
-      reservations,
-      reserveAccommodation,
-      payReservation,
-      cliques,
-      invites,
-      createClique,
-      sendInvite,
-      isInvited,
-      removeMember,
-      leaveClique,
-      respondInvite,
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [profile, hasOnboarded, registrations, reservations, cliques, invites, sentInvites]
-  );
+  return {
+    profile,
+    hasOnboarded,
+    completeOnboarding,
+    updateProfile,
+    registrations,
+    registerForEvent,
+    toggleShuttle,
+    payTicket,
+    reservations,
+    reserveAccommodation,
+    payReservation,
+    cliques,
+    invites,
+    createClique,
+    sendInvite,
+    isInvited,
+    removeMember,
+    leaveClique,
+    respondInvite,
+  };
+}
 
+// Step-2 checkpoint skeleton — same shape as useLocalStore, filled in over
+// the following steps with real mobile/lib/api.ts-backed reads/writes.
+// Profile/onboarding stays local React state here too: PLAN-mobile-auth's
+// app/index.tsx and onboarding screen already own syncing that to Supabase
+// directly via their own completeOnboarding()/updateProfile() calls.
+function useRemoteStore(): AppStoreValue {
+  const [profile, setProfile] = useState<Profile>(emptyProfile);
+  const [hasOnboarded, setHasOnboarded] = useState(false);
+  const [registrations, setRegistrations] = useState<Record<string, Registration>>({});
+  const [reservations, setReservations] = useState<Record<string, Reservation>>({});
+  const [cliques, setCliques] = useState<Clique[]>([]);
+  const [invites, setInvites] = useState<CliqueInvite[]>([]);
+
+  function completeOnboarding(next: Profile) {
+    setProfile(next);
+    setHasOnboarded(true);
+  }
+
+  function updateProfile(next: Profile) {
+    setProfile(next);
+  }
+
+  function registerForEvent(_eventId: string) {}
+  function toggleShuttle(_eventId: string) {}
+  function payTicket(_eventId: string) {}
+  function reserveAccommodation(_eventId: string) {}
+  function payReservation(_eventId: string) {}
+  function createClique(_name: string, _invitedUserIds: string[], _heroImage: ImageSourcePropType | null) {}
+  function sendInvite(_cliqueId: string, _userId: string) {}
+  function isInvited(_cliqueId: string, _userId: string) {
+    return false;
+  }
+  function removeMember(_cliqueId: string, _userId: string) {}
+  function leaveClique(_cliqueId: string) {}
+  function respondInvite(_inviteId: string, _accept: boolean) {}
+
+  return {
+    profile,
+    hasOnboarded,
+    completeOnboarding,
+    updateProfile,
+    registrations,
+    registerForEvent,
+    toggleShuttle,
+    payTicket,
+    reservations,
+    reserveAccommodation,
+    payReservation,
+    cliques,
+    invites,
+    createClique,
+    sendInvite,
+    isInvited,
+    removeMember,
+    leaveClique,
+    respondInvite,
+  };
+}
+
+export function AppStoreProvider({ children }: { children: ReactNode }) {
+  // isSupabaseConfigured is a module-level constant resolved once from
+  // process.env at bundle time (mobile/lib/supabase.ts) — it never changes
+  // for the lifetime of the app, so this branch is stable across every
+  // render and calling one hook or the other here does not violate the
+  // rules of hooks in practice.
+  const value = isSupabaseConfigured ? useRemoteStore() : useLocalStore();
   return <AppStoreContext.Provider value={value}>{children}</AppStoreContext.Provider>;
 }
 
