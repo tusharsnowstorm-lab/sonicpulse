@@ -358,7 +358,22 @@ function useRemoteStore(): AppStoreValue {
     });
   }
 
-  function respondInvite(_inviteId: string, _accept: boolean) {}
+  function respondInvite(inviteId: string, accept: boolean) {
+    if (!userId) return;
+    const invite = invites.find((inv) => inv.id === inviteId);
+    if (!invite) return;
+    // Optimistic: the invite disappears from the list immediately either way.
+    setInvites((i) => i.filter((inv) => inv.id !== inviteId));
+    api
+      .respondInviteRemote(inviteId, userId, invite.cliqueId, accept)
+      .then(() => {
+        if (accept) refreshCliquesAndInvites();
+      })
+      .catch((err) => {
+        console.warn('Failed to respond to invite', err);
+        setInvites((i) => (i.some((inv) => inv.id === inviteId) ? i : [...i, invite]));
+      });
+  }
 
   return {
     profile,
