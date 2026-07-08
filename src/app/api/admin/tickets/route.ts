@@ -44,10 +44,11 @@ export async function PATCH(req: NextRequest) {
   const supabase = adminClient()
 
   // Gender-only update
-  if (gender !== undefined) {
+  if (typeof gender === 'string') {
     if (!['male', 'female'].includes(gender)) return NextResponse.json({ error: 'Invalid gender' }, { status: 400 })
-    const { error } = await supabase.from('user_tickets').update({ gender }).eq('id', ticketId)
+    const { error, count } = await supabase.from('user_tickets').update({ gender }, { count: 'exact' }).eq('id', ticketId)
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    if (count === 0) return NextResponse.json({ error: 'Ticket not found' }, { status: 404 })
     return NextResponse.json({ success: true })
   }
 

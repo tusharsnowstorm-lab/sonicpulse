@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
   const { data, error } = await supabase
     .from('influencer_applications')
-    .select('id, full_name, status, instagram_handle')
+    .select('id, status')
     .eq('email', email.trim().toLowerCase())
     .maybeSingle()
 

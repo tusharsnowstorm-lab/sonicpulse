@@ -63,8 +63,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Rejected applications cannot be transferred.' }, { status: 400 })
   }
 
-  // Upload new ID document
-  const ext = nidFile.name.split('.').pop()
+  // Derive extension from validated MIME type — never trust filename
+  const mimeToExt: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'application/pdf': 'pdf' }
+  const ext = mimeToExt[nidFile.type] ?? 'bin'
   const fileName = `influencer/transfer-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
   const arrayBuffer = await nidFile.arrayBuffer()
   const { error: uploadError } = await supabase.storage
@@ -91,6 +92,8 @@ export async function POST(req: NextRequest) {
     .eq('id', applicationId)
 
   if (updateError) {
+    // Clean up the uploaded file to avoid orphaned storage objects
+    await supabase.storage.from('nid-documents').remove([fileName])
     return NextResponse.json({ error: 'Failed to update application.' }, { status: 500 })
   }
 

@@ -14,9 +14,7 @@ type IdType = 'nid' | 'passport' | 'birth_certificate'
 
 type Application = {
   id: string
-  full_name: string
   status: string
-  instagram_handle: string
 }
 
 const inputStyle: React.CSSProperties = {
@@ -231,8 +229,8 @@ export default function InfluencerTransferPage() {
                 🎤
               </div>
               <div>
-                <p className="text-sm font-bold" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-montserrat)' }}>{application.full_name}</p>
-                <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>@{application.instagram_handle} · Status: {application.status}</p>
+                <p className="text-sm font-bold" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-montserrat)' }}>Application found</p>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Status: {application.status}</p>
               </div>
               <button type="button" onClick={() => setApplication(null)} className="ml-auto text-xs cursor-pointer" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-montserrat)', touchAction: 'manipulation' }}>
                 Change

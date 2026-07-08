@@ -113,20 +113,30 @@ export default function AdminClient() {
   }
 
   const handleTicketGender = async (ticketId: string, gender: 'male' | 'female') => {
-    await fetch('/api/admin/tickets', {
+    const res = await fetch('/api/admin/tickets', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ticketId, gender }),
     })
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: 'Update failed' }))
+      alert(error ?? 'Failed to update gender')
+      return
+    }
     await fetchTickets()
   }
 
   const handleInfluencerGender = async (applicationId: string, gender: 'male' | 'female') => {
-    await fetch('/api/admin/influencers', {
+    const res = await fetch('/api/admin/influencers', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ applicationId, gender }),
     })
+    if (!res.ok) {
+      const { error } = await res.json().catch(() => ({ error: 'Update failed' }))
+      alert(error ?? 'Failed to update gender')
+      return
+    }
     await fetchInfluencers()
   }
 
@@ -381,6 +391,7 @@ function TicketRow({
                     border: ticket.gender === g ? '1px solid rgba(255,63,194,0.5)' : '1px solid var(--border)',
                     color: ticket.gender === g ? 'var(--accent-magenta)' : 'var(--text-muted)',
                     fontFamily: 'var(--font-montserrat)',
+                    touchAction: 'manipulation',
                   }}
                 >
                   {g === 'male' ? 'M' : 'F'}
@@ -502,6 +513,7 @@ function InfluencerRow({
                     border: app.gender === g ? '1px solid rgba(255,63,194,0.5)' : '1px solid var(--border)',
                     color: app.gender === g ? 'var(--accent-magenta)' : 'var(--text-muted)',
                     fontFamily: 'var(--font-montserrat)',
+                    touchAction: 'manipulation',
                   }}
                 >
                   {g === 'male' ? 'M' : 'F'}
