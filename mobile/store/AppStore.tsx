@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import type { ImageSourcePropType } from 'react-native';
 import * as WebBrowser from 'expo-web-browser';
-import { emptyProfile, type Profile } from '@/data/profile';
+import { emptyProfile, type Profile, type InfluencerProfile } from '@/data/profile';
 import {
   seedCliques,
   seedInvites,
@@ -16,6 +16,7 @@ import { useAuth } from '@/store/AuthContext';
 import * as api from '@/lib/api';
 
 export type PaymentProvider = 'bkash' | 'sslcommerz';
+export type PromotionStatus = 'pending' | 'approved' | 'rejected';
 
 export type RegistrationStatus = 'none' | 'pending' | 'approved';
 export type Registration = {
@@ -28,6 +29,9 @@ export type Registration = {
   // True while a real checkout is polling for a server-verified result;
   // always absent/false in demo mode.
   confirming?: boolean;
+  // Absent in demo mode. 'influencer' skips payment entirely — see
+  // tickets.tsx's INFLUENCER · NO CHARGE tag.
+  ticketTier?: 'phase1' | 'influencer';
 };
 
 export type ReservationStatus = 'none' | 'pending' | 'approved';
@@ -67,6 +71,12 @@ type AppStoreValue = {
   removeMember: (cliqueId: string, userId: string) => void;
   leaveClique: (cliqueId: string) => void;
   respondInvite: (inviteId: string, accept: boolean) => void;
+
+  // Influencer segment
+  influencerProfile: InfluencerProfile | null;
+  saveInfluencerProfile: (profile: InfluencerProfile) => void;
+  promotionApplications: Record<string, PromotionStatus>;
+  applyToPromote: (eventId: string) => void;
 };
 
 const AppStoreContext = createContext<AppStoreValue | null>(null);
@@ -112,6 +122,8 @@ function useLocalStore(): AppStoreValue {
   const [cliques, setCliques] = useState<Clique[]>(seedCliques);
   const [invites, setInvites] = useState<CliqueInvite[]>(seedInvites);
   const [sentInvites, setSentInvites] = useState<{ cliqueId: string; userId: string }[]>([]);
+  const [influencerProfile, setInfluencerProfile] = useState<InfluencerProfile | null>(null);
+  const [promotionApplications, setPromotionApplications] = useState<Record<string, PromotionStatus>>({});
 
   function completeOnboarding(next: Profile) {
     setProfile(next);
@@ -221,6 +233,19 @@ function useLocalStore(): AppStoreValue {
     }
   }
 
+  function saveInfluencerProfile(next: InfluencerProfile) {
+    setInfluencerProfile(next);
+  }
+
+  function applyToPromote(eventId: string) {
+    setPromotionApplications((p) => ({ ...p, [eventId]: 'pending' }));
+    // Demo-only auto-approve, same pattern/delay as registerForEvent — CI
+    // Playwright flows depend on it to reach the approved state.
+    setTimeout(() => {
+      setPromotionApplications((p) => (p[eventId] === 'pending' ? { ...p, [eventId]: 'approved' } : p));
+    }, APPROVAL_DELAY_MS);
+  }
+
   return {
     profile,
     hasOnboarded,
@@ -241,6 +266,10 @@ function useLocalStore(): AppStoreValue {
     removeMember,
     leaveClique,
     respondInvite,
+    influencerProfile,
+    saveInfluencerProfile,
+    promotionApplications,
+    applyToPromote,
   };
 }
 
@@ -258,6 +287,8 @@ function useRemoteStore(): AppStoreValue {
   const [reservations, setReservations] = useState<Record<string, Reservation>>({});
   const [cliques, setCliques] = useState<Clique[]>([]);
   const [invites, setInvites] = useState<CliqueInvite[]>([]);
+  const [influencerProfile, setInfluencerProfileState] = useState<InfluencerProfile | null>(null);
+  const [promotionApplications, setPromotionApplications] = useState<Record<string, PromotionStatus>>({});
   // Optimistic "invite sent" tracking, mirroring useLocalStore's
   // sentInvites — real state lives in clique_invites, but isInvited() is
   // called on every render and must answer synchronously.
@@ -316,6 +347,14 @@ function useRemoteStore(): AppStoreValue {
     refreshCliquesAndInvites();
     refreshRegistration();
     refreshReservation();
+    api
+      .fetchInfluencerProfile(userId)
+      .then(setInfluencerProfileState)
+      .catch((err) => console.warn('Failed to fetch influencer profile', err));
+    api
+      .fetchMyPromotionApplications(userId)
+      .then(setPromotionApplications)
+      .catch((err) => console.warn('Failed to fetch promotion applications', err));
     // Warms data/users.ts's synchronous search cache — see its comment for
     // why remote search can't just be an async replacement for searchUsers.
     api
@@ -485,6 +524,27 @@ function useRemoteStore(): AppStoreValue {
     });
   }
 
+  function saveInfluencerProfile(next: InfluencerProfile) {
+    if (!userId) return;
+    setInfluencerProfileState(next);
+    api.saveInfluencerProfileRemote(userId, next).catch((err) => {
+      console.warn('Failed to save influencer profile', err);
+    });
+  }
+
+  function applyToPromote(eventId: string) {
+    if (!userId) return;
+    setPromotionApplications((p) => ({ ...p, [eventId]: 'pending' }));
+    api.applyToPromoteRemote(userId, eventId).catch((err) => {
+      console.warn('Failed to apply to promote', err);
+      setPromotionApplications((p) => {
+        const next = { ...p };
+        delete next[eventId];
+        return next;
+      });
+    });
+  }
+
   function respondInvite(inviteId: string, accept: boolean) {
     if (!userId) return;
     const invite = invites.find((inv) => inv.id === inviteId);
@@ -522,6 +582,10 @@ function useRemoteStore(): AppStoreValue {
     removeMember,
     leaveClique,
     respondInvite,
+    influencerProfile,
+    saveInfluencerProfile,
+    promotionApplications,
+    applyToPromote,
   };
 }
 

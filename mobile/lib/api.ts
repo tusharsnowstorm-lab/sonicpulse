@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { cliquePalette } from '@/theme';
 import type { Clique, CliqueMember, CliqueInvite } from '@/data/clique';
 import type { AppUser } from '@/data/users';
+import type { InfluencerProfile } from '@/data/profile';
 import type { Registration, Reservation } from '@/store/AppStore';
 
 function client() {
@@ -224,22 +225,42 @@ export async function fetchMyRegistration(userId: string): Promise<RemoteRegistr
   const db = client();
   const { data, error } = await db
     .from('user_tickets')
-    .select('id, status, includes_shuttle, reference_code')
+    .select('id, status, includes_shuttle, reference_code, ticket_tier')
     .eq('user_id', userId)
-    .eq('ticket_tier', 'phase1')
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .in('ticket_tier', ['phase1', 'influencer'])
+    .order('created_at', { ascending: false });
   if (error) throw error;
-  if (!data) return { registration: { status: 'none', shuttle: false, paid: false }, ticketId: null };
+  const rows = data ?? [];
+  if (rows.length === 0) return { registration: { status: 'none', shuttle: false, paid: false }, ticketId: null };
+
+  // A user can hold both a paid phase1 ticket and an influencer-approved
+  // one for the same event (PLAN-influencer-segment's "double-ticket"
+  // edge case). Registration is a single object per event here — narrower
+  // than that plan's ideal "Tickets tab lists both" — so prefer the
+  // influencer ticket when both exist.
+  const row = rows.find((r) => r.ticket_tier === 'influencer') ?? rows[0];
+  const isInfluencer = row.ticket_tier === 'influencer';
+
+  let paid = isInfluencer; // influencer tickets never go through checkout
+  if (!isInfluencer) {
+    const { data: successfulPayment } = await db
+      .from('payments')
+      .select('id')
+      .eq('ticket_id', row.id)
+      .eq('status', 'success')
+      .maybeSingle();
+    paid = !!successfulPayment;
+  }
+
   return {
     registration: {
-      status: data.status === 'approved' ? 'approved' : data.status === 'pending' ? 'pending' : 'none',
-      shuttle: data.includes_shuttle,
-      paid: false, // payments wiring is PLAN-payments.md's scope
-      referenceCode: data.reference_code,
+      status: row.status === 'approved' ? 'approved' : row.status === 'pending' ? 'pending' : 'none',
+      shuttle: row.includes_shuttle,
+      paid,
+      referenceCode: row.reference_code,
+      ticketTier: row.ticket_tier,
     },
-    ticketId: data.id,
+    ticketId: row.id,
   };
 }
 
@@ -298,8 +319,11 @@ export function subscribeToMyTickets(userId: string, onChange: () => void): () =
   const channel = db
     .channel('me-tickets')
     .on(
+      // '*' (not just UPDATE) so an influencer-approved application —
+      // which INSERTs a brand new user_tickets row rather than updating an
+      // existing one — also triggers a refetch.
       'postgres_changes',
-      { event: 'UPDATE', schema: 'public', table: 'user_tickets', filter: `user_id=eq.${userId}` },
+      { event: '*', schema: 'public', table: 'user_tickets', filter: `user_id=eq.${userId}` },
       onChange
     )
     .subscribe();
@@ -320,10 +344,18 @@ export async function fetchMyReservation(userId: string, eventId: string): Promi
     .maybeSingle();
   if (error) throw error;
   if (!data) return { reservation: { status: 'none', paid: false }, reservationId: null };
+
+  const { data: successfulPayment } = await db
+    .from('payments')
+    .select('id')
+    .eq('reservation_id', data.id)
+    .eq('status', 'success')
+    .maybeSingle();
+
   return {
     reservation: {
       status: data.status === 'approved' ? 'approved' : data.status === 'pending' ? 'pending' : 'none',
-      paid: false, // payments wiring is PLAN-payments.md's scope
+      paid: !!successfulPayment,
     },
     reservationId: data.id,
   };
@@ -402,6 +434,62 @@ export async function fetchPaymentStatus(accessToken: string, paymentId: string)
   if (!res.ok) throw new Error(`fetchPaymentStatus failed: ${res.status}`);
   const data = await res.json();
   return data.status as string;
+}
+
+// ---- Influencer segment ----------------------------------------------------
+
+export async function fetchInfluencerProfile(userId: string): Promise<InfluencerProfile | null> {
+  const db = client();
+  const { data, error } = await db
+    .from('influencer_profiles')
+    .select('primary_platform, tiktok_handle, youtube_channel, follower_count, content_type')
+    .eq('user_id', userId)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  return {
+    primaryPlatform: data.primary_platform,
+    tiktokHandle: data.tiktok_handle ?? '',
+    youtubeChannel: data.youtube_channel ?? '',
+    followerCount: data.follower_count,
+    contentType: data.content_type,
+  };
+}
+
+export async function saveInfluencerProfileRemote(userId: string, profile: InfluencerProfile): Promise<void> {
+  const db = client();
+  const { error } = await db.from('influencer_profiles').upsert(
+    {
+      user_id: userId,
+      primary_platform: profile.primaryPlatform,
+      tiktok_handle: profile.tiktokHandle || null,
+      youtube_channel: profile.youtubeChannel || null,
+      follower_count: profile.followerCount,
+      content_type: profile.contentType,
+    },
+    { onConflict: 'user_id' }
+  );
+  if (error) throw error;
+}
+
+export async function fetchMyPromotionApplications(userId: string): Promise<Record<string, 'pending' | 'approved' | 'rejected'>> {
+  const db = client();
+  const { data, error } = await db.from('promotion_applications').select('event_id, status').eq('user_id', userId);
+  if (error) throw error;
+  const result: Record<string, 'pending' | 'approved' | 'rejected'> = {};
+  (data ?? []).forEach((row) => {
+    result[row.event_id] = row.status;
+  });
+  return result;
+}
+
+export async function applyToPromoteRemote(userId: string, eventId: string): Promise<'pending' | 'already-applied'> {
+  const db = client();
+  const { error } = await db.from('promotion_applications').insert({ user_id: userId, event_id: eventId });
+  // unique(user_id, event_id) makes double-applying a 23505, not a real
+  // failure — the button should just settle into its PENDING state.
+  if (error && error.code !== '23505') throw error;
+  return error ? 'already-applied' : 'pending';
 }
 
 // ---- Directory search (read) ------------------------------------------------
