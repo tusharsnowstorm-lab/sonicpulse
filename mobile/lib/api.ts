@@ -136,6 +136,77 @@ export async function fetchMyInvites(userId: string): Promise<CliqueInvite[]> {
   });
 }
 
+// ---- Cliques + invites (writes) --------------------------------------------
+
+export async function createCliqueRemote(userId: string, name: string): Promise<string> {
+  const db = client();
+  const { data: cliqueRow, error: insertErr } = await db
+    .from('cliques')
+    .insert({ name, creator_id: userId })
+    .select('id')
+    .single();
+  if (insertErr) throw insertErr;
+
+  // Creator seeds their own membership row (the RLS insert policy allows
+  // this specifically so is_clique_member() sees the creator immediately).
+  const { error: memberErr } = await db
+    .from('clique_members')
+    .insert({ clique_id: cliqueRow.id, user_id: userId, color_hex: cliquePalette[0] });
+  if (memberErr) throw memberErr;
+
+  return cliqueRow.id as string;
+}
+
+export async function sendInviteRemote(cliqueId: string, inviterId: string, inviteeId: string): Promise<void> {
+  const db = client();
+  const { error } = await db
+    .from('clique_invites')
+    .insert({ clique_id: cliqueId, inviter_id: inviterId, invitee_id: inviteeId });
+  // The partial unique index (one pending invite per clique+invitee) makes
+  // re-inviting a no-op rather than a real failure.
+  if (error && error.code !== '23505') throw error;
+}
+
+export async function respondInviteRemote(
+  inviteId: string,
+  userId: string,
+  cliqueId: string,
+  accept: boolean
+): Promise<void> {
+  const db = client();
+  const { error: updateErr } = await db
+    .from('clique_invites')
+    .update({ status: accept ? 'accepted' : 'declined' })
+    .eq('id', inviteId);
+  if (updateErr) throw updateErr;
+  if (!accept) return;
+
+  // Two simultaneous accepts can race this count and pick the same palette
+  // index — acceptable (colors may repeat past six anyway); not worth a lock.
+  const { count, error: countErr } = await db
+    .from('clique_members')
+    .select('*', { count: 'exact', head: true })
+    .eq('clique_id', cliqueId);
+  if (countErr) throw countErr;
+
+  const { error: joinErr } = await db
+    .from('clique_members')
+    .insert({ clique_id: cliqueId, user_id: userId, color_hex: cliquePalette[(count ?? 0) % cliquePalette.length] });
+  if (joinErr) throw joinErr;
+}
+
+export async function removeMemberRemote(cliqueId: string, memberUserId: string): Promise<void> {
+  const db = client();
+  const { error } = await db.from('clique_members').delete().eq('clique_id', cliqueId).eq('user_id', memberUserId);
+  if (error) throw error;
+}
+
+export async function leaveCliqueRemote(cliqueId: string, userId: string): Promise<void> {
+  const db = client();
+  const { error } = await db.from('clique_members').delete().eq('clique_id', cliqueId).eq('user_id', userId);
+  if (error) throw error;
+}
+
 // ---- Registration / reservation (reads) -----------------------------------
 
 export type RemoteRegistration = { registration: Registration; ticketId: string | null };

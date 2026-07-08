@@ -229,6 +229,10 @@ function useRemoteStore(): AppStoreValue {
   const [reservations, setReservations] = useState<Record<string, Reservation>>({});
   const [cliques, setCliques] = useState<Clique[]>([]);
   const [invites, setInvites] = useState<CliqueInvite[]>([]);
+  // Optimistic "invite sent" tracking, mirroring useLocalStore's
+  // sentInvites — real state lives in clique_invites, but isInvited() is
+  // called on every render and must answer synchronously.
+  const [sentInvites, setSentInvites] = useState<{ cliqueId: string; userId: string }[]>([]);
 
   // Raw DB row ids behind the current registration/reservation — the
   // public Registration/Reservation shapes never carry an id (no screen
@@ -299,13 +303,61 @@ function useRemoteStore(): AppStoreValue {
   function payTicket(_eventId: string) {}
   function reserveAccommodation(_eventId: string) {}
   function payReservation(_eventId: string) {}
-  function createClique(_name: string, _invitedUserIds: string[], _heroImage: ImageSourcePropType | null) {}
-  function sendInvite(_cliqueId: string, _userId: string) {}
-  function isInvited(_cliqueId: string, _userId: string) {
-    return false;
+
+  function sendInvite(cliqueId: string, inviteeId: string) {
+    if (!userId) return;
+    setSentInvites((s) => [...s, { cliqueId, userId: inviteeId }]);
+    api.sendInviteRemote(cliqueId, userId, inviteeId).catch((err) => {
+      console.warn('Failed to send invite', err);
+      setSentInvites((s) => s.filter((entry) => !(entry.cliqueId === cliqueId && entry.userId === inviteeId)));
+    });
   }
-  function removeMember(_cliqueId: string, _userId: string) {}
-  function leaveClique(_cliqueId: string) {}
+
+  function isInvited(cliqueId: string, inviteeId: string) {
+    return sentInvites.some((s) => s.cliqueId === cliqueId && s.userId === inviteeId);
+  }
+
+  function createClique(name: string, invitedUserIds: string[], _heroImage: ImageSourcePropType | null) {
+    if (!userId) return;
+    const tempId = `pending-${Date.now()}`;
+    // Optimistic placeholder; replaced with the real id (and its members,
+    // via the next cliques refresh) once the insert resolves.
+    setCliques((c) => [...c, { id: tempId, name, creatorId: 'me', heroImage: null, members: [] }]);
+    api
+      .createCliqueRemote(userId, name)
+      .then((realId) => {
+        setCliques((c) => c.map((clq) => (clq.id === tempId ? { ...clq, id: realId } : clq)));
+        invitedUserIds.forEach((inviteeId) => sendInvite(realId, inviteeId));
+      })
+      .catch((err) => {
+        console.warn('Failed to create clique', err);
+        setCliques((c) => c.filter((clq) => clq.id !== tempId));
+      });
+  }
+
+  function removeMember(cliqueId: string, memberUserId: string) {
+    const prev = cliques;
+    setCliques((c) =>
+      c.map((clq) =>
+        clq.id === cliqueId ? { ...clq, members: clq.members.filter((m) => m.slug !== memberUserId) } : clq
+      )
+    );
+    api.removeMemberRemote(cliqueId, memberUserId).catch((err) => {
+      console.warn('Failed to remove member', err);
+      setCliques(prev);
+    });
+  }
+
+  function leaveClique(cliqueId: string) {
+    if (!userId) return;
+    const prev = cliques;
+    setCliques((c) => c.filter((clq) => clq.id !== cliqueId));
+    api.leaveCliqueRemote(cliqueId, userId).catch((err) => {
+      console.warn('Failed to leave clique', err);
+      setCliques(prev);
+    });
+  }
+
   function respondInvite(_inviteId: string, _accept: boolean) {}
 
   return {
