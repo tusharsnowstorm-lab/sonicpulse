@@ -290,8 +290,26 @@ create table if not exists public.payments (
   includes_shuttle boolean not null default false,
   raw_payload jsonb,
   created_at timestamptz default now(),
+  updated_at timestamptz default now(),
   check (num_nonnulls(ticket_id, reservation_id) = 1)   -- XOR: a payment settles exactly one thing
 );
+alter table public.payments add column if not exists updated_at timestamptz default now();
+
+-- Keeps updated_at meaningful for the IPN/callback idempotency check
+-- (acceptance criterion 5: replaying an IPN must not touch it) without
+-- every route handler having to remember to set it by hand.
+create or replace function public.set_payments_updated_at()
+returns trigger language plpgsql as $$
+begin
+  new.updated_at = now();
+  return new;
+end;
+$$;
+drop trigger if exists payments_set_updated_at on public.payments;
+create trigger payments_set_updated_at
+  before update on public.payments
+  for each row execute function public.set_payments_updated_at();
+
 alter table public.payments enable row level security;
 drop policy if exists "own payments readable" on public.payments;
 create policy "own payments readable" on public.payments for select using (auth.uid() = user_id);
