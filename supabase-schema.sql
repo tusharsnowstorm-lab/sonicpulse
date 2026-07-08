@@ -275,3 +275,24 @@ exception when duplicate_object then null; end $$;
 do $$ begin
   alter publication supabase_realtime add table public.clique_members;
 exception when duplicate_object then null; end $$;
+
+-- ── Payments (Phase 08) — bKash + SSLCommerz ─────────────────────
+create table if not exists public.payments (
+  id uuid primary key default gen_random_uuid(),
+  ticket_id uuid references public.user_tickets(id) on delete set null,
+  reservation_id uuid references public.accommodation_reservations(id) on delete set null,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  provider text not null check (provider in ('bkash','sslcommerz')),
+  provider_txn_id text unique,
+  amount integer not null,           -- whole BDT, integer. Never float.
+  currency text not null default 'BDT',
+  status text not null default 'initiated' check (status in ('initiated','success','failed','refunded')),
+  includes_shuttle boolean not null default false,
+  raw_payload jsonb,
+  created_at timestamptz default now(),
+  check (num_nonnulls(ticket_id, reservation_id) = 1)   -- XOR: a payment settles exactly one thing
+);
+alter table public.payments enable row level security;
+drop policy if exists "own payments readable" on public.payments;
+create policy "own payments readable" on public.payments for select using (auth.uid() = user_id);
+-- inserts/updates: service role only (no user policy) — all writes go through the API routes.
