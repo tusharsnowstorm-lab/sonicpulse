@@ -308,6 +308,13 @@ function useRemoteStore(): AppStoreValue {
     });
   }, [userId, refreshRegistration]);
 
+  useEffect(() => {
+    if (!userId) return;
+    return api.subscribeToMyReservations(userId, () => {
+      refreshReservation();
+    });
+  }, [userId, refreshReservation]);
+
   function registerForEvent(eventId: string) {
     if (!userId || !session) return;
     api
@@ -341,7 +348,20 @@ function useRemoteStore(): AppStoreValue {
   }
 
   function payTicket(_eventId: string) {}
-  function reserveAccommodation(_eventId: string) {}
+  function reserveAccommodation(eventId: string) {
+    if (!userId) return;
+    setReservations((r) => ({ ...r, [eventId]: { status: 'pending', paid: false } }));
+    api
+      .submitReservation(userId, eventId, 'shared', sonicPulse.accommodationPrice)
+      .then(({ reservationId }) => {
+        reservationIds.current[eventId] = reservationId;
+      })
+      .catch((err) => {
+        console.warn('Failed to reserve accommodation', err);
+        setReservations((r) => ({ ...r, [eventId]: { status: 'none', paid: false } }));
+      });
+  }
+
   function payReservation(_eventId: string) {}
 
   function sendInvite(cliqueId: string, inviteeId: string) {

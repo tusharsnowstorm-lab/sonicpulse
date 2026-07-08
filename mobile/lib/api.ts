@@ -320,6 +320,53 @@ export async function fetchMyReservation(userId: string, eventId: string): Promi
   };
 }
 
+export async function submitReservation(
+  userId: string,
+  eventId: string,
+  tier: string,
+  price: number
+): Promise<{ reservationId: string }> {
+  const db = client();
+
+  // unique(event_id, user_id) makes double-reserving impossible at the DB
+  // level; treat an existing row as success instead of surfacing an error,
+  // since the optimistic caller has no way to know one already exists.
+  const existing = await fetchMyReservation(userId, eventId);
+  if (existing.reservationId) return { reservationId: existing.reservationId };
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const referenceCode = generateReferenceCode();
+    const { data, error } = await db
+      .from('accommodation_reservations')
+      .insert({ event_id: eventId, user_id: userId, tier, price, reference_code: referenceCode })
+      .select('id')
+      .single();
+    if (!error) return { reservationId: data.id };
+    if (error.code === '23505') {
+      const again = await fetchMyReservation(userId, eventId);
+      if (again.reservationId) return { reservationId: again.reservationId };
+      continue; // reference_code collision — retry with a fresh one
+    }
+    throw error;
+  }
+  throw new Error('Failed to create a reservation after retry');
+}
+
+export function subscribeToMyReservations(userId: string, onChange: () => void): () => void {
+  const db = client();
+  const channel = db
+    .channel('me-reservations')
+    .on(
+      'postgres_changes',
+      { event: 'UPDATE', schema: 'public', table: 'accommodation_reservations', filter: `user_id=eq.${userId}` },
+      onChange
+    )
+    .subscribe();
+  return () => {
+    db.removeChannel(channel);
+  };
+}
+
 // ---- Directory search (read) ------------------------------------------------
 
 // query='' matches every profile with a name (ilike '%%' matches all rows) —
