@@ -17,13 +17,13 @@ export const faqs: FAQItem[] = [
     id: 'when-where',
     category: 'Event Basics',
     question: 'When and where is it?',
-    answer: '25 September 2026 (Friday) at 4:30 PM through to 9 AM Saturday morning. Venue is TBA — full address will be sent to registered attendees via email closer to the event.',
+    answer: '25 September 2026 (Friday) at 4 PM through to 9 AM Saturday morning. Venue is TBA — full address will be sent to registered attendees via email closer to the event.',
   },
   {
     id: 'event-hours',
     category: 'Event Basics',
     question: 'Is this an all-night event? What are the hours?',
-    answer: 'Yes. Doors open at 4:30 PM on Friday and the event runs through the night until 9 AM Saturday morning — 16.5 hours of music. Both stages operate simultaneously.',
+    answer: 'Yes. Doors open at 4 PM on Friday and the event runs through the night until 9 AM Saturday morning — 17 hours of music. Both stages operate simultaneously.',
   },
   {
     id: 'rain-policy',
@@ -72,7 +72,7 @@ export const faqs: FAQItem[] = [
     id: 'refund-policy',
     category: 'Tickets & Registration',
     question: 'What is your refund policy?',
-    answer: 'Tickets are non-refundable. In the event of cancellation by the organiser, full refunds will be processed within 7 business days.',
+    answer: 'All tickets are non-refundable. If the event is cancelled due to circumstances outside the organiser\'s control, your ticket will carry over to the next edition of Sonic Pulse.',
   },
   // At the Event
   {

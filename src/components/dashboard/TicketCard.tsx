@@ -286,7 +286,7 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
     <div>
       <div class="sub">Dhaka Music Festival</div>
       <div class="wordmark">SONIC<span>PULSE</span></div>
-      <div class="sub" style="margin-top:4px;">25 SEP 2026 · 16:30 FRI → 09:00 SAT</div>
+      <div class="sub" style="margin-top:4px;">25 SEP 2026 · 16:00 FRI → 09:00 SAT</div>
     </div>
   </div>
   <div class="photo-section">

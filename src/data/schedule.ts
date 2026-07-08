@@ -33,5 +33,5 @@ export const schedule: Schedule = {
 export const EVENT_DATE = '2026-09-25'
 export const EVENT_DATE_DISPLAY = '25 SEPTEMBER 2026'
 export const EVENT_VENUE = 'TBA'
-export const EVENT_START = '16:30'
+export const EVENT_START = '16:00'
 export const EVENT_END = '09:00'
