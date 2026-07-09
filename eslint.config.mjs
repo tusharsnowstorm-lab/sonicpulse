@@ -12,6 +12,13 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // mobile/ is a separate Expo/React Native app with its own toolchain
+    // (npx tsc --noEmit + expo export, no eslint of its own) — this
+    // Next.js web config's rules (react/no-unescaped-entities on RN text,
+    // no-require-imports on RN's require()-based image imports, jsx-a11y
+    // rules meant for DOM <img>) don't apply to it and were never
+    // satisfiable by React Native code in the first place.
+    "mobile/**",
   ]),
 ]);
 

@@ -240,9 +240,22 @@ function useLocalStore(): AppStoreValue {
   function applyToPromote(eventId: string) {
     setPromotionApplications((p) => ({ ...p, [eventId]: 'pending' }));
     // Demo-only auto-approve, same pattern/delay as registerForEvent — CI
-    // Playwright flows depend on it to reach the approved state.
+    // Playwright flows depend on it to reach the approved state, and on
+    // Tickets showing the free ticket once it does (acceptance criterion:
+    // "apply -> PENDING -> auto-approve -> Tickets shows INFLUENCER · NO
+    // CHARGE, no pay buttons").
     setTimeout(() => {
       setPromotionApplications((p) => (p[eventId] === 'pending' ? { ...p, [eventId]: 'approved' } : p));
+      setRegistrations((r) => ({
+        ...r,
+        [eventId]: {
+          status: 'approved',
+          shuttle: false,
+          paid: true,
+          ticketTier: 'influencer',
+          referenceCode: `SP-DEMO${Date.now().toString(36).slice(-4).toUpperCase()}`,
+        },
+      }));
     }, APPROVAL_DELAY_MS);
   }
 
@@ -590,12 +603,15 @@ function useRemoteStore(): AppStoreValue {
 }
 
 export function AppStoreProvider({ children }: { children: ReactNode }) {
-  // isSupabaseConfigured is a module-level constant resolved once from
-  // process.env at bundle time (mobile/lib/supabase.ts) — it never changes
-  // for the lifetime of the app, so this branch is stable across every
-  // render and calling one hook or the other here does not violate the
-  // rules of hooks in practice.
-  const value = isSupabaseConfigured ? useRemoteStore() : useLocalStore();
+  // Both hooks run every render (rules-of-hooks requires the same hooks in
+  // the same order every time) and only the relevant one's result is used.
+  // useRemoteStore() is inert when unconfigured — every one of its effects
+  // guards on `userId`, which stays null when isSupabaseConfigured is
+  // false, so this costs an idle context read and some unused state, not
+  // any network activity or side effects.
+  const localValue = useLocalStore();
+  const remoteValue = useRemoteStore();
+  const value = isSupabaseConfigured ? remoteValue : localValue;
   return <AppStoreContext.Provider value={value}>{children}</AppStoreContext.Provider>;
 }
 
