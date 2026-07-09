@@ -1,26 +1,31 @@
 import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
 import { SymbolView } from 'expo-symbols';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Screen } from '@/components/Screen';
 import { EventHeader } from '@/components/Headers';
 import { AppText } from '@/components/AppText';
+import { Button } from '@/components/ui';
 import { SearchInput } from '@/components/SearchInput';
 import { Radar } from '@/components/Radar';
 import { FOUND_DISTANCE_METERS, type CliqueMember } from '@/data/clique';
 import { useAppStore } from '@/store/AppStore';
+import { useLiveClique } from '@/hooks/useLiveClique';
 import { theme } from '@/theme';
 
 export default function WyaScreen() {
   const { cliqueId } = useLocalSearchParams<{ cliqueId?: string }>();
   const { cliques } = useAppStore();
   const clique = cliques.find((c) => c.id === cliqueId) ?? cliques[0];
+  const { members, status, stopSharing } = useLiveClique(clique);
   const [query, setQuery] = useState('');
 
-  const members = clique?.members ?? [];
   const normalized = query.trim().toLowerCase();
   const dimmedSlugs = useMemo(
-    () => (normalized ? members.filter((m) => !m.name.toLowerCase().includes(normalized)).map((m) => m.slug) : []),
+    () =>
+      members
+        .filter((m) => m.stale || (normalized && !m.name.toLowerCase().includes(normalized)))
+        .map((m) => m.slug),
     [normalized, members]
   );
   const visibleMembers = normalized ? members.filter((m) => m.name.toLowerCase().includes(normalized)) : members;
@@ -39,16 +44,35 @@ export default function WyaScreen() {
     );
   }
 
+  if (status === 'denied') {
+    return (
+      <Screen>
+        <EventHeader back={clique.name} />
+        <View style={styles.deniedWrap}>
+          <SymbolView name={{ ios: 'location.slash', android: 'location_off', web: 'location_off' }} tintColor={theme.muted} size={28} />
+          <AppText weight="bold" style={styles.deniedTitle}>
+            Location access needed
+          </AppText>
+          <AppText weight="regular" style={styles.deniedSub}>
+            wya? shows your clique roughly where you are, only while this screen is open, only tonight. Enable
+            location access in Settings to use it.
+          </AppText>
+          <Button label="Open Settings" variant="outline" style={{ marginTop: 16 }} onPress={() => Linking.openSettings()} />
+        </View>
+      </Screen>
+    );
+  }
+
   return (
     <Screen>
       <EventHeader back={clique.name} />
 
-      <View style={styles.sharePill}>
+      <Pressable style={styles.sharePill} onPress={status === 'live' ? stopSharing : undefined} disabled={status !== 'live'}>
         <SymbolView name={{ ios: 'location.fill', android: 'location_on', web: 'location_on' }} tintColor={theme.accent} size={11} />
         <AppText weight="medium" style={styles.sharePillText}>
-          Sharing until 09:00
+          {status === 'connecting' ? 'Connecting…' : 'Sharing until 09:00'}
         </AppText>
-      </View>
+      </Pressable>
 
       <SearchInput value={query} onChangeText={setQuery} />
 
@@ -61,7 +85,7 @@ export default function WyaScreen() {
           </AppText>
         ) : (
           visibleMembers.map((m) => {
-            const found = m.distanceMeters <= FOUND_DISTANCE_METERS;
+            const found = m.found ?? m.distanceMeters <= FOUND_DISTANCE_METERS;
             return (
               <Pressable key={m.slug} style={styles.legendRow} onPress={() => openMember(m)}>
                 <View style={[styles.dot, { backgroundColor: m.color }]} />
@@ -108,6 +132,9 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   sharePillText: { fontSize: 10, color: theme.muted },
+  deniedWrap: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 12, gap: 4 },
+  deniedTitle: { fontSize: 15, color: theme.primary, marginTop: 10 },
+  deniedSub: { fontSize: 12.5, color: theme.muted, textAlign: 'center', lineHeight: 18, marginTop: 4 },
   legend: { gap: 10 },
   legendRow: { flexDirection: 'row', alignItems: 'center', gap: 9 },
   dot: { width: 10, height: 10, borderRadius: 5 },

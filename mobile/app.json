@@ -42,6 +42,12 @@
         {
           "photosPermission": "Used for your profile photo and ID document — both are shown on your ticket and checked at the gate."
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Connect shows your clique roughly where you are, only while wya? is open, only tonight."
+        }
       ]
     ],
     "experiments": {

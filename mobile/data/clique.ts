@@ -9,6 +9,13 @@ export type CliqueMember = {
   color: string;
   distanceMeters: number;
   bearingDeg: number; // degrees clockwise from north, relative to the viewer
+  // Both absent in demo mode / seeds — mobile/hooks/useLiveClique.ts sets
+  // them from live GPS. `found` defaults to the old distanceMeters<=
+  // FOUND_DISTANCE_METERS check when absent so demo mode is untouched.
+  found?: boolean;
+  // No live presence yet (member hasn't opened wya? or hasn't shared a fix
+  // in >15s) — render dimmed via Radar's existing dimmedSlugs prop.
+  stale?: boolean;
 };
 
 export type Clique = {
@@ -93,6 +100,10 @@ export const pendingCliqueDefinitions: Record<string, Clique> = {
 };
 
 export const FOUND_DISTANCE_METERS = 8;
+
+// Local time (24h) at which wya? live-sharing auto-stops. The event itself
+// runs 16:30-09:00 overnight; useLiveClique checks this every second.
+export const EVENT_END_HOUR = 9;
 
 export function getMemberBySlug(clique: Clique | undefined, slug: string | undefined) {
   return clique?.members.find((m) => m.slug === slug);

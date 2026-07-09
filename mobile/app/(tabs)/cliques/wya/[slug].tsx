@@ -13,8 +13,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Screen } from '@/components/Screen';
 import { AppText } from '@/components/AppText';
-import { getMemberBySlug, FOUND_DISTANCE_METERS } from '@/data/clique';
+import { FOUND_DISTANCE_METERS } from '@/data/clique';
 import { useAppStore } from '@/store/AppStore';
+import { useLiveClique } from '@/hooks/useLiveClique';
 import { theme } from '@/theme';
 
 const AnimatedPolygon = Animated.createAnimatedComponent(Polygon);
@@ -23,7 +24,8 @@ export default function MemberFinderScreen() {
   const { slug, cliqueId } = useLocalSearchParams<{ slug: string; cliqueId?: string }>();
   const { cliques } = useAppStore();
   const clique = cliques.find((c) => c.id === cliqueId) ?? cliques[0];
-  const member = getMemberBySlug(clique, slug);
+  const { members } = useLiveClique(clique);
+  const member = members.find((m) => m.slug === slug);
 
   if (!clique || !member) {
     return (
@@ -35,7 +37,7 @@ export default function MemberFinderScreen() {
     );
   }
 
-  const found = member.distanceMeters <= FOUND_DISTANCE_METERS;
+  const found = member.found ?? member.distanceMeters <= FOUND_DISTANCE_METERS;
 
   return (
     <Screen>
@@ -47,7 +49,7 @@ export default function MemberFinderScreen() {
       </Pressable>
 
       <View style={styles.chipRow}>
-        {clique.members.map((m) => (
+        {members.map((m) => (
           <Pressable
             key={m.slug}
             onPress={() => router.setParams({ slug: m.slug })}
