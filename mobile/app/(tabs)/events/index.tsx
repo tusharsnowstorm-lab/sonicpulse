@@ -12,8 +12,9 @@ import { theme } from '@/theme';
 
 export default function EventsScreen() {
   const { width } = useWindowDimensions();
-  const { registrations } = useAppStore();
+  const { registrations, influencerProfile, promotionApplications, applyToPromote } = useAppStore();
   const registration = getRegistration(registrations, sonicPulse.id);
+  const promotionStatus = promotionApplications[sonicPulse.id];
   const cardSize = width - 40; // Screen's horizontal padding is 20 on each side
 
   return (
@@ -30,6 +31,22 @@ export default function EventsScreen() {
             </AppText>
           </View>
         </Pressable>
+
+        {/* Gated only on having an influencer profile, never on registration
+            status — approval to promote IS the ticket, independent of
+            whether this person ever registers normally. */}
+        {influencerProfile && (
+          <View style={styles.promoRow}>
+            {promotionStatus ? (
+              <StatusPill
+                label={promotionStatus.toUpperCase()}
+                tone={promotionStatus === 'approved' ? 'good' : promotionStatus === 'rejected' ? 'neutral' : 'pending'}
+              />
+            ) : (
+              <Button label="🎤 Apply to Promote" variant="outline" onPress={() => applyToPromote(sonicPulse.id)} />
+            )}
+          </View>
+        )}
 
         {registration.status === 'pending' && (
           <View style={styles.statusRow}>
@@ -84,6 +101,7 @@ const styles = StyleSheet.create({
   },
   captionRow: { paddingTop: 10, paddingHorizontal: 2 },
   caption: { fontSize: 11, color: theme.muted },
+  promoRow: { paddingTop: 8, paddingHorizontal: 2 },
   statusRow: {
     flexDirection: 'row',
     alignItems: 'center',

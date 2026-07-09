@@ -151,6 +151,13 @@ export default function TicketsScreen() {
                 {sonicPulse.ticketTier.toUpperCase()}
                 {registration.shuttle ? ' · SHUTTLE ADDED' : ''}
               </AppText>
+              {registration.ticketTier === 'influencer' && (
+                <View style={styles.influencerPill}>
+                  <AppText weight="medium" style={styles.influencerPillText}>
+                    🎤 INFLUENCER · NO CHARGE
+                  </AppText>
+                </View>
+              )}
               <View style={styles.qrWrap}>
                 <QrPlaceholder />
               </View>
@@ -241,7 +248,17 @@ const styles = StyleSheet.create({
   statusPill: { borderWidth: 1, borderColor: theme.good, borderRadius: 100, paddingVertical: 3, paddingHorizontal: 8 },
   statusText: { fontSize: 9, color: theme.good, letterSpacing: 0.4 },
   holder: { fontSize: 15 },
-  tier: { fontSize: 11, color: theme.muted, marginBottom: 16 },
+  tier: { fontSize: 11, color: theme.muted, marginBottom: 8 },
+  influencerPill: {
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: theme.accent,
+    borderRadius: 100,
+    paddingVertical: 3,
+    paddingHorizontal: 9,
+    marginBottom: 16,
+  },
+  influencerPillText: { fontSize: 9, letterSpacing: 0.4, color: theme.accent },
   qrWrap: { alignSelf: 'center', borderRadius: 10, overflow: 'hidden', marginBottom: 12 },
   reference: { fontSize: 11, color: theme.muted, textAlign: 'center', letterSpacing: 0.5 },
 

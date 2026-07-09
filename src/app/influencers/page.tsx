@@ -20,9 +20,9 @@ const PLATFORMS = [
 const FOLLOWER_RANGES = [
   { value: 'under_1k', label: 'Under 1,000' },
   { value: '1k_5k', label: '1,000 – 5,000' },
-  { value: '5k_20k', label: '5,000 – 20,000' },
-  { value: '20k_100k', label: '20,000 – 100,000' },
-  { value: '100k_plus', label: '100,000+' },
+  { value: '5k_10k', label: '5,000 – 10,000' },
+  { value: '10k_15k', label: '10,000 – 15,000' },
+  { value: '15k_plus', label: '15,000+' },
 ]
 
 const CONTENT_TYPES = [

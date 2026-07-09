@@ -10,12 +10,19 @@ const ID_TYPE_LABELS: Record<string, string> = {
   birth_certificate: 'Birth Cert.',
 }
 
+// Legacy keys (5k_20k/20k_100k/100k_plus) stay forever — existing
+// influencer_applications rows already have them and deleting the label
+// would render a raw enum string for every one of those. The five new
+// keys are what src/app/influencers/page.tsx's form submits going forward.
 const FOLLOWER_LABELS: Record<string, string> = {
   under_1k: '< 1K',
   '1k_5k': '1K–5K',
   '5k_20k': '5K–20K',
   '20k_100k': '20K–100K',
   '100k_plus': '100K+',
+  '5k_10k': '5K–10K',
+  '10k_15k': '10K–15K',
+  '15k_plus': '15K+',
 }
 
 const CONTENT_LABELS: Record<string, string> = {
@@ -63,6 +70,26 @@ type InfluencerApp = {
   created_at: string
 }
 
+// App-originated "apply to promote" applications — distinct from the
+// website's own influencer_applications form above. Profile fields are
+// already on file (onboarding + Become an Influencer), so this is a
+// review-only queue, not a form submission.
+type PromotionApp = {
+  id: string
+  user_id: string
+  event_id: string
+  status: 'pending' | 'approved' | 'rejected'
+  reference_code?: string
+  created_at: string
+  full_name: string
+  phone: string
+  instagram_handle: string
+  primary_platform: string
+  follower_count: string
+  content_type: string
+  already_has_ticket: boolean
+}
+
 const TIER_LABELS: Record<string, string> = {
   phase1: 'Phase 1 — Early Bird',
   phase2: 'Phase 2',
@@ -72,9 +99,10 @@ const TIER_LABELS: Record<string, string> = {
 const STATUS_TABS = ['pending', 'approved', 'rejected'] as const
 
 export default function AdminClient() {
-  const [section, setSection] = useState<'tickets' | 'influencers'>('tickets')
+  const [section, setSection] = useState<'tickets' | 'influencers' | 'promotions'>('tickets')
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [influencers, setInfluencers] = useState<InfluencerApp[]>([])
+  const [promotions, setPromotions] = useState<PromotionApp[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'rejected'>('pending')
   const [actionLoading, setActionLoading] = useState<string | null>(null)
@@ -96,10 +124,19 @@ export default function AdminClient() {
     setLoading(false)
   }, [])
 
+  const fetchPromotions = useCallback(async () => {
+    setLoading(true)
+    const res = await fetch('/api/admin/influencers?source=promotion')
+    const json = await res.json()
+    setPromotions(json.applications ?? [])
+    setLoading(false)
+  }, [])
+
   useEffect(() => {
     if (section === 'tickets') fetchTickets()
-    else fetchInfluencers()
-  }, [section, fetchTickets, fetchInfluencers])
+    else if (section === 'influencers') fetchInfluencers()
+    else fetchPromotions()
+  }, [section, fetchTickets, fetchInfluencers, fetchPromotions])
 
   const getNidUrl = async (ticket: Ticket) => {
     if (nidUrls[ticket.id]) return nidUrls[ticket.id]
@@ -134,6 +171,17 @@ export default function AdminClient() {
     setActionLoading(null)
   }
 
+  const handlePromotionAction = async (applicationId: string, action: 'approved' | 'rejected') => {
+    setActionLoading(applicationId + action)
+    await fetch('/api/admin/influencers', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ applicationId, status: action, source: 'promotion' }),
+    })
+    await fetchPromotions()
+    setActionLoading(null)
+  }
+
   const filtered = tickets.filter((t) => t.status === activeTab)
   const counts = {
     pending: tickets.filter((t) => t.status === 'pending').length,
@@ -146,6 +194,12 @@ export default function AdminClient() {
     rejected: influencers.filter((a) => a.status === 'rejected').length,
   }
   const filteredInf = influencers.filter((a) => a.status === activeTab)
+  const promoCounts = {
+    pending: promotions.filter((a) => a.status === 'pending').length,
+    approved: promotions.filter((a) => a.status === 'approved').length,
+    rejected: promotions.filter((a) => a.status === 'rejected').length,
+  }
+  const filteredPromo = promotions.filter((a) => a.status === activeTab)
 
   return (
     <main className="min-h-screen" style={{ background: 'var(--bg-void)' }}>
@@ -198,9 +252,25 @@ export default function AdminClient() {
               </span>
             )}
           </button>
+          <button
+            onClick={() => { setSection('promotions'); setActiveTab('pending') }}
+            className="px-5 py-2.5 rounded-lg text-sm font-bold cursor-pointer transition-all"
+            style={{
+              background: section === 'promotions' ? 'var(--bg-elevated)' : 'transparent',
+              border: section === 'promotions' ? '1px solid var(--accent-magenta)' : '1px solid var(--border)',
+              color: section === 'promotions' ? 'var(--accent-magenta)' : 'var(--text-muted)',
+            }}
+          >
+            🎤 App Applications
+            {promoCounts.pending > 0 && (
+              <span className="ml-2 inline-flex items-center justify-center w-5 h-5 rounded-full text-xs font-black" style={{ background: 'var(--accent-magenta)', color: '#fff' }}>
+                {promoCounts.pending}
+              </span>
+            )}
+          </button>
         </div>
 
-        {section === 'tickets' ? (
+        {section === 'tickets' && (
           <>
             <div className="mb-6">
               <h1 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-montserrat)' }}>Ticket Reviews</h1>
@@ -241,7 +311,9 @@ export default function AdminClient() {
               </div>
             )}
           </>
-        ) : (
+        )}
+
+        {section === 'influencers' && (
           <>
             <div className="mb-6">
               <h1 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-montserrat)' }}>Influencer Applications</h1>
@@ -278,6 +350,49 @@ export default function AdminClient() {
               <div className="space-y-4">
                 {filteredInf.map((app) => (
                   <InfluencerRow key={app.id} app={app} actionLoading={actionLoading} onAction={handleInfluencerAction} />
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+        {section === 'promotions' && (
+          <>
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold mb-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-montserrat)' }}>App Applications</h1>
+              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Apply-to-promote requests from inside the app — profile fields are already on file.</p>
+            </div>
+
+            {/* Status tabs */}
+            <div className="flex gap-2 mb-6 flex-wrap">
+              {STATUS_TABS.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all cursor-pointer"
+                  style={{
+                    background: activeTab === tab ? 'rgba(255,63,194,0.12)' : 'var(--bg-elevated)',
+                    border: activeTab === tab ? '1px solid rgba(255,63,194,0.4)' : '1px solid var(--border)',
+                    color: activeTab === tab ? 'var(--accent-magenta)' : 'var(--text-muted)',
+                  }}
+                >
+                  {tab === 'approved' ? <CheckCircle size={13} /> : <Clock size={13} />}
+                  {tab === 'pending' ? 'Pending' : tab === 'approved' ? 'Approved' : 'Rejected'}
+                  <span className="rounded-full px-1.5 py-0.5 text-xs" style={{ background: 'rgba(255,255,255,0.08)' }}>{promoCounts[tab]}</span>
+                </button>
+              ))}
+            </div>
+
+            {loading ? (
+              <div className="space-y-4">{[1, 2, 3].map((i) => <div key={i} className="rounded-xl h-32 animate-pulse" style={{ background: 'var(--bg-elevated)' }} />)}</div>
+            ) : filteredPromo.length === 0 ? (
+              <div className="rounded-xl p-10 text-center" style={{ background: 'var(--bg-elevated)', border: '1px dashed var(--border)' }}>
+                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No {activeTab} app applications.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredPromo.map((app) => (
+                  <PromotionRow key={app.id} app={app} actionLoading={actionLoading} onAction={handlePromotionAction} />
                 ))}
               </div>
             )}
@@ -465,6 +580,85 @@ function InfluencerRow({
               <button onClick={() => onAction(app.id, 'approved')} disabled={!!actionLoading} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded cursor-pointer font-semibold" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.35)', color: '#22c55e' }}>
                 <CheckCircle size={12} />
                 {actionLoading === app.id + 'approved' ? 'Approving…' : 'Approve & send pass'}
+              </button>
+              <button onClick={() => onAction(app.id, 'rejected')} disabled={!!actionLoading} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded cursor-pointer font-semibold" style={{ background: 'rgba(255,45,107,0.1)', border: '1px solid rgba(255,45,107,0.3)', color: 'var(--accent-pulse)' }}>
+                <XCircle size={12} />
+                {actionLoading === app.id + 'rejected' ? 'Rejecting…' : 'Reject'}
+              </button>
+            </>
+          )}
+          {app.status === 'approved' && (
+            <div className="flex items-center gap-3">
+              <span className="text-xs px-2 py-1 rounded font-semibold" style={{ background: 'rgba(34,197,94,0.1)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.3)' }}>✓ Approved</span>
+              {app.reference_code && <span className="text-xs font-mono" style={{ color: 'var(--accent-magenta)' }}>{app.reference_code}</span>}
+            </div>
+          )}
+          {app.status === 'rejected' && (
+            <span className="text-xs px-2 py-1 rounded font-semibold" style={{ background: 'rgba(255,45,107,0.1)', color: 'var(--accent-pulse)', border: '1px solid rgba(255,45,107,0.3)' }}>✗ Rejected</span>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PromotionRow({
+  app,
+  actionLoading,
+  onAction,
+}: {
+  app: PromotionApp
+  actionLoading: string | null
+  onAction: (id: string, action: 'approved' | 'rejected') => void
+}) {
+  const date = new Date(app.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+
+  return (
+    <div className="rounded-xl overflow-hidden" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
+      <div className="px-5 py-3 flex items-center justify-between flex-wrap gap-2" style={{ background: 'rgba(255,63,194,0.04)', borderBottom: '1px solid var(--border)' }}>
+        <div className="flex items-center gap-3 flex-wrap">
+          <span className="text-xs font-bold" style={{ color: 'var(--text-primary)' }}>{app.full_name}</span>
+          <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(255,63,194,0.1)', color: 'var(--accent-magenta)', border: '1px solid rgba(255,63,194,0.2)' }}>
+            {CONTENT_LABELS[app.content_type] ?? app.content_type}
+          </span>
+          <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(255,255,255,0.06)', color: 'var(--text-muted)' }}>
+            {FOLLOWER_LABELS[app.follower_count] ?? app.follower_count} followers
+          </span>
+          {app.already_has_ticket && (
+            <span className="text-xs px-2 py-0.5 rounded" style={{ background: 'rgba(255,182,72,0.12)', color: '#FFB648', border: '1px solid rgba(255,182,72,0.3)' }}>
+              Already holds a ticket
+            </span>
+          )}
+        </div>
+        <span className="text-xs" style={{ color: 'var(--text-muted)' }}>{date}</span>
+      </div>
+
+      <div className="px-5 py-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+          <div>
+            <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Phone</p>
+            <p className="text-sm" style={{ color: 'var(--text-primary)' }}>{app.phone || '—'}</p>
+          </div>
+          <div>
+            <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Instagram</p>
+            {app.instagram_handle ? (
+              <a href={`https://instagram.com/${app.instagram_handle}`} target="_blank" rel="noopener noreferrer" className="text-sm hover:underline" style={{ color: 'var(--accent-magenta)' }}>@{app.instagram_handle}</a>
+            ) : (
+              <p className="text-sm" style={{ color: 'var(--text-primary)' }}>—</p>
+            )}
+          </div>
+          <div>
+            <p className="text-xs mb-1" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Platform</p>
+            <p className="text-sm capitalize" style={{ color: 'var(--text-primary)' }}>{app.primary_platform}</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 flex-wrap">
+          {app.status === 'pending' && (
+            <>
+              <button onClick={() => onAction(app.id, 'approved')} disabled={!!actionLoading} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded cursor-pointer font-semibold" style={{ background: 'rgba(34,197,94,0.12)', border: '1px solid rgba(34,197,94,0.35)', color: '#22c55e' }}>
+                <CheckCircle size={12} />
+                {actionLoading === app.id + 'approved' ? 'Approving…' : 'Approve & issue ticket'}
               </button>
               <button onClick={() => onAction(app.id, 'rejected')} disabled={!!actionLoading} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded cursor-pointer font-semibold" style={{ background: 'rgba(255,45,107,0.1)', border: '1px solid rgba(255,45,107,0.3)', color: 'var(--accent-pulse)' }}>
                 <XCircle size={12} />
