@@ -1,17 +1,15 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { X, User } from 'lucide-react'
+import PillButton, { PillLink } from '@/components/ui/PillButton'
 
 const navLinks = [
-  { href: '/', label: 'Home' },
   { href: '/lineup', label: 'Lineup' },
   { href: '/schedule', label: 'Schedule' },
   { href: '/tickets', label: 'Tickets' },
   { href: '/faq', label: 'FAQ' },
-  { href: '/policy', label: 'Policy' },
   { href: '/contact', label: 'Contact' },
 ]
 
@@ -59,51 +57,33 @@ export default function MobileMenu({ onClose }: Props) {
     <div
       className="fixed inset-0 z-50 flex flex-col"
       style={{
-        backgroundImage: 'url(/images/hero-poster.webp)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center top',
+        background: '#000',
         overscrollBehavior: 'none',
         paddingTop: 'env(safe-area-inset-top)',
         paddingBottom: 'env(safe-area-inset-bottom)',
       }}
     >
-      {/* Dark overlay */}
-      <div className="absolute inset-0" style={{ background: 'rgba(5,5,8,0.88)' }} aria-hidden="true" />
-
       {/* Header */}
       <div
-        className="relative z-10 flex items-center justify-between px-5 shrink-0"
-        style={{ height: '4rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}
+        className="flex items-center justify-between px-5 shrink-0"
+        style={{ height: '4rem', borderBottom: '1px solid var(--border)' }}
       >
-        <div className="flex items-center gap-2.5">
-          <Image
-            src="/images/logo-badge.webp"
-            alt="Sonic Pulse"
-            width={32}
-            height={32}
-            className="rounded-full"
-            style={{ border: '1.5px solid rgba(255,255,255,0.35)' }}
-          />
-          <span
-            className="text-lg font-black tracking-[0.2em]"
-            style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--text-primary)' }}
-          >
-            SONIC <span style={{ color: 'var(--accent-magenta)' }}>PULSE</span>
-          </span>
-        </div>
+        <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.32em', fontFamily: 'var(--font-montserrat)', color: '#fff' }}>
+          SONIC PULSE
+        </span>
         <button
           onClick={onClose}
           type="button"
           className="flex items-center justify-center"
-          style={{ width: 48, height: 48, color: 'rgba(255,255,255,0.7)', touchAction: 'manipulation' }}
+          style={{ width: 48, height: 48, color: 'rgba(255,255,255,0.6)', touchAction: 'manipulation' }}
           aria-label="Close menu"
         >
-          <X size={26} />
+          <X size={24} />
         </button>
       </div>
 
       {/* Nav links */}
-      <nav className="relative z-10 flex-1 flex flex-col justify-center px-6 gap-1" aria-label="Mobile navigation">
+      <nav className="flex-1 flex flex-col justify-center px-6" aria-label="Mobile navigation">
         {navLinks.map(({ href, label }) => {
           const active = pathname === href
           return (
@@ -111,22 +91,16 @@ export default function MobileMenu({ onClose }: Props) {
               key={href}
               href={href}
               onClick={onClose}
-              className="flex items-center py-4 transition-colors duration-150"
+              className="flex items-center py-4"
               style={{
                 fontFamily: 'var(--font-montserrat)',
-                fontSize: 'clamp(1.35rem, 5.5vw, 1.75rem)',
+                fontSize: 'clamp(1.5rem, 6vw, 2rem)',
                 fontWeight: 700,
-                letterSpacing: '0.04em',
-                color: active ? 'var(--accent-magenta)' : 'rgba(255,255,255,0.85)',
-                borderBottom: '1px solid rgba(255,255,255,0.06)',
+                letterSpacing: '-0.02em',
+                color: active ? 'var(--accent-magenta)' : '#fff',
+                borderBottom: '1px solid var(--border)',
               }}
             >
-              {active && (
-                <span
-                  className="inline-block w-1.5 h-1.5 rounded-full mr-3 shrink-0"
-                  style={{ background: 'var(--accent-magenta)', marginBottom: 2 }}
-                />
-              )}
               {label}
             </Link>
           )
@@ -134,66 +108,29 @@ export default function MobileMenu({ onClose }: Props) {
       </nav>
 
       {/* Bottom CTAs */}
-      <div className="relative z-10 px-6 py-8 shrink-0 space-y-3">
-        {/* Auth button */}
+      <div className="px-6 py-8 shrink-0 space-y-3">
         {user ? (
-          <Link
-            href="/dashboard"
-            onClick={onClose}
-            className="flex items-center justify-center gap-3 w-full py-4 rounded font-bold tracking-widest uppercase"
-            style={{
-              background: 'rgba(255,63,194,0.08)',
-              border: '1.5px solid rgba(255,63,194,0.35)',
-              color: 'var(--accent-magenta)',
-              fontFamily: 'var(--font-montserrat)',
-              fontSize: '0.9rem',
-            }}
-          >
+          <PillLink href="/dashboard" onClick={onClose} variant="outline" className="w-full">
             {avatar ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={avatar} alt="Profile" width={26} height={26} style={{ borderRadius: '50%', objectFit: 'cover', width: 26, height: 26 }} />
+              <img src={avatar} alt="Profile" width={20} height={20} style={{ borderRadius: '50%', objectFit: 'cover', width: 20, height: 20 }} />
             ) : (
-              <User size={18} />
+              <User size={16} />
             )}
-            My Account
-          </Link>
+            Account
+          </PillLink>
         ) : (
-          <Link
-            href="/login"
-            onClick={onClose}
-            className="flex items-center justify-center gap-2 w-full py-4 rounded font-bold tracking-widest uppercase"
-            style={{
-              background: 'rgba(255,63,194,0.08)',
-              border: '1.5px solid rgba(255,63,194,0.35)',
-              color: 'var(--accent-magenta)',
-              fontFamily: 'var(--font-montserrat)',
-              fontSize: '0.9rem',
-            }}
-          >
-            <User size={18} />
-            Sign In
-          </Link>
+          <PillLink href="/login" onClick={onClose} variant="outline" className="w-full">
+            <User size={16} />
+            Sign in
+          </PillLink>
         )}
 
-        {/* Get tickets */}
-        <Link
-          href="/tickets"
-          onClick={onClose}
-          className="flex items-center justify-center w-full py-4 rounded font-bold tracking-widest uppercase"
-          style={{
-            background: 'var(--accent-magenta)',
-            color: '#fff',
-            fontFamily: 'var(--font-montserrat)',
-            fontSize: '1rem',
-          }}
-        >
-          GET TICKETS
-        </Link>
+        <PillButton onClick={() => { onClose(); window.location.href = '/tickets' }} variant="primary" className="w-full">
+          Get tickets
+        </PillButton>
 
-        <p
-          className="text-center text-xs mt-1 tracking-widest uppercase"
-          style={{ color: 'rgba(255,255,255,0.3)', fontFamily: 'var(--font-jetbrains-mono)' }}
-        >
+        <p style={{ textAlign: 'center', fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginTop: 6 }}>
           25 Sep 2026
         </p>
       </div>

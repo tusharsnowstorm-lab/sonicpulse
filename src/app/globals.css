@@ -22,6 +22,10 @@
   --font-inter: var(--font-montserrat);
   --font-space-grotesk: var(--font-montserrat);
   --font-jetbrains-mono: var(--font-montserrat);
+
+  /* Legacy tokens — kept until every page is reskinned onto the Gallery
+     Minimal system below (see REDESIGN_PLAN.md Phase 6). Do not add new
+     usages of these; use the Gallery Minimal tokens instead. */
   --bg-void: #050508;
   --bg-surface: #0D0D14;
   --bg-elevated: #16161F;
@@ -33,6 +37,23 @@
   --text-primary: #F0F0F8;
   --text-muted: #6B6B7E;
   --border: #1E1E2E;
+
+  /* ── Gallery Minimal design system (REDESIGN_PLAN.md §1.1) ──────── */
+  --text-dim: rgba(255,255,255,0.55);    /* ledes, body copy */
+  --text-label-muted: rgba(255,255,255,0.35); /* tracked labels, captions */
+  --accent-soft: rgba(255,63,194,0.4);   /* featured borders */
+  --accent-faint: rgba(255,63,194,0.08); /* tinted fills */
+  --border-strong: rgba(255,255,255,0.2);
+
+  --radius-pill: 999px;
+  --radius-card: 24px;
+
+  --text-display: clamp(52px, 8.5vw, 92px);
+  --text-title: clamp(34px, 5vw, 52px);
+  --text-lede: 17px;
+  --text-body: 14px;
+  --text-caption: 12px;
+  --text-label: 11px;
 }
 
 /* ── Wide-gamut P3 override — keeps magenta consistent on iPhone/AMOLED ── */

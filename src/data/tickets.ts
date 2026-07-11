@@ -2,47 +2,53 @@ export type TicketTier = {
   id: 'phase1' | 'phase2' | 'phase3'
   label: string
   price: number
+  /** Price when purchased inside the Afterhours app — see APP_DISCOUNT. */
+  appPrice: number
   badge?: string
   perks: string[]
   status: 'available' | 'selling_fast' | 'sold_out'
   highlight?: boolean
 }
 
+export const APP_NAME = 'Afterhours'
+export const APP_DISCOUNT = 1000
+
 export const ticketTiers: TicketTier[] = [
   {
     id: 'phase1',
-    label: 'PHASE 1 — EARLY BIRD',
-    price: 4500,
-    badge: 'BEST VALUE',
+    label: 'PULSE',
+    price: 5500,
+    appPrice: 4500,
     perks: [
-      'General admission',
-      'Wristband included',
-      'Access to both stages',
-      'Early bird discount',
+      'General entry',
+      'Both stages',
+      'Rest zones',
+    ],
+    status: 'available',
+  },
+  {
+    id: 'phase2',
+    label: 'RHYTHM',
+    price: 6500,
+    appPrice: 5500,
+    badge: 'MOST POPULAR',
+    perks: [
+      'Priority entry',
+      'Lounge access',
+      'Complimentary drink',
     ],
     status: 'available',
     highlight: true,
   },
   {
-    id: 'phase2',
-    label: 'PHASE 2 — STANDARD',
-    price: 5500,
-    perks: [
-      'General admission',
-      'Wristband included',
-      'Access to both stages',
-    ],
-    status: 'available',
-  },
-  {
     id: 'phase3',
-    label: 'PHASE 3 — FINAL',
-    price: 6500,
-    badge: 'LAST CHANCE',
+    label: 'CRESCENDO',
+    price: 7500,
+    appPrice: 6500,
     perks: [
-      'General admission',
-      'Wristband included',
-      'Access to both stages',
+      'VIP entry',
+      'Stage-side deck',
+      'Dedicated bar',
     ],
     status: 'available',
   },
