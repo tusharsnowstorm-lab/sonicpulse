@@ -56,7 +56,7 @@ function wrap(body: string) {
 
 // ── Button helper ───────────────────────────────────────────────────────────
 
-function btn(href: string, label: string, bg = '#00f0ff', color = '#050508') {
+function btn(href: string, label: string, bg = '#ff3fc2', color = '#050508') {
   return `<table cellpadding="0" cellspacing="0" style="margin:20px 0;">
     <tr>
       <td style="background:${bg};border-radius:6px;">

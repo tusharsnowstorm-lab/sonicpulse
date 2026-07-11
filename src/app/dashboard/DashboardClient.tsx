@@ -1,6 +1,5 @@
 ﻿'use client'
 import { useState, useEffect, useCallback } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Plus, LogOut, X } from 'lucide-react'
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser'
@@ -8,7 +7,7 @@ import TicketCard from '@/components/dashboard/TicketCard'
 import AddTicketForm from '@/components/dashboard/AddTicketForm'
 import AccommodationSection from '@/components/dashboard/AccommodationSection'
 import ProfileSection from '@/components/dashboard/ProfileSection'
-import Button from '@/components/ui/Button'
+import PillButton from '@/components/ui/PillButton'
 import type { User } from '@supabase/supabase-js'
 
 type Ticket = {
@@ -68,31 +67,22 @@ export default function DashboardClient({ user }: { user: User }) {
   }
 
   return (
-    <main className="min-h-screen" style={{ background: 'var(--bg-void)' }}>
+    <main className="min-h-screen" style={{ background: '#000' }}>
       {/* Top bar */}
       <div
         className="sticky top-0 z-30 border-b"
         style={{
-          background: 'rgba(5,5,8,0.92)',
+          background: 'rgba(0,0,0,0.9)',
           backdropFilter: 'blur(16px)',
           borderColor: 'var(--border)',
         }}
       >
         <div className="max-w-[1000px] mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <Image
-              src="/images/logo-badge.webp"
-              alt="Sonic Pulse"
-              width={32}
-              height={32}
-              className="rounded-full"
-              style={{ border: '1.5px solid rgba(255,255,255,0.3)' }}
-            />
             <span
-              className="font-black tracking-[0.15em] text-base"
-              style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--text-primary)' }}
+              style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.32em', fontFamily: 'var(--font-montserrat)', color: '#fff' }}
             >
-              SONIC <span style={{ color: 'var(--accent-magenta)' }}>PULSE</span>
+              SONIC PULSE
             </span>
           </Link>
           <div className="flex items-center gap-3">
@@ -107,14 +97,14 @@ export default function DashboardClient({ user }: { user: User }) {
                   style={{ width: 28, height: 28, border: '1.5px solid rgba(255,255,255,0.2)' }}
                 />
               )}
-              <span className="text-sm" style={{ color: 'var(--text-muted)' }}>
+              <span className="text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
                 {user.user_metadata?.full_name ?? user.email}
               </span>
             </div>
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded transition-colors"
-              style={{ color: 'var(--text-muted)', border: '1px solid var(--border)', fontFamily: 'var(--font-montserrat)' }}
+              className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-colors"
+              style={{ color: 'rgba(255,255,255,0.45)', border: '1px solid var(--border-strong)', fontFamily: 'var(--font-montserrat)', touchAction: 'manipulation' }}
             >
               <LogOut size={13} />
               Sign out
@@ -124,7 +114,7 @@ export default function DashboardClient({ user }: { user: User }) {
       </div>
 
       {/* Site nav strip */}
-      <div className="border-b" style={{ borderColor: 'var(--border)', background: 'rgba(5,5,8,0.6)' }}>
+      <div className="border-b" style={{ borderColor: 'var(--border)' }}>
         <div className="max-w-[1000px] mx-auto px-4 h-10 flex items-center gap-6 overflow-x-auto">
           {[
             { href: '/', label: 'Home' },
@@ -138,7 +128,7 @@ export default function DashboardClient({ user }: { user: User }) {
               key={href}
               href={href}
               className="text-xs whitespace-nowrap transition-colors"
-              style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)', letterSpacing: '0.1em' }}
+              style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-montserrat)', letterSpacing: '0.1em' }}
             >
               {label}
             </Link>
@@ -153,31 +143,31 @@ export default function DashboardClient({ user }: { user: User }) {
             <div>
               <h1
                 className="text-2xl font-bold"
-                style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}
+                style={{ color: '#fff', fontFamily: 'var(--font-montserrat)' }}
               >
-                My Tickets
+                My tickets
               </h1>
-              <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
+              <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
                 {tickets.length === 0
                   ? 'No tickets yet. Add your first one below.'
                   : `${tickets.length} ticket${tickets.length !== 1 ? 's' : ''} registered`}
               </p>
             </div>
-            <Button onClick={() => setShowForm((v) => !v)} size="sm">
+            <PillButton onClick={() => setShowForm((v) => !v)} variant={showForm ? 'outline' : 'primary'} style={{ padding: '10px 20px', fontSize: 13 }}>
               {showForm ? <><X size={14} className="inline mr-1" />Cancel</> : <><Plus size={14} className="inline mr-1" />Add ticket</>}
-            </Button>
+            </PillButton>
           </div>
 
           {/* Add ticket form */}
           {showForm && (
             <div
-              className="rounded-lg p-6 mb-6"
+              className="rounded-2xl p-6 mb-6"
               style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
             >
-              <h3 className="font-bold mb-4" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>
+              <h3 className="font-bold mb-4" style={{ color: '#fff', fontFamily: 'var(--font-montserrat)' }}>
                 Add a ticket
               </h3>
-              <p className="text-xs mb-5" style={{ color: 'var(--text-muted)' }}>
+              <p className="text-xs mb-5" style={{ color: 'rgba(255,255,255,0.45)' }}>
                 Each ticket requires the attendee&apos;s details and NID for verification. You can register tickets for others.
               </p>
               <AddTicketForm onSuccess={handleTicketAdded} />
@@ -190,7 +180,7 @@ export default function DashboardClient({ user }: { user: User }) {
               {[1, 2].map((i) => (
                 <div
                   key={i}
-                  className="rounded-lg h-28 animate-pulse"
+                  className="rounded-2xl h-28 animate-pulse"
                   style={{ background: 'var(--bg-elevated)' }}
                 />
               ))}
@@ -201,10 +191,10 @@ export default function DashboardClient({ user }: { user: User }) {
             </div>
           ) : !showForm ? (
             <div
-              className="rounded-lg p-8 text-center"
+              className="rounded-2xl p-8 text-center"
               style={{ background: 'var(--bg-elevated)', border: '1px dashed var(--border)' }}
             >
-              <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
                 Click &quot;Add ticket&quot; to register yourself or someone else.
               </p>
             </div>

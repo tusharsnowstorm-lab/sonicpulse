@@ -12,17 +12,15 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const styles: Record<ButtonVariant, string> = {
   primary: `
-    bg-[var(--accent-magenta)] text-white font-bold tracking-widest uppercase
-    hover:shadow-[0_0_20px_rgba(255,63,194,0.5)] transition-shadow duration-200
-    disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none
+    bg-[var(--accent-magenta)] text-white font-semibold
+    disabled:opacity-40 disabled:cursor-not-allowed
   `,
   secondary: `
-    bg-transparent text-[var(--accent-magenta)] border border-[var(--accent-magenta)]
-    hover:bg-[var(--accent-magenta)] hover:text-white transition-colors duration-200
+    bg-transparent text-white border border-[var(--border-strong)] font-semibold
     disabled:opacity-40 disabled:cursor-not-allowed
   `,
   ghost: `
-    bg-transparent text-[var(--text-muted)] hover:text-[var(--text-primary)]
+    bg-transparent text-[rgba(255,255,255,0.45)] hover:text-white font-semibold
     transition-colors duration-200
     disabled:opacity-40 disabled:cursor-not-allowed
   `,
@@ -39,7 +37,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <button
         ref={ref}
-        className={`inline-flex items-center justify-center gap-2 rounded-xl cursor-pointer font-[family-name:var(--font-inter)] ${styles[variant]} ${sizes[size]} ${className}`}
+        className={`inline-flex items-center justify-center gap-2 rounded-full cursor-pointer font-[family-name:var(--font-montserrat)] ${styles[variant]} ${sizes[size]} ${className}`}
+        style={{ touchAction: 'manipulation' }}
         disabled={loading || props.disabled}
         {...props}
       >

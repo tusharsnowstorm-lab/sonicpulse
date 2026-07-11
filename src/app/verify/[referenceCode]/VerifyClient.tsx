@@ -1,7 +1,7 @@
 ﻿'use client'
 import { useState } from 'react'
-import Image from 'next/image'
-import { CheckCircle, XCircle, Clock, LogIn, LogOut, AlertTriangle, ExternalLink } from 'lucide-react'
+import { CheckCircle, XCircle, LogIn, LogOut, AlertTriangle, ExternalLink } from 'lucide-react'
+import { ticketTiers } from '@/data/tickets'
 
 const ID_TYPE_LABELS: Record<string, string> = {
   nid: 'National ID (NID)',
@@ -9,11 +9,7 @@ const ID_TYPE_LABELS: Record<string, string> = {
   birth_certificate: 'Birth Certificate',
 }
 
-const TIER_LABELS: Record<string, string> = {
-  phase1: 'Phase 1 — Early Bird',
-  phase2: 'Phase 2',
-  phase3: 'Phase 3 — Last Release',
-}
+const TIER_LABELS: Record<string, string> = Object.fromEntries(ticketTiers.map((t) => [t.id, t.label]))
 
 type Ticket = {
   id: string
@@ -91,7 +87,7 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
     return (
       <main className="min-h-screen flex flex-col items-center justify-center px-4" style={{ background: 'var(--bg-void)' }}>
         <div className="w-full max-w-sm text-center">
-          <Image src="/images/logo-badge.webp" alt="Sonic Pulse" width={56} height={56} className="rounded-full mx-auto mb-6" style={{ border: '2px solid rgba(255,255,255,0.25)' }} />
+          <p className="mb-6" style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.32em', fontFamily: 'var(--font-montserrat)', color: '#fff' }}>SONIC PULSE</p>
 
           {!ticket ? (
             <>
@@ -162,8 +158,7 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
       <div className="sticky top-0 z-30 border-b" style={{ background: 'rgba(5,5,8,0.97)', backdropFilter: 'blur(16px)', borderColor: 'var(--border)' }}>
         <div className="max-w-[640px] mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Image src="/images/logo-badge.webp" alt="Sonic Pulse" width={26} height={26} className="rounded-full" style={{ border: '1px solid rgba(255,255,255,0.2)' }} />
-            <span className="font-black tracking-[0.15em] text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--text-primary)' }}>SONIC <span style={{ color: 'var(--accent-magenta)' }}>PULSE</span></span>
+            <span className="font-bold tracking-[0.15em] text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: '#fff' }}>SONIC PULSE</span>
             <span className="text-xs px-2 py-0.5 rounded font-bold" style={{ background: 'rgba(255,63,194,0.12)', border: '1px solid rgba(255,63,194,0.3)', color: 'var(--accent-volt)', fontFamily: 'var(--font-jetbrains-mono)' }}>GATE</span>
           </div>
           <a href="/gate" className="text-xs px-3 py-1.5 rounded" style={{ color: 'var(--text-muted)', border: '1px solid var(--border)' }}>← Back</a>

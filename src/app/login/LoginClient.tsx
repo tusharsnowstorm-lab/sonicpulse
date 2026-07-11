@@ -1,6 +1,5 @@
 'use client'
 import { useState } from 'react'
-import Image from 'next/image'
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser'
 
 function GoogleIcon() {
@@ -47,67 +46,55 @@ export default function LoginClient() {
   const inputStyle: React.CSSProperties = {
     background: 'var(--bg-surface)',
     border: '1px solid var(--border)',
-    borderRadius: 4,
-    color: 'var(--text-primary)',
+    borderRadius: 12,
+    color: '#fff',
     padding: '10px 12px',
     width: '100%',
     fontSize: 16,
     outline: 'none',
+    WebkitAppearance: 'none',
   }
 
   return (
     <main
       className="min-h-screen flex flex-col items-center justify-center px-4"
-      style={{ background: 'var(--bg-void)' }}
+      style={{ background: '#000', minHeight: '100svh' }}
     >
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="flex flex-col items-center mb-10">
-          <Image
-            src="/images/logo-badge.webp"
-            alt="Sonic Pulse"
-            width={64}
-            height={64}
-            className="rounded-full mb-4"
-            style={{ border: '2px solid rgba(255,255,255,0.3)' }}
-          />
           <h1
-            className="text-2xl font-black tracking-[0.2em]"
-            style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--text-primary)' }}
+            style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.32em', fontFamily: 'var(--font-montserrat)', color: '#fff' }}
           >
-            SONIC <span style={{ color: 'var(--accent-magenta)' }}>PULSE</span>
+            SONIC PULSE
           </h1>
-          <p className="text-xs tracking-widest uppercase mt-1" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)' }}>
+          <p className="text-xs tracking-widest uppercase mt-3" style={{ color: 'var(--text-label-muted)', fontFamily: 'var(--font-montserrat)' }}>
             25 September 2026
           </p>
         </div>
 
         {/* Attendee login card */}
         <div
-          className="rounded-lg p-8"
+          className="rounded-2xl p-8"
           style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
         >
-          <h2 className="text-lg font-bold mb-1" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>
+          <h2 className="text-lg font-bold mb-1" style={{ color: '#fff', fontFamily: 'var(--font-montserrat)' }}>
             Sign in
           </h2>
-          <p className="text-sm mb-8" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.45)' }}>
             Create your account to register for tickets and manage your bookings.
           </p>
 
           <button
             onClick={handleGoogleSignIn}
-            className="w-full flex items-center justify-center gap-3 rounded px-4 py-3 text-sm font-semibold transition-all duration-150"
-            style={{
-              background: 'var(--bg-surface)',
-              border: '1px solid var(--border)',
-              color: 'var(--text-primary)',
-            }}
+            className="w-full flex items-center justify-center gap-3 rounded-full px-4 py-3.5 text-sm font-semibold transition-all duration-150"
+            style={{ background: '#fff', color: '#000', touchAction: 'manipulation' }}
           >
             <GoogleIcon />
             Continue with Google
           </button>
 
-          <p className="text-xs text-center mt-6" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-xs text-center mt-6" style={{ color: 'rgba(255,255,255,0.35)' }}>
             By signing in you agree to our terms of service and privacy policy.
           </p>
         </div>
@@ -118,22 +105,22 @@ export default function LoginClient() {
             type="button"
             onClick={() => setShowGateLogin((v) => !v)}
             className="w-full text-xs py-2 transition-colors cursor-pointer"
-            style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)', letterSpacing: '0.1em' }}
+            style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-montserrat)', letterSpacing: '0.1em', touchAction: 'manipulation' }}
           >
-            {showGateLogin ? '▲ Hide' : '▼ Gate staff login'}
+            {showGateLogin ? 'Hide' : 'Gate staff login'}
           </button>
 
           {showGateLogin && (
             <form
               onSubmit={handleGateSignIn}
-              className="mt-3 rounded-lg p-6 space-y-4"
+              className="mt-3 rounded-2xl p-6 space-y-4"
               style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
             >
               <p
                 className="text-xs font-bold tracking-widest uppercase"
-                style={{ color: 'var(--accent-volt)', fontFamily: 'var(--font-jetbrains-mono)' }}
+                style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-montserrat)' }}
               >
-                Gate Staff Access
+                Gate staff access
               </p>
 
               <div>
@@ -152,7 +139,7 @@ export default function LoginClient() {
               </div>
 
               <div>
-                <label className="block text-xs mb-1.5" style={{ color: 'var(--text-muted)', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-jetbrains-mono)' }}>
+                <label className="block text-xs mb-1.5" style={{ color: 'var(--text-label-muted)', letterSpacing: '0.1em', textTransform: 'uppercase', fontFamily: 'var(--font-montserrat)' }}>
                   Password
                 </label>
                 <input
@@ -167,20 +154,21 @@ export default function LoginClient() {
               </div>
 
               {gateError && (
-                <p className="text-xs" style={{ color: 'var(--accent-pulse)' }}>{gateError}</p>
+                <p className="text-xs" style={{ color: '#e24b4a' }}>{gateError}</p>
               )}
 
               <button
                 type="submit"
                 disabled={gateLoading}
-                className="w-full py-3 rounded text-sm font-bold transition-all cursor-pointer"
+                className="w-full py-3 rounded-full text-sm font-semibold transition-all cursor-pointer"
                 style={{
-                  background: 'var(--accent-volt)',
-                  color: '#050508',
+                  background: 'var(--accent-magenta)',
+                  color: '#fff',
                   opacity: gateLoading ? 0.6 : 1,
+                  touchAction: 'manipulation',
                 }}
               >
-                {gateLoading ? 'Signing in…' : 'Sign in as Gate Staff'}
+                {gateLoading ? 'Signing in…' : 'Sign in as gate staff'}
               </button>
             </form>
           )}

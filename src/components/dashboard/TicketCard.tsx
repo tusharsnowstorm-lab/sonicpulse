@@ -259,7 +259,7 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
   .ticket { width: 480px; background: #050508; border: 1.5px solid rgba(255,63,194,0.35); border-radius: 8px; overflow: hidden; color: #F0F0F8; }
   .top { padding: 24px; border-bottom: 1.5px dashed rgba(255,63,194,0.2); }
   .wordmark { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: 0.08em; }
-  .wordmark span { color: #00F0FF; }
+  .wordmark span { color: #FF3FC2; }
   .sub { font-size: 11px; color: #6B6B7E; letter-spacing: 0.2em; text-transform: uppercase; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
   .photo-section { width: 100%; background: #050508; padding: 24px 0 16px; display: flex; justify-content: center; }
   .photo-section img { width: 220px; height: 220px; border-radius: 50%; object-fit: cover; display: block; border: 2px solid rgba(255,63,194,0.3); }
@@ -269,7 +269,7 @@ export default function TicketCard({ ticket, onRefresh, profilePicUrl }: { ticke
   .info { flex: 1; }
   .field-label { font-size: 10px; color: #6B6B7E; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 3px; font-family: 'JetBrains Mono', monospace; }
   .field-val { font-size: 15px; font-weight: 600; margin-bottom: 14px; }
-  .ref { font-family: 'JetBrains Mono', monospace; color: #00F0FF; font-size: 13px; }
+  .ref { font-family: 'JetBrains Mono', monospace; color: #FF3FC2; font-size: 13px; }
   .tier { font-family: 'JetBrains Mono', monospace; color: #FF3FC2; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; }
   .qr img { width: 120px; height: 120px; border-radius: 4px; }
   .bottom { background: #0D0D14; padding: 14px 24px; border-top: 1px dashed rgba(255,63,194,0.15); font-family: 'JetBrains Mono', monospace; }
