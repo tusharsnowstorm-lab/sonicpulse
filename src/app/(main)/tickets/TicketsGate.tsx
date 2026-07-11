@@ -1,9 +1,8 @@
-﻿'use client'
-import Image from 'next/image'
-import Link from 'next/link'
+'use client'
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser'
-import { ticketTiers, CURRENT_PHASE } from '@/data/tickets'
-import Badge from '@/components/ui/Badge'
+import { ticketTiers } from '@/data/tickets'
+import PageHeader from '@/components/ui/PageHeader'
+import AppPromoBand from '@/components/ui/AppPromoBand'
 
 function GoogleIcon() {
   return (
@@ -18,7 +17,6 @@ function GoogleIcon() {
 
 export default function TicketsGate() {
   const supabase = createSupabaseBrowserClient()
-  const tier = ticketTiers.find((t) => t.id === CURRENT_PHASE)
 
   const handleSignIn = async () => {
     await supabase.auth.signInWithOAuth({
@@ -28,93 +26,51 @@ export default function TicketsGate() {
   }
 
   return (
-    <div className="max-w-[1200px] mx-auto px-4 py-16 md:py-24">
-      <div className="max-w-xl mx-auto text-center">
+    <div className="max-w-[1200px] mx-auto px-4" style={{ padding: '64px 6vw 100px' }}>
+      <PageHeader eyebrow="25 September 2026" title="Choose your night" sub="Every tier includes both stages, all seventeen hours." className="mb-10 text-center" />
 
-        {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <Image
-            src="/images/logo-badge.webp"
-            alt="Sonic Pulse"
-            width={72}
-            height={72}
-            className="rounded-full"
-            style={{ border: '2px solid rgba(255,255,255,0.25)' }}
-          />
-        </div>
-
-        {/* Heading */}
-        <p
-          className="text-[10px] tracking-[0.35em] uppercase mb-3"
-          style={{ color: 'var(--accent-volt)', fontFamily: 'var(--font-jetbrains-mono)' }}
-        >
-          Sonic Pulse 2025
-        </p>
-        <h1
-          className="text-4xl md:text-5xl font-black glow-heading mb-4"
-          style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--text-primary)' }}
-        >
-          GET YOUR TICKETS
-        </h1>
-        <p className="text-base mb-10" style={{ color: 'rgba(240,240,248,0.65)' }}>
-          Create a free account to register for tickets. Each ticket is reviewed
-          individually — you&apos;ll be notified by email once approved.
-        </p>
-
-        {/* Current tier card */}
-        {tier && (
+      <div style={{ display: 'flex', gap: 20, justifyContent: 'center', alignItems: 'flex-end', flexWrap: 'wrap', marginBottom: 60 }}>
+        {ticketTiers.map((tier) => (
           <div
-            className="rounded-[4px] p-6 mb-8 text-left glow-border"
-            style={{ background: 'var(--bg-surface)' }}
+            key={tier.id}
+            style={{
+              width: 240,
+              background: 'var(--bg-elevated)',
+              border: tier.highlight ? '1px solid var(--accent-soft)' : '1px solid var(--border)',
+              borderRadius: 'var(--radius-card)',
+              padding: tier.highlight ? '48px 28px' : '38px 28px',
+              textAlign: 'center',
+            }}
           >
-            <div className="flex items-start justify-between mb-3">
-              <div>
-                {tier.badge && (
-                  <div className="mb-2">
-                    <Badge variant={tier.highlight ? 'tier-highlight' : 'tier-last'}>{tier.badge}</Badge>
-                  </div>
-                )}
-                <p
-                  className="text-[10px] tracking-[0.25em] uppercase"
-                  style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)' }}
-                >
-                  {tier.label}
-                </p>
-              </div>
-              <p
-                className="text-3xl font-black"
-                style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--text-primary)' }}
-              >
-                ৳{tier.price.toLocaleString()}
-                <span className="text-sm font-normal" style={{ color: 'var(--text-muted)' }}> BDT</span>
-              </p>
-            </div>
-            <ul className="space-y-1">
+            <p style={{ fontSize: 11, letterSpacing: '0.3em', textTransform: 'uppercase', color: tier.highlight ? 'var(--accent-magenta)' : 'var(--text-label-muted)', marginBottom: 20, fontFamily: 'var(--font-montserrat)', fontWeight: 700 }}>
+              {tier.label}
+            </p>
+            <p style={{ fontSize: 34, fontWeight: 700, letterSpacing: '-0.02em', color: '#fff', fontFamily: 'var(--font-montserrat)', margin: 0 }}>
+              ৳{tier.price.toLocaleString()}
+            </p>
+            <p style={{ fontSize: 12, color: 'var(--accent-magenta)', marginTop: 8 }}>
+              ৳{tier.appPrice.toLocaleString()} in the app
+            </p>
+            <ul style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.45)', lineHeight: 2.1, marginTop: 22, listStyle: 'none', padding: 0 }}>
               {tier.perks.map((perk) => (
-                <li key={perk} className="flex items-center gap-2 text-xs" style={{ color: 'rgba(240,240,248,0.6)' }}>
-                  <span style={{ color: 'var(--accent-magenta)' }}>—</span>
-                  {perk}
-                </li>
+                <li key={perk}>{perk}</li>
               ))}
             </ul>
           </div>
-        )}
+        ))}
+      </div>
 
-        {/* Sign in CTA */}
+      <div className="max-w-xl mx-auto text-center">
         <button
           onClick={handleSignIn}
-          className="w-full flex items-center justify-center gap-3 rounded px-5 py-4 text-sm font-bold transition-all duration-150 mb-4 cursor-pointer"
-          style={{
-            background: 'var(--accent-magenta)',
-            color: '#050508',
-            letterSpacing: '0.05em',
-          }}
+          className="w-full flex items-center justify-center gap-3 rounded-full px-5 py-4 text-sm font-semibold transition-all duration-150 mb-4 cursor-pointer"
+          style={{ background: '#fff', color: '#000', touchAction: 'manipulation' }}
         >
           <GoogleIcon />
           Sign up / Sign in with Google
         </button>
 
-        <p className="text-xs" style={{ color: 'rgba(240,240,248,0.35)' }}>
+        <p className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
           Already have an account?{' '}
           <button
             onClick={handleSignIn}
@@ -126,18 +82,17 @@ export default function TicketsGate() {
           {' '}to go straight to your dashboard.
         </p>
 
-        {/* How it works */}
-        <div
-          className="mt-10 p-4 rounded-[4px] text-sm text-left"
-          style={{ background: 'var(--bg-elevated)', borderLeft: '3px solid var(--accent-magenta)', color: 'rgba(240,240,248,0.55)' }}
-        >
-          <strong style={{ color: 'var(--text-primary)' }}>How it works: </strong>
-          Sign up → Register ticket with your NID → We review within 24h → Approved tickets can be downloaded with QR code.
+        <div className="mt-10">
+          <AppPromoBand />
         </div>
 
-        <p className="text-xs mt-6" style={{ color: 'rgba(240,240,248,0.3)' }}>
-          25 September 2026
-        </p>
+        <div
+          className="mt-10 p-4 rounded-xl text-sm text-left"
+          style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'rgba(255,255,255,0.45)' }}
+        >
+          <strong style={{ color: '#fff' }}>How it works: </strong>
+          Sign up → Register ticket with your NID → We review within 24h → Approved tickets can be downloaded with QR code.
+        </div>
       </div>
     </div>
   )

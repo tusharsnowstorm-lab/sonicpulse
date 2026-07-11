@@ -20,11 +20,11 @@ export default function FAQSearch({ value, onChange }: Props) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Search questions..."
-        className="w-full pl-10 pr-4 py-3 rounded-[4px] text-sm"
+        className="w-full pl-10 pr-4 py-3 rounded-xl text-sm"
         style={{
-          background: 'var(--bg-surface)',
+          background: 'var(--bg-elevated)',
           border: '1px solid var(--border)',
-          color: 'var(--text-primary)',
+          color: '#fff',
           outline: 'none',
         }}
         onFocus={(e) => (e.target.style.borderColor = 'var(--accent-magenta)')}

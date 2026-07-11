@@ -56,12 +56,14 @@ export default function Timetable() {
           <button
             key={stage}
             onClick={() => setActiveTab(stage)}
-            className="flex-1 py-2.5 text-xs font-bold tracking-widest uppercase rounded-[4px] transition-all duration-200 cursor-pointer"
+            className="flex-1 py-2.5 text-xs font-semibold uppercase rounded-full transition-all duration-200 cursor-pointer"
             style={{
-              fontFamily: 'var(--font-jetbrains-mono)',
-              background: activeTab === stage ? 'var(--accent-magenta)' : 'var(--bg-surface)',
-              color: activeTab === stage ? 'var(--bg-void)' : 'var(--text-muted)',
-              border: '1px solid var(--border)',
+              fontFamily: 'var(--font-montserrat)',
+              letterSpacing: '0.1em',
+              background: activeTab === stage ? '#fff' : 'transparent',
+              color: activeTab === stage ? '#000' : 'rgba(255,255,255,0.45)',
+              border: '1px solid var(--border-strong)',
+              touchAction: 'manipulation',
             }}
           >
             {stage === 'main' ? 'Main Stage' : 'Sunrise Stage'}
@@ -76,8 +78,8 @@ export default function Timetable() {
             <h3
               className="text-xs font-bold tracking-[0.3em] uppercase mb-4 pb-3 border-b"
               style={{
-                fontFamily: 'var(--font-jetbrains-mono)',
-                color: stage === 'main' ? 'var(--accent-magenta)' : 'var(--accent-volt)',
+                fontFamily: 'var(--font-montserrat)',
+                color: stage === 'main' ? '#fff' : 'var(--accent-magenta)',
                 borderColor: 'var(--border)',
               }}
             >
@@ -103,27 +105,17 @@ export default function Timetable() {
       <div className="flex items-center gap-3 mt-8 pt-6 border-t border-[var(--border)]">
         <button
           onClick={handleAddToCalendar}
-          className="px-4 py-2 text-xs font-bold tracking-widest uppercase rounded-[4px] transition-all duration-200 cursor-pointer"
-          style={{
-            fontFamily: 'var(--font-jetbrains-mono)',
-            background: 'var(--bg-surface)',
-            color: 'var(--accent-magenta)',
-            border: '1px solid var(--accent-magenta)',
-          }}
+          className="px-6 py-3 text-xs font-semibold rounded-full transition-all duration-200 cursor-pointer"
+          style={{ fontFamily: 'var(--font-montserrat)', background: 'transparent', color: '#fff', border: '1px solid var(--border-strong)', touchAction: 'manipulation' }}
         >
-          + Add to Calendar
+          Add to calendar
         </button>
         <button
           onClick={handleShare}
-          className="px-4 py-2 text-xs font-bold tracking-widest uppercase rounded-[4px] transition-all duration-200 cursor-pointer"
-          style={{
-            fontFamily: 'var(--font-jetbrains-mono)',
-            background: 'var(--bg-surface)',
-            color: 'var(--text-muted)',
-            border: '1px solid var(--border)',
-          }}
+          className="px-6 py-3 text-xs font-semibold rounded-full transition-all duration-200 cursor-pointer"
+          style={{ fontFamily: 'var(--font-montserrat)', background: 'transparent', color: 'rgba(255,255,255,0.45)', border: '1px solid var(--border)', touchAction: 'manipulation' }}
         >
-          Share Schedule
+          Share schedule
         </button>
       </div>
     </div>

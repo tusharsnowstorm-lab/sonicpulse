@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import Button from '@/components/ui/Button'
+import PillButton from '@/components/ui/PillButton'
 
 const schema = z.object({
   name: z.string().min(2, 'Name is required'),
@@ -118,9 +118,9 @@ export default function ContactForm() {
         </p>
       )}
 
-      <Button type="submit" size="lg" loading={submitState === 'submitting'} className="w-full">
-        SEND MESSAGE
-      </Button>
+      <PillButton type="submit" disabled={submitState === 'submitting'} className="w-full" style={{ padding: '15px 0' }}>
+        {submitState === 'submitting' ? 'Sending…' : 'Send message'}
+      </PillButton>
     </form>
   )
 }

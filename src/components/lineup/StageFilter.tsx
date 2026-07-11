@@ -22,12 +22,14 @@ export default function StageFilter({ active, onChange }: Props) {
           role="tab"
           aria-selected={active === value}
           onClick={() => onChange(value)}
-          className="px-4 py-2 rounded-full text-xs font-bold tracking-widest uppercase transition-all duration-200 cursor-pointer"
+          className="px-4 py-2 rounded-full text-xs font-semibold uppercase transition-all duration-200 cursor-pointer"
           style={{
-            fontFamily: 'var(--font-jetbrains-mono)',
-            background: active === value ? 'var(--accent-magenta)' : 'var(--bg-surface)',
-            color: active === value ? 'var(--bg-void)' : 'var(--text-muted)',
-            border: active === value ? '1px solid var(--accent-magenta)' : '1px solid var(--border)',
+            fontFamily: 'var(--font-montserrat)',
+            letterSpacing: '0.08em',
+            background: active === value ? '#fff' : 'transparent',
+            color: active === value ? '#000' : 'rgba(255,255,255,0.45)',
+            border: '1px solid var(--border-strong)',
+            touchAction: 'manipulation',
           }}
         >
           {label}

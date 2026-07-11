@@ -1,6 +1,7 @@
-﻿import type { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { artists } from '@/data/artists'
 import ArtistGrid from '@/components/lineup/ArtistGrid'
+import PageHeader from '@/components/ui/PageHeader'
 
 export const metadata: Metadata = {
   title: 'Lineup — Sonic Pulse',
@@ -9,26 +10,12 @@ export const metadata: Metadata = {
 
 export default function LineupPage() {
   return (
-    <div className="max-w-[1200px] mx-auto px-4 py-12 md:py-20">
-      {/* Header */}
-      <div className="mb-12">
-        <p
-          className="text-[10px] tracking-[0.3em] uppercase mb-2"
-          style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)' }}
-        >
-          Sonic Pulse 2025
-        </p>
-        <h1
-          className="text-4xl md:text-5xl font-black glow-heading"
-          style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--text-primary)' }}
-        >
-          THE LINEUP
-        </h1>
-        <p className="mt-2 text-[var(--text-muted)] text-sm">
-          {artists.length} Artists · Two Stages · 25 September 2026
-        </p>
-      </div>
-
+    <div className="max-w-[1200px] mx-auto px-4" style={{ padding: '64px 6vw 100px' }}>
+      <PageHeader
+        eyebrow="25 September 2026"
+        title="The lineup"
+        sub={`${artists.length} artists · Two stages`}
+      />
       <ArtistGrid />
     </div>
   )
