@@ -50,13 +50,6 @@ export default function AppPromoBand() {
           <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 8, height: 26, width: '70%' }} />
         </div>
       </div>
-      <style jsx>{`
-        @media (max-width: 720px) {
-          .app-promo-band {
-            grid-template-columns: 1fr;
-          }
-        }
-      `}</style>
     </div>
   )
 }

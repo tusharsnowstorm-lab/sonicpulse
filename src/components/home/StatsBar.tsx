@@ -1,38 +1,25 @@
-﻿import { artists } from '@/data/artists'
+import { artists } from '@/data/artists'
 
 const stats = [
-  { value: '800+', label: 'Expected Festival-Goers' },
-  { value: '2',    label: 'Stages' },
+  { value: '17', label: 'Hours' },
+  { value: '2', label: 'Stages' },
   { value: String(artists.length), label: 'Artists' },
-  { value: '17hrs', label: 'Non-Stop Music' },
+  { value: '800', label: 'Capacity' },
 ]
 
 export default function StatsBar() {
   return (
-    <div
-      className="py-5 border-y"
-      style={{ background: 'var(--bg-surface)', borderColor: 'var(--border)' }}
-    >
-      <div className="max-w-[1200px] mx-auto px-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x md:divide-[var(--border)]">
-          {stats.map(({ value, label }) => (
-            <div key={label} className="flex flex-col items-center text-center px-4">
-              <span
-                className="text-2xl md:text-3xl font-black leading-none"
-                style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--accent-magenta)' }}
-              >
-                {value}
-              </span>
-              <span
-                className="mt-1 text-[10px] tracking-[0.2em] uppercase"
-                style={{ color: 'var(--text-muted)' }}
-              >
-                {label}
-              </span>
-            </div>
-          ))}
+    <div style={{ display: 'flex', justifyContent: 'center', gap: 70, padding: '64px 6vw', borderBottom: '1px solid var(--border)', flexWrap: 'wrap' }}>
+      {stats.map(({ value, label }) => (
+        <div key={label} style={{ textAlign: 'center' }}>
+          <b style={{ display: 'block', fontSize: 30, fontWeight: 700, letterSpacing: '-0.02em', color: '#fff', fontFamily: 'var(--font-montserrat)' }}>
+            {value}
+          </b>
+          <span style={{ fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-label-muted)' }}>
+            {label}
+          </span>
         </div>
-      </div>
+      ))}
     </div>
   )
 }

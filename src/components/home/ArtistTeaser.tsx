@@ -1,82 +1,38 @@
-import Link from 'next/link'
-import Image from 'next/image'
 import { publishedArtists } from '@/data/artists'
-import Badge from '@/components/ui/Badge'
+import Section from '@/components/ui/Section'
+import PhotoCard from '@/components/ui/PhotoCard'
+import Reveal from '@/components/ui/Reveal'
+import { PillLink } from '@/components/ui/PillButton'
 
 export default function ArtistTeaser() {
   const featured = publishedArtists.slice(0, 4)
 
   return (
-    <section className="py-12 md:py-20 px-4" style={{ background: 'var(--bg-surface)' }}>
-      <div className="max-w-[1200px] mx-auto">
-        <div className="flex items-end justify-between mb-10">
-          <div>
-            <p
-              className="text-[10px] tracking-[0.3em] uppercase mb-2"
-              style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-jetbrains-mono)' }}
-            >
-              The Artists
-            </p>
-            <h2
-              className="text-2xl md:text-3xl font-black glow-heading"
-              style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--text-primary)' }}
-            >
-              FEATURED ACTS
-            </h2>
-          </div>
-          <Link
-            href="/lineup"
-            className="text-xs tracking-widest uppercase transition-colors duration-150 whitespace-nowrap"
-            style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-jetbrains-mono)' }}
-          >
-            See Full Lineup →
-          </Link>
-        </div>
-
-        {/* Mobile: horizontal scroll  |  Desktop: grid */}
-        <div className="flex md:grid md:grid-cols-4 gap-4 overflow-x-auto pb-2 md:overflow-visible md:pb-0 -mx-4 px-4 md:mx-0 md:px-0">
-          {featured.map((artist) => (
-            <Link
-              key={artist.id}
-              href="/lineup"
-              className="shrink-0 w-48 md:w-auto group"
-            >
-              <div
-                className="aspect-square rounded-xl overflow-hidden flex items-center justify-center mb-3 transition-all duration-200 group-hover:scale-[1.02] group-hover:shadow-[0_0_20px_rgba(255,63,194,0.15)]"
-                style={{
-                  background: 'var(--bg-elevated)',
-                  border: '1px solid var(--border)',
-                  position: 'relative',
-                }}
-              >
-                {artist.image ? (
-                  <Image
-                    src={artist.image}
-                    alt={artist.name}
-                    fill
-                    sizes="(max-width:768px) 192px, 25vw"
-                    style={{ objectFit: 'cover' }}
-                  />
-                ) : (
-                  <span
-                    className="text-3xl font-black"
-                    style={{ fontFamily: 'var(--font-space-grotesk)', color: 'var(--accent-magenta)', opacity: 0.6 }}
-                  >
-                    {artist.name.slice(0, 2).toUpperCase()}
-                  </span>
-                )}
-              </div>
-              <p className="font-bold text-sm text-[var(--text-primary)] mb-1">{artist.name}</p>
-              <div className="flex items-center gap-2">
-                <Badge variant={artist.stage === 'main' ? 'stage-main' : 'stage-sunrise'}>
-                  {artist.stage === 'main' ? 'Main' : 'Sunrise'}
-                </Badge>
-                <span className="text-[10px] text-[var(--text-muted)]">{artist.genre}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
+    <Section eyebrow="The lineup" title="Twelve acts. Curated, not crowded.">
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+          gap: 4,
+          maxWidth: 1000,
+          margin: '0 auto',
+        }}
+      >
+        {featured.map((artist, i) => (
+          <Reveal key={artist.id} delay={i * 80}>
+            <PhotoCard
+              src={artist.image ?? '/images/hero-visual.jpg'}
+              alt={artist.name}
+              title={artist.name}
+              caption={`${artist.stage === 'main' ? 'Main stage' : 'Sunrise stage'} · ${artist.setTime.split('–')[0]}`}
+              ratio="3/4"
+            />
+          </Reveal>
+        ))}
       </div>
-    </section>
+      <PillLink href="/lineup" variant="outline" style={{ marginTop: 44 }}>
+        Full lineup →
+      </PillLink>
+    </Section>
   )
 }

@@ -1,4 +1,3 @@
-'use client'
 import Image from 'next/image'
 
 type PhotoCardProps = {
@@ -10,10 +9,12 @@ type PhotoCardProps = {
   ratio?: '3/4' | '4/3' | '16/9'
   sizes?: string
   priority?: boolean
+  /** 'tracked' — short uppercase caption (artist times). 'prose' — a full sentence (experience cards). */
+  captionStyle?: 'tracked' | 'prose'
 }
 
 /** Image + bottom scrim + meta text — the gallery-style card used for artists and experience. */
-export default function PhotoCard({ src, alt, title, caption, ratio = '3/4', sizes = '(max-width: 640px) 50vw, 25vw', priority = false }: PhotoCardProps) {
+export default function PhotoCard({ src, alt, title, caption, ratio = '3/4', sizes = '(max-width: 640px) 50vw, 25vw', priority = false, captionStyle = 'tracked' }: PhotoCardProps) {
   return (
     <div
       style={{
@@ -22,6 +23,7 @@ export default function PhotoCard({ src, alt, title, caption, ratio = '3/4', siz
         overflow: 'hidden',
         borderRadius: 0,
       }}
+      className="photo-card"
     >
       <Image
         src={src}
@@ -52,7 +54,7 @@ export default function PhotoCard({ src, alt, title, caption, ratio = '3/4', siz
         }}
       >
         <p style={{ fontSize: 17, fontWeight: 600, color: '#fff', fontFamily: 'var(--font-montserrat)', margin: 0 }}>{title}</p>
-        {caption && (
+        {caption && captionStyle === 'tracked' && (
           <p
             style={{
               fontSize: 11,
@@ -65,14 +67,19 @@ export default function PhotoCard({ src, alt, title, caption, ratio = '3/4', siz
             {caption}
           </p>
         )}
+        {caption && captionStyle === 'prose' && (
+          <p
+            style={{
+              fontSize: 12.5,
+              color: 'rgba(255,255,255,0.5)',
+              marginTop: 5,
+              lineHeight: 1.5,
+            }}
+          >
+            {caption}
+          </p>
+        )}
       </div>
-      <style jsx>{`
-        @media (hover: hover) {
-          div:hover :global(.photo-card-img) {
-            transform: scale(1.04);
-          }
-        }
-      `}</style>
     </div>
   )
 }

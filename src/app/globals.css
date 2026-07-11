@@ -198,6 +198,18 @@ a:active,
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
+/* ── Gallery Minimal component behavior ──────────────────────── */
+@media (hover: hover) {
+  .photo-card:hover .photo-card-img {
+    transform: scale(1.04);
+  }
+}
+@media (max-width: 720px) {
+  .app-promo-band {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 /* ── Reduce motion ────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .glow-heading::after { animation: none; }
