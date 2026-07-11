@@ -38,9 +38,10 @@
   --text-muted: #6B6B7E;
   --border: #1E1E2E;
 
-  /* ── Gallery Minimal design system (REDESIGN_PLAN.md §1.1) ──────── */
-  --text-dim: rgba(255,255,255,0.55);    /* ledes, body copy */
-  --text-label-muted: rgba(255,255,255,0.35); /* tracked labels, captions */
+  /* ── Gallery Minimal design system (REDESIGN_PLAN.md §1.1, contrast
+     floor raised in §7.2 after owner reported thin/low-contrast text) ── */
+  --text-dim: rgba(255,255,255,0.72);    /* ledes, body copy */
+  --text-label-muted: rgba(255,255,255,0.55); /* tracked labels, captions */
   --accent-soft: rgba(255,63,194,0.4);   /* featured borders */
   --accent-faint: rgba(255,63,194,0.08); /* tinted fills */
   --border-strong: rgba(255,255,255,0.2);

@@ -25,7 +25,7 @@ export default function PageHeader({ eyebrow, title, sub, className = 'mb-12' }:
         {title}
       </h1>
       {sub && (
-        <p style={{ marginTop: 10, fontSize: 14, color: 'rgba(255,255,255,0.45)' }}>{sub}</p>
+        <p style={{ marginTop: 10, fontSize: 14, fontWeight: 500, color: 'var(--text-dim)' }}>{sub}</p>
       )}
     </div>
   )

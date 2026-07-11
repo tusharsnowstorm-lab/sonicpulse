@@ -113,7 +113,7 @@ export default function Timetable() {
         <button
           onClick={handleShare}
           className="px-6 py-3 text-xs font-semibold rounded-full transition-all duration-200 cursor-pointer"
-          style={{ fontFamily: 'var(--font-montserrat)', background: 'transparent', color: 'rgba(255,255,255,0.45)', border: '1px solid var(--border)', touchAction: 'manipulation' }}
+          style={{ fontFamily: 'var(--font-montserrat)', background: 'transparent', color: 'rgba(255,255,255,0.65)', border: '1px solid var(--border)', touchAction: 'manipulation' }}
         >
           Share schedule
         </button>

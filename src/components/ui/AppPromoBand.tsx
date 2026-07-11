@@ -22,7 +22,7 @@ export default function AppPromoBand() {
         <h3 style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.02em', color: '#fff', fontFamily: 'var(--font-montserrat)', margin: 0 }}>
           Save ৳{APP_DISCOUNT.toLocaleString()} on every tier.
         </h3>
-        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', margin: '12px 0 30px', maxWidth: 340, lineHeight: 1.65 }}>
+        <p style={{ fontSize: 14, fontWeight: 500, color: 'rgba(255,255,255,0.65)', margin: '12px 0 30px', maxWidth: 340, lineHeight: 1.65 }}>
           Book inside the <span style={{ color: 'var(--accent-magenta)', fontWeight: 600 }}>{APP_NAME} app</span> and every ticket drops by ৳{APP_DISCOUNT.toLocaleString()}. Same tiers, same night.
         </p>
         <PillButton>Get the app</PillButton>

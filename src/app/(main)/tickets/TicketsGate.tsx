@@ -51,7 +51,7 @@ export default function TicketsGate() {
             <p style={{ fontSize: 12, color: 'var(--accent-magenta)', marginTop: 8 }}>
               ৳{tier.appPrice.toLocaleString()} in the app
             </p>
-            <ul style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.45)', lineHeight: 2.1, marginTop: 22, listStyle: 'none', padding: 0 }}>
+            <ul style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.65)', lineHeight: 2.1, marginTop: 22, listStyle: 'none', padding: 0 }}>
               {tier.perks.map((perk) => (
                 <li key={perk}>{perk}</li>
               ))}
@@ -70,7 +70,7 @@ export default function TicketsGate() {
           Sign up / Sign in with Google
         </button>
 
-        <p className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+        <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
           Already have an account?{' '}
           <button
             onClick={handleSignIn}
@@ -88,7 +88,7 @@ export default function TicketsGate() {
 
         <div
           className="mt-10 p-4 rounded-xl text-sm text-left"
-          style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'rgba(255,255,255,0.45)' }}
+          style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'rgba(255,255,255,0.65)' }}
         >
           <strong style={{ color: '#fff' }}>How it works: </strong>
           Sign up → Register ticket with your NID → We review within 24h → Approved tickets can be downloaded with QR code.

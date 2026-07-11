@@ -81,7 +81,7 @@ function InstagramWarningModal({ onConfirm, onCancel }: { onConfirm: () => void;
           </button>
 
           {expanded && (
-            <p className="text-xs leading-relaxed" style={{ color: 'rgba(240,240,248,0.5)', fontFamily: 'var(--font-montserrat)' }}>
+            <p className="text-xs leading-relaxed" style={{ color: 'rgba(240,240,248,0.68)', fontFamily: 'var(--font-montserrat)' }}>
               We verify attendees via Instagram. Private accounts receive a follow request from <strong style={{ color: 'var(--text-primary)' }}>@dhakamusicfestival</strong> — accept it to complete approval.
             </p>
           )}

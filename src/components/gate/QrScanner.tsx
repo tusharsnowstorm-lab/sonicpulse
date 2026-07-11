@@ -90,20 +90,20 @@ export default function QrScanner({ onClose }: Props) {
   return (
     <div
       className="fixed inset-0 z-50 flex flex-col"
-      style={{ background: 'rgba(5,5,8,0.97)' }}
+      style={{ background: 'rgba(0,0,0,0.97)' }}
     >
       {/* Header */}
       <div
         className="flex items-center justify-between px-5 h-16 shrink-0"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}
+        style={{ borderBottom: '1px solid var(--border)' }}
       >
-        <p className="font-bold text-sm" style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-space-grotesk)', letterSpacing: '0.1em' }}>
-          SCAN TICKET QR CODE
+        <p className="font-bold text-sm" style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-montserrat)', letterSpacing: '0.1em' }}>
+          Scan ticket QR code
         </p>
         <button
           onClick={onClose}
           type="button"
-          style={{ width: 44, height: 44, color: 'rgba(255,255,255,0.6)', touchAction: 'manipulation' }}
+          style={{ width: 44, height: 44, color: 'rgba(255,255,255,0.65)', touchAction: 'manipulation' }}
           className="flex items-center justify-center"
           aria-label="Close scanner"
         >
@@ -115,12 +115,12 @@ export default function QrScanner({ onClose }: Props) {
       <div className="flex-1 flex flex-col items-center justify-center px-6 gap-6">
         {error ? (
           <div className="text-center space-y-4">
-            <AlertCircle size={48} style={{ color: 'var(--accent-pulse)', margin: '0 auto' }} />
-            <p className="text-sm" style={{ color: 'rgba(240,240,248,0.75)' }}>{error}</p>
+            <AlertCircle size={48} style={{ color: '#e24b4a', margin: '0 auto' }} />
+            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.72)' }}>{error}</p>
             <button
               onClick={onClose}
-              className="px-5 py-2.5 rounded text-sm font-bold"
-              style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'var(--text-primary)' }}
+              className="px-5 py-2.5 rounded-full text-sm font-semibold"
+              style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-strong)', color: '#fff', touchAction: 'manipulation' }}
             >
               Go back
             </button>
@@ -129,15 +129,15 @@ export default function QrScanner({ onClose }: Props) {
           <div className="text-center space-y-3">
             <div
               className="w-16 h-16 rounded-full flex items-center justify-center mx-auto"
-              style={{ background: 'rgba(255,63,194,0.15)', border: '2px solid var(--accent-volt)' }}
+              style={{ background: 'var(--accent-faint)', border: '2px solid var(--accent-magenta)' }}
             >
-              <span style={{ fontSize: 28 }}>✓</span>
+              <span style={{ fontSize: 28, color: 'var(--accent-magenta)' }}>✓</span>
             </div>
-            <p className="font-bold" style={{ color: 'var(--accent-volt)', fontFamily: 'var(--font-space-grotesk)' }}>
+            <p className="font-bold" style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-montserrat)' }}>
               Code detected
             </p>
-            <p className="text-sm font-mono" style={{ color: 'var(--text-muted)' }}>{detected}</p>
-            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>Opening ticket…</p>
+            <p className="text-sm font-mono" style={{ color: 'rgba(255,255,255,0.72)' }}>{detected}</p>
+            <p className="text-xs" style={{ color: 'rgba(255,255,255,0.65)' }}>Opening ticket…</p>
           </div>
         ) : (
           <>
@@ -145,7 +145,7 @@ export default function QrScanner({ onClose }: Props) {
             <div className="relative w-full max-w-[320px]">
               <video
                 ref={videoRef}
-                className="w-full rounded-lg"
+                className="w-full rounded-2xl"
                 style={{ aspectRatio: '1 / 1', objectFit: 'cover', background: '#111' }}
                 playsInline
                 muted
@@ -168,11 +168,11 @@ export default function QrScanner({ onClose }: Props) {
             <div className="text-center space-y-1">
               <div className="flex items-center justify-center gap-2">
                 <Camera size={14} style={{ color: 'var(--accent-magenta)' }} />
-                <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
+                <p className="text-sm" style={{ color: 'rgba(255,255,255,0.72)' }}>
                   Point camera at the QR code on the ticket
                 </p>
               </div>
-              <p className="text-xs" style={{ color: 'rgba(240,240,248,0.4)' }}>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>
                 Keep the code within the frame
               </p>
             </div>

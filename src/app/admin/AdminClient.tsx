@@ -103,7 +103,7 @@ export default function AdminClient() {
               ADMIN
             </span>
           </div>
-          <Link href="/dashboard" className="text-xs px-3 py-1.5 rounded-full" style={{ color: 'rgba(255,255,255,0.45)', border: '1px solid var(--border-strong)' }}>
+          <Link href="/dashboard" className="text-xs px-3 py-1.5 rounded-full" style={{ color: 'rgba(255,255,255,0.65)', border: '1px solid var(--border-strong)' }}>
             My dashboard
           </Link>
         </div>
@@ -112,7 +112,7 @@ export default function AdminClient() {
       <div className="max-w-[1100px] mx-auto px-4 py-10">
         <div className="mb-6">
           <h1 className="text-2xl font-bold mb-1" style={{ color: '#fff', fontFamily: 'var(--font-montserrat)' }}>Ticket reviews</h1>
-          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>Review and approve or reject submitted tickets.</p>
+          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>Review and approve or reject submitted tickets.</p>
         </div>
 
         {/* Status tabs */}
@@ -140,7 +140,7 @@ export default function AdminClient() {
           <div className="space-y-4">{[1, 2, 3].map((i) => <div key={i} className="rounded-2xl h-32 animate-pulse" style={{ background: 'var(--bg-elevated)' }} />)}</div>
         ) : filtered.length === 0 ? (
           <div className="rounded-2xl p-10 text-center" style={{ background: 'var(--bg-elevated)', border: '1px dashed var(--border)' }}>
-            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>No {activeTab} tickets.</p>
+            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>No {activeTab} tickets.</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -195,9 +195,9 @@ function TicketRow({
       <div className="px-5 py-3 flex items-center justify-between flex-wrap gap-2" style={{ background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid var(--border)' }}>
         <div className="flex items-center gap-3 flex-wrap">
           <span className="font-mono text-xs" style={{ color: 'var(--accent-magenta)' }}>{ticket.reference_code}</span>
-          <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(255,63,194,0.08)', color: 'rgba(255,255,255,0.45)' }}>{tierLabel}</span>
+          <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(255,63,194,0.08)', color: 'rgba(255,255,255,0.65)' }}>{tierLabel}</span>
         </div>
-        <span className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>{date}</span>
+        <span className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>{date}</span>
       </div>
 
       <div className="px-5 py-4">
@@ -246,7 +246,7 @@ function TicketRow({
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          <p className="text-xs mr-2" style={{ color: 'rgba(255,255,255,0.35)' }}>Account: <span style={{ color: '#fff' }}>{ticket.user_email}</span></p>
+          <p className="text-xs mr-2" style={{ color: 'rgba(255,255,255,0.5)' }}>Account: <span style={{ color: '#fff' }}>{ticket.user_email}</span></p>
           <button onClick={handleViewNid} disabled={loadingNid} className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full cursor-pointer" style={{ background: 'rgba(255,63,194,0.08)', border: '1px solid var(--accent-soft)', color: 'var(--accent-magenta)', touchAction: 'manipulation' }}>
             <ExternalLink size={12} />
             {loadingNid ? 'Loading…' : `View ${ID_TYPE_LABELS[ticket.id_type ?? 'nid'] ?? 'ID'}`}

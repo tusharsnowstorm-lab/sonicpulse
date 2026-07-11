@@ -1,7 +1,6 @@
-﻿'use client'
+'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser'
 import { LogOut, Search, Camera } from 'lucide-react'
 import dynamic from 'next/dynamic'
@@ -26,24 +25,23 @@ export default function GateLanding({ email }: { email: string }) {
   }
 
   return (
-    <main className="min-h-screen" style={{ background: 'var(--bg-void)' }}>
+    <main className="min-h-screen" style={{ background: '#000' }}>
       {/* Top bar */}
       <div
         className="sticky top-0 z-30 border-b"
-        style={{ background: 'rgba(5,5,8,0.95)', backdropFilter: 'blur(16px)', borderColor: 'var(--border)' }}
+        style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(16px)', borderColor: 'var(--border)' }}
       >
         <div className="max-w-[600px] mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <Image src="/images/logo-badge.webp" alt="Sonic Pulse" width={30} height={30} className="rounded-full" style={{ border: '1.5px solid rgba(255,255,255,0.3)' }} />
-            <span className="font-black tracking-[0.15em] text-sm" style={{ fontFamily: 'var(--font-montserrat)', color: 'var(--text-primary)' }}>SONIC <span style={{ color: 'var(--accent-magenta)' }}>PULSE</span></span>
-            <span className="text-xs px-2 py-0.5 rounded font-bold" style={{ background: 'rgba(255,63,194,0.12)', border: '1px solid rgba(255,63,194,0.3)', color: 'var(--accent-volt)', fontFamily: 'var(--font-jetbrains-mono)' }}>
+            <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.32em', fontFamily: 'var(--font-montserrat)', color: '#fff' }}>SONIC PULSE</span>
+            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'var(--accent-faint)', border: '1px solid var(--accent-soft)', color: 'var(--accent-magenta)', fontFamily: 'var(--font-montserrat)', fontWeight: 700 }}>
               GATE
             </span>
           </div>
           <button
             onClick={handleSignOut}
-            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded cursor-pointer"
-            style={{ color: 'var(--text-muted)', border: '1px solid var(--border)', fontFamily: 'var(--font-montserrat)' }}
+            className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full cursor-pointer"
+            style={{ color: 'rgba(255,255,255,0.65)', border: '1px solid var(--border-strong)', fontFamily: 'var(--font-montserrat)', touchAction: 'manipulation' }}
           >
             <LogOut size={13} />
             Sign out
@@ -56,13 +54,13 @@ export default function GateLanding({ email }: { email: string }) {
       <div className="max-w-[600px] mx-auto px-4 py-10 space-y-8">
         {/* Status */}
         <div
-          className="rounded-lg px-5 py-4 flex items-center gap-3"
-          style={{ background: 'rgba(255,63,194,0.06)', border: '1px solid rgba(255,63,194,0.2)' }}
+          className="rounded-2xl px-5 py-4 flex items-center gap-3"
+          style={{ background: 'var(--accent-faint)', border: '1px solid var(--accent-soft)' }}
         >
-          <div className="w-2 h-2 rounded-full shrink-0" style={{ background: 'var(--accent-volt)', boxShadow: '0 0 6px var(--accent-volt)' }} />
+          <div className="w-2 h-2 rounded-full shrink-0" style={{ background: 'var(--accent-magenta)' }} />
           <div>
-            <p className="text-sm font-semibold" style={{ color: 'var(--accent-volt)' }}>Gate access active</p>
-            <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Signed in as {email}</p>
+            <p className="text-sm font-semibold" style={{ color: 'var(--accent-magenta)' }}>Gate access active</p>
+            <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.65)' }}>Signed in as {email}</p>
           </div>
         </div>
 
@@ -70,36 +68,36 @@ export default function GateLanding({ email }: { email: string }) {
         <button
           type="button"
           onClick={() => setScanning(true)}
-          className="w-full flex flex-col items-center justify-center gap-3 rounded-lg py-10"
+          className="w-full flex flex-col items-center justify-center gap-3 rounded-2xl py-10"
           style={{
-            background: 'rgba(255,63,194,0.06)',
-            border: '2px solid rgba(255,63,194,0.3)',
+            background: 'var(--bg-elevated)',
+            border: '1px solid var(--accent-soft)',
             touchAction: 'manipulation',
           }}
         >
           <div
             className="w-16 h-16 rounded-full flex items-center justify-center"
-            style={{ background: 'rgba(255,63,194,0.12)', border: '1.5px solid rgba(255,63,194,0.4)' }}
+            style={{ background: 'var(--accent-faint)', border: '1.5px solid var(--accent-soft)' }}
           >
             <Camera size={28} style={{ color: 'var(--accent-magenta)' }} />
           </div>
           <div className="text-center">
-            <p className="font-bold text-base" style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-space-grotesk)' }}>
-              Scan QR Code
+            <p className="font-bold text-base" style={{ color: '#fff', fontFamily: 'var(--font-montserrat)' }}>
+              Scan QR code
             </p>
-            <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.65)' }}>
               Tap to open camera and scan attendee ticket
             </p>
           </div>
         </button>
 
         {/* Manual lookup */}
-        <div className="rounded-lg p-6" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
+        <div className="rounded-2xl p-6" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
           <div className="flex items-center gap-2 mb-4">
             <Search size={16} style={{ color: 'var(--accent-magenta)' }} />
-            <p className="text-sm font-bold" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>Manual lookup</p>
+            <p className="text-sm font-bold" style={{ color: '#fff', fontFamily: 'var(--font-montserrat)' }}>Manual lookup</p>
           </div>
-          <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-xs mb-4" style={{ color: 'rgba(255,255,255,0.65)' }}>
             If the QR code is damaged or unreadable, enter the reference code manually.
           </p>
           <form onSubmit={handleLookup} className="flex gap-2">
@@ -112,19 +110,20 @@ export default function GateLanding({ email }: { email: string }) {
                 flex: 1,
                 background: 'var(--bg-surface)',
                 border: '1px solid var(--border)',
-                borderRadius: 4,
-                color: 'var(--text-primary)',
+                borderRadius: 12,
+                color: '#fff',
                 padding: '10px 12px',
                 fontSize: 16,
                 outline: 'none',
-                fontFamily: 'var(--font-jetbrains-mono)',
+                fontFamily: 'var(--font-montserrat)',
                 letterSpacing: '0.1em',
+                WebkitAppearance: 'none',
               }}
             />
             <button
               type="submit"
-              className="px-4 py-2 rounded text-sm font-bold cursor-pointer"
-              style={{ background: 'var(--accent-magenta)', color: '#050508' }}
+              className="px-4 py-2 rounded-full text-sm font-semibold cursor-pointer"
+              style={{ background: 'var(--accent-magenta)', color: '#fff', touchAction: 'manipulation' }}
             >
               Look up
             </button>

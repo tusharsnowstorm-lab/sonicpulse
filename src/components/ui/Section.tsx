@@ -40,7 +40,8 @@ export default function Section({ title, eyebrow, sub, children, className = '',
         <p
           style={{
             fontSize: 'var(--text-lede)',
-            color: 'rgba(255,255,255,0.45)',
+            fontWeight: 500,
+            color: 'var(--text-dim)',
             marginBottom: 60,
           }}
         >

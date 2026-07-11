@@ -130,7 +130,7 @@ export default function MobileMenu({ onClose }: Props) {
           Get tickets
         </PillButton>
 
-        <p style={{ textAlign: 'center', fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.3)', marginTop: 6 }}>
+        <p style={{ textAlign: 'center', fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginTop: 6 }}>
           25 Sep 2026
         </p>
       </div>

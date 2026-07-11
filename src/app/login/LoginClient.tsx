@@ -81,7 +81,7 @@ export default function LoginClient() {
           <h2 className="text-lg font-bold mb-1" style={{ color: '#fff', fontFamily: 'var(--font-montserrat)' }}>
             Sign in
           </h2>
-          <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.45)' }}>
+          <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.65)' }}>
             Create your account to register for tickets and manage your bookings.
           </p>
 
@@ -94,7 +94,7 @@ export default function LoginClient() {
             Continue with Google
           </button>
 
-          <p className="text-xs text-center mt-6" style={{ color: 'rgba(255,255,255,0.35)' }}>
+          <p className="text-xs text-center mt-6" style={{ color: 'rgba(255,255,255,0.5)' }}>
             By signing in you agree to our terms of service and privacy policy.
           </p>
         </div>
@@ -105,7 +105,7 @@ export default function LoginClient() {
             type="button"
             onClick={() => setShowGateLogin((v) => !v)}
             className="w-full text-xs py-2 transition-colors cursor-pointer"
-            style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-montserrat)', letterSpacing: '0.1em', touchAction: 'manipulation' }}
+            style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-montserrat)', letterSpacing: '0.1em', touchAction: 'manipulation' }}
           >
             {showGateLogin ? 'Hide' : 'Gate staff login'}
           </button>

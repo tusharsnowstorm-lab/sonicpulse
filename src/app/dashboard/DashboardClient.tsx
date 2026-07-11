@@ -97,14 +97,14 @@ export default function DashboardClient({ user }: { user: User }) {
                   style={{ width: 28, height: 28, border: '1.5px solid rgba(255,255,255,0.2)' }}
                 />
               )}
-              <span className="text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              <span className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 {user.user_metadata?.full_name ?? user.email}
               </span>
             </div>
             <button
               onClick={handleSignOut}
               className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full transition-colors"
-              style={{ color: 'rgba(255,255,255,0.45)', border: '1px solid var(--border-strong)', fontFamily: 'var(--font-montserrat)', touchAction: 'manipulation' }}
+              style={{ color: 'rgba(255,255,255,0.65)', border: '1px solid var(--border-strong)', fontFamily: 'var(--font-montserrat)', touchAction: 'manipulation' }}
             >
               <LogOut size={13} />
               Sign out
@@ -128,7 +128,7 @@ export default function DashboardClient({ user }: { user: User }) {
               key={href}
               href={href}
               className="text-xs whitespace-nowrap transition-colors"
-              style={{ color: 'rgba(255,255,255,0.4)', fontFamily: 'var(--font-montserrat)', letterSpacing: '0.1em' }}
+              style={{ color: 'rgba(255,255,255,0.65)', fontFamily: 'var(--font-montserrat)', letterSpacing: '0.1em' }}
             >
               {label}
             </Link>
@@ -147,7 +147,7 @@ export default function DashboardClient({ user }: { user: User }) {
               >
                 My tickets
               </h1>
-              <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 {tickets.length === 0
                   ? 'No tickets yet. Add your first one below.'
                   : `${tickets.length} ticket${tickets.length !== 1 ? 's' : ''} registered`}
@@ -167,7 +167,7 @@ export default function DashboardClient({ user }: { user: User }) {
               <h3 className="font-bold mb-4" style={{ color: '#fff', fontFamily: 'var(--font-montserrat)' }}>
                 Add a ticket
               </h3>
-              <p className="text-xs mb-5" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              <p className="text-xs mb-5" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 Each ticket requires the attendee&apos;s details and NID for verification. You can register tickets for others.
               </p>
               <AddTicketForm onSuccess={handleTicketAdded} />
@@ -194,7 +194,7 @@ export default function DashboardClient({ user }: { user: User }) {
               className="rounded-2xl p-8 text-center"
               style={{ background: 'var(--bg-elevated)', border: '1px dashed var(--border)' }}
             >
-              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 Click &quot;Add ticket&quot; to register yourself or someone else.
               </p>
             </div>

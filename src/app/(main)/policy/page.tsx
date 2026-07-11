@@ -113,7 +113,7 @@ function PolicyRow({ title, body, tag }: {
               {tag.label}
             </span>
           )}
-          <p style={{ margin: 0, fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 1.75 }}>{body}</p>
+          <p style={{ margin: 0, fontSize: 14, color: 'rgba(255,255,255,0.65)', lineHeight: 1.75 }}>{body}</p>
         </div>
       </div>
     </div>
@@ -154,7 +154,7 @@ export default function PolicyPage() {
         ))}
       </div>
 
-      <p style={{ marginTop: 32, fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.2)' }}>
+      <p style={{ marginTop: 32, fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>
         Sonic Pulse · Last updated {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
       </p>
     </div>

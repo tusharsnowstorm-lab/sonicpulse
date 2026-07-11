@@ -69,7 +69,7 @@ export default function ArtistGrid() {
         >
           More artists dropping soon
         </p>
-        <p className="text-sm" style={{ color: 'rgba(240,240,248,0.5)' }}>
+        <p className="text-sm" style={{ color: 'rgba(240,240,248,0.68)' }}>
           Follow <span style={{ color: 'var(--accent-magenta)' }}>@sonicpulsefestival</span> for announcements
         </p>
       </div>

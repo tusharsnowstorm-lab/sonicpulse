@@ -20,7 +20,7 @@ const styles: Record<ButtonVariant, string> = {
     disabled:opacity-40 disabled:cursor-not-allowed
   `,
   ghost: `
-    bg-transparent text-[rgba(255,255,255,0.45)] hover:text-white font-semibold
+    bg-transparent text-[rgba(255,255,255,0.65)] hover:text-white font-semibold
     transition-colors duration-200
     disabled:opacity-40 disabled:cursor-not-allowed
   `,

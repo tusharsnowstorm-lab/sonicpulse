@@ -39,7 +39,7 @@ export default function PhotoCard({ src, alt, title, caption, ratio = '3/4', siz
         style={{
           position: 'absolute',
           inset: 0,
-          background: 'linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 45%)',
+          background: 'linear-gradient(0deg, rgba(0,0,0,0.92) 0%, transparent 55%)',
         }}
       />
       <div

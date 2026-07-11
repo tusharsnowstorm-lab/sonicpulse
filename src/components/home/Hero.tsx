@@ -25,12 +25,18 @@ export default function Hero() {
         className="absolute inset-0"
         style={{
           background: `linear-gradient(to bottom,
-            rgba(0,0,0,0.55) 0%,
-            rgba(0,0,0,0.35) 35%,
-            rgba(0,0,0,0.55) 65%,
-            rgba(0,0,0,0.95) 100%
+            rgba(0,0,0,0.65) 0%,
+            rgba(0,0,0,0.45) 30%,
+            rgba(0,0,0,0.7) 60%,
+            rgba(0,0,0,0.98) 100%
           )`,
         }}
+        aria-hidden="true"
+      />
+      {/* Left-side scrim — hero content sits bottom-left on desktop */}
+      <div
+        className="absolute inset-0 hidden sm:block"
+        style={{ background: 'linear-gradient(90deg, rgba(0,0,0,0.55), transparent 55%)' }}
         aria-hidden="true"
       />
 
@@ -41,7 +47,7 @@ export default function Hero() {
           style={{
             fontSize: 'var(--text-display)',
             fontWeight: 700,
-            letterSpacing: '-0.035em',
+            letterSpacing: '-0.02em',
             lineHeight: 1.0,
             color: '#fff',
             fontFamily: 'var(--font-montserrat)',
@@ -49,13 +55,14 @@ export default function Hero() {
         >
           One night.
           <br />
-          <span style={{ color: 'rgba(255,255,255,0.35)' }}>Seventeen hours.</span>
+          <span style={{ color: 'rgba(255,255,255,0.55)' }}>Seventeen hours.</span>
         </h1>
 
         <p
           style={{
             fontSize: 'var(--text-lede)',
-            color: 'rgba(255,255,255,0.55)',
+            fontWeight: 500,
+            color: 'var(--text-dim)',
             maxWidth: 440,
             margin: '30px 0 40px',
             lineHeight: 1.65,

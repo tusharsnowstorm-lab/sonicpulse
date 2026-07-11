@@ -40,7 +40,7 @@ export default function StageBreak() {
             fontSize: 12,
             letterSpacing: '0.3em',
             textTransform: 'uppercase',
-            color: 'rgba(255,255,255,0.4)',
+            color: 'rgba(255,255,255,0.5)',
             marginTop: 22,
           }}
         >

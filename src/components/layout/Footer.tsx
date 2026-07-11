@@ -73,17 +73,17 @@ export default function Footer() {
             >
               SONIC PULSE
             </span>
-            <p style={{ fontSize: 13.5, color: 'rgba(255,255,255,0.45)', lineHeight: 1.65, marginTop: 14, maxWidth: 280 }}>
+            <p style={{ fontSize: 13.5, fontWeight: 500, color: 'rgba(255,255,255,0.65)', lineHeight: 1.65, marginTop: 14, maxWidth: 280 }}>
               Bangladesh&apos;s first sunset-to-sunrise music festival. Presented by Dhaka Music Festival.
             </p>
             <div className="flex items-center gap-4" style={{ marginTop: 22 }}>
-              <a href="https://instagram.com/sonicpulsefestival" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              <a href="https://instagram.com/sonicpulsefestival" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 <InstagramIcon />
               </a>
-              <a href="#" aria-label="Facebook" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              <a href="#" aria-label="Facebook" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 <FacebookIcon />
               </a>
-              <a href="#" aria-label="TikTok" style={{ color: 'rgba(255,255,255,0.45)' }}>
+              <a href="#" aria-label="TikTok" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 <TikTokIcon />
               </a>
             </div>
@@ -96,7 +96,7 @@ export default function Footer() {
 
         <div
           className="flex flex-col sm:flex-row items-center justify-between gap-2"
-          style={{ marginTop: 56, paddingTop: 24, borderTop: '1px solid var(--border)', fontSize: 11.5, color: 'rgba(255,255,255,0.3)' }}
+          style={{ marginTop: 56, paddingTop: 24, borderTop: '1px solid var(--border)', fontSize: 11.5, color: 'rgba(255,255,255,0.5)' }}
         >
           <span>© {new Date().getFullYear()} Sonic Pulse</span>
           <span>25 September 2026 · Dhaka</span>
