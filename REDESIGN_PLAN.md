@@ -362,3 +362,83 @@ never say "please".
 - If a visual check fails, fix before proceeding — never stack unverified pages.
 - If an ambiguity arises, resolve it by matching the approved mockup, then the
   tokens in §1, then Apple.com as tiebreaker. Do not ask the owner.
+
+---
+
+## 7. Phase 7 — Readability hardening + gate reskin (added 12 Jul 2026)
+
+Owner reviewed the deployed landing page (Firefox on Windows) and flagged the
+text as too thin / hard to read. Fix readability WITHOUT sacrificing the
+Gallery Minimal aesthetic: the look stays black-canvas, restrained, pill-based;
+what changes is weight, contrast, and scrim strength. Do not reintroduce glow,
+neon, or heavy borders.
+
+### 7.1 Diagnose the font first (do this before changing any values)
+
+The thinness may be a font-loading failure, not a design flaw. Montserrat is
+loaded via next/font with weights 400/500/600/700/900 in `src/app/layout.tsx`.
+1. Run the dev server, open the home page, and confirm via DevTools
+   (Computed → font-family) that the h1 actually renders Montserrat, not a
+   fallback (Segoe UI Light is a common Windows fallback that looks thin).
+2. Grep for any `fontWeight` below 400 and any element relying on an
+   unloaded weight. If a fallback is rendering, fix the font pipeline first
+   (e.g. `adjustFontFallback`, correct variable wiring) — that alone may
+   resolve most of the complaint.
+3. Whether or not a font bug is found, still apply §7.2 — the owner's screen
+   proves current values are too low-contrast on real hardware.
+
+### 7.2 Contrast + weight floor (apply everywhere, tokens first)
+
+Token changes in `globals.css` (update the Gallery Minimal block):
+- `--text-dim`: rgba(255,255,255,0.55) → **rgba(255,255,255,0.72)**
+- `--text-label-muted`: rgba(255,255,255,0.35) → **rgba(255,255,255,0.55)**
+- Any inline `rgba(255,255,255,0.45)` used for reading copy (section subs,
+  card perks, footer description) → **rgba(255,255,255,0.65)**. Inline 0.35
+  used for captions → **0.5**. Grep for `0.45)` and `0.35)` in src and update
+  every instance that styles TEXT (leave borders/fills alone).
+- Hero dimmed second line: rgba(255,255,255,0.35) → **rgba(255,255,255,0.55)**.
+- New rule — minimum text contrast: no reading copy below 0.65 alpha; 0.5
+  alpha only for decorative tracked labels; nothing below 0.5 ever.
+
+Weight floor:
+- Body/lede text: add `fontWeight: 500` (currently default 400).
+- Nav links, footer links: 500.
+- The display h1 stays 700 — but bump letter-spacing from -0.035em to
+  **-0.02em** (tight negative tracking amplifies perceived thinness at
+  large sizes on Windows ClearType).
+- Eyebrows keep 700.
+
+Hero scrim (image is busy — type must win):
+- Strengthen the hero gradient bottom stop from rgba(0,0,0,0.95) to a taller
+  ramp: `0.65 0% / 0.45 30% / 0.7 60% / 0.98 100%`, AND add a left-side
+  scrim on desktop (`linear-gradient(90deg, rgba(0,0,0,0.55), transparent 55%)`)
+  since hero content is bottom-left.
+- PhotoCard scrim: bottom stop 0.85 → **0.92**, extend transparent stop from
+  45% to **55%**.
+
+Verification gate for §7.2: screenshot home at 1280×800 and 375×812; every
+text block must be clearly legible over its background. Then run the full
+build/lint/visual protocol from §4.
+
+### 7.3 Gate scanner reskin (match new system)
+
+Reskin `src/app/gate/GateLanding.tsx` and `src/components/gate/QrScanner.tsx`
+to the Gallery Minimal system. Camera/scan logic must not change — chrome only:
+- Text wordmark ("SONIC PULSE", 13px/700/0.32em) instead of logo image.
+- Background `#000`; cards `--bg-elevated` + 24px radius + hairline border.
+- Buttons → pill shapes (white primary, outline secondary), sentence case.
+- Replace remaining `--accent-volt` refs with `--accent-magenta`, and any
+  jetbrains-mono font refs with montserrat (aliases resolve anyway; tidy them).
+- Status colors: keep green #22c55e for success, #e24b4a for errors.
+- Apply the §7.2 contrast floor to all gate/verify text.
+
+### 7.4 Dead code — scheduled deletion
+
+`src/components/tickets/RegistrationForm.tsx` and
+`src/components/tickets/TierCards.tsx` are unreferenced (kept at owner's
+request, 12 Jul 2026). **If still unused by 12 Aug 2026, delete both** and
+remove the `react-hook-form`/`zod` deps if nothing else imports them.
+Check with: `grep -rln "RegistrationForm\|TierCards" src` (only their own
+files should match).
+
+---
