@@ -1,14 +1,14 @@
-import { publishedArtists } from '@/data/artists'
+import { acts } from '@/data/lineup'
 import Section from '@/components/ui/Section'
 import PhotoCard from '@/components/ui/PhotoCard'
 import Reveal from '@/components/ui/Reveal'
 import { PillLink } from '@/components/ui/PillButton'
 
 export default function ArtistTeaser() {
-  const featured = publishedArtists.slice(0, 4)
+  const featured = acts.filter((a) => a.poster)
 
   return (
-    <Section eyebrow="The lineup" title="Twelve acts. Curated, not crowded.">
+    <Section eyebrow="The lineup" title="One night. Gate to sunrise.">
       <div
         style={{
           display: 'grid',
@@ -18,13 +18,13 @@ export default function ArtistTeaser() {
           margin: '0 auto',
         }}
       >
-        {featured.map((artist, i) => (
-          <Reveal key={artist.id} delay={i * 80}>
+        {featured.map((act, i) => (
+          <Reveal key={act.id} delay={i * 80}>
             <PhotoCard
-              src={artist.image ?? '/images/hero-visual.jpg'}
-              alt={artist.name}
-              title={artist.name}
-              caption={`${artist.stage === 'main' ? 'Main stage' : 'Sunrise stage'} · ${artist.setTime.split('–')[0]}`}
+              src={act.poster!}
+              alt={`${act.name} poster`}
+              title={act.name}
+              caption={`${act.time} · ${act.tag}`}
               ratio="3/4"
             />
           </Reveal>

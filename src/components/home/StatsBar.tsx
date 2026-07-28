@@ -1,9 +1,9 @@
-import { artists } from '@/data/artists'
+import { ARTIST_COUNT } from '@/data/lineup'
 
 const stats = [
-  { value: '17', label: 'Hours' },
+  { value: '17.5', label: 'Hours' },
   { value: '2', label: 'Stages' },
-  { value: String(artists.length), label: 'Artists' },
+  { value: String(ARTIST_COUNT), label: 'Artists' },
   { value: '800', label: 'Capacity' },
 ]
 

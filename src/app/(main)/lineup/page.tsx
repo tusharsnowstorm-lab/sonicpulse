@@ -1,11 +1,13 @@
 import type { Metadata } from 'next'
-import { artists } from '@/data/artists'
-import ArtistGrid from '@/components/lineup/ArtistGrid'
 import PageHeader from '@/components/ui/PageHeader'
+import ArtistSlider from '@/components/lineup/ArtistSlider'
+import NightTimetable from '@/components/lineup/NightTimetable'
+import Eyebrow from '@/components/ui/Eyebrow'
+import { ARTIST_COUNT } from '@/data/lineup'
 
 export const metadata: Metadata = {
   title: 'Lineup — Sonic Pulse',
-  description: `${artists.length} artists. Two stages. One night.`,
+  description: `${ARTIST_COUNT} artists. One night, gate to sunrise.`,
 }
 
 export default function LineupPage() {
@@ -14,9 +16,16 @@ export default function LineupPage() {
       <PageHeader
         eyebrow="25 September 2026"
         title="The lineup"
-        sub={`${artists.length} artists · Two stages`}
+        sub={`${ARTIST_COUNT} artists · One night, gate to sunrise`}
       />
-      <ArtistGrid />
+      <ArtistSlider />
+
+      <div style={{ marginTop: 70 }}>
+        <Eyebrow tone="muted">The night, in order</Eyebrow>
+        <div style={{ marginTop: 24 }}>
+          <NightTimetable />
+        </div>
+      </div>
     </div>
   )
 }

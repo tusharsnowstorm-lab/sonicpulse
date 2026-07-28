@@ -55,7 +55,7 @@ export default function Hero() {
         >
           One night.
           <br />
-          <span style={{ color: 'rgba(255,255,255,0.55)' }}>Seventeen hours.</span>
+          <span style={{ color: 'rgba(255,255,255,0.55)' }}>Seventeen and a half hours.</span>
         </h1>
 
         <p

@@ -6,7 +6,7 @@ import AppPromoBand from '@/components/ui/AppPromoBand'
 export default function TicketsTeaser() {
   return (
     <>
-      <Section eyebrow="Tickets" title="Choose your night" sub="Every tier includes both stages, all seventeen hours.">
+      <Section eyebrow="Tickets" title="Choose your night" sub="Every tier includes both stages, all seventeen and a half hours.">
         <div style={{ display: 'flex', gap: 20, justifyContent: 'center', alignItems: 'flex-end', flexWrap: 'wrap' }}>
           {ticketTiers.map((tier) => (
             <div

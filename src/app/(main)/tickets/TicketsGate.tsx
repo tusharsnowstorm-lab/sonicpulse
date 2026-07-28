@@ -27,7 +27,7 @@ export default function TicketsGate() {
 
   return (
     <div className="max-w-[1200px] mx-auto px-4" style={{ padding: '64px 6vw 100px' }}>
-      <PageHeader eyebrow="25 September 2026" title="Choose your night" sub="Every tier includes both stages, all seventeen hours." className="mb-10 text-center" />
+      <PageHeader eyebrow="25 September 2026" title="Choose your night" sub="Every tier includes both stages, all seventeen and a half hours." className="mb-10 text-center" />
 
       <div style={{ display: 'flex', gap: 20, justifyContent: 'center', alignItems: 'flex-end', flexWrap: 'wrap', marginBottom: 60 }}>
         {ticketTiers.map((tier) => (

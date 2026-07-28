@@ -211,6 +211,17 @@ a:active,
   }
 }
 
+/* ── Read-more expanders (Activities / Nine Echoes) ──────────────── */
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary::after {
+  content: '+';
+  color: var(--accent-magenta);
+  margin-left: 6px;
+  font-size: 15px;
+}
+details[open] > summary::after { content: '–'; }
+
 /* ── Reduce motion ────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .glow-heading::after { animation: none; }

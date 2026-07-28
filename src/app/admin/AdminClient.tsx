@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { CheckCircle, XCircle, Clock, ExternalLink } from 'lucide-react'
 import { ticketTiers } from '@/data/tickets'
+import FirstPulseTab from './FirstPulseTab'
 
 const ID_TYPE_LABELS: Record<string, string> = {
   nid: 'NID',
@@ -31,6 +32,7 @@ const TIER_LABELS: Record<string, string> = Object.fromEntries(ticketTiers.map((
 const STATUS_TABS = ['pending', 'approved', 'rejected'] as const
 
 export default function AdminClient() {
+  const [surface, setSurface] = useState<'tickets' | 'first-pulse'>('tickets')
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'rejected'>('pending')
@@ -110,44 +112,69 @@ export default function AdminClient() {
       </div>
 
       <div className="max-w-[1100px] mx-auto px-4 py-10">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold mb-1" style={{ color: '#fff', fontFamily: 'var(--font-montserrat)' }}>Ticket reviews</h1>
-          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>Review and approve or reject submitted tickets.</p>
-        </div>
-
-        {/* Status tabs */}
-        <div className="flex gap-2 mb-6 flex-wrap">
-          {STATUS_TABS.map((tab) => (
+        {/* Surface switcher */}
+        <div className="flex gap-2 mb-8 flex-wrap">
+          {(['tickets', 'first-pulse'] as const).map((s) => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
+              key={s}
+              onClick={() => setSurface(s)}
+              className="px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
               style={{
-                background: activeTab === tab ? (tab === 'approved' ? 'rgba(34,197,94,0.12)' : 'rgba(255,63,194,0.12)') : 'var(--bg-elevated)',
-                border: activeTab === tab ? (tab === 'approved' ? '1px solid rgba(34,197,94,0.4)' : '1px solid var(--accent-soft)') : '1px solid var(--border)',
-                color: activeTab === tab ? (tab === 'approved' ? '#22c55e' : 'var(--accent-magenta)') : 'rgba(255,255,255,0.45)',
+                background: surface === s ? '#fff' : 'var(--bg-elevated)',
+                color: surface === s ? '#000' : 'rgba(255,255,255,0.5)',
+                border: '1px solid var(--border)',
                 touchAction: 'manipulation',
               }}
             >
-              {tab === 'approved' ? <CheckCircle size={13} /> : <Clock size={13} />}
-              {tab === 'pending' ? 'Pending' : tab === 'approved' ? 'Approved' : 'Rejected'}
-              <span className="rounded-full px-1.5 py-0.5 text-xs" style={{ background: 'rgba(255,255,255,0.08)' }}>{counts[tab]}</span>
+              {s === 'tickets' ? 'Tickets' : 'First Pulse'}
             </button>
           ))}
         </div>
 
-        {loading ? (
-          <div className="space-y-4">{[1, 2, 3].map((i) => <div key={i} className="rounded-2xl h-32 animate-pulse" style={{ background: 'var(--bg-elevated)' }} />)}</div>
-        ) : filtered.length === 0 ? (
-          <div className="rounded-2xl p-10 text-center" style={{ background: 'var(--bg-elevated)', border: '1px dashed var(--border)' }}>
-            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>No {activeTab} tickets.</p>
-          </div>
+        {surface === 'tickets' ? (
+          <>
+            <div className="mb-6">
+              <h1 className="text-2xl font-bold mb-1" style={{ color: '#fff', fontFamily: 'var(--font-montserrat)' }}>Ticket reviews</h1>
+              <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>Review and approve or reject submitted tickets.</p>
+            </div>
+
+            {/* Status tabs */}
+            <div className="flex gap-2 mb-6 flex-wrap">
+              {STATUS_TABS.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer"
+                  style={{
+                    background: activeTab === tab ? (tab === 'approved' ? 'rgba(34,197,94,0.12)' : 'rgba(255,63,194,0.12)') : 'var(--bg-elevated)',
+                    border: activeTab === tab ? (tab === 'approved' ? '1px solid rgba(34,197,94,0.4)' : '1px solid var(--accent-soft)') : '1px solid var(--border)',
+                    color: activeTab === tab ? (tab === 'approved' ? '#22c55e' : 'var(--accent-magenta)') : 'rgba(255,255,255,0.45)',
+                    touchAction: 'manipulation',
+                  }}
+                >
+                  {tab === 'approved' ? <CheckCircle size={13} /> : <Clock size={13} />}
+                  {tab === 'pending' ? 'Pending' : tab === 'approved' ? 'Approved' : 'Rejected'}
+                  <span className="rounded-full px-1.5 py-0.5 text-xs" style={{ background: 'rgba(255,255,255,0.08)' }}>{counts[tab]}</span>
+                </button>
+              ))}
+            </div>
+
+            {loading ? (
+              <div className="space-y-4">{[1, 2, 3].map((i) => <div key={i} className="rounded-2xl h-32 animate-pulse" style={{ background: 'var(--bg-elevated)' }} />)}</div>
+            ) : filtered.length === 0 ? (
+              <div className="rounded-2xl p-10 text-center" style={{ background: 'var(--bg-elevated)', border: '1px dashed var(--border)' }}>
+                <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>No {activeTab} tickets.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filtered.map((ticket) => (
+                  <TicketRow key={ticket.id} ticket={ticket} actionLoading={actionLoading} onAction={handleAction} onGenderUpdate={handleTicketGender} onGetNidUrl={() => getNidUrl(ticket)} cachedUrl={nidUrls[ticket.id]} />
+                ))}
+              </div>
+            )}
+          </>
         ) : (
-          <div className="space-y-4">
-            {filtered.map((ticket) => (
-              <TicketRow key={ticket.id} ticket={ticket} actionLoading={actionLoading} onAction={handleAction} onGenderUpdate={handleTicketGender} onGetNidUrl={() => getNidUrl(ticket)} cachedUrl={nidUrls[ticket.id]} />
-            ))}
-          </div>
+          <FirstPulseTab />
         )}
       </div>
     </main>

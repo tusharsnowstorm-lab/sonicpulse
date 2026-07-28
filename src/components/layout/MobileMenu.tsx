@@ -1,14 +1,17 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { X, User } from 'lucide-react'
 import PillButton, { PillLink } from '@/components/ui/PillButton'
 
 const navLinks = [
   { href: '/lineup', label: 'Lineup' },
-  { href: '/schedule', label: 'Schedule' },
+  { href: '/activities', label: 'Activities' },
+  { href: '/echoes', label: 'Echoes' },
   { href: '/tickets', label: 'Tickets' },
+  { href: '/first-pulse', label: 'First Pulse' },
   { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },
 ]
@@ -68,8 +71,11 @@ export default function MobileMenu({ onClose }: Props) {
         className="flex items-center justify-between px-5 shrink-0"
         style={{ height: '4rem', borderBottom: '1px solid var(--border)' }}
       >
-        <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.32em', fontFamily: 'var(--font-montserrat)', color: '#fff' }}>
-          SONIC PULSE
+        <span className="flex items-center gap-2.5">
+          <Image src="/images/brand/logo.webp" alt="" width={28} height={28} style={{ borderRadius: '50%' }} />
+          <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.32em', fontFamily: 'var(--font-montserrat)', color: '#fff' }}>
+            SONIC PULSE
+          </span>
         </span>
         <button
           onClick={onClose}
@@ -83,7 +89,7 @@ export default function MobileMenu({ onClose }: Props) {
       </div>
 
       {/* Nav links */}
-      <nav className="flex-1 flex flex-col justify-center px-6" aria-label="Mobile navigation">
+      <nav className="flex-1 flex flex-col justify-center px-6 overflow-y-auto" aria-label="Mobile navigation">
         {navLinks.map(({ href, label }) => {
           const active = pathname === href
           return (
@@ -91,10 +97,10 @@ export default function MobileMenu({ onClose }: Props) {
               key={href}
               href={href}
               onClick={onClose}
-              className="flex items-center py-4"
+              className="flex items-center py-3"
               style={{
                 fontFamily: 'var(--font-montserrat)',
-                fontSize: 'clamp(1.5rem, 6vw, 2rem)',
+                fontSize: 'clamp(1.25rem, 5.5vw, 1.75rem)',
                 fontWeight: 700,
                 letterSpacing: '-0.02em',
                 color: active ? 'var(--accent-magenta)' : '#fff',

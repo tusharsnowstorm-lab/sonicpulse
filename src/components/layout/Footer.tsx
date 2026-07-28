@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 function InstagramIcon() {
   return (
@@ -28,11 +29,14 @@ function TikTokIcon() {
 
 const eventLinks = [
   { href: '/lineup', label: 'Lineup' },
+  { href: '/activities', label: 'Activities' },
+  { href: '/echoes', label: 'Echoes' },
   { href: '/schedule', label: 'Schedule' },
   { href: '/tickets', label: 'Tickets' },
 ]
 
 const supportLinks = [
+  { href: '/first-pulse', label: 'First Pulse' },
   { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },
   { href: '/policy', label: 'Policy' },
@@ -68,10 +72,13 @@ export default function Footer() {
       <div className="max-w-[1200px] mx-auto px-4" style={{ padding: '64px 6vw' }}>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10">
           <div style={{ gridColumn: 'span 2' }}>
-            <span
-              style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.32em', fontFamily: 'var(--font-montserrat)', color: '#fff' }}
-            >
-              SONIC PULSE
+            <span className="flex items-center gap-2.5">
+              <Image src="/images/brand/logo.webp" alt="" width={30} height={30} style={{ borderRadius: '50%' }} />
+              <span
+                style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.32em', fontFamily: 'var(--font-montserrat)', color: '#fff' }}
+              >
+                SONIC PULSE
+              </span>
             </span>
             <p style={{ fontSize: 13.5, fontWeight: 500, color: 'rgba(255,255,255,0.65)', lineHeight: 1.65, marginTop: 14, maxWidth: 280 }}>
               Bangladesh&apos;s first sunset-to-sunrise music festival. Presented by Dhaka Music Festival.

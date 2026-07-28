@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { Menu, User } from 'lucide-react'
 import MobileMenu from './MobileMenu'
@@ -79,8 +80,10 @@ export default function Navbar() {
       >
         <div className="max-w-[1200px] mx-auto px-4 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="shrink-0 flex items-center">
+          <Link href="/" className="shrink-0 flex items-center gap-2.5">
+            <Image src="/images/brand/logo.webp" alt="" width={32} height={32} style={{ borderRadius: '50%' }} priority />
             <span
+              className="hidden sm:inline"
               style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.32em', fontFamily: 'var(--font-montserrat)', color: '#fff' }}
             >
               SONIC PULSE
@@ -88,7 +91,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-8" aria-label="Main navigation">
+          <nav className="hidden lg:flex items-center gap-6" aria-label="Main navigation">
             {navLinks.map(({ href, label }) => {
               const active = pathname === href
               return (
@@ -137,7 +140,7 @@ export default function Navbar() {
             type="button"
             aria-label="Open menu"
             onClick={() => setMenuOpen(true)}
-            className="md:hidden flex items-center justify-center"
+            className="lg:hidden flex items-center justify-center"
             style={{ width: 48, height: 48, color: '#fff', flexShrink: 0, touchAction: 'manipulation' }}
           >
             <Menu size={24} />
@@ -156,8 +159,10 @@ export default function Navbar() {
 
 const navLinks = [
   { href: '/lineup', label: 'Lineup' },
-  { href: '/schedule', label: 'Schedule' },
+  { href: '/activities', label: 'Activities' },
+  { href: '/echoes', label: 'Echoes' },
   { href: '/tickets', label: 'Tickets' },
+  { href: '/first-pulse', label: 'First Pulse' },
   { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },
 ]
