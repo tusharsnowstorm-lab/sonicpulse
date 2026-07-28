@@ -442,3 +442,332 @@ Check with: `grep -rln "RegistrationForm\|TierCards" src` (only their own
 files should match).
 
 ---
+
+## 8. Phase 8 — New Chapters (added 28 Jul 2026, owner-approved)
+
+Owner approved the full direction on 28 Jul 2026 (mockup artifact:
+https://claude.ai/code/artifact/bc8515ba-e0af-4634-ae2d-79a672f46d82).
+Everything in this phase uses the Gallery Minimal system from §1 unchanged.
+All names, lore and copy below are FINAL and owner-approved — use verbatim,
+do not rename or rewrite. Assets are already committed under `public/images/`
+(artists/, echoes/, activities/, brand/) — no external fetching needed.
+
+### 8.0 Global fact change — event now ends 9:30 AM
+
+The event runs 25 Sep 2026, 4:00 PM Friday → **9:30 AM Saturday, 17.5 hours**
+(was 9:00 AM / 17 hours; §0.7 is superseded on this one point). Grep the whole
+of `src/` for `9:00 AM`, `9 AM`, `9AM`, `17 hours`, `17-hour`, `17H` and update
+every user-facing mention: hero, StatsBar, schedule page, tickets page, FAQ,
+policy, any metadata/OG descriptions. Nothing else in §0 changes.
+
+### 8.1 Brand — logo option 5 site-wide
+
+`public/images/brand/logo.webp` (1024px) and `logo-512.png` are the new logo
+(circular badge: hand pressing through a glowing membrane + SONICPULSE
+wordmark). Use it in: Navbar (replacing the text wordmark IF it reads cleanly
+at 32–40px height next to nav links — otherwise logo mark + keep text), the
+Footer, `favicon.ico` (regenerate from logo-512.png), and OG/social card
+images. Keep the gate scanner's text wordmark (§7.3) as-is.
+
+### 8.2 Lineup page rebuild (`/lineup`) — posters, bios, slider, set times
+
+Assets per artist in `public/images/artists/`: `{slug}-poster.webp` (1200w)
+and `{slug}-bio.webp` (1080w) for slugs: `psytaraa`, `vampbetch`, `izhaqo`,
+`drip`, `rii`.
+
+Build a full-width **artist slider** (scroll-snap horizontal, arrow buttons +
+dot indicators, touch swipe; `touchAction: 'manipulation'` on all controls):
+each slide = poster image left (5/12 cols), body right (7/12): set-time chip,
+artist name, one-line hook (magenta, uppercase), text bio, and a "View bio
+card" toggle revealing the bio-card image (`{slug}-bio.webp`). Mobile: stacks
+vertically, poster on top (min-height ~340px, object-fit cover).
+
+Below the slider, a bordered **timetable** listing the night in order.
+Chronology and copy (verbatim):
+
+| Time | Act | Tag |
+|---|---|---|
+| 4:00 – 7:00 PM | First Pulse ×2 — Two rising acts from the open call | Opening |
+| 7:00 – 8:30 PM | Fly on the Wall | Dusk |
+| 8:30 – 10:00 PM | Izhaqo | Night |
+| 10:00 – 11:30 PM | Vampbetch | Night |
+| 11:30 PM – 3:00 AM | Night Rituals — Ember Rites peak · The Great Burn at midnight · resident selectors between | Ritual |
+| 3:00 – 4:30 AM | Psytaraa | Peak |
+| 4:30 – 6:30 AM | Starside Hours — Guided stargazing over an ambient bridge set · Cloud Nine at its best | Drift |
+| 6:30 – 8:00 AM | Drip | Sunrise |
+| 8:00 – 9:30 AM | Rii | Closing |
+
+Artist hooks + text bios (verbatim; transcribed from the owner's bio cards):
+
+- **PSYTARAA** (3:00–4:30 AM · Peak) — hook "There can be no pulse without him".
+  Bio: "As the chief architect of Bangladesh's underground, his peak-time
+  techno and psytrance textures don't just move a crowd — they pull it into
+  another dimension entirely."
+- **VAMPBETCH** (10:00–11:30 PM) — hook "The one and only". Bio: "Sound exists
+  in a space between the unknown and the euphoric. Progressive house, acid
+  techno and tech house woven into sets that are dark, dynamic and deeply
+  immersive. She doesn't just perform for a crowd — she absorbs them whole,
+  leaving behind nothing but the frequency."
+- **IZHAQO** (8:30–10:00 PM) — hook "None other than". Bio: "His sound exists
+  at the intersection of memory and movement. Two worlds — the Middle East and
+  the Bay of Bengal — compressed into leftfield grooves, braindance textures
+  and bass-driven rhythms that build the way tides do. Gradually. Inevitably.
+  Until the room has no choice but to surrender."
+- **DRIP** (6:30–8:00 AM · Sunrise) — hook "He built the room he plays to".
+  Bio: "Before Drip played his first set, he had already shaped the culture
+  around it. Community first, performance second — in that order, always.
+  Underground house, deep tech and minimal selections built from the same
+  authenticity that created some of Dhaka's most beloved underground spaces.
+  What he plays is an extension of what he built."
+- **RII** (8:00–9:30 AM · Closing) — hook "Some DJs read the room. She scores
+  it". Bio: "A violinist before she was a DJ, her ear was trained on melody,
+  dynamics and emotion long before she ever touched a deck. That foundation
+  bleeds into everything — hypnotic techno, progressive textures and deep
+  organic house that feel less like sets and more like compositions. The pulse
+  has never been played quite like this."
+- **FLY ON THE WALL** (7:00–8:30 PM) — no assets yet. Styled placeholder slide
+  (dark gradient, name + "Poster & bio pending"); owner will supply content
+  later. Hook "The early current".
+- **FIRST PULSE ×2** (4:00–7:00 PM · Opening) — placeholder slide linking to
+  `/first-pulse`: "The first three hours of Sonic Pulse belong to two artists
+  chosen from the open First Pulse call. Their posters get made in the same
+  treatment as the headliners — same sky, same constellation, same stage."
+
+Update the home `ArtistTeaser` to feature the new posters and link `/lineup`;
+update `/schedule` (Timetable/SetRow) to the table above.
+
+### 8.3 Activities — dedicated section, equal billing with artists
+
+New page **`/activities`** plus a home-page section teaser (3 featured cards →
+link to page). Card grid (auto-fill minmax ~310px), each card: photo
+(16/11 crop), category kicker, NAME · tail (name uppercase 800, tail magenta),
+one-line hook, and a "Read more" expander (`<details>`, styled summary) with
+the extended copy. Images in `public/images/activities/`. All copy verbatim:
+
+1. **EMBER RITES · Dancers of Flame** (fire show; `ember-rites.webp`) — Hook:
+   "Fire dancers rewrite the dark in ropes of live spark — held close enough
+   to feel on your face." Extended: "Performances run in waves through the
+   night at the ritual ground beneath the glyph wall. Spinners, breathers and
+   whip artists trace the Signal's loops in flame while the far stage bleeds
+   bass across the field. Stand inside the drum circle's edge — close enough
+   for heat, behind the ember line. Final rite leads the crowd to the Great
+   Burn."
+2. **THE GREAT BURN · Night of Release** (bonfire; `great-burn.webp`) — Hook:
+   "One match. Twelve feet of lore. The whole night's weight, released at
+   once." Extended: "All night, Icarus — the giant kite (Echo IX) — collects
+   paper ribbons where guests write the thing they came to let go of. Then the
+   drums stop, the field goes dark, and the kite takes its only flight: as
+   fire. A minute of silence, then the heaviest drop of the night. This is the
+   moment people will describe badly to their friends for a year." Caption
+   line: "Midnight, inside the Night Rituals block."
+3. **WARPAINT · Skin of Light** (glow painting; `warpaint.webp`) — Hook: "UV
+   artists mark you in the Signal's own handwriting. Your crew, one
+   constellation." Extended: "The glyphs burned into the gate, the boats and
+   the feast stalls have an alphabet — and the paint station is where it gets
+   written on skin. Pick a line of the lore or let the artist read you and
+   improvise. The paint blazes under the stage UV rigs and washes off in the
+   morning. What it says doesn't."
+4. **NEON LAGOON · Water That Glows Back** (poolside; `neon-lagoon.webp`) —
+   Hook: "A pool that glows back. Float in color while the bass rolls across
+   the water." Extended: "The pool deck is tiled in lit glyphs and the water
+   runs cyan-to-magenta all night. Loungers, towels and a slow poolside
+   selector who never rushes anyone anywhere. At dawn it turns into the best
+   seat in the house: Drip and Rii's sunrise sets carry across the water.
+   Bring shorts, leave dignity — the 7 AM swim is a rite."
+5. **STARSIDE · The Whisper Hour** (stargazing; no photo — styled starfield
+   placeholder, CSS gradient + dot stars) — Hook: "Lights face down; eyes go
+   up. The delta sky, narrated — you're looking at where the Signal came
+   from." Extended: "In the quiet hours a guide sets up scopes on the dark
+   side of the grounds, away from the rigs. Star maps, a laser pointer, and
+   the version of the lore where every constellation the artists wear on their
+   skin is real and overhead. Best paired with the Cloud Nine nets next door."
+6. **STYX · The Silent Ferry** (boating; `styx.webp`) — Hook: "Glide black
+   water in a glowing boat between carved stone lanterns. The quietest set of
+   the night is out here." Extended: "Circuit-lit boats, two to four seekers
+   each, drifting a channel of carved stone lanterns. Mist on the water, the
+   far stage reduced to a heartbeat. The route passes under Event Horizon, the
+   bridge of light (Echo III) — and boat crews swear the water under the
+   bridge plays a note nothing on land does."
+7. **BAZAAR OF ECHOES · Trades of Wonder** (marketplace;
+   `bazaar-of-echoes.webp`) — Hook: "A night bazaar of makers — wearables,
+   prints, and oddities that glow in the temple lanes." Extended: "Designers,
+   UV jewellers, print artists and the installation crews selling miniatures
+   of the Nine Echoes. Everything under strings of neon in the temple lanes.
+   At 3 AM the bazaar runs a barter hour — money down, trades only — which is
+   exactly as chaotic and beautiful as it sounds."
+8. **FEAST QUARTER · Fire and Ice** (food stalls; `feast-quarter.webp`) —
+   Hook: "Eating as ceremony. Open flame on one side, iced chai and cold
+   treats on the other — until the last beat, and a while after." Extended:
+   "Stone counters, open flame, glyphs glowing under the woks — and across the
+   lane, the cold side: iced chai, kulfi and frozen treats for the
+   sweat-drenched. Street classics next to late-night biryani, a full
+   vegetarian line, and hot chai at sunrise poured for whoever's still
+   standing. The quarter never closes while the music plays — refuelling is
+   part of the ritual, not a break from it."
+9. **CLOUD NINE · The Star Nets** (net platforms; reuse
+   `echoes/cloud-nine.webp`) — Hook: "Raised star-nets over the grass. Sit,
+   sprawl, sink — the mesh hums with the far stage's bass." Extended: "A hive
+   of lit nets stretched between bamboo pillars, raised off the grass — nine
+   bays around a floating center. Shoes off, climb in, lie back. The netting
+   carries the sub-bass like a slow heartbeat and the sky does the rest.
+   Doubles as Echo VIII in the lore. Best hours: 4 to 6 AM, between the peak
+   and the sunrise sets. The only place on the grounds where doing nothing is
+   doing everything."
+
+### 8.4 Art installations — "The Nine Echoes" (`/echoes`)
+
+New page **`/echoes`** plus a home-page section teaser. Opens with the
+founding myth in a bordered intro panel (verbatim):
+
+> **Before language, there was frequency.**
+> Long before this city had a name, something crossed the sky over the delta
+> and fell into the wetlands. It didn't die. It scattered — into nine echoes
+> that sank into the grass, the water and the trees, and waited. The glyphs
+> you'll find burned into stone and steel across the grounds are its
+> handwriting.
+> One night a year, when eight hundred heartbeats land in the same field, the
+> echoes wake. For seventeen hours this place remembers what it is: a landing
+> ground. Walk all nine before sunrise and the Loop closes with you inside it.
+> **You don't attend Sonic Pulse. You're received by it.**
+
+Then nine alternating image/text panels (image left/right alternating on
+desktop, stacked on mobile). Numbering is the trail order (gate → burn), shown
+as "ECHO I · THE GATE" style eyebrows. Images in `public/images/echoes/`.
+All copy verbatim:
+
+- **ECHO I · THE GATE — COILGATE · The First Loop** (`coilgate.webp`; main
+  entrance — the first thing every guest sees). Lore: "The serpent that
+  swallowed the first sound and has circled it ever since. You enter the night
+  through its coil, and inside, time runs on BPM instead of clocks. Meet its
+  eye on the way in — it will already be looking at you." On site: ember-lit
+  scales, teal glass eye, kites and jellies visible through the arch. The
+  oldest symbol of the loop — every set, every night, every year feeding back
+  into itself.
+- **ECHO II · THE WALKWAY — GLOWTIDE · The Migration of Dreams**
+  (`glowtide.webp`; from the gate into the heart of the grounds). Lore: "The
+  current that pulls every wanderer inward — gently, and without asking. The
+  jellies overhead migrate along it all night, feeding on bass and lantern
+  light. Walk it slowly: arrival isn't a race, it's a descent into deeper
+  water." On site: glowing jellyfish avenue between lit poles and lanterns —
+  the festival's bloodstream, gate to heart.
+- **ECHO III · THE BRIDGE — EVENT HORIZON · Bridge of Light** (NO photo —
+  styled placeholder: dark gradient + glowing arch motif + "No photo yet";
+  the short bridge across the lake, into the alcove). Lore: "A bridge strung
+  with so much light it stops being a bridge. Cross it with a question and the
+  alcove on the other side answers quietly. Everyone comes back across the
+  Horizon a little lighter than they went." On site: tunnel-of-light dressing
+  over the existing bridge; the Styx boats pass beneath.
+- **ECHO IV · OVERHEAD — MYCELIA · Dream of the Forest Floor**
+  (`mycelia.webp`; hanging above the grove — soft light, fairy weather).
+  Lore: "The forest has always talked underground — root to root, a
+  whisper-web beneath the grass. On the night the Signal fell, the network
+  dreamed for the first time, and its dream floated up: soft-lit blooms
+  hanging overhead. Stand beneath them and you're inside the forest's dream."
+  On site: giant lit mushroom-medusa canopies hanging overhead among the
+  trees — half coral, half toadstool, all glow.
+- **ECHO V · THE KEEPER — EMBERHART · Keeper of the Wilds** (`emberhart.webp`;
+  standing watch over the open field, fully lit). Lore: "The antlered keeper
+  walked out of the floodplain on the first night, antlers tuned like
+  antennae, eyes lit with embers of the first burn. It hasn't moved since.
+  Regulars insist it does — but only when nobody's watching." On site:
+  monumental metal beast, red inner glow, antlers catching the rigs. "Hart" —
+  the old word for a crowned stag; ember for the eyes.
+- **ECHO VI · THE CLIMB — CHROMA · Beast of Broken Light** (`chroma.webp`;
+  climbable — stairs up the mane to the crown). Lore: "A creature assembled
+  from every wish that was ever dismissed as childish. Each stair up its mane
+  is a wish somebody gave up on; climb them and give those wishes somewhere to
+  go. From the crown, the whole dreamscape is yours." On site: iridescent
+  glass-panel beast, lit stair spiralling up the mane, horn throwing a beam
+  that splits the night into color.
+- **ECHO VII · THE OVERLOOK — THE EMPTY THRONE · Seat of No King**
+  (`empty-throne.webp`; climbable — stand on the seat and see the whole
+  field). Lore: "A throne built for whoever runs the night. Nobody runs the
+  night. So it stands empty — which means, for one climb, it's yours. Reign
+  for a minute. Survey your kingdom. Come down humble." On site: oversized
+  chair in warm neon trim, twin flame torches, guests allowed up for the
+  view — the grounds' highest legal vantage point.
+- **ECHO VIII · THE REST — CLOUD NINE · The Star Nets** (`cloud-nine.webp`;
+  the raised nets over the grass — lie down, look up). Lore: "Woven to catch
+  falling stars, the nets caught dreamers instead. Lie back and the mesh hums
+  with the far stage's bass like a slow heartbeat. The only place on the
+  grounds where doing nothing is doing everything." On site: nine
+  bamboo-framed net bays with warm edge light, radiating from a floating
+  center — the name is literal. Doubles as the activity of the same name.
+- **ECHO IX · THE FINALE — ICARUS · The Last Transmission** (`icarus.webp`;
+  the ritual ground — burned at the Great Burn). Lore: "Every festival ends.
+  Ours transmits. Icarus is a giant kite of bamboo and woven light that spends
+  the night collecting what the crowd wants to release — then flies the only
+  way a message that heavy can: as fire. They said don't fly too close to the
+  sun. Icarus brings the sun to the field instead. The sparks that rise are
+  the reply." On site: monumental kite, psychedelic lit panels, braided tail;
+  ribbon-writing station beside it all night until the burn.
+
+Close the page with the trail note: "Enter the Loop (I), ride the tide (II),
+cross the horizon (III), walk the forest's dream (IV), meet the keeper (V),
+climb (VI), reign (VII), rest (VIII), release (IX). Nine stations, one arc —
+gate to burn."
+
+### 8.5 First Pulse — new-artist platform (`/first-pulse`)
+
+Program name: **First Pulse** ("the first signal of the Pulse"). New page with
+two halves — manifesto left, registration form right (stack on mobile).
+
+Manifesto copy (verbatim): "Every artist on our poster played to an empty room
+once. Somebody gave them a stage anyway. Sonic Pulse runs on the underground,
+and undergrounds only survive when the next wave gets a way in — so we're
+holding the door open ourselves. The call is open worldwide: if you can get to
+Dhaka on 25 September, you can play." / "Two artists from this open call will
+open Sonic Pulse 2026: a three-hour window, the main rig, eight hundred people
+arriving curious. Same stage as the headliners, same poster treatment, same
+sky." Three bullet points: **A real slot, not a side tent** (4:00–7:00 PM on
+the main stage, full production) · **The full treatment** (your own
+cosmic-constellation poster and bio card, made like the headliners') ·
+**Heard by the right ears** (sets reviewed by the Sonic Pulse artists;
+selected names announced on the event page).
+
+Form fields → `public.artist_applications` (table SQL in
+`supabase-first-pulse.sql`, repo root — owner runs it in the Supabase SQL
+editor; assume it exists): full name*, email*, stage name*, city & country*,
+sound & genres*, bio* (≤1000 chars, show live counter), example set/mix link
+(optional, validate URL), Instagram/socials (optional), years behind the decks
+(optional integer, "0 is a valid answer"), anything else (optional). CTA:
+"Send your First Pulse →".
+
+API route `src/app/api/first-pulse/route.ts` modeled on `api/register`:
+service-role Supabase client, server-side validation, reference code
+`FP-XXXXXXXX` (same generator alphabet), duplicate-email returns a friendly
+"You've already applied — we have your application" (unique index on
+lower(email) raises a 23505), Resend confirmation email in the existing dark
+template style ("Application received — First Pulse"), success state on the
+page shows the reference code. No file uploads in v1 — mix links only.
+
+Admin: add a "First Pulse" tab in `src/app/admin/AdminClient.tsx` listing
+applications (name, stage name, city, genres, mix link as clickable,
+created_at) with status transitions pending → shortlisted/accepted/rejected
+(reuse the registrations tab's patterns + an api/admin route with the service
+role, matching existing admin API conventions).
+
+Navigation: add "First Pulse" to Navbar + MobileMenu + Footer. Link the
+lineup's First Pulse slide and the timetable's opening row to `/first-pulse`.
+
+### 8.6 Nav & information architecture
+
+Final top nav: Home · Lineup · Activities · Echoes · Tickets · First Pulse ·
+FAQ · Contact (Schedule folds into Lineup's timetable if nav gets crowded on
+mobile — builder's call, but every page must remain reachable). Home page adds
+two new sections after the artist teaser: Activities teaser (3 cards) and
+Nine Echoes teaser (founding-myth pull-quote + 3 echo images) linking to the
+new pages.
+
+### 8.7 Execution order & verification
+
+Order: 8.0 facts → 8.1 brand → 8.2 lineup → 8.3 activities → 8.4 echoes →
+8.5 first-pulse (page, then API, then admin tab) → 8.6 nav → full test pass.
+Per §4 protocol after each sub-phase: `npm run build` + lint clean, screenshot
+home/lineup/activities/echoes/first-pulse at 1280×800 and 375×812, §7.2
+contrast floor applies to all new text, all interactive elements get
+`touchAction: 'manipulation'`, images always behind dark gradients with type
+on top (§0.5), magenta stays the only accent (§0.6). The First Pulse form must
+degrade gracefully if the `artist_applications` table doesn't exist yet
+(catch the DB error, show "Applications open soon" state) — the owner runs the
+SQL separately.
