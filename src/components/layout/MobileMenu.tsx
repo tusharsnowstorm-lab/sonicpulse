@@ -72,12 +72,12 @@ export default function MobileMenu({ onClose }: Props) {
         className="flex items-center justify-between px-5 shrink-0"
         style={{ height: '4rem', borderBottom: '1px solid var(--border)' }}
       >
-        <span className="flex items-center gap-2.5">
+        <Link href="/" onClick={onClose} className="flex items-center gap-2.5">
           <Image src="/images/brand/logo.webp" alt="" width={28} height={28} style={{ borderRadius: '50%' }} />
           <span style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.32em', fontFamily: 'var(--font-montserrat)', color: '#fff' }}>
             SONIC PULSE
           </span>
-        </span>
+        </Link>
         <button
           onClick={onClose}
           type="button"

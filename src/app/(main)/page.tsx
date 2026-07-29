@@ -3,7 +3,6 @@ import StatsBar from '@/components/home/StatsBar'
 import ArtistTeaser from '@/components/home/ArtistTeaser'
 import ActivitiesTeaser from '@/components/home/ActivitiesTeaser'
 import EchoesTeaser from '@/components/home/EchoesTeaser'
-import StageBreak from '@/components/home/StageBreak'
 import TicketsTeaser from '@/components/home/TicketsTeaser'
 import FAQTeaser from '@/components/home/FAQTeaser'
 
@@ -15,7 +14,6 @@ export default function HomePage() {
       <ArtistTeaser />
       <ActivitiesTeaser />
       <EchoesTeaser />
-      <StageBreak />
       <TicketsTeaser />
       <FAQTeaser />
     </>

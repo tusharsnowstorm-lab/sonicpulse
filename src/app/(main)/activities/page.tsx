@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import PageHeader from '@/components/ui/PageHeader'
 import ActivityCard from '@/components/activities/ActivityCard'
+import ConceptArtNote from '@/components/ui/ConceptArtNote'
 import { activities } from '@/data/activities'
+import { CONCEPT_ART_NOTE_LIVE } from '@/data/concept-art'
 
 export const metadata: Metadata = {
   title: 'Activities — Sonic Pulse',
@@ -14,7 +16,7 @@ export default function ActivitiesPage() {
       <PageHeader
         eyebrow="Beyond the stage"
         title="The grounds are open"
-        sub="Nine rituals around the music — as much the show as the artists themselves."
+        sub={`Nine rituals around the music — as much the show as the artists themselves.${CONCEPT_ART_NOTE_LIVE ? '*' : ''}`}
       />
       <div
         style={{
@@ -27,6 +29,7 @@ export default function ActivitiesPage() {
           <ActivityCard key={activity.id} activity={activity} />
         ))}
       </div>
+      <ConceptArtNote />
     </div>
   )
 }

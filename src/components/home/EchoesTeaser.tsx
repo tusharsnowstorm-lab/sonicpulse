@@ -2,6 +2,7 @@ import Section from '@/components/ui/Section'
 import PhotoCard from '@/components/ui/PhotoCard'
 import Reveal from '@/components/ui/Reveal'
 import { PillLink } from '@/components/ui/PillButton'
+import ConceptArtNote from '@/components/ui/ConceptArtNote'
 import { echoes } from '@/data/echoes'
 
 const featured = echoes.filter((e) => e.image).slice(0, 3)
@@ -37,6 +38,7 @@ export default function EchoesTeaser() {
       <PillLink href="/echoes" variant="outline" style={{ marginTop: 44 }}>
         Walk all nine echoes →
       </PillLink>
+      <ConceptArtNote centered />
     </Section>
   )
 }

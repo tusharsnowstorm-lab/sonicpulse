@@ -2,6 +2,7 @@ import Section from '@/components/ui/Section'
 import PhotoCard from '@/components/ui/PhotoCard'
 import Reveal from '@/components/ui/Reveal'
 import { PillLink } from '@/components/ui/PillButton'
+import ConceptArtNote from '@/components/ui/ConceptArtNote'
 import { activities } from '@/data/activities'
 
 const featured = activities.filter((a) => a.image).slice(0, 3)
@@ -34,6 +35,7 @@ export default function ActivitiesTeaser() {
       <PillLink href="/activities" variant="outline" style={{ marginTop: 44 }}>
         All nine activities →
       </PillLink>
+      <ConceptArtNote centered />
     </Section>
   )
 }

@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import PageHeader from '@/components/ui/PageHeader'
 import EchoPanel from '@/components/echoes/EchoPanel'
+import ConceptArtNote from '@/components/ui/ConceptArtNote'
 import { echoes } from '@/data/echoes'
+import { CONCEPT_ART_NOTE_LIVE } from '@/data/concept-art'
 
 export const metadata: Metadata = {
   title: 'The Nine Echoes — Sonic Pulse',
@@ -14,7 +16,7 @@ export default function EchoesPage() {
       <PageHeader
         eyebrow="Art installations"
         title="The Nine Echoes"
-        sub="Nine installations, one lore — walk them all before sunrise."
+        sub={`Nine installations, one lore — walk them all before sunrise.${CONCEPT_ART_NOTE_LIVE ? '*' : ''}`}
       />
 
       <div
@@ -57,6 +59,7 @@ export default function EchoesPage() {
         Enter the Loop (I), ride the tide (II), cross the horizon (III), walk the forest&apos;s dream (IV), meet
         the keeper (V), climb (VI), reign (VII), rest (VIII), release (IX). Nine stations, one arc — gate to burn.
       </p>
+      <ConceptArtNote />
     </div>
   )
 }
