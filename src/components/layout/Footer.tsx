@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { TICKETS_LIVE } from '@/data/tickets'
 
 function InstagramIcon() {
   return (
@@ -32,7 +33,7 @@ const eventLinks = [
   { href: '/activities', label: 'Activities' },
   { href: '/echoes', label: 'Echoes' },
   { href: '/schedule', label: 'Schedule' },
-  { href: '/tickets', label: 'Tickets' },
+  ...(TICKETS_LIVE ? [{ href: '/tickets', label: 'Tickets' }] : []),
 ]
 
 const supportLinks = [

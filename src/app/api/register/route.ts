@@ -11,6 +11,10 @@ function validateNid(nid: string): boolean {
 }
 
 export async function POST(req: NextRequest) {
+  const { TICKETS_LIVE } = await import('@/data/tickets')
+  if (!TICKETS_LIVE) {
+    return Response.json({ error: 'Ticket registration is not open yet.' }, { status: 503 })
+  }
   try {
     const formData = await req.formData()
 

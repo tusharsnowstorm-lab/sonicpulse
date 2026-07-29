@@ -795,3 +795,29 @@ had no remaining references and were deleted (hero-poster.png alone was
 
 Home page section order is now: Hero → StatsBar → ArtistTeaser →
 ActivitiesTeaser → EchoesTeaser → StageBreak → TicketsTeaser → FAQTeaser.
+
+### 8.9 Ticket surfaces hidden behind a flag (added 29 Jul 2026, owner-requested)
+
+Prices, buying CTAs and ticket registration are **temporarily hidden, not
+removed** — the owner will bring them back later. Everything is gated on one
+switch: `TICKETS_LIVE` in `src/data/tickets.ts` (currently `false`). To
+restore all ticket surfaces, flip it to `true` — nothing else should need
+touching.
+
+What the flag gates when `false`:
+- Home: `TicketsTeaser` (tier cards + AppPromoBand) renders nothing.
+- Hero CTAs: "Get tickets" → primary becomes "See the lineup", ghost becomes
+  "Explore the grounds →" (/activities).
+- Navbar: "Tickets" nav link and the "Get tickets" pill hidden.
+- MobileMenu: "Tickets" link and "Get tickets" button hidden.
+- Footer: "Tickets" link hidden.
+- Dashboard quick-nav: "Tickets" link hidden.
+- `/tickets`: renders a "Tickets open soon" holding page instead of
+  `TicketsGate` (the component is untouched, just not routed to).
+- Dashboard: "Add ticket" button + `AddTicketForm` hidden; empty-state copy
+  says registration opens soon. Existing tickets still display normally.
+- Server-side: POST `/api/tickets` and POST `/api/register` return 503 while
+  the flag is off, so registration can't happen via direct API calls either.
+
+Untouched by the flag: First Pulse (artist applications stay open), the
+admin panel, verify/gate flows, and existing approved tickets in dashboards.

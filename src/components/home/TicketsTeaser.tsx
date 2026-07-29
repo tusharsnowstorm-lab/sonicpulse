@@ -1,9 +1,10 @@
-import { ticketTiers } from '@/data/tickets'
+import { ticketTiers, TICKETS_LIVE } from '@/data/tickets'
 import Section from '@/components/ui/Section'
 import { PillLink } from '@/components/ui/PillButton'
 import AppPromoBand from '@/components/ui/AppPromoBand'
 
 export default function TicketsTeaser() {
+  if (!TICKETS_LIVE) return null
   return (
     <>
       <Section eyebrow="Tickets" title="Choose your night" sub="Every tier includes both stages, all seventeen and a half hours.">

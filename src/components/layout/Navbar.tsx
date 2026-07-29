@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { Menu, User } from 'lucide-react'
 import MobileMenu from './MobileMenu'
 import { PillLink } from '@/components/ui/PillButton'
+import { TICKETS_LIVE } from '@/data/tickets'
 
 // Auth state is optional — if Supabase env vars aren't configured yet the
 // navbar still renders and the hamburger button still works.
@@ -130,9 +131,11 @@ export default function Navbar() {
                 Sign in
               </Link>
             )}
-            <PillLink href="/tickets" variant="primary" style={{ padding: '10px 24px', fontSize: 12.5 }}>
-              Get tickets
-            </PillLink>
+            {TICKETS_LIVE && (
+              <PillLink href="/tickets" variant="primary" style={{ padding: '10px 24px', fontSize: 12.5 }}>
+                Get tickets
+              </PillLink>
+            )}
           </nav>
 
           {/* Mobile burger */}
@@ -161,7 +164,7 @@ const navLinks = [
   { href: '/lineup', label: 'Lineup' },
   { href: '/activities', label: 'Activities' },
   { href: '/echoes', label: 'Echoes' },
-  { href: '/tickets', label: 'Tickets' },
+  ...(TICKETS_LIVE ? [{ href: '/tickets', label: 'Tickets' }] : []),
   { href: '/first-pulse', label: 'First Pulse' },
   { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },

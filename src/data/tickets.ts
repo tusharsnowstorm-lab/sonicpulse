@@ -13,6 +13,13 @@ export type TicketTier = {
 export const APP_NAME = 'Afterhours'
 export const APP_DISCOUNT = 1000
 
+/**
+ * Master switch for all public ticket surfaces (owner request, 29 Jul 2026).
+ * false = prices, buying CTAs and ticket registration are hidden site-wide;
+ * flip to true to bring them all back. See REDESIGN_PLAN.md §8.9.
+ */
+export const TICKETS_LIVE = false
+
 export const ticketTiers: TicketTier[] = [
   {
     id: 'phase1',

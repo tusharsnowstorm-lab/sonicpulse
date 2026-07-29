@@ -5,12 +5,13 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { X, User } from 'lucide-react'
 import PillButton, { PillLink } from '@/components/ui/PillButton'
+import { TICKETS_LIVE } from '@/data/tickets'
 
 const navLinks = [
   { href: '/lineup', label: 'Lineup' },
   { href: '/activities', label: 'Activities' },
   { href: '/echoes', label: 'Echoes' },
-  { href: '/tickets', label: 'Tickets' },
+  ...(TICKETS_LIVE ? [{ href: '/tickets', label: 'Tickets' }] : []),
   { href: '/first-pulse', label: 'First Pulse' },
   { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },
@@ -132,9 +133,11 @@ export default function MobileMenu({ onClose }: Props) {
           </PillLink>
         )}
 
-        <PillButton onClick={() => { onClose(); window.location.href = '/tickets' }} variant="primary" className="w-full">
-          Get tickets
-        </PillButton>
+        {TICKETS_LIVE && (
+          <PillButton onClick={() => { onClose(); window.location.href = '/tickets' }} variant="primary" className="w-full">
+            Get tickets
+          </PillButton>
+        )}
 
         <p style={{ textAlign: 'center', fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginTop: 6 }}>
           25 Sep 2026

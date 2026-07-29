@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { PillLink } from '@/components/ui/PillButton'
 import Eyebrow from '@/components/ui/Eyebrow'
+import { TICKETS_LIVE } from '@/data/tickets'
 
 export default function Hero() {
   return (
@@ -73,8 +74,17 @@ export default function Hero() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center gap-4">
-          <PillLink href="/tickets" variant="primary">Get tickets</PillLink>
-          <PillLink href="/lineup" variant="ghost">See the lineup →</PillLink>
+          {TICKETS_LIVE ? (
+            <>
+              <PillLink href="/tickets" variant="primary">Get tickets</PillLink>
+              <PillLink href="/lineup" variant="ghost">See the lineup →</PillLink>
+            </>
+          ) : (
+            <>
+              <PillLink href="/lineup" variant="primary">See the lineup</PillLink>
+              <PillLink href="/activities" variant="ghost">Explore the grounds →</PillLink>
+            </>
+          )}
         </div>
       </div>
     </section>

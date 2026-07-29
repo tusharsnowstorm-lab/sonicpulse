@@ -8,6 +8,7 @@ import AddTicketForm from '@/components/dashboard/AddTicketForm'
 import AccommodationSection from '@/components/dashboard/AccommodationSection'
 import ProfileSection from '@/components/dashboard/ProfileSection'
 import PillButton from '@/components/ui/PillButton'
+import { TICKETS_LIVE } from '@/data/tickets'
 import type { User } from '@supabase/supabase-js'
 
 type Ticket = {
@@ -120,7 +121,7 @@ export default function DashboardClient({ user }: { user: User }) {
             { href: '/', label: 'Home' },
             { href: '/lineup', label: 'Lineup' },
             { href: '/schedule', label: 'Schedule' },
-            { href: '/tickets', label: 'Tickets' },
+            ...(TICKETS_LIVE ? [{ href: '/tickets', label: 'Tickets' }] : []),
             { href: '/faq', label: 'FAQ' },
             { href: '/contact', label: 'Contact' },
           ].map(({ href, label }) => (
@@ -149,17 +150,19 @@ export default function DashboardClient({ user }: { user: User }) {
               </h1>
               <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.65)' }}>
                 {tickets.length === 0
-                  ? 'No tickets yet. Add your first one below.'
+                  ? TICKETS_LIVE ? 'No tickets yet. Add your first one below.' : 'Ticket registration opens soon.'
                   : `${tickets.length} ticket${tickets.length !== 1 ? 's' : ''} registered`}
               </p>
             </div>
-            <PillButton onClick={() => setShowForm((v) => !v)} variant={showForm ? 'outline' : 'primary'} style={{ padding: '10px 20px', fontSize: 13 }}>
-              {showForm ? <><X size={14} className="inline mr-1" />Cancel</> : <><Plus size={14} className="inline mr-1" />Add ticket</>}
-            </PillButton>
+            {TICKETS_LIVE && (
+              <PillButton onClick={() => setShowForm((v) => !v)} variant={showForm ? 'outline' : 'primary'} style={{ padding: '10px 20px', fontSize: 13 }}>
+                {showForm ? <><X size={14} className="inline mr-1" />Cancel</> : <><Plus size={14} className="inline mr-1" />Add ticket</>}
+              </PillButton>
+            )}
           </div>
 
           {/* Add ticket form */}
-          {showForm && (
+          {TICKETS_LIVE && showForm && (
             <div
               className="rounded-2xl p-6 mb-6"
               style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}
@@ -195,7 +198,9 @@ export default function DashboardClient({ user }: { user: User }) {
               style={{ background: 'var(--bg-elevated)', border: '1px dashed var(--border)' }}
             >
               <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
-                Click &quot;Add ticket&quot; to register yourself or someone else.
+                {TICKETS_LIVE
+                  ? 'Click "Add ticket" to register yourself or someone else.'
+                  : 'Ticket registration isn’t open yet — check back soon.'}
               </p>
             </div>
           ) : null}
