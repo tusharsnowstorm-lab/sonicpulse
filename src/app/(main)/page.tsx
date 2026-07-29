@@ -4,7 +4,6 @@ import ArtistTeaser from '@/components/home/ArtistTeaser'
 import ActivitiesTeaser from '@/components/home/ActivitiesTeaser'
 import EchoesTeaser from '@/components/home/EchoesTeaser'
 import StageBreak from '@/components/home/StageBreak'
-import ExperienceGrid from '@/components/home/ExperienceGrid'
 import TicketsTeaser from '@/components/home/TicketsTeaser'
 import FAQTeaser from '@/components/home/FAQTeaser'
 
@@ -17,7 +16,6 @@ export default function HomePage() {
       <ActivitiesTeaser />
       <EchoesTeaser />
       <StageBreak />
-      <ExperienceGrid />
       <TicketsTeaser />
       <FAQTeaser />
     </>

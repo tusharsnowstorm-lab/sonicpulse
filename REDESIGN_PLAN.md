@@ -771,3 +771,27 @@ on top (§0.5), magenta stays the only accent (§0.6). The First Pulse form must
 degrade gracefully if the `artist_applications` table doesn't exist yet
 (catch the DB error, show "Applications open soon" state) — the owner runs the
 SQL separately.
+
+### 8.8 Home-page trims (added 29 Jul 2026, owner-requested)
+
+Owner reviewed the live home page on mobile and cut two things:
+
+1. **Stage-break image removed.** `poster-2.webp` had "SONIC PULSE / HOLD
+   BACK THE VOID" text baked into the artwork, which collided with the
+   overlaid statement copy. `StageBreak` is now a pure typographic band —
+   hairline top/bottom borders, black canvas, the statement + caption only.
+   The copy ("The biggest sound system ever assembled in Dhaka." / "MAIN
+   STAGE · 400,000 WATTS") is unchanged. Do not reintroduce imagery here
+   unless the owner supplies clean art with no baked-in text.
+2. **Experience section deleted.** `ExperienceGrid` (The lounge / The
+   sunrise set / Midnight kitchen / Shuttle service) is gone from the home
+   page and the component is deleted — its content was superseded by the
+   Activities section (§8.3). §3 Phase 2's "Experience grid" spec and the
+   §5 experience copy lines are obsolete.
+
+Asset cleanup that followed: `poster-2.png/webp` and `hero-poster.png/webp`
+had no remaining references and were deleted (hero-poster.png alone was
+17 MB). `hero-visual.jpg` stays — the home hero uses it.
+
+Home page section order is now: Hero → StatsBar → ArtistTeaser →
+ActivitiesTeaser → EchoesTeaser → StageBreak → TicketsTeaser → FAQTeaser.
