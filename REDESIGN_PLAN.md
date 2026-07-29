@@ -821,3 +821,113 @@ What the flag gates when `false`:
 
 Untouched by the flag: First Pulse (artist applications stay open), the
 admin panel, verify/gate flows, and existing approved tickets in dashboards.
+
+### 8.10 Concept-art disclaimer on activities & echoes imagery (added 29 Jul 2026, owner-requested)
+
+All activity and installation images are AI-generated concept renders. Until
+real photography replaces them, a **small, discreet asterisk note** must
+accompany that imagery: the real builds follow the renders closely, but may
+vary. This is temporary — when real photos land, a future amendment removes
+it — so it is gated on one flag for a one-line off-switch.
+
+**Scope fences.** Only the four surfaces below. The lineup/artist posters,
+brand logo, First Pulse, nav, footer and all other pages are untouched — the
+owner scoped this to activities and installations only. No route changes, no
+new assets, no database.
+
+**Files: two creates, four edits.**
+
+1. **Create `src/data/concept-art.ts`:**
+
+```ts
+/**
+ * The activities and Nine Echoes imagery are AI-generated concept renders.
+ * This note discloses that until real photography replaces them, at which
+ * point flip the flag to false (or remove the component in a later
+ * amendment). See REDESIGN_PLAN.md §8.10.
+ */
+export const CONCEPT_ART_NOTE_LIVE = true
+
+export const CONCEPT_ART_NOTE =
+  '*Concept renders — the real installations and activities follow these images closely, but the night may vary.'
+```
+
+2. **Create `src/components/ui/ConceptArtNote.tsx`** (server component, no
+'use client'):
+
+```tsx
+import { CONCEPT_ART_NOTE, CONCEPT_ART_NOTE_LIVE } from '@/data/concept-art'
+
+/** Discreet footnote for AI-generated concept imagery — see §8.10. */
+export default function ConceptArtNote({ centered = false }: { centered?: boolean }) {
+  if (!CONCEPT_ART_NOTE_LIVE) return null
+  return (
+    <p
+      style={{
+        fontSize: 11.5,
+        lineHeight: 1.6,
+        color: 'var(--text-label-muted)',
+        marginTop: 18,
+        maxWidth: 560,
+        textAlign: centered ? 'center' : 'left',
+        marginLeft: centered ? 'auto' : 0,
+        marginRight: centered ? 'auto' : 0,
+      }}
+    >
+      {CONCEPT_ART_NOTE}
+    </p>
+  )
+}
+```
+
+3. **Edit `src/app/(main)/activities/page.tsx`:** import `ConceptArtNote`
+and `CONCEPT_ART_NOTE_LIVE`. The PageHeader `sub` becomes a template string
+so the marker disappears with the flag:
+`sub={`Nine rituals around the music — as much the show as the artists themselves.${CONCEPT_ART_NOTE_LIVE ? '*' : ''}`}`.
+Render `<ConceptArtNote />` directly after the closing tag of the card grid
+`<div>` (left-aligned, bottom of page content).
+
+4. **Edit `src/app/(main)/echoes/page.tsx`:** same pattern —
+`sub={`Nine installations, one lore — walk them all before sunrise.${CONCEPT_ART_NOTE_LIVE ? '*' : ''}`}`,
+and `<ConceptArtNote />` rendered after the existing closing trail-note
+paragraph ("Enter the Loop (I)…"), as the last element before the wrapper
+closes.
+
+5. **Edit `src/components/home/ActivitiesTeaser.tsx`:** render
+`<ConceptArtNote centered />` immediately after the closing `</PillLink>`
+("All nine activities →"), still inside the `<Section>`.
+
+6. **Edit `src/components/home/EchoesTeaser.tsx`:** render
+`<ConceptArtNote centered />` immediately after the closing `</PillLink>`
+("Walk all nine echoes →"), still inside the `<Section>`.
+
+**Copy is locked.** The note text is exactly the `CONCEPT_ART_NOTE` string
+above — one sentence, leading asterisk included, no heading, no emphasis, no
+magenta. 11.5px at `--text-label-muted` (0.55 alpha) is the deliberate
+"discreet" size: legible per §7.2 but subordinate to everything around it.
+
+**Failure/empty states.** None reachable — static data. With
+`CONCEPT_ART_NOTE_LIVE = false` the component returns null and the two
+PageHeader subs render without the trailing asterisk, so no dangling `*`
+survives the off-switch.
+
+**Reversibility.** Flip `CONCEPT_ART_NOTE_LIVE` to `false` in
+`src/data/concept-art.ts` — all four surfaces clear at once. When real
+photography replaces the renders, a future amendment deletes the component,
+the data file and the two template-string markers outright.
+
+**Verification gates.**
+- §4.1: `npx tsc --noEmit`, `npm run lint` (only pre-existing failures
+  allowed), `npm run build`.
+- Dev server: `curl -s localhost:3000/activities | grep -c "Concept renders"`
+  → 1; same for `/echoes` → 1; `curl -s localhost:3000/ | grep -c "Concept renders"`
+  → 2 (both teasers).
+- The asterisk marker renders at the end of both page subs:
+  `curl -s localhost:3000/activities | grep -c "artists themselves.\*"` → ≥1,
+  `curl -s localhost:3000/echoes | grep -c "before sunrise.\*"` → ≥1.
+- Flag check: set `CONCEPT_ART_NOTE_LIVE = false`, confirm all three pages
+  build and render with zero "Concept renders" hits and zero trailing
+  asterisks, then restore `true` before committing.
+- Playwright at 1280×800 and 375×812 on `/`, `/activities`, `/echoes`:
+  `scrollWidth - clientWidth === 0`.
+- Scope grep, zero hits: `grep -rn "ConceptArtNote\|concept-art" src/components/lineup src/components/layout src/app/\(main\)/lineup`.
