@@ -47,12 +47,17 @@ function Row({ row }: { row: (typeof timetableRows)[number] }) {
 
 export default function NightTimetable() {
   return (
-    <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-card)', overflow: 'hidden' }}>
-      {timetableRows.map((row, i) => (
-        <div key={row.time} style={{ borderTop: i === 0 ? 'none' : '1px solid var(--border)', background: 'var(--bg-elevated)' }}>
-          <Row row={row} />
-        </div>
-      ))}
-    </div>
+    <>
+      <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-card)', overflow: 'hidden' }}>
+        {timetableRows.map((row, i) => (
+          <div key={row.time} style={{ borderTop: i === 0 ? 'none' : '1px solid var(--border)', background: 'var(--bg-elevated)' }}>
+            <Row row={row} />
+          </div>
+        ))}
+      </div>
+      <p style={{ marginTop: 12, fontSize: 12.5, color: 'var(--text-label-muted)', lineHeight: 1.6 }}>
+        One continuous night — the Main Stage runs until 4:30 AM, then the Sunrise Stage carries it through to 9:30 AM.
+      </p>
+    </>
   )
 }

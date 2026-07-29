@@ -23,7 +23,7 @@ export const faqs: FAQItem[] = [
     id: 'event-hours',
     category: 'Event Basics',
     question: 'Is this an all-night event? What are the hours?',
-    answer: 'Yes. Doors open at 4 PM on Friday and the event runs through the night until 9:30 AM Saturday morning — 17.5 hours of music. Both stages operate simultaneously.',
+    answer: 'Yes. Doors open at 4 PM on Friday and the event runs through the night until 9:30 AM Saturday morning — 17.5 hours of music. The Main Stage runs from 4 PM to 4:30 AM, then the Sunrise Stage takes over through to 9:30 AM.',
   },
   {
     id: 'rain-policy',
@@ -103,7 +103,7 @@ export const faqs: FAQItem[] = [
     id: 'stages',
     category: 'At the Event',
     question: 'What stages are there and where are they?',
-    answer: 'Two stages: the Main Stage (peak-hour techno and house, full production lighting and sound) and the Sunrise Stage (intimate, melodic, facing east for the sunrise). A site map will be included in your ticket email.',
+    answer: 'Two stages, running in sequence: the Main Stage (4 PM – 4:30 AM — peak-hour techno and house, full production lighting and sound) and the Sunrise Stage (4:30 – 9:30 AM — intimate, melodic, facing east for the sunrise). A site map will be included in your ticket email.',
   },
   // Accessibility
   {
