@@ -931,3 +931,61 @@ the data file and the two template-string markers outright.
 - Playwright at 1280×800 and 375×812 on `/`, `/activities`, `/echoes`:
   `scrollWidth - clientWidth === 0`.
 - Scope grep, zero hits: `grep -rn "ConceptArtNote\|concept-art" src/components/lineup src/components/layout src/app/\(main\)/lineup`.
+
+### 8.11 Remove the stage-break section + make the mobile-menu logo link home (added 29 Jul 2026, owner-requested)
+
+Two small landing-page fixes from the owner's mobile review. Independent of
+§8.10 (no shared files) — the two amendments can be executed in either order
+or together.
+
+**A. Delete the stage-break section — permanent.**
+
+The typographic band ("The biggest sound system ever assembled in Dhaka." /
+"MAIN STAGE · 400,000 WATTS") that §8.8 kept after removing its image is now
+removed entirely. This is a delete, not a flag: the owner cut the section
+outright.
+
+1. Delete `src/components/home/StageBreak.tsx`.
+2. Edit `src/app/(main)/page.tsx`: remove the `StageBreak` import and the
+   `<StageBreak />` element. Home section order becomes:
+   Hero → StatsBar → ArtistTeaser → ActivitiesTeaser → EchoesTeaser →
+   TicketsTeaser → FAQTeaser. (§8.8's order list is superseded; with
+   `TICKETS_LIVE = false` per §8.9, TicketsTeaser renders null, so the page
+   visibly flows Echoes teaser → FAQ teaser.)
+3. Superseded plan text: §3 Phase 2's "Stage break" spec and the §5 copy-bank
+   lines "The biggest sound system ever assembled in Dhaka." / "MAIN STAGE ·
+   400,000 WATTS" are obsolete — do not reintroduce this copy anywhere.
+
+**B. Mobile-menu logo returns to the landing page.**
+
+In `src/components/layout/MobileMenu.tsx`, the header's logo + wordmark is
+currently a plain `<span className="flex items-center gap-2.5">…</span>`.
+Replace that outer `<span>` with:
+
+```tsx
+<Link href="/" onClick={onClose} className="flex items-center gap-2.5">
+```
+
+keeping the inner `<Image>` and wordmark `<span>` exactly as they are.
+`Link` is already imported in this file. `onClick={onClose}` is required so
+tapping the logo while already on the home page still closes the overlay
+instead of doing nothing. No explicit `touchAction` needed — the global rule
+in `globals.css` covers all `a` elements. The desktop Navbar logo already
+links to `/`; do not touch it, the Footer, or the dashboard/admin top bars.
+
+**Failure/empty states.** None — both changes are structural.
+
+**Reversibility.** A is a permanent delete (re-adding would be a new
+amendment). B is trivially revertible but is intended as permanent UX.
+
+**Verification gates.**
+- §4.1: `npx tsc --noEmit`, `npm run lint` (only pre-existing failures
+  allowed), `npm run build`.
+- Greps, zero hits: `grep -rn "StageBreak" src` and
+  `grep -rn "biggest sound system\|400,000" src`.
+- Dev server: `curl -s localhost:3000/ | grep -c "biggest sound system"` → 0.
+- Playwright at 375×812 on `/`: tap the burger (aria-label "Open menu"), tap
+  the "SONIC PULSE" logo link in the overlay header — the overlay must close
+  and the URL must be `/`. Repeat starting from `/lineup` — tapping the menu
+  logo must navigate to `/`. `scrollWidth - clientWidth === 0` on `/` at both
+  1280×800 and 375×812.
