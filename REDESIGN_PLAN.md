@@ -989,3 +989,84 @@ amendment). B is trivially revertible but is intended as permanent UX.
   and the URL must be `/`. Repeat starting from `/lineup` — tapping the menu
   logo must navigate to `/`. `scrollWidth - clientWidth === 0` on `/` at both
   1280×800 and 375×812.
+
+### 8.12 Stage operating hours — sequential, not simultaneous (added 29 Jul 2026, owner-requested)
+
+The owner corrected the stage model: the two stages run **in sequence**, not
+simultaneously. Owner's statement: Main Stage 4 PM – 4 AM, second stage
+4:30 AM – 9:30 AM. Two planner resolutions applied (both flagged to the owner
+for veto before execution):
+
+1. **Main Stage close is recorded as 4:30 AM, not 4:00 AM.** Psytaraa's
+   owner-approved set (§8.2 timetable) runs 3:00 – 4:30 AM on the main stage,
+   and the second stage starts at 4:30 — a 4:00 close would orphan the last
+   half hour of an announced set and leave a dead 4:00–4:30 gap. If the owner
+   confirms Main truly ends 4:00 AM, a follow-up amendment must shorten
+   Psytaraa to 3:00 – 4:00 AM instead; do not execute that variant without
+   owner confirmation.
+2. **The second stage keeps its established public name, "Sunrise Stage"**
+   (already live in the FAQ 'stages' answer; its 4:30 – 9:30 AM window spans
+   sunrise). The owner's phrase "Second Stage" is treated as a description,
+   not a rename.
+
+Canonical stage facts from this amendment forward: **Main Stage 4:00 PM –
+4:30 AM · Sunrise Stage 4:30 AM – 9:30 AM · one continuous night, sequential
+handover at 4:30 AM.** The FAQ claim "Both stages operate simultaneously"
+(written in §8.0's sweep) is superseded. "2 Stages" stats, "Two stages"
+ledes, and "Every tier includes both stages" remain true and untouched.
+
+**Files: three edits.**
+
+1. **Edit `src/data/faq.ts`** — two answers, replaced verbatim:
+   - `id: 'event-hours'` answer becomes exactly:
+     "Yes. Doors open at 4 PM on Friday and the event runs through the night
+     until 9:30 AM Saturday morning — 17.5 hours of music. The Main Stage
+     runs from 4 PM to 4:30 AM, then the Sunrise Stage takes over through to
+     9:30 AM."
+   - `id: 'stages'` answer becomes exactly:
+     "Two stages, running in sequence: the Main Stage (4 PM – 4:30 AM —
+     peak-hour techno and house, full production lighting and sound) and the
+     Sunrise Stage (4:30 – 9:30 AM — intimate, melodic, facing east for the
+     sunrise). A site map will be included in your ticket email."
+
+2. **Edit `src/components/lineup/NightTimetable.tsx`** — the component
+   currently returns a single bordered `<div>`. Wrap the return in a fragment
+   and append, after that bordered div, exactly:
+
+```tsx
+<p style={{ marginTop: 12, fontSize: 12.5, color: 'var(--text-label-muted)', lineHeight: 1.6 }}>
+  One continuous night — the Main Stage runs until 4:30 AM, then the Sunrise Stage carries it through to 9:30 AM.
+</p>
+```
+
+   This caption renders on both `/lineup` and `/schedule` (shared component —
+   intended). No row times change; the 4:30 AM boundary already aligns with
+   the Psytaraa → Starside Hours handover.
+
+3. **Edit `src/app/layout.tsx`** — adjacent fact fix in the same sweep: both
+   metadata description strings say "Dawn till dusk." — backwards for a
+   sunset-to-sunrise festival. Replace "Dawn till dusk." with
+   "Dusk till dawn." in `metadata.description` and
+   `metadata.openGraph.description`. No other metadata changes.
+
+**Scope fences.** Do not touch `src/data/lineup.ts` (set times stay as
+approved), tickets copy, StatsBar, hero, emails, policy, or the gate/admin
+surfaces. No component or route changes beyond the caption in
+NightTimetable.
+
+**Failure/empty states.** None — static copy.
+
+**Reversibility.** Plain copy edits; reverting is a new amendment.
+
+**Verification gates.**
+- §4.1: `npx tsc --noEmit`, `npm run lint` (only pre-existing failures
+  allowed), `npm run build`.
+- Grep, zero hits: `grep -rn "simultaneous" src` and
+  `grep -rn "Dawn till dusk" src`.
+- Dev server (count occurrences with `grep -o … | wc -l`, not `grep -c` —
+  Next.js inlines a duplicate hydration payload on one line, §8.10 execution
+  note): `/faq` contains "then the Sunrise Stage takes over" ≥1 and
+  "running in sequence" ≥1; `/lineup` and `/schedule` each contain
+  "carries it through to 9:30 AM" ≥1.
+- Playwright `scrollWidth - clientWidth === 0` on `/faq`, `/lineup`,
+  `/schedule` at 1280×800 and 375×812.
