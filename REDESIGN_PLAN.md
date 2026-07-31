@@ -1070,3 +1070,146 @@ NightTimetable.
   "carries it through to 9:30 AM" ≥1.
 - Playwright `scrollWidth - clientWidth === 0` on `/faq`, `/lineup`,
   `/schedule` at 1280×800 and 375×812.
+
+### 8.13 Apple sign-in + one account across web and the Afterhours app (added 30 Jul 2026, owner-requested)
+
+Owner wants (a) "Continue with Apple" alongside Google on the sign-in
+surfaces, and (b) accounts created on the website to exist in the Afterhours
+app too, with both providers usable there.
+
+**Architecture decision (canonical).** Shared accounts are achieved by both
+clients using the **same Supabase project** — one `auth.users` pool. The
+website already does; the Afterhours app must be pointed at the same project
+URL + anon key by the app team. No sync code, webhooks, or API bridges are to
+be built in this repo — same project = same accounts, automatically. Google
+and Apple both become usable in the app once the app registers its native
+OAuth clients against that same Supabase project.
+
+**Gating (both default OFF at execution).** Apple sign-in cannot work until
+the owner configures Apple + Supabase (below), and the cross-app account
+claim isn't true until the app team switches projects. A dead button and a
+false promise are both failure modes, so execution ships the code dark:
+
+1. **Create `src/data/auth.ts`:**
+
+```ts
+/**
+ * Sign-in feature flags — see REDESIGN_PLAN.md §8.13.
+ *
+ * APPLE_SIGNIN_LIVE: flip to true ONLY after the Apple provider is
+ * configured and verified in the Supabase dashboard (Authentication →
+ * Providers → Apple). Until then the Apple button stays hidden.
+ *
+ * AFTERHOURS_SHARED_ACCOUNT_LIVE: flip to true ONLY after the Afterhours
+ * app authenticates against this same Supabase project. Until then the
+ * one-account copy line stays hidden.
+ */
+export const APPLE_SIGNIN_LIVE = false
+export const AFTERHOURS_SHARED_ACCOUNT_LIVE = false
+```
+
+**Files: one create (above), two edits.**
+
+2. **Edit `src/app/login/LoginClient.tsx`:**
+   - Import both flags from `@/data/auth`.
+   - Add an `AppleIcon` component beside the existing `GoogleIcon` (this
+     file and TicketsGate already each carry their own GoogleIcon — follow
+     that convention, duplicate rather than abstract):
+
+```tsx
+function AppleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#000" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.031 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.56-1.702"/>
+    </svg>
+  )
+}
+```
+
+   - Add `handleAppleSignIn`, identical to `handleGoogleSignIn` but
+     `provider: 'apple'` (same `redirectTo`).
+   - Directly below the Google button, render (flag-gated):
+
+```tsx
+{APPLE_SIGNIN_LIVE && (
+  <button
+    onClick={handleAppleSignIn}
+    className="w-full flex items-center justify-center gap-3 rounded-full px-4 py-3.5 text-sm font-semibold transition-all duration-150 mt-3"
+    style={{ background: '#fff', color: '#000', touchAction: 'manipulation' }}
+  >
+    <AppleIcon />
+    Continue with Apple
+  </button>
+)}
+```
+
+     (Same white pill as Google — a matched pair; Google stays first: the
+     audience is overwhelmingly Android.)
+   - The card's sub copy becomes flag-aware. Replace the static paragraph
+     text with:
+
+```tsx
+Create your account to register for tickets and manage your bookings.
+{AFTERHOURS_SHARED_ACCOUNT_LIVE && ' One account works across the website and the Afterhours app.'}
+```
+
+3. **Edit `src/app/(main)/tickets/TicketsGate.tsx`:** same treatment —
+   import `APPLE_SIGNIN_LIVE`, add the identical `AppleIcon` component, add
+   `handleAppleSignIn` (`provider: 'apple'`, keep this file's existing
+   `redirectTo` with `?next=/dashboard`), and render the same flag-gated
+   Apple button directly below its Google button with `className` ending
+   `mb-4` replaced by the Google button keeping `mb-4`… precisely: insert
+   the Apple button between the Google button and the "Already have an
+   account?" paragraph, with `mt-0 mb-4` spacing matching the Google
+   button's rhythm (Google keeps `mb-4`; Apple button adds `-mt-1 mb-4`?
+   No — exact spec: give the Apple button the same classes as this file's
+   Google button but change `mb-4` to `mb-4` and add nothing else; place
+   `style={{ background: '#fff', color: '#000', touchAction: 'manipulation', marginTop: -6 }}`).
+   Simpler and final: Apple button classes = `"w-full flex items-center
+   justify-center gap-3 rounded-full px-5 py-4 text-sm font-semibold
+   transition-all duration-150 mb-4 cursor-pointer"`, inline style
+   `{ background: '#fff', color: '#000', touchAction: 'manipulation', marginTop: -6 }`,
+   label "Continue with Apple". (This page is currently unreachable while
+   `TICKETS_LIVE = false` — §8.9 — but must be ready when tickets return.)
+
+**Scope fences.** `auth/callback/route.ts` is provider-agnostic — do not
+touch it. Gate-staff email/password login, dashboard, admin, First Pulse,
+and the §8.9 ticket gating are untouched. No Supabase dashboard changes are
+made by the executor — configuration is owner work.
+
+**Failure/empty states.** Both flags false → site renders exactly as today
+(execution is a visual no-op). If Apple is flipped on without Supabase
+configuration, Supabase returns a provider-disabled error on tap — which is
+why the flag must only be flipped after the owner confirms configuration.
+
+**Reversibility.** Both features are one-line flags; the code is inert
+while they are false.
+
+**Owner to-dos (blocking each flag, in order):**
+1. *Apple (blocks `APPLE_SIGNIN_LIVE`):* Apple Developer Program account →
+   create an App ID and a Services ID with "Sign in with Apple" enabled →
+   register the Supabase callback URL
+   (`https://<project-ref>.supabase.co/auth/v1/callback`) → generate the
+   Sign in with Apple key (.p8) → in Supabase Dashboard → Authentication →
+   Providers → Apple, enter Services ID, Team ID, Key ID and the key. Note:
+   Apple client secrets expire every 6 months and must be rotated.
+2. *Afterhours app (blocks `AFTERHOURS_SHARED_ACCOUNT_LIVE`):* the app team
+   points the app's auth at this same Supabase project (same URL + anon
+   key) and registers the app's native Google OAuth client and Apple App ID
+   under the same Supabase providers. Existing and future website accounts
+   then work in the app with no migration.
+
+**Verification gates.**
+- §4.1: `npx tsc --noEmit`, `npm run lint` (only pre-existing failures
+  allowed), `npm run build`.
+- Flags-off (the shipping state): `curl -s localhost:3000/login` →
+  "Continue with Apple" occurrences 0 and "Afterhours app" occurrences 0
+  (count with `grep -o … | wc -l`).
+- Flag-on smoke (local only, revert before commit): set
+  `APPLE_SIGNIN_LIVE = true` → "Continue with Apple" ≥1 on `/login`; set
+  `AFTERHOURS_SHARED_ACCOUNT_LIVE = true` → "One account works across" ≥1
+  on `/login`. Restore both to `false` before committing.
+- Playwright `scrollWidth - clientWidth === 0` on `/login` at 1280×800 and
+  375×812 (run with both flags true locally, then revert — the wider state
+  is the risk).
+- Scope grep, zero hits: `grep -rn "APPLE_SIGNIN_LIVE\|AppleIcon" src/app/auth src/app/gate src/app/admin`.
