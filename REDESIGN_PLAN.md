@@ -1408,3 +1408,163 @@ closed card — acceptable. `/login?open=1` shows the full sign-in card
   ≥1.
 - Playwright `scrollWidth - clientWidth === 0` on `/` and `/login` at
   1280×800 and 375×812.
+
+### 8.16 First Pulse form: production insert failure + submission hardening (added 31 Jul 2026, artist-reported)
+
+An artist (Mishū, @mishuwski) reported a persistent form error on the
+First Pulse form and emailed her submission to
+hello@sonicpulsefestival.com instead. Diagnosis, run against production
+on 31 Jul 2026:
+
+- `POST /api/first-pulse` with a fully valid payload → **HTTP 500**
+  `{"error":"Something went wrong. Please try again."}` — the `dbError`
+  catch-all branch in `src/app/api/first-pulse/route.ts`. Every
+  submission fails; a duplicate-email retry also 500s (it never reaches
+  the dedup check).
+- A **direct REST insert into `artist_applications`** using this
+  environment's `SUPABASE_SERVICE_ROLE_KEY` (new-format `sb_secret_…`)
+  → **HTTP 201**. Table, schema, and RLS are all fine; the key in this
+  environment is valid. (Test row deleted immediately.)
+- The `artist_applications` table contains **zero rows** — no
+  application has ever been stored in production. Mishū is the one who
+  flagged it; anyone else who tried is silently lost.
+- The 500 is the `dbError` branch, not the outer catch ("An unexpected
+  error occurred.") — so `SUPABASE_SERVICE_ROLE_KEY` **exists** in the
+  production environment but Supabase **rejects** it. If it were absent,
+  `createClient` would throw before the insert.
+
+**Root cause: the service-role key stored in Vercel is stale or
+mispasted** — most likely a legacy JWT-format (`eyJ…`) service_role key
+that stopped working when the new-format API keys (`sb_secret_…` /
+`sb_publishable_…`) were issued for the project, or a paste with
+whitespace. The code, the table, and the current dashboard keys are all
+correct — the fix is repasting env values, plus code hardening below so
+the next failure is not silent and scheme-less mix links stop bouncing.
+
+**A. Owner actions (blocking — the env fix alone unbreaks the form).**
+
+1. **Fix the Vercel env (~5 min).** Vercel → sonicpulse project →
+   Settings → Environment Variables. Open the Supabase dashboard in a
+   second tab (Sonic Pulse project → Project Settings → API Keys) and
+   re-paste, for Production (and Preview):
+   - `SUPABASE_SERVICE_ROLE_KEY` = the `sb_secret_…` secret key
+   - `NEXT_PUBLIC_SUPABASE_URL` = the project URL (verify it matches)
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = the `sb_publishable_…` key
+   Watch for trailing spaces/newlines. While there, confirm
+   `RESEND_API_KEY` exists (confirmation emails). Then **redeploy**
+   (Deployments → ⋯ on the latest → Redeploy) — env edits do not apply
+   until a redeploy.
+2. **Verify:** submit the live form once yourself (any real-looking
+   data). Expect the "Signal sent." card with a reference code. Tell the
+   executor session the test email used so the row can be removed — or
+   leave it; status stays `pending` and is harmless.
+3. **Mishū's submission.** hello@sonicpulsefestival.com is the published
+   contact address on /contact — confirm that mailbox actually exists
+   and is being read, and pull her email out of it (check spam). Once
+   the form is fixed, either ask her to resubmit through the form
+   (recommended — she gets a reference code and the confirmation email)
+   or have the admin enter it manually. Suggested DM reply, voice-rules
+   clean: "Hey — thanks for flagging this. You caught a real bug on our
+   end and it's fixed now. We have your email; if you resubmit through
+   the form you'll get a reference code and a confirmation. Either way
+   you're in the pool."
+4. **Veto item — FAQ email mismatch.** `src/data/faq.ts` tells ticket
+   holders to email support@sonicpulsedhaka.com; every other surface
+   uses hello@sonicpulsefestival.com. Item B5 below unifies the FAQ onto
+   hello@ — veto it if support@sonicpulsedhaka.com is the real staffed
+   mailbox.
+
+**B. Code changes (executor — independent of A; ship now).**
+
+1. **`src/app/api/first-pulse/route.ts` — normalize scheme-less mix
+   links.** Artists paste "soundcloud.com/name/mix"; today that is
+   rejected. Add above `isValidUrl`:
+
+```ts
+function normalizeMixLink(value: string): string {
+  if (!value) return value
+  return /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(value) ? value : `https://${value}`
+}
+```
+
+   and change the `mixLink` parse line to
+   `const mixLink = normalizeMixLink((body.mixLink ?? '').trim())`.
+   `isValidUrl` and everything downstream are unchanged — genuinely
+   malformed values still 400, now with clearer copy (verbatim):
+   "That link doesn't look right — paste the full link from SoundCloud,
+   Mixcloud, or YouTube."
+
+2. **Same file — error copy with an escape hatch.** The 500 body
+   currently says "Something went wrong. Please try again." (which also
+   violates the §5 no-"please" rule). Replace with, verbatim:
+   "Something went wrong on our end. Try again in a minute, or email
+   your application to hello@sonicpulsefestival.com." Update the 409
+   body to, verbatim: "You've already applied — the application we have
+   on file is the one that counts."
+
+3. **Same file — diagnosable logging.** Replace the single
+   `console.error('First Pulse DB insert error:', dbError)` with:
+
+```ts
+console.error('First Pulse DB insert error:', dbError.code, dbError.message, dbError.details)
+if (/api key|jwt|authoriz/i.test(dbError.message ?? '')) {
+  console.error('First Pulse: Supabase rejected the server credentials — re-paste SUPABASE_SERVICE_ROLE_KEY (and NEXT_PUBLIC_SUPABASE_URL) in Vercel env, then redeploy. See REDESIGN_PLAN.md §8.16.')
+}
+```
+
+4. **`src/components/first-pulse/FirstPulseForm.tsx` — two changes.**
+   - The mix-link input: `type="url"` → `type="text"` and add
+     `inputMode="url"`. (Browser-native `type="url"` validation blocks
+     scheme-less links before the server ever sees them; the server now
+     normalizes, so stop pre-blocking. `inputMode` keeps the URL
+     keyboard on phones.)
+   - Treat 409 as a calm state, not a red error. Add
+     `'already_applied'` to the `Status` union; in `handleSubmit`,
+     after the `not_open` check add:
+
+```ts
+if (res.status === 409) {
+  setStatus('already_applied')
+  return
+}
+```
+
+     and render it exactly like the `not_open` card (same container
+     styles — `var(--border)` border, not the error red), with heading
+     (verbatim) "You've already applied." and body (verbatim) "The
+     application we have on file is the one that counts. Questions?
+     Email hello@sonicpulsefestival.com." Also update the client-side
+     catch/fallback error string to match B2's 500 copy, verbatim.
+
+5. **`src/data/faq.ts`** — change support@sonicpulsedhaka.com to
+   hello@sonicpulsefestival.com in the lost-ticket answer (see owner
+   veto item A4).
+
+**Scope fences.** No schema changes; `supabase-first-pulse.sql`
+untouched. The admin route/tab, register route, Resend email template,
+and `EMAIL_FROM` config are untouched. No retry/queue machinery — the
+env fix is the cure; the code changes are UX and observability.
+
+**Failure/empty states.** If the env is still broken after B ships,
+users now get the hello@ escape hatch instead of a dead end, and Vercel
+logs name the exact env var to fix. Duplicate applications now land on
+a calm confirmation instead of an alarming red line.
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`, `npm run lint` (only the pre-existing
+  baseline — 7 errors / 9 warnings — allowed), `npm run build`.
+- Local dev on port 3100 (local env holds valid keys, so the API works
+  against the real production table — clean up after):
+  - POST valid payload, email `fp-verify-8p16@example.com`, mixLink
+    `soundcloud.com/fp-verify/mix` (no scheme) → 201 + referenceCode.
+  - Same email again → 409 with the B2 copy.
+  - mixLink `not a real link` → 400 with the B1 copy.
+  - Playwright 375×812: fill + submit the form → "Signal sent." card;
+    resubmit same email → "You've already applied." card rendered in
+    the calm style; `scrollWidth - clientWidth === 0` on `/first-pulse`.
+  - **Cleanup (mandatory):** delete the test row via Supabase REST
+    (`DELETE /rest/v1/artist_applications?email=eq.fp-verify-8p16@example.com`
+    with the service key; never print the key), then GET to confirm 0
+    rows for that email.
+- Live, only after owner action A1: POST one test application to
+  production, expect 201, then delete its row the same way.
