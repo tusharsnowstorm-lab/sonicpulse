@@ -1154,23 +1154,27 @@ Create your account to register for tickets and manage your bookings.
 ```
 
 3. **Edit `src/app/(main)/tickets/TicketsGate.tsx`:** same treatment —
-   import `APPLE_SIGNIN_LIVE`, add the identical `AppleIcon` component, add
-   `handleAppleSignIn` (`provider: 'apple'`, keep this file's existing
-   `redirectTo` with `?next=/dashboard`), and render the same flag-gated
-   Apple button directly below its Google button with `className` ending
-   `mb-4` replaced by the Google button keeping `mb-4`… precisely: insert
-   the Apple button between the Google button and the "Already have an
-   account?" paragraph, with `mt-0 mb-4` spacing matching the Google
-   button's rhythm (Google keeps `mb-4`; Apple button adds `-mt-1 mb-4`?
-   No — exact spec: give the Apple button the same classes as this file's
-   Google button but change `mb-4` to `mb-4` and add nothing else; place
-   `style={{ background: '#fff', color: '#000', touchAction: 'manipulation', marginTop: -6 }}`).
-   Simpler and final: Apple button classes = `"w-full flex items-center
-   justify-center gap-3 rounded-full px-5 py-4 text-sm font-semibold
-   transition-all duration-150 mb-4 cursor-pointer"`, inline style
-   `{ background: '#fff', color: '#000', touchAction: 'manipulation', marginTop: -6 }`,
-   label "Continue with Apple". (This page is currently unreachable while
-   `TICKETS_LIVE = false` — §8.9 — but must be ready when tickets return.)
+   import `APPLE_SIGNIN_LIVE`, add the identical `AppleIcon` component, and
+   add `handleAppleSignIn` (`provider: 'apple'`, keeping this file's
+   existing `redirectTo` with `?next=/dashboard`). Insert the flag-gated
+   Apple button between the Google button and the "Already have an
+   account?" paragraph, exactly:
+
+```tsx
+{APPLE_SIGNIN_LIVE && (
+  <button
+    onClick={handleAppleSignIn}
+    className="w-full flex items-center justify-center gap-3 rounded-full px-5 py-4 text-sm font-semibold transition-all duration-150 mb-4 cursor-pointer"
+    style={{ background: '#fff', color: '#000', touchAction: 'manipulation', marginTop: -6 }}
+  >
+    <AppleIcon />
+    Continue with Apple
+  </button>
+)}
+```
+
+   (This page is currently unreachable while `TICKETS_LIVE = false` — §8.9
+   — but must be ready when tickets return.)
 
 **Scope fences.** `auth/callback/route.ts` is provider-agnostic — do not
 touch it. Gate-staff email/password login, dashboard, admin, First Pulse,
