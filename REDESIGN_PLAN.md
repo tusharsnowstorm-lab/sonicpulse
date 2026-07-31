@@ -1217,3 +1217,73 @@ while they are false.
   375×812 (run with both flags true locally, then revert — the wider state
   is the risk).
 - Scope grep, zero hits: `grep -rn "APPLE_SIGNIN_LIVE\|AppleIcon" src/app/auth src/app/gate src/app/admin`.
+
+### 8.14 Apple sign-in, corrected against the Afterhours repo (added 30 Jul 2026, owner-directed)
+
+The owner attached the Afterhours repo (`tusharsnowstorm-lab/afterhours`,
+cloned at `/workspace/afterhours`) and directed a read of its plan files.
+Findings that amend §8.13 — **§8.13's code spec is unchanged and this
+section adds no new executor work**; what changes is the architecture
+record and the owner to-do list.
+
+**Finding 1 — the §8.13 code pattern is confirmed.** Afterhours signs in
+with the identical call (`supabase.auth.signInWithOAuth({ provider:
+'apple' | 'google', options: { redirectTo } })` — see
+`/workspace/afterhours/src/components/auth/AuthSheet.tsx`), and its code
+comments confirm a disabled provider only errors after Supabase's hosted
+redirect, not client-side — which is exactly why `APPLE_SIGNIN_LIVE` stays
+false until configuration is verified. No changes to §8.13's buttons,
+icon, or handlers.
+
+**Finding 2 — the projects are separate; §8.13's architecture paragraph is
+superseded.** §8.13 assumed both products already share one Supabase
+project. They do not: Afterhours runs its own Supabase Pro project (its
+own `supabase/migrations/`, events/orders/crews schema, Apple + Google
+providers enabled); Sonic Pulse web runs a different project
+(registrations/user_tickets/artist_applications). Therefore:
+- "One account across web and app" is NOT achieved by app-side
+  configuration as §8.13 claimed. It requires unifying the two products
+  onto one auth backend — a real migration (schemas, RLS, storage buckets,
+  admin/gate emails) that must be its own future amendment if the owner
+  wants it. `AFTERHOURS_SHARED_ACCOUNT_LIVE` stays `false` until that
+  amendment ships; it is no longer unblocked by a mere config change.
+- In §8.13's `src/data/auth.ts` spec, the comment block for
+  `AFTERHOURS_SHARED_ACCOUNT_LIVE` is replaced verbatim with:
+
+```ts
+/**
+ * AFTERHOURS_SHARED_ACCOUNT_LIVE: the website and the Afterhours app
+ * currently run SEPARATE Supabase projects (confirmed 30 Jul 2026 —
+ * REDESIGN_PLAN.md §8.14). Flip to true only after a future amendment
+ * unifies both products onto one auth backend. Until then the
+ * one-account copy line stays hidden.
+ */
+```
+
+**Finding 3 — the Apple owner to-do collapses to ~15 minutes.** §8.13's
+to-do assumed Apple enrollment from zero. The Afterhours launch work
+(plan-launch.md L0, App Store guide Parts 0–1) already produced: an
+enrolled Apple Developer account, a "Sign in with Apple" key (.p8), and a
+working Services ID pointed at the Afterhours Supabase callback. Apple
+allows one Services ID to carry multiple return URLs, so §8.13's owner
+to-do item 1 is replaced with:
+
+1. *Apple (blocks `APPLE_SIGNIN_LIVE`):* in the Apple Developer portal,
+   open the existing Sign in with Apple **Services ID** (the one created
+   for Afterhours) → Configure → add the Sonic Pulse Supabase domain and
+   return URL: `https://<sonicpulse-project-ref>.supabase.co/auth/v1/callback`
+   (the project ref is shown in the Sonic Pulse project's Supabase
+   dashboard → Project Settings → API). Then in the **Sonic Pulse**
+   Supabase project → Authentication → Providers → Apple: enter the same
+   Services ID as client ID and generate the secret from the same Team
+   ID, Key ID and .p8 already used for Afterhours. No new Apple accounts,
+   keys, or Services IDs are needed. The 6-month secret rotation noted in
+   §8.13 now applies to both Supabase projects.
+
+Owner to-do 2 from §8.13 (app-side) is superseded by Finding 2 — there is
+nothing for the app team to configure until a unification amendment
+exists.
+
+**Executor invocation is unchanged:** "execute §8.13 of REDESIGN_PLAN.md"
+builds the code (reading §8.13 together with this section for the amended
+`auth.ts` comment). All §8.13 verification gates apply as written.
