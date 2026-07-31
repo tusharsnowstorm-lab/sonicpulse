@@ -1568,3 +1568,88 @@ a calm confirmation instead of an alarming red line.
     rows for that email.
 - Live, only after owner action A1: POST one test application to
   production, expect 201, then delete its row the same way.
+
+### 8.17 Post-fix verification: Vercel points at the wrong Supabase project; hello@ forwarding is dead (added 31 Jul 2026, owner-requested)
+
+The owner completed §8.16 A1 (env repaste + redeploy) and asked for a
+verification test. Ran against production on 31 Jul 2026, after the
+redeploy (deployment id changed `dpl_FTd3barc…` → `dpl_4GYonaDT…`, so
+the redeploy definitely happened):
+
+- `POST /api/first-pulse` (note: apex 308-redirects to www; the test
+  followed it) → **still HTTP 500**, same `dbError` branch. Not fixed.
+- The deployed client bundle inlines
+  `https://ytgwocaresxghgyiwikr.supabase.co` and a publishable key
+  starting `sb_publishable_iGiffW`. The project that actually holds
+  `artist_applications` — the one the owner ran
+  `supabase-first-pulse.sql` in, where a direct insert succeeds — is
+  **`https://pjstgctrmgfrkooeeyrl.supabase.co`** (publishable key
+  starting `sb_publishable_Ytjl4zE`).
+
+**§8.16's root-cause wording is superseded on one point:** it is not a
+stale service key — **Vercel's entire Supabase env triplet points at a
+different Supabase project** (`ytgwocaresxghgyiwikr`; possibly the
+Afterhours project or an older setup — the owner will recognize it).
+Any key repasted from the correct project's dashboard is rejected by
+the wrong project's URL, so the 500 survives the repaste. §8.16 B (code
+hardening) is unchanged and still to execute.
+
+**A. Owner action — the actual env fix (~5 min).**
+
+1. Supabase dashboard → open the project whose ref is
+   **pjstgctrmgfrkooeeyrl** (check the URL bar; if the dashboard shows a
+   different ref, you are in the wrong project — this is exactly how the
+   first repaste went sideways). Project Settings → API Keys.
+2. Vercel → sonicpulse project → Settings → Environment Variables — set
+   **all three**, Production and Preview, from that project:
+   - `NEXT_PUBLIC_SUPABASE_URL` = `https://pjstgctrmgfrkooeeyrl.supabase.co`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = the `sb_publishable_Ytjl4zE…` key
+   - `SUPABASE_SERVICE_ROLE_KEY` = the `sb_secret_…` key from the same
+     API Keys page
+3. Redeploy. Verify by submitting the live form once — expect the
+   "Signal sent." card with a reference code. If it still fails, the
+   Vercel function logs now matter: Deployments → the deployment →
+   Functions → `/api/first-pulse` shows the logged Supabase error.
+4. Nothing changes in the `ytgwocaresxghgyiwikr` project — the website
+   simply must not point at it (§8.14: the products keep separate
+   projects).
+
+**B. Owner action — hello@ email forwarding (registrar-side, no code).**
+
+Diagnosis: Mishū's email to hello@sonicpulsefestival.com **bounced**
+(Gmail: "the remote server is misconfigured") — her submission is
+definitively lost and exists nowhere. The domain's DNS is on Namecheap
+(`dns1/dns2.registrar-servers.com`); MX records point at Namecheap's
+free email-forwarding relays (`eforward1–5.registrar-servers.com`), but
+no forwarding rule is active for the address, so the relays reject
+inbound mail. Outbound (Resend via `send.sonicpulsefestival.com`) is a
+separate path and is unaffected.
+
+1. Namecheap dashboard → Domain List → sonicpulsefestival.com →
+   Manage → **Redirect Email** (email forwarding). Add:
+   - `hello` → the inbox the team actually reads
+   - `press` → same or the press inbox (it is published on /contact)
+   - optionally a Catch-All to the same inbox so nothing bounces.
+2. Save; allow up to ~30 minutes. Test by emailing
+   hello@sonicpulsefestival.com from a personal account and confirming
+   arrival.
+3. Known limit, accepted for now: forwarding is inbound-only — replies
+   go out from the personal address. A real mailbox (Google Workspace,
+   Zoho) is a future owner decision, deliberately not planned here.
+4. §8.16 A4's veto item hardens: support@sonicpulsedhaka.com is on a
+   different domain entirely and is almost certainly also dead. §8.16
+   B5 (FAQ unifies onto hello@) stands.
+
+**C. DM reply to Mishū** — supersedes §8.16 A3's draft (her email did
+not arrive, so "we have your email" is no longer true). Verbatim, send
+only after A and B are both verified:
+"Hey — thanks for flagging this. You caught a real bug on our end and
+it's fixed now. Heads up that your email bounced before it reached us,
+so nothing was lost on your side but we don't have a copy — resubmit
+through the form and you'll get a reference code and a confirmation
+email straight away."
+
+**D. Code changes: none in this section.** §8.16 B is the outstanding
+code work; "execute §8.16 of REDESIGN_PLAN.md" remains the executor
+invocation, and its live verification gate applies after A above is
+done.
