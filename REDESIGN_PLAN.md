@@ -1287,3 +1287,124 @@ exists.
 **Executor invocation is unchanged:** "execute §8.13 of REDESIGN_PLAN.md"
 builds the code (reading §8.13 together with this section for the amended
 `auth.ts` comment). All §8.13 verification gates apply as written.
+
+### 8.15 Sign-in turned off behind a flag (added 30 Jul 2026, owner-requested)
+
+The owner is closing public sign-in "for now — live again later". Same
+philosophy as §8.9 (tickets): **hide, don't delete**, one flag, one-line
+restoration. Two deliberate exceptions, both flagged to the owner:
+
+- **Gate staff login stays live.** It is an operations tool (email +
+  password on `/login`), not public sign-in. It keeps working.
+- **Already-signed-in users are not evicted.** Their sessions, the navbar
+  "Account" link, and `/dashboard` keep working. This closes the door; it
+  does not log anyone out.
+
+This is a soft switch, not a security boundary — someone hand-crafting the
+Supabase OAuth URL could still authenticate. That is acceptable for a
+"not open yet" state; nothing sensitive is reachable by merely having an
+account.
+
+**Files: one create (superseding §8.13's file spec), four edits.**
+
+1. **Create `src/data/auth.ts`** — this is now the canonical spec for the
+   file, superseding §8.13's item 1 (three flags, not two). If §8.13
+   executes after this section, it skips its own file creation:
+
+```ts
+/**
+ * Sign-in feature flags — see REDESIGN_PLAN.md §8.13–§8.15.
+ *
+ * SIGNIN_LIVE: master switch for PUBLIC sign-in (owner request, 30 Jul
+ * 2026 — §8.15). false = the attendee sign-in card, and every "Sign in"
+ * link in nav/menu/footer, are hidden. Gate-staff login and existing
+ * signed-in sessions are unaffected. Flip to true to restore.
+ *
+ * APPLE_SIGNIN_LIVE: flip to true ONLY after the Apple provider is
+ * configured and verified in the Supabase dashboard (Authentication →
+ * Providers → Apple) — see §8.14 for the short path via the existing
+ * Afterhours Services ID.
+ *
+ * AFTERHOURS_SHARED_ACCOUNT_LIVE: the website and the Afterhours app
+ * currently run SEPARATE Supabase projects (confirmed 30 Jul 2026 —
+ * REDESIGN_PLAN.md §8.14). Flip to true only after a future amendment
+ * unifies both products onto one auth backend. Until then the
+ * one-account copy line stays hidden.
+ */
+export const SIGNIN_LIVE = false
+export const APPLE_SIGNIN_LIVE = false
+export const AFTERHOURS_SHARED_ACCOUNT_LIVE = false
+```
+
+2. **Edit `src/app/login/LoginClient.tsx`:**
+   - Import `SIGNIN_LIVE` from `@/data/auth`.
+   - Add an owner escape hatch so admins can still reach Google sign-in
+     without a redeploy (client-only state, no hydration mismatch):
+
+```tsx
+const [signinOverride, setSigninOverride] = useState(false)
+useEffect(() => {
+  if (new URLSearchParams(window.location.search).has('open')) setSigninOverride(true)
+}, [])
+```
+
+     (`useEffect` joins the existing `useState` import.)
+   - Compute `const signinOpen = SIGNIN_LIVE || signinOverride`.
+   - In the attendee card, when `signinOpen` is false: keep the "Sign in"
+     heading, and replace the sub-copy paragraph, the Google button (and
+     §8.13's Apple button, if built) and the terms line with a single
+     paragraph, verbatim, styled like the existing sub-copy
+     (`className="text-sm"`, `style={{ color: 'rgba(255,255,255,0.65)' }}`):
+     "Sign-in isn't open yet — accounts and ticket registration go live
+     closer to the event. Follow @sonicpulsefestival for the word."
+     When `signinOpen` is true, the card renders exactly as before.
+   - The gate-staff section below the card is untouched.
+
+3. **Edit `src/components/layout/Navbar.tsx`:** import `SIGNIN_LIVE` from
+   `@/data/auth`. The desktop nav's account slot currently renders
+   `user ? <Account link> : <Sign in link>`. Change the false branch to
+   render the Sign-in link only when `SIGNIN_LIVE`; with the flag off and
+   no user, render nothing in that slot.
+
+4. **Edit `src/components/layout/MobileMenu.tsx`:** same rule — the
+   bottom-CTA area renders the Account pill when `user` exists; the
+   Sign-in pill only when `SIGNIN_LIVE`. Flag off + signed out = neither
+   pill (the "Get tickets" pill there is already gated by §8.9; the date
+   caption stays).
+
+5. **Edit `src/components/layout/Footer.tsx`:** import `SIGNIN_LIVE`.
+   When the flag is false, do not render the "Account" `LinkColumn` at
+   all (both "Sign in" and "Dashboard" links go — a dashboard link that
+   dead-ends at a closed login card is a broken promise; signed-in users
+   reach the dashboard from the navbar Account link).
+
+**Scope fences.** `TicketsGate.tsx` needs no edit — it is unreachable
+while `TICKETS_LIVE = false` (§8.9); if tickets are re-enabled while
+sign-in is still off, that re-enable must be its own amendment and
+reconcile the two flags. Auth callback route, dashboard, admin, gate
+scanner, First Pulse (its form is email-fields, not auth) — all
+untouched.
+
+**Failure/empty states.** Flag off: `/login` shows the closed card +
+gate-staff toggle; nav/menu/footer simply omit sign-in entries; visiting
+`/dashboard` signed-out still redirects to `/login` and lands on the
+closed card — acceptable. `/login?open=1` shows the full sign-in card
+(the escape hatch; leave undocumented on-site).
+
+**Reversibility.** Flip `SIGNIN_LIVE` to `true` — every surface returns.
+
+**Verification gates.**
+- §4.1: `npx tsc --noEmit`, `npm run lint` (only pre-existing failures
+  allowed), `npm run build`.
+- Flags-off (shipping state), counting with `grep -o … | wc -l`:
+  `/login` → "Continue with Google" 0, "isn't open yet" ≥1,
+  "Gate staff login" ≥1; `/` → ">Sign in<" 0; footer has no
+  "Dashboard" link (`grep -o '>Dashboard<' | wc -l` → 0 on `/`).
+- Escape hatch (Playwright, not curl — it renders client-side after an
+  effect): goto `/login?open=1`, expect visible text "Continue with
+  Google".
+- Flag-on smoke (local only, revert before commit): `SIGNIN_LIVE = true`
+  → `/login` shows "Continue with Google" ≥1 and `/` shows ">Sign in<"
+  ≥1.
+- Playwright `scrollWidth - clientWidth === 0` on `/` and `/login` at
+  1280×800 and 375×812.
