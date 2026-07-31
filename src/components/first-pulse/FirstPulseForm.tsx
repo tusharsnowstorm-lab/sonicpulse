@@ -24,7 +24,7 @@ const labelStyle: React.CSSProperties = {
   marginBottom: 6,
 }
 
-type Status = 'idle' | 'submitting' | 'success' | 'not_open' | 'error'
+type Status = 'idle' | 'submitting' | 'success' | 'not_open' | 'already_applied' | 'error'
 
 const initialForm = {
   fullName: '',
@@ -63,15 +63,19 @@ export default function FirstPulseForm() {
         setStatus('not_open')
         return
       }
+      if (res.status === 409) {
+        setStatus('already_applied')
+        return
+      }
       if (!res.ok) {
-        setErrorMsg(json.error ?? 'Something went wrong. Please try again.')
+        setErrorMsg(json.error ?? 'Something went wrong on our end. Try again in a minute, or email your application to hello@sonicpulsefestival.com.')
         setStatus('error')
         return
       }
       setReferenceCode(json.referenceCode ?? '')
       setStatus('success')
     } catch {
-      setErrorMsg('Something went wrong. Please try again.')
+      setErrorMsg('Something went wrong on our end. Try again in a minute, or email your application to hello@sonicpulsefestival.com.')
       setStatus('error')
     }
   }
@@ -101,6 +105,17 @@ export default function FirstPulseForm() {
       >
         <p style={{ fontSize: 20, fontWeight: 700, color: '#fff', marginBottom: 8 }}>Applications open soon.</p>
         <p style={{ fontSize: 14, color: 'var(--text-dim)' }}>Check back shortly, or follow @sonicpulsefestival for the announcement.</p>
+      </div>
+    )
+  }
+
+  if (status === 'already_applied') {
+    return (
+      <div
+        style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 'var(--radius-card)', padding: 32, textAlign: 'center' }}
+      >
+        <p style={{ fontSize: 20, fontWeight: 700, color: '#fff', marginBottom: 8 }}>You&apos;ve already applied.</p>
+        <p style={{ fontSize: 14, color: 'var(--text-dim)' }}>The application we have on file is the one that counts. Questions? Email hello@sonicpulsefestival.com.</p>
       </div>
     )
   }
@@ -151,7 +166,7 @@ export default function FirstPulseForm() {
 
       <div>
         <label style={labelStyle} htmlFor="fp-mix">Example set / mix link</label>
-        <input id="fp-mix" type="url" style={fieldStyle} value={form.mixLink} onChange={set('mixLink')} placeholder="SoundCloud, Mixcloud, YouTube — optional but decisive" />
+        <input id="fp-mix" type="text" inputMode="url" style={fieldStyle} value={form.mixLink} onChange={set('mixLink')} placeholder="SoundCloud, Mixcloud, YouTube — optional but decisive" />
       </div>
 
       <div>

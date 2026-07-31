@@ -15,6 +15,11 @@ function isValidUrl(value: string): boolean {
   }
 }
 
+function normalizeMixLink(value: string): string {
+  if (!value) return value
+  return /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(value) ? value : `https://${value}`
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
@@ -25,7 +30,7 @@ export async function POST(req: NextRequest) {
     const cityCountry = (body.cityCountry ?? '').trim()
     const genres = (body.genres ?? '').trim()
     const bio = (body.bio ?? '').trim()
-    const mixLink = (body.mixLink ?? '').trim()
+    const mixLink = normalizeMixLink((body.mixLink ?? '').trim())
     const instagramHandle = (body.instagramHandle ?? '').trim()
     const yearsExperience = body.yearsExperience === '' || body.yearsExperience == null ? null : parseInt(body.yearsExperience, 10)
     const notes = (body.notes ?? '').trim()
@@ -39,7 +44,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (mixLink && !isValidUrl(mixLink)) {
-      return Response.json({ error: 'Mix link must be a valid URL.' }, { status: 400 })
+      return Response.json({ error: "That link doesn't look right — paste the full link from SoundCloud, Mixcloud, or YouTube." }, { status: 400 })
     }
 
     if (yearsExperience !== null && (Number.isNaN(yearsExperience) || yearsExperience < 0 || yearsExperience > 60)) {
@@ -75,10 +80,13 @@ export async function POST(req: NextRequest) {
       }
       // Duplicate email (unique index on lower(email))
       if (dbError.code === '23505') {
-        return Response.json({ error: 'You\'ve already applied — we have your application.' }, { status: 409 })
+        return Response.json({ error: "You've already applied — the application we have on file is the one that counts." }, { status: 409 })
       }
-      console.error('First Pulse DB insert error:', dbError)
-      return Response.json({ error: 'Something went wrong. Please try again.' }, { status: 500 })
+      console.error('First Pulse DB insert error:', dbError.code, dbError.message, dbError.details)
+      if (/api key|jwt|authoriz/i.test(dbError.message ?? '')) {
+        console.error('First Pulse: Supabase rejected the server credentials — re-paste SUPABASE_SERVICE_ROLE_KEY (and NEXT_PUBLIC_SUPABASE_URL) in Vercel env, then redeploy. See REDESIGN_PLAN.md §8.16.')
+      }
+      return Response.json({ error: 'Something went wrong on our end. Try again in a minute, or email your application to hello@sonicpulsefestival.com.' }, { status: 500 })
     }
 
     try {
