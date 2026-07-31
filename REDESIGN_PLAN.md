@@ -1707,3 +1707,68 @@ owner decision, deliberately not planned here.
 
 **Code changes in this section: one line** — the `faq.ts` answer above.
 No other file changes; §8.16's shipped code is unaffected.
+
+### 8.19 First Pulse root cause, corrected: the table is in the wrong Supabase project (added 31 Jul 2026)
+
+The owner updated the Vercel env and asked for verification. Production
+still returns HTTP 500 on a valid submission. Probing both Supabase
+projects settled what §8.16 and §8.17 each got wrong.
+
+**Two projects exist, and they are not interchangeable:**
+
+| Project ref | What it holds | Role |
+| --- | --- | --- |
+| `ytgwocaresxghgyiwikr` | `user_profiles` (5 real users), `user_tickets`, `influencer_applications`. **No `artist_applications`.** | The live Sonic Pulse production project — what Vercel points at |
+| `pjstgctrmgfrkooeeyrl` | `artist_applications`, `creator_profiles`, `tickets`. No `user_profiles`. | A separate project — where this session's env points, and where `supabase-first-pulse.sql` was run |
+
+**Root cause: `supabase-first-pulse.sql` was run in the wrong project.**
+The table the First Pulse API writes to does not exist in the project
+production actually uses. Every submission has always failed.
+
+**Both earlier diagnoses are superseded:**
+- **§8.16's "stale/mispasted service-role key" is wrong.** The key was
+  never the problem.
+- **§8.17's "Vercel points at the wrong project" is wrong, and its
+  owner instruction A was actively harmful.** It told the owner to
+  repoint Vercel at `pjstgctrmgfrkooeeyrl`. Doing so would have pointed
+  the live site at a project with no `user_profiles` table, breaking
+  auth and the dashboard for the 5 existing users. **Vercel was correct
+  all along and must keep pointing at `ytgwocaresxghgyiwikr`.**
+- The misreading came from this session's env pointing at the *other*
+  project: direct REST inserts succeeded there, which looked like proof
+  the table was fine and the deployment was at fault. **Lesson for
+  future diagnosis: confirm the session env and the deployment target
+  are the same project before drawing conclusions from a direct query.**
+
+**Why a missing table produced a 500 instead of the designed 503.** The
+route degrades gracefully on `dbError.code === '42P01'` (§8.5). But
+PostgREST reports a missing table as **`PGRST205`**; the raw Postgres
+`42P01` only surfaces through direct SQL. The graceful branch never
+fired, so a missing table fell through to the catch-all 500 — which is
+what made this look like a credentials failure for two rounds.
+
+**Code changes (executed in this section, two lines).**
+1. `src/app/api/first-pulse/route.ts` — the missing-table branch now
+   matches `'42P01' || 'PGRST205'`, so a missing table returns the
+   "Applications open soon." card instead of an error.
+2. `src/app/api/admin/first-pulse/route.ts` — identical fix; the admin
+   tab's `notReady` empty state had the same dead check.
+
+**Owner actions.**
+1. **Run the SQL in the correct project.** Supabase → the project whose
+   ref is **`ytgwocaresxghgyiwikr`** (verify: it has `user_profiles`
+   with your real users). SQL Editor → New query → paste all of
+   `supabase-first-pulse.sql` from the repo root → Run. It is
+   `create table if not exists`, so it is safe.
+2. **Leave the Vercel Supabase env pointing at `ytgwocaresxghgyiwikr`.**
+   If anything was repasted from the other project while following
+   §8.17 — the URL, the publishable key, or the secret key — set all
+   three back to `ytgwocaresxghgyiwikr`'s values and redeploy. A
+   mismatched URL/key pair fails exactly like a bad key.
+3. Nothing needs to change in `pjstgctrmgfrkooeeyrl`. Its
+   `artist_applications` table is empty and can be ignored or dropped.
+
+**Verification, once step 1 is done.** POST a test application to
+production expecting 201 + reference code, then delete the row. No
+redeploy is needed for step 1 alone — the table appears to the running
+deployment as soon as the SQL runs.

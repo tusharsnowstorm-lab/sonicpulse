@@ -75,7 +75,9 @@ export async function POST(req: NextRequest) {
 
     if (dbError) {
       // Table not created yet — degrade gracefully instead of a hard 500.
-      if (dbError.code === '42P01') {
+      // PostgREST reports a missing table as PGRST205; the raw Postgres
+      // code (42P01) only surfaces via direct SQL. Both are checked.
+      if (dbError.code === '42P01' || dbError.code === 'PGRST205') {
         return Response.json({ error: 'not_open', message: 'Applications open soon.' }, { status: 503 })
       }
       // Duplicate email (unique index on lower(email))

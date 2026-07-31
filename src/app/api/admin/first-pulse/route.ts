@@ -30,7 +30,8 @@ export async function GET() {
 
   if (error) {
     // Table not created yet — return an empty list instead of failing the admin page.
-    if (error.code === '42P01') return NextResponse.json({ applications: [], notReady: true })
+    // PostgREST reports a missing table as PGRST205, not the raw Postgres 42P01.
+    if (error.code === '42P01' || error.code === 'PGRST205') return NextResponse.json({ applications: [], notReady: true })
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
   return NextResponse.json({ applications: data })
