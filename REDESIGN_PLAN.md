@@ -1653,3 +1653,57 @@ email straight away."
 code work; "execute §8.16 of REDESIGN_PLAN.md" remains the executor
 invocation, and its live verification gate applies after A above is
 done.
+
+### 8.18 Mailbox addresses finalised: hello@, press@, support@ (added 31 Jul 2026, owner-requested)
+
+The owner set up Namecheap Redirect Email and hit an incomplete-row
+error: the alias field accepted `hello` but the row would not save. The
+second field in a Namecheap forwarder row is the **destination** — it
+needs a full email address (`name@gmail.com`), not an alias. Recorded
+here because it is the same trap on every future forwarder.
+
+**Supersedes §8.16 B5 and §8.17 B4 on the FAQ address.** Those unified
+the FAQ's lost-ticket answer onto hello@; the owner has chosen a
+dedicated ticket-support address instead. `src/data/faq.ts` now reads
+"Email us at support@sonicpulsefestival.com with your reference number.
+We will reissue your ticket." (support@sonicpulsedhaka.com — a dead
+address on a different domain — is gone from the codebase entirely.)
+
+**The site's full address surface, after this change** — three
+addresses, all on sonicpulsefestival.com, each needing a forwarder:
+
+| Address | Used on |
+| --- | --- |
+| hello@ | /contact "General Inquiries"; the First Pulse 500-error copy and duplicate-application card (§8.16 B2/B4) |
+| press@ | /contact "Press & Media" |
+| support@ | /faq lost-ticket answer |
+
+Any future amendment that introduces a fourth address must add the
+matching forwarder in the same breath, or it ships a bounce.
+
+**Owner action — Namecheap forwarders (replaces §8.17 B1).** Domain
+List → sonicpulsefestival.com → Manage → Redirect Email. Each row has
+two fields: **left = alias only** (`hello`, no @domain), **right =
+full destination address**. Fill both, then click the ✓ to save the
+row — an unsaved row shows the red dashed underline and warning
+triangle. Add three rows (Add Forwarder for each): `hello`, `press`,
+`support`, all pointing to the inbox actually read. Optionally Add
+Catch-All to the same inbox so a typo'd address never bounces.
+
+DNS is already correct — MX points at Namecheap's forwarding relays
+(`eforward1–5.registrar-servers.com`), so no DNS edit is needed and no
+propagation wait beyond ~30 minutes for the rule itself. Outbound mail
+(Resend on `send.sonicpulsefestival.com`) is a separate path, unchanged.
+
+**Verification (owner).** Email each of the three addresses from a
+personal account and confirm arrival. Port 25 is blocked from the build
+container, so inbound mail cannot be tested from a session — this gate
+is owner-only.
+
+**Known limit, accepted.** Forwarding is inbound-only: replies leave
+from the personal address, not from @sonicpulsefestival.com. A real
+mailbox (Namecheap Private Email, Google Workspace, Zoho) is a future
+owner decision, deliberately not planned here.
+
+**Code changes in this section: one line** — the `faq.ts` answer above.
+No other file changes; §8.16's shipped code is unaffected.

@@ -60,7 +60,7 @@ export const faqs: FAQItem[] = [
     id: 'lost-ticket',
     category: 'Tickets & Registration',
     question: 'What if I lose my ticket/QR code?',
-    answer: 'Email us at hello@sonicpulsefestival.com with your reference number. We will reissue your ticket.',
+    answer: 'Email us at support@sonicpulsefestival.com with your reference number. We will reissue your ticket.',
   },
   {
     id: 'door-sales',
