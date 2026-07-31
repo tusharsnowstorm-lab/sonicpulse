@@ -1,6 +1,7 @@
 'use client'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser'
+import { SIGNIN_LIVE, APPLE_SIGNIN_LIVE, AFTERHOURS_SHARED_ACCOUNT_LIVE } from '@/data/auth'
 
 function GoogleIcon() {
   return (
@@ -13,6 +14,14 @@ function GoogleIcon() {
   )
 }
 
+function AppleIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+      <path fill="#000" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.031 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.56-1.702"/>
+    </svg>
+  )
+}
+
 export default function LoginClient() {
   const supabase = createSupabaseBrowserClient()
   const [showGateLogin, setShowGateLogin] = useState(false)
@@ -20,10 +29,25 @@ export default function LoginClient() {
   const [password, setPassword] = useState('')
   const [gateError, setGateError] = useState<string | null>(null)
   const [gateLoading, setGateLoading] = useState(false)
+  const [signinOverride, setSigninOverride] = useState(false)
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- client-only read of the URL to avoid an SSR/hydration mismatch (§8.15)
+    if (new URLSearchParams(window.location.search).has('open')) setSigninOverride(true)
+  }, [])
+
+  const signinOpen = SIGNIN_LIVE || signinOverride
 
   const handleGoogleSignIn = async () => {
     await supabase.auth.signInWithOAuth({
       provider: 'google',
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    })
+  }
+
+  const handleAppleSignIn = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'apple',
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     })
   }
@@ -81,22 +105,42 @@ export default function LoginClient() {
           <h2 className="text-lg font-bold mb-1" style={{ color: '#fff', fontFamily: 'var(--font-montserrat)' }}>
             Sign in
           </h2>
-          <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.65)' }}>
-            Create your account to register for tickets and manage your bookings.
-          </p>
+          {signinOpen ? (
+            <>
+              <p className="text-sm mb-8" style={{ color: 'rgba(255,255,255,0.65)' }}>
+                Create your account to register for tickets and manage your bookings.
+                {AFTERHOURS_SHARED_ACCOUNT_LIVE && ' One account works across the website and the Afterhours app.'}
+              </p>
 
-          <button
-            onClick={handleGoogleSignIn}
-            className="w-full flex items-center justify-center gap-3 rounded-full px-4 py-3.5 text-sm font-semibold transition-all duration-150"
-            style={{ background: '#fff', color: '#000', touchAction: 'manipulation' }}
-          >
-            <GoogleIcon />
-            Continue with Google
-          </button>
+              <button
+                onClick={handleGoogleSignIn}
+                className="w-full flex items-center justify-center gap-3 rounded-full px-4 py-3.5 text-sm font-semibold transition-all duration-150"
+                style={{ background: '#fff', color: '#000', touchAction: 'manipulation' }}
+              >
+                <GoogleIcon />
+                Continue with Google
+              </button>
 
-          <p className="text-xs text-center mt-6" style={{ color: 'rgba(255,255,255,0.5)' }}>
-            By signing in you agree to our terms of service and privacy policy.
-          </p>
+              {APPLE_SIGNIN_LIVE && (
+                <button
+                  onClick={handleAppleSignIn}
+                  className="w-full flex items-center justify-center gap-3 rounded-full px-4 py-3.5 text-sm font-semibold transition-all duration-150 mt-3"
+                  style={{ background: '#fff', color: '#000', touchAction: 'manipulation' }}
+                >
+                  <AppleIcon />
+                  Continue with Apple
+                </button>
+              )}
+
+              <p className="text-xs text-center mt-6" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                By signing in you agree to our terms of service and privacy policy.
+              </p>
+            </>
+          ) : (
+            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
+              Sign-in isn&apos;t open yet — accounts and ticket registration go live closer to the event. Follow @sonicpulsefestival for the word.
+            </p>
+          )}
         </div>
 
         {/* Gate staff login */}

@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { X, User } from 'lucide-react'
 import PillButton, { PillLink } from '@/components/ui/PillButton'
 import { TICKETS_LIVE } from '@/data/tickets'
+import { SIGNIN_LIVE } from '@/data/auth'
 
 const navLinks = [
   { href: '/lineup', label: 'Lineup' },
@@ -126,12 +127,12 @@ export default function MobileMenu({ onClose }: Props) {
             )}
             Account
           </PillLink>
-        ) : (
+        ) : SIGNIN_LIVE ? (
           <PillLink href="/login" onClick={onClose} variant="outline" className="w-full">
             <User size={16} />
             Sign in
           </PillLink>
-        )}
+        ) : null}
 
         {TICKETS_LIVE && (
           <PillButton onClick={() => { onClose(); window.location.href = '/tickets' }} variant="primary" className="w-full">

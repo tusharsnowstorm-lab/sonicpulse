@@ -7,6 +7,7 @@ import { Menu, User } from 'lucide-react'
 import MobileMenu from './MobileMenu'
 import { PillLink } from '@/components/ui/PillButton'
 import { TICKETS_LIVE } from '@/data/tickets'
+import { SIGNIN_LIVE } from '@/data/auth'
 
 // Auth state is optional — if Supabase env vars aren't configured yet the
 // navbar still renders and the hamburger button still works.
@@ -123,14 +124,14 @@ export default function Navbar() {
                 )}
                 Account
               </Link>
-            ) : (
+            ) : SIGNIN_LIVE ? (
               <Link
                 href="/login"
                 style={{ fontSize: 12.5, color: '#fff', fontFamily: 'var(--font-montserrat)' }}
               >
                 Sign in
               </Link>
-            )}
+            ) : null}
             {TICKETS_LIVE && (
               <PillLink href="/tickets" variant="primary" style={{ padding: '10px 24px', fontSize: 12.5 }}>
                 Get tickets

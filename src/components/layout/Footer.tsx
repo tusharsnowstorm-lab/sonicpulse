@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { TICKETS_LIVE } from '@/data/tickets'
+import { SIGNIN_LIVE } from '@/data/auth'
 
 function InstagramIcon() {
   return (
@@ -99,7 +100,7 @@ export default function Footer() {
 
           <LinkColumn title="Event" links={eventLinks} />
           <LinkColumn title="Support" links={supportLinks} />
-          <LinkColumn title="Account" links={accountLinks} />
+          {SIGNIN_LIVE && <LinkColumn title="Account" links={accountLinks} />}
         </div>
 
         <div
