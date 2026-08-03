@@ -1772,3 +1772,169 @@ what made this look like a credentials failure for two rounds.
 production expecting 201 + reference code, then delete the row. No
 redeploy is needed for step 1 alone — the table appears to the running
 deployment as soon as the SQL runs.
+
+### 8.20 Organiser attribution — Dhaka Music Festival credited site-wide, with Instagram tags (added 3 Aug 2026, owner-requested)
+
+Context, so the intent survives: the organiser's Instagram account
+(@dhakamusicfestival) was restricted by Meta under fraud/scams after
+creator outreach DMs pattern-matched brand-impersonation scams. Making
+the organiser publicly verifiable — named on the website and linked to
+its Instagram, with the website linked back — is both correct
+attribution and direct evidence for the Meta review. Handles: festival
+account **@sonicpulsefestival**, organiser account
+**@dhakamusicfestival**; organiser links point to
+`https://instagram.com/dhakamusicfestival`.
+
+**Already attributed — do not touch:** the FAQ "what is Sonic Pulse"
+answer says "organised by Dhaka Music Festival" (extended below, not
+replaced); footer blurb says "Presented by Dhaka Music Festival"
+(linked below); meta description in `src/app/layout.tsx`; the ICS
+summary in `ScheduleActions.tsx`; the ticket card sub-line in
+`TicketCard.tsx`; the @dhakamusicfestival follow-request copy in
+`AddTicketForm.tsx`.
+
+**Files: eight edits, no creates. All copy verbatim.**
+
+1. **`src/components/layout/Footer.tsx`** — in the blurb paragraph,
+   turn the existing words "Dhaka Music Festival" into a link, keeping
+   the sentence otherwise identical:
+
+```tsx
+Bangladesh&apos;s first sunset-to-sunrise music festival. Presented by{' '}
+<a
+  href="https://instagram.com/dhakamusicfestival"
+  target="_blank"
+  rel="noopener noreferrer"
+  style={{ color: 'rgba(255,255,255,0.65)', textDecoration: 'underline', textUnderlineOffset: 3 }}
+>
+  Dhaka Music Festival
+</a>
+.
+```
+
+2. **`src/components/contact/ContactDetails.tsx`** — add a fourth
+   block after the Instagram block (same structure and classes as the
+   existing blocks), exactly:
+
+```tsx
+<div>
+  <h3 className="text-xs font-bold tracking-[0.3em] uppercase mb-4" style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--text-muted)' }}>
+    Organiser
+  </h3>
+  <p className="text-sm" style={{ color: 'var(--text-primary)', marginBottom: 6 }}>Dhaka Music Festival</p>
+  <a
+    href="https://instagram.com/dhakamusicfestival"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-sm transition-colors"
+    style={{ color: 'var(--accent-magenta)' }}
+  >
+    @dhakamusicfestival →
+  </a>
+  <p className="mt-1 text-xs text-[var(--text-muted)]">Sonic Pulse is organised and promoted by Dhaka Music Festival.</p>
+</div>
+```
+
+3. **`src/data/faq.ts`** — the `what-is-sonic-pulse` answer becomes,
+   verbatim: "Sonic Pulse is a large-scale outdoor music festival
+   organised by Dhaka Music Festival — @dhakamusicfestival on
+   Instagram. Two stages, 800+ festival-goers, and music from dusk
+   till dawn."
+
+4. **`src/app/(main)/policy/page.tsx`** — the closing caption line
+   becomes (only the text changes; the date expression stays):
+   `Sonic Pulse · Organised by Dhaka Music Festival · Last updated {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}`
+
+5. **`src/app/layout.tsx`** — `openGraph.description` becomes,
+   verbatim: "Two stages. 800+ festival-goers. Dusk till dawn.
+   Presented by Dhaka Music Festival."
+
+6. **`src/lib/email.ts`** — in the shared `wrap()` footer (covers all
+   five templates in this file), the footer paragraph becomes:
+
+```html
+<strong style="color:#666;">Sonic Pulse 2026</strong><br>
+25 September 2026 · Organised by Dhaka Music Festival<br>
+<a href="https://sonicpulsefestival.com" style="color:#999;text-decoration:underline;">sonicpulsefestival.com</a> · <a href="https://instagram.com/dhakamusicfestival" style="color:#999;text-decoration:underline;">@dhakamusicfestival</a>
+```
+
+7. **`src/app/api/first-pulse/route.ts`** — the confirmation email's
+   closing `<p>` text becomes, verbatim: "Selected names will be
+   announced on the event page. Questions? Reply to this email or
+   message us on Instagram @sonicpulsefestival. Sonic Pulse is
+   organised by Dhaka Music Festival — @dhakamusicfestival."
+
+8. **`src/app/api/register/route.ts`** — same pattern; its closing
+   `<p>` text becomes, verbatim: "Questions? Reply to this email or
+   message us on Instagram @sonicpulsefestival. Sonic Pulse is
+   organised by Dhaka Music Festival — @dhakamusicfestival."
+
+**Plus one structured-data addition (ninth edit).**
+**`src/app/(main)/page.tsx`** — add organiser-bearing JSON-LD to the
+home page. Immediately inside the fragment, before `<Hero />`:
+
+```tsx
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{
+    __html: JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'MusicEvent',
+      name: 'Sonic Pulse',
+      startDate: '2026-09-25T16:00:00+06:00',
+      endDate: '2026-09-26T09:30:00+06:00',
+      eventStatus: 'https://schema.org/EventScheduled',
+      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      location: { '@type': 'Place', name: 'Venue announced to ticket holders', address: { '@type': 'PostalAddress', addressLocality: 'Dhaka', addressCountry: 'BD' } },
+      organizer: { '@type': 'Organization', name: 'Dhaka Music Festival', url: 'https://sonicpulsefestival.com', sameAs: ['https://instagram.com/dhakamusicfestival', 'https://instagram.com/sonicpulsefestival'] },
+      image: 'https://sonicpulsefestival.com/images/brand/logo-512.png',
+      description: "Bangladesh's first sunset-to-sunrise music festival. Two stages, 800+ festival-goers, dusk till dawn. Presented by Dhaka Music Festival.',
+    }),
+  }}
+/>
+```
+
+   Note for the executor: the description value above must use
+   double-quoted JS string with an escaped apostrophe or a template
+   literal — ship it as
+   `description: "Bangladesh's first sunset-to-sunrise music festival. Two stages, 800+ festival-goers, dusk till dawn. Presented by Dhaka Music Festival."`
+   (the trailing quote in the block above is a typo; this line is
+   canonical).
+
+**Deliberately skipped, owner may veto:** the home Hero gets no
+"presented by" line — the owner has twice trimmed the home page
+(§8.8, §8.11), the footer credit renders on every page including
+home, and the JSON-LD now carries the organiser for machines. If the
+owner wants it visible in the hero, that is its own amendment.
+
+**Scope fences.** `AddTicketForm.tsx`, `TicketCard.tsx`,
+`ScheduleActions.tsx`, the admin pages, gate scanner, and the meta
+`description` in `layout.tsx` are untouched. No nav or footer-column
+changes — this is attribution, not IA.
+
+**Failure/empty states.** None introduced — all edits are static copy,
+one static script tag, and email template text.
+
+**Reversibility.** Pure copy edits; revert by removing the added
+words/links. The JSON-LD block is one self-contained element.
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline
+  only — 7 errors / 9 warnings); `npm run build`.
+- Local dev on port 3100, counting with `grep -o … | wc -l`:
+  - `/contact` → `dhakamusicfestival` ≥ 2, `Organiser` ≥ 1
+  - `/` → `application/ld+json` ≥ 1, `Dhaka Music Festival` ≥ 2
+    (footer + JSON-LD), `instagram.com/dhakamusicfestival` ≥ 2
+    (footer link + JSON-LD)
+  - `/policy` → `Organised by Dhaka Music Festival` ≥ 1
+  - `/faq` → `@dhakamusicfestival` ≥ 1
+- JSON-LD validity: extract the script content from the rendered page
+  and `JSON.parse` it in node — must parse, and
+  `organizer.name === 'Dhaka Music Festival'`.
+- Playwright at 1280×800 and 375×812:
+  `scrollWidth - clientWidth === 0` on `/`, `/contact`, `/policy`.
+- No email smoke test (Resend sends real mail); the two route-template
+  edits are verified by grep in the source after edit:
+  `grep -c 'dhakamusicfestival' src/app/api/first-pulse/route.ts` → 1,
+  same for `src/app/api/register/route.ts` → 1, and
+  `grep -c 'dhakamusicfestival' src/lib/email.ts` → 1.
