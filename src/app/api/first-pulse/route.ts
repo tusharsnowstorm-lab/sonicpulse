@@ -109,7 +109,7 @@ export async function POST(req: NextRequest) {
               <p style="margin:0 0 8px;font-size:12px;color:#6B6B7E;letter-spacing:0.2em;text-transform:uppercase;">Reference Code</p>
               <p style="margin:0;font-family:monospace;font-size:18px;color:#FF3FC2;font-weight:bold;">${referenceCode}</p>
             </div>
-            <p style="margin:24px 0 0;font-size:12px;color:#6B6B7E;">Selected names will be announced on the event page. Questions? Reply to this email or message us on Instagram @sonicpulsefestival</p>
+            <p style="margin:24px 0 0;font-size:12px;color:#6B6B7E;">Selected names will be announced on the event page. Questions? Reply to this email or message us on Instagram @sonicpulsefestival. Sonic Pulse is organised by Dhaka Music Festival — @dhakamusicfestival.</p>
           </div>
         `,
       })

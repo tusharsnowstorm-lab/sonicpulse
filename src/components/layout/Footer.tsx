@@ -83,7 +83,16 @@ export default function Footer() {
               </span>
             </span>
             <p style={{ fontSize: 13.5, fontWeight: 500, color: 'rgba(255,255,255,0.65)', lineHeight: 1.65, marginTop: 14, maxWidth: 280 }}>
-              Bangladesh&apos;s first sunset-to-sunrise music festival. Presented by Dhaka Music Festival.
+              Bangladesh&apos;s first sunset-to-sunrise music festival. Presented by{' '}
+              <a
+                href="https://instagram.com/dhakamusicfestival"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'rgba(255,255,255,0.65)', textDecoration: 'underline', textUnderlineOffset: 3 }}
+              >
+                Dhaka Music Festival
+              </a>
+              .
             </p>
             <div className="flex items-center gap-4" style={{ marginTop: 22 }}>
               <a href="https://instagram.com/sonicpulsefestival" target="_blank" rel="noopener noreferrer" aria-label="Instagram" style={{ color: 'rgba(255,255,255,0.65)' }}>

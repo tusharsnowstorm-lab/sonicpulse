@@ -155,7 +155,7 @@ export default function PolicyPage() {
       </div>
 
       <p style={{ marginTop: 32, fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>
-        Sonic Pulse · Last updated {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+        Sonic Pulse · Organised by Dhaka Music Festival · Last updated {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
       </p>
     </div>
   )

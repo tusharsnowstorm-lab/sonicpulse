@@ -41,8 +41,8 @@ function wrap(body: string) {
           <td style="background:#f7f7fb;border-top:1px solid #ebebf0;padding:20px 32px;text-align:center;">
             <p style="margin:0;font-size:12px;color:#aaa;line-height:1.6;">
               <strong style="color:#666;">Sonic Pulse 2026</strong><br>
-              25 September 2026<br>
-              <a href="https://sonicpulsefestival.com" style="color:#999;text-decoration:underline;">sonicpulsefestival.com</a>
+              25 September 2026 · Organised by Dhaka Music Festival<br>
+              <a href="https://sonicpulsefestival.com" style="color:#999;text-decoration:underline;">sonicpulsefestival.com</a> · <a href="https://instagram.com/dhakamusicfestival" style="color:#999;text-decoration:underline;">@dhakamusicfestival</a>
             </p>
           </td>
         </tr>

@@ -71,6 +71,23 @@ export default function ContactDetails() {
           @sonicpulsefestival →
         </a>
       </div>
+
+      <div>
+        <h3 className="text-xs font-bold tracking-[0.3em] uppercase mb-4" style={{ fontFamily: 'var(--font-jetbrains-mono)', color: 'var(--text-muted)' }}>
+          Organiser
+        </h3>
+        <p className="text-sm" style={{ color: 'var(--text-primary)', marginBottom: 6 }}>Dhaka Music Festival</p>
+        <a
+          href="https://instagram.com/dhakamusicfestival"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm transition-colors"
+          style={{ color: 'var(--accent-magenta)' }}
+        >
+          @dhakamusicfestival →
+        </a>
+        <p className="mt-1 text-xs text-[var(--text-muted)]">Sonic Pulse is organised and promoted by Dhaka Music Festival.</p>
+      </div>
     </div>
   )
 }
