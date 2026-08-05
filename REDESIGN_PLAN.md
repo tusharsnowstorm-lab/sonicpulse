@@ -1966,3 +1966,28 @@ also update `EVENT_CONTEXT.md` in the same execution, or explicitly
 state why not. A stale canonical brief is worse than none.
 
 Not linked from the website; not part of the build. No code changes.
+
+### 8.22 FINANCE_CONTEXT.md — finance/accounting session brief (added 5 Aug 2026, owner-requested)
+
+Companion to §8.21's EVENT_CONTEXT.md: the owner is standing up a
+dedicated Cowork session as the festival's accountant, maintaining the
+Sonic Pulse budget workbook (Excel). **`FINANCE_CONTEXT.md` at the repo
+root** briefs that session with a finance lens rather than a physical
+one. Planner executed its own plan (same reasoning as §8.21 — the file
+is pure judgment).
+
+Core discipline encoded in the file: every figure is tagged **KNOWN**
+(committed or published — ticket tiers ৳5,500/6,500/7,500 web with a
+৳1,000 app discount; the installation-vendor fees ৳220,000 + ৳100,000 +
+৳60,000; the 20 Sep delivery deadline; the every-4-months exclusivity
+obligation through 2028) or **OPEN** (venue, materials, artist fees,
+production, payment rails, videography quote, and everything else with
+no committed number) — with a standing rule that the finance session
+never invents a value for an OPEN line. Barter tickets (creator media
+passes) are recorded as forgone revenue, not zero-cost.
+
+**Maintenance rule (extends §8.21's):** amendments that change money —
+ticket pricing, vendor terms, new contracts, tier structure — must
+update `FINANCE_CONTEXT.md` in the same execution, or state why not.
+
+Not linked from the website; no code changes.
