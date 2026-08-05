@@ -1938,3 +1938,31 @@ words/links. The JSON-LD block is one self-contained element.
   `grep -c 'dhakamusicfestival' src/app/api/first-pulse/route.ts` → 1,
   same for `src/app/api/register/route.ts` → 1, and
   `grep -c 'dhakamusicfestival' src/lib/email.ts` → 1.
+
+### 8.21 EVENT_CONTEXT.md — reusable physical-event brief (added 5 Aug 2026, owner-requested)
+
+The owner increasingly briefs other sessions (vendor contracts, quote
+evaluations — today: a videography quotation) and needs the physical
+event described once, canonically, instead of reassembled from chat
+memory each time. This amendment creates **`EVENT_CONTEXT.md` at the
+repo root** — a self-contained brief on the physical event, written to
+be pasted or attached into any session with zero repo access.
+
+Planner executed its own plan in the same pass (the file's substance is
+entirely planner judgment; a spec would contain the file verbatim).
+Content decisions of note, all sourced from locked data files and this
+plan rather than invented: the Great Burn is fixed at midnight inside
+Night Rituals (per `activities.ts`); the two stages run in sequence,
+never in parallel; ~14 of 17.5 hours are darkness; the no-live-streaming
+policy and attendee pro-camera ban are stated as constraints any media
+vendor must plan around; drone permission and venue address are recorded
+as open items, not assumptions. A closing "scale implications" section
+states what full coverage spans — deliberately factual, so a session
+evaluating a quote draws its own conclusion against real scope.
+
+**Maintenance rule:** any future amendment that changes the physical
+event (set times, installations, activities, venue lock, policies) must
+also update `EVENT_CONTEXT.md` in the same execution, or explicitly
+state why not. A stale canonical brief is worse than none.
+
+Not linked from the website; not part of the build. No code changes.
