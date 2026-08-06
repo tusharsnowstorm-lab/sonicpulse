@@ -1991,3 +1991,26 @@ ticket pricing, vendor terms, new contracts, tier structure — must
 update `FINANCE_CONTEXT.md` in the same execution, or state why not.
 
 Not linked from the website; no code changes.
+
+### 8.23 OPS_CONTEXT.md — event-planner session brief (added 6 Aug 2026, owner-requested)
+
+Third companion brief (after §8.21 EVENT_CONTEXT.md and §8.22
+FINANCE_CONTEXT.md): the owner is standing up a Cowork session as the
+festival's event planner / production manager, connected to their
+calendar, to build the master timeline, track vendor workstreams
+(light & sound, installations, venue, decor, security, housekeeping,
+and more) and schedule follow-up reminders. **`OPS_CONTEXT.md` at the
+repo root** briefs that session: hard dates (20 Sep installation
+delivery, 2 Sep Instagram unlock, midnight Burn), twelve workstreams
+with as-of-6-Aug status, the dependency chains (venue is the critical
+path), how the owner works, and the division of labour between the
+four sessions (website / accountant / contracts / planner). Planner
+executed its own plan (same reasoning as §8.21).
+
+**Maintenance rule (extends §8.21/§8.22):** amendments that change
+dates, vendor status, or workstream facts must update `OPS_CONTEXT.md`
+in the same execution, or state why not. The file itself tells the
+planner session to treat its statuses as a snapshot and keep its own
+tracker as the living record.
+
+Not linked from the website; no code changes.
