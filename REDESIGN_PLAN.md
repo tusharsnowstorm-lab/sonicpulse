@@ -2014,3 +2014,44 @@ planner session to treat its statuses as a snapshot and keep its own
 tracker as the living record.
 
 Not linked from the website; no code changes.
+
+### 8.24 VENUE_CONTRACT_CONTEXT.md — venue contract session brief (added 9 Aug 2026, owner-requested)
+
+Fourth companion brief (after §8.21 EVENT, §8.22 FINANCE, §8.23 OPS):
+the owner's contracts session is drafting the **venue agreement**.
+**`VENUE_CONTRACT_CONTEXT.md` at the repo root** briefs it. Planner
+executed its own plan, as in §8.21–§8.23.
+
+Content is derived, not restated: the venue's requirements are read
+backwards out of the already-designed programme — the site features
+each installation and activity presupposes (grove for Mycelia's
+rigging, lake + bridge for Event Horizon and Styx, east sightline for
+the Sunrise Stage, single entrance for Coilgate and NID control), the
+structural disclosures that exceed a routine hire (40 ft stage, two
+climbable public structures, overhead suspension over crowds,
+guest-loaded netting, four forms of open flame including the midnight
+Great Burn, boats and pool, overnight amplified sound to 9:30 AM), the
+service split to settle, commercial terms, and permit ownership.
+
+**Two findings the file records, both derived during the sweep:**
+
+1. **Access-window conflict risk.** The installation vendor is bound to
+   complete six installations and the Main Stage **on site by 20 Sep**.
+   A venue contract granting access only on 24–25 Sep would breach that
+   contract. The required number of build days is OPEN — the owner must
+   confirm it with the vendor before either contract is finalised.
+
+2. **Published alcohol contradiction (accuracy flag).** `src/data/faq.ts`
+   ("Will there be food and drinks?") promises "a fully stocked bar",
+   while `src/app/(main)/policy/page.tsx` bans alcohol on the premises
+   under zero tolerance. Both are live on the site. This is material to
+   the venue contract (licensing, security, insurance). **Owner decision
+   required**; the losing side of the contradiction should be corrected
+   on the website in a later amendment, which this section does not
+   presume to specify.
+
+**Maintenance rule (extends §8.21–§8.23):** amendments changing venue
+status, dates, site requirements or the alcohol position must update
+this file in the same execution, or state why not.
+
+Not linked from the website; no code changes.
