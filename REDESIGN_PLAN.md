@@ -2055,3 +2055,90 @@ status, dates, site requirements or the alcohol position must update
 this file in the same execution, or state why not.
 
 Not linked from the website; no code changes.
+
+### 8.25 Alcohol-free event — remove the bar from all site copy (added 9 Aug 2026, owner-requested)
+
+Owner decision: **there is no bar. No alcohol, narcotics or illegal
+substances are permitted anywhere on the premises.** This resolves the
+contradiction recorded in §8.24: the FAQ promised "a fully stocked bar"
+while `src/app/(main)/policy/page.tsx` banned alcohol under zero
+tolerance. The policy page was right and is **untouched** by this
+amendment.
+
+A sweep for `bar|drink|alcohol|intoxicat` across `src/` found three
+places to change — including one the FAQ alone would have missed.
+
+**Files: two edits. All copy verbatim.**
+
+1. **`src/data/faq.ts`** — three changes:
+
+   a. The `food-drinks` answer (id and question unchanged) becomes,
+      verbatim: "Yes. Multiple food stalls and drink counters run
+      throughout the night — street food, late-night biryani, a full
+      vegetarian line, iced chai, and hot chai at sunrise. Sonic Pulse is
+      an alcohol-free event: alcohol, narcotics and illegal substances
+      are not permitted anywhere on the premises."
+
+   b. The `prohibited` answer becomes, verbatim: "Professional
+      cameras/recording equipment, outside food and drinks, alcohol,
+      narcotics and illegal substances, weapons of any kind, and glass
+      bottles. Security checks are thorough."
+
+   c. **Insert a new FAQ item immediately after `food-drinks`**, in the
+      same `At the Event` category and the same object shape:
+
+```ts
+  {
+    id: 'alcohol-free',
+    category: 'At the Event',
+    question: 'Is alcohol served at the event?',
+    answer: 'No. Sonic Pulse is an alcohol-free event. Alcohol, narcotics and illegal substances are not permitted anywhere on the premises, and anyone suspected of being intoxicated may be denied entry or removed. Gate checks are thorough.',
+  },
+```
+
+2. **`src/data/tickets.ts`** — the CRESCENDO tier (`phase3`) lists
+   `'Dedicated bar'` as a perk. It is currently unreachable
+   (`TICKETS_LIVE = false`, §8.9) but ships the moment sales open, so it
+   is fixed now. Change that single perk string to, verbatim:
+   `'Dedicated drinks counter'`.
+
+   **Decision, not an open question:** the `phase2` (RHYTHM) perk
+   `'Complimentary drink'` **stays as written** — it is accurate for a
+   non-alcoholic drink and needs no change.
+
+**Scope fences.** The policy page is already correct — do not edit it.
+`src/data/activities.ts` is untouched: FEAST QUARTER and NEON LAGOON
+mention chai, kulfi and a "poolside selector" (a DJ, not a bar) and
+contain no alcohol reference. No email templates, admin, or component
+files change. This is copy only — no flags, no new components.
+
+**Failure/empty states.** None introduced. The new FAQ item renders
+through the existing accordion; the FAQ page groups by `category`, and
+`At the Event` already exists, so no new grouping logic is needed.
+
+**Reversibility.** Pure copy edits; revert by restoring the previous
+strings and deleting the added FAQ item.
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Local dev on port 3100, counting with `grep -o … | wc -l`:
+  - `/faq` → `fully stocked` **0**, `alcohol-free event` **≥2**,
+    `Is alcohol served at the event?` **≥1**
+- Source greps: `grep -c 'Dedicated bar' src/data/tickets.ts` → **0**;
+  `grep -c 'fully stocked' src/data/faq.ts` → **0**.
+- Regression: `grep -c 'No narcotics or alcohol' "src/app/(main)/policy/page.tsx"`
+  → **1** (the policy page must remain unchanged).
+- Playwright at 1280×800 and 375×812:
+  `scrollWidth - clientWidth === 0` on `/faq`.
+
+**Companion-file note (already done by the planner, no executor action):**
+`VENUE_CONTRACT_CONTEXT.md` §6 and §8 now record the alcohol-free
+decision, and its §5 was rewritten after the owner confirmed on the same
+date that **installations are fabricated off site and transported to the
+venue on festival day** — superseding §8.24's assumption of an on-site
+build. That correction moves the venue risk from a long build occupancy
+to a single day-of load-in (truck access, gate and overhead clearance,
+crane standing space, no slack before 4 PM gates) and leaves one item
+**OPEN and urgent**: whether the 40 ft, seven-pillar Main Stage is also
+day-of assembly or needs earlier on-site days.

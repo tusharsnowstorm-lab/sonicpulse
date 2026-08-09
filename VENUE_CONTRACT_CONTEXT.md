@@ -107,18 +107,37 @@ supplied, or organiser-supplied-with-venue-permission**, and who bears cost:
 - **Site map**: the FAQ promises attendees a site map in their ticket email
   — it cannot be produced until the venue is locked.
 
-## 5. Dates and access window — the term most likely to be got wrong
+## 5. Dates, load-in and access window
 
-The installation vendor is contractually bound to have **six installations
-and the Main Stage complete and delivered on site by 20 September 2026**.
-Therefore:
+**Owner confirmation (9 Aug 2026): the installations are fabricated
+OFF SITE and transported to the venue on the day of the festival.** This
+supersedes the earlier assumption that they were built on site, and it
+changes what the venue contract must secure — the risk moves from a long
+build occupancy to a single, unforgiving load-in day.
 
-- **Venue access must begin materially before 20 September** — build,
-  rigging, stage assembly and installation placement all happen on site.
-  The exact build-days requirement is **OPEN** (the owner should confirm
-  with the vendor how many days on site they need), but a venue contract
-  granting access only on 24–25 September **breaks the installation
-  contract**. Establish the access window before signing either way.
+- **20 September 2026** — the installation vendor's contractual deadline.
+  Given off-site fabrication, this now means **fabrication complete and
+  inspected at the workshop**, not standing at the venue. The installation
+  contract should say so explicitly; "delivered by 20 Sep" read literally
+  against a day-of transport plan is ambiguous and worth correcting there.
+- **25 September, load-in** — six monumental installations transported and
+  erected **before 4:00 PM gates**, alongside sound, lighting and power
+  build. This makes the following venue terms critical, not routine:
+  - **Vehicle access** onto the grounds for large trucks, with route,
+    surface and turning capacity for 12 ft+ pieces.
+  - **Gate, route and overhead clearance** — the pieces are monumental;
+    a venue whose only entrance is a narrow arch or has low cabling can
+    physically refuse the build.
+  - **Crane / lifting equipment access and standing space**, including for
+    overhead rigging in the grove (Mycelia) and the tall pieces.
+  - **A load-in window long enough to be survivable** — start time on
+    25 Sep, and whether earlier access on 23–24 Sep is available as
+    contingency. There is **no slack before gates**: a transport delay has
+    nowhere to go.
+- **Main Stage — OPEN and urgent.** Seven pillars, tallest ~40 ft. Whether
+  this is also day-of assembly or needs earlier on-site days has not been
+  confirmed with the vendor. Ask before signing: if the stage needs build
+  days, the venue access window must cover them.
 - **Event day**: 25 September, gates 4:00 PM.
 - **Strike**: from 9:30 AM on 26 September. Includes clearing **ash and
   debris from the Great Burn**, dismantling two climbable structures, the
@@ -137,7 +156,10 @@ and who pays:
 - Water/boat safety compliance; pool operation.
 - Structural sign-off for the 40 ft stage and both climbable installations.
 - Food-service and hygiene approvals for the Feast Quarter.
-- **Alcohol licence — see §8 first; this may not apply at all.**
+- **Alcohol licence — not required. The event is alcohol-free (owner
+  decision, 9 Aug 2026); see §8.** If a candidate venue mandates in-house
+  bar service or a minimum bar spend, that conflicts with the event's own
+  policy and must be negotiated out.
 - **Drone permission: not secured**, airspace and venue rules unresolved —
   relevant because a videography quotation is under evaluation.
 - Liability insurance (fire, working at height, water, 800+ overnight
@@ -173,22 +195,22 @@ All **OPEN** — no venue figure exists anywhere in the project:
   site tells attendees the full address is emailed closer to the event.
   Agree announcement timing and any venue publicity requirements.
 
-## 8. Accuracy flag — resolve before drafting
+## 8. Alcohol — settled: the event is alcohol-free
 
-**The published site contradicts itself on alcohol**, and this materially
-changes the venue contract (licensed premises, licence cost, security
-posture, insurance):
+The published site previously contradicted itself (the FAQ promised "a
+fully stocked bar" while the policy page banned alcohol outright). **Owner
+decision, 9 Aug 2026: there is no bar. No alcohol, narcotics or illegal
+substances are permitted anywhere on the premises.** The website copy is
+being corrected accordingly (REDESIGN_PLAN.md §8.25).
 
-- FAQ, "Will there be food and drinks?" — answers that food stalls **and a
-  fully stocked bar** will operate through the night.
-- Policy page, Prohibited — states that bringing or consuming **narcotics,
-  illegal substances, or alcohol anywhere on the premises is strictly
-  prohibited**, zero tolerance.
-
-These cannot both stand. The owner must decide the actual position — no
-alcohol at all, a non-alcoholic bar, or licensed service — and the website
-should be corrected in the same pass. **Do not draft alcohol provisions
-until this is settled.**
+Contract consequences: no alcohol licence, no licensed-premises
+obligations, and no bar-service or minimum-bar-spend clause. Security
+scope is enforcement — gate checks, refusing entry to and removing anyone
+intoxicated — rather than licensed service supervision. Food and
+non-alcoholic drink service (the Feast Quarter: street food, late-night
+biryani, a vegetarian line, iced and hot chai) runs all night and is
+supplied by the organiser's own vendors, which matters against any venue
+F&B exclusivity demand (§7).
 
 ## 9. Working rules for the contracts session
 
