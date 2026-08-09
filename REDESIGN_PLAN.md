@@ -2142,3 +2142,50 @@ to a single day-of load-in (truck access, gate and overhead clearance,
 crane standing space, no slack before 4 PM gates) and leaves one item
 **OPEN and urgent**: whether the 40 ft, seven-pillar Main Stage is also
 day-of assembly or needs earlier on-site days.
+
+### 8.26 CONTRACTS_CONTEXT.md — master contracts session brief (added 9 Aug 2026, owner-requested)
+
+Fifth companion brief (§8.21 EVENT, §8.22 FINANCE, §8.23 OPS, §8.24
+VENUE_CONTRACT, and now this). The owner's contracts session handles
+**every** agreement, not just the venue, so
+**`CONTRACTS_CONTEXT.md` at the repo root** is the master and
+`VENUE_CONTRACT_CONTEXT.md` becomes its venue deep-dive — the master
+points to it rather than duplicating it. Planner executed its own plan,
+as in §8.21–§8.24.
+
+Contents: an 18-row contract register with live status; full terms of
+the one agreement that has agreed terms (installation vendor — scope,
+৳220k/৳100k/৳60k fees, owner-borne materials, 20 Sep delivery,
+exclusivity to end-2028 against work every 4 months); what each
+unstarted contract must cover; the **published attendee terms** treated
+as a binding consumer contract no vendor agreement may contradict; the
+Bangladeshi legal environment; and a standing clause checklist.
+
+**Findings recorded during the sweep:**
+
+1. **The organiser's legal entity is unrecorded.** Nothing in the
+   project states whether Dhaka Music Festival is a registered company,
+   a partnership, or the owner trading personally. Every contract needs
+   a correct contracting party — flagged as OPEN and blocking.
+2. **Volunteer programme may involve minors.** The event is strictly
+   18+, but "graduating students" can include under-18s. If minors
+   participate, guardian consent and a safeguarding position are needed,
+   and the volunteer agreement must be drafted as volunteering (no wage,
+   no employment relationship) with a liability waiver and a defined
+   certificate of service.
+3. **Force-majeure asymmetry.** The published attendee policy carries
+   tickets over to the next edition rather than refunding. Vendor and
+   venue cancellation clauses should be negotiated against that, or a
+   cancellation leaves the organiser paying twice.
+
+Also carried in: the 9 Aug owner confirmations that installations are
+fabricated off site and transported on festival day (making "delivered
+by 20 Sep" ambiguous in the installation contract) and that the event
+is alcohol-free (§8.25).
+
+**Maintenance rule (extends §8.21–§8.24):** amendments that change
+vendor terms, counterparties, published attendee terms, or contract
+status must update `CONTRACTS_CONTEXT.md` in the same execution, or
+state why not.
+
+Not linked from the website; no code changes.
