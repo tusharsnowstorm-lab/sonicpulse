@@ -85,7 +85,7 @@ export const faqs: FAQItem[] = [
     id: 'prohibited',
     category: 'At the Event',
     question: 'What is prohibited at the venue?',
-    answer: 'Professional cameras/recording equipment, outside food and drinks, illegal substances, weapons of any kind, and glass bottles. Security checks are thorough.',
+    answer: 'Professional cameras/recording equipment, outside food and drinks, alcohol, narcotics and illegal substances, weapons of any kind, and glass bottles. Security checks are thorough.',
   },
   {
     id: 'parking',
@@ -97,7 +97,13 @@ export const faqs: FAQItem[] = [
     id: 'food-drinks',
     category: 'At the Event',
     question: 'Will there be food and drinks?',
-    answer: 'Yes. Multiple food stalls and a fully stocked bar will operate throughout the night. We cater to vegetarian and non-vegetarian preferences.',
+    answer: 'Yes. Multiple food stalls and drink counters run throughout the night — street food, late-night biryani, a full vegetarian line, iced chai, and hot chai at sunrise. Sonic Pulse is an alcohol-free event: alcohol, narcotics and illegal substances are not permitted anywhere on the premises.',
+  },
+  {
+    id: 'alcohol-free',
+    category: 'At the Event',
+    question: 'Is alcohol served at the event?',
+    answer: 'No. Sonic Pulse is an alcohol-free event. Alcohol, narcotics and illegal substances are not permitted anywhere on the premises, and anyone suspected of being intoxicated may be denied entry or removed. Gate checks are thorough.',
   },
   {
     id: 'stages',

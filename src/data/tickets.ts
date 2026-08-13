@@ -55,7 +55,7 @@ export const ticketTiers: TicketTier[] = [
     perks: [
       'VIP entry',
       'Stage-side deck',
-      'Dedicated bar',
+      'Dedicated drinks counter',
     ],
     status: 'available',
   },
