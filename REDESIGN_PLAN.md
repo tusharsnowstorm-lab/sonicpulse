@@ -2528,3 +2528,35 @@ files and reverting the three nav edits.
   "You're on the list." card; `scrollWidth - clientWidth === 0` on
   `/wayfinder` **and** on `/` (the nav gains a seventh item — confirm the
   desktop navbar does not overflow at 1280).
+
+### 8.29 Wayfinder minimum age: 17 (added 13 Aug 2026, owner-decided)
+
+§8.28 flagged the volunteer minimum age as an owner decision and shipped
+the form with a date-of-birth field but no gate. Owner decision: **17**.
+
+**Judgment call, flagged rather than silently assumed:** age is computed
+against **today's date (application time)**, mirroring the exact pattern
+the site already used for the attendee 18+ gate before §8.27 removed it
+— not against the event date (25 Sep 2026). An applicant who is 16 today
+but turns 17 before the festival will not pass this check. If the owner
+intends age-by-event-date instead, that is a one-line change to the
+comparison date in both the client and server checks below.
+
+**Files: two edits.**
+
+1. `src/components/wayfinder/WayfinderForm.tsx` — client-side check
+   before submit, reusing the exact age-calculation arithmetic
+   `RegistrationForm.tsx` used for its (now-removed) 18+ gate, adjusted
+   to 17. On failure: `setErrorMsg('Wayfinders must be 17 or older to
+   apply.')`, `setStatus('error')`, return before the network call.
+2. `src/app/api/wayfinder/route.ts` — the same check server-side (client
+   validation is never trusted alone). Also adds `dateOfBirth` to the
+   required-fields check — it was marked required in the form but not
+   enforced by the API, a gap from §8.28's execution, closed here.
+3. `src/app/(main)/wayfinder/page.tsx` — the "Open to graduating
+   students" point body becomes: "Final-year undergraduates and HSC or
+   A-level finishers, 17 or older, are welcome to apply."
+
+**Verification:** date of birth yielding age 16 → 400 "Wayfinders must
+be 17 or older to apply." on both client (before submit) and server;
+age exactly 17 → passes.

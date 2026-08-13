@@ -15,7 +15,7 @@ const points = [
   },
   {
     title: 'Open to graduating students',
-    body: 'Final-year undergraduates and HSC or A-level finishers are both welcome to apply.',
+    body: 'Final-year undergraduates and HSC or A-level finishers, 17 or older, are welcome to apply.',
   },
   {
     title: 'Inside the whole night',

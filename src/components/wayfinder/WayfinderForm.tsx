@@ -65,8 +65,20 @@ export default function WayfinderForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setStatus('submitting')
     setErrorMsg('')
+
+    const dob = new Date(form.dateOfBirth)
+    const today = new Date()
+    const age = today.getFullYear() - dob.getFullYear()
+    const m = today.getMonth() - dob.getMonth()
+    const isAtLeast17 = age > 17 || (age === 17 && (m > 0 || (m === 0 && today.getDate() >= dob.getDate())))
+    if (!isAtLeast17) {
+      setErrorMsg('Wayfinders must be 17 or older to apply.')
+      setStatus('error')
+      return
+    }
+
+    setStatus('submitting')
     try {
       const res = await fetch('/api/wayfinder', {
         method: 'POST',
