@@ -14,7 +14,8 @@ by Dhaka Music Festival (@dhakamusicfestival; festival account
 PM, running continuously to 9:30 AM Saturday — 17.5 hours. Dhaka; exact venue
 TBA (announced to ticket holders). Outdoor grounds with a grove of trees, an
 open field, a lake with a short bridge, and a pool deck. Capacity 800+,
-strictly 18+, NID-verified entry. Audience is Gen Z / millennial,
+**open to all ages** (the strict 18+ rule was removed 13 Aug 2026),
+ID-verified entry — NID, passport or birth certificate. Audience is Gen Z / millennial,
 underground-electronic-music-centred.
 
 ## Scale at a glance
@@ -24,7 +25,7 @@ underground-electronic-music-centred.
 - 10 programme blocks (8 artist sets + 2 ritual blocks)
 - 9 large-scale themed art installations ("The Nine Echoes") along a trail from gate to ritual ground
 - 9 named activities running through the night, several of them visual set-pieces
-- 800+ attendees, single entrance through an installation arch
+- 800+ attendees, all ages, single entrance through an installation arch
 - Approx. 14 hours of the event are in darkness or low light
 
 ## Stages

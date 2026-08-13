@@ -11,7 +11,7 @@ KNOWN vs OPEN figures). This file is about **who does what by when**.
 
 Sonic Pulse — Bangladesh's first sunset-to-sunrise festival by Dhaka Music
 Festival: Friday 25 Sep 2026, 4:00 PM → 9:30 AM, Dhaka, venue TBA, 800+
-attendees (18+, NID-verified), two sequential stages, nine art installations,
+attendees (all ages, ID-verified), two sequential stages, nine art installations,
 nine activities. Single night — there is no recovery day.
 
 ## Hard dates already fixed
@@ -51,7 +51,8 @@ nine activities. Single night — there is no recovery day.
 5. **Venue decor** — NO VENDOR. Everything thematic that is not one of the
    Nine Echoes: temple-lane dressing for the Bazaar, lantern lines, the
    Styx channel's carved-stone lanterns, glyph signage, wayfinding.
-6. **Ground security** — NOT ARRANGED. 18+ enforcement, NID checks at gate,
+6. **Ground security** — NOT ARRANGED. ID checks at gate (all ages since
+   13 Aug 2026 — a minors/guardian policy is an OPEN owner decision),
    overnight coverage, climbable-installation marshals, ember-line and burn
    perimeter at midnight, lake and pool watch.
 7. **Housekeeping / sanitation** — NOT ARRANGED. Toilets, waste, overnight

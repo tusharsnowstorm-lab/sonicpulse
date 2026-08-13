@@ -17,7 +17,7 @@ by **Dhaka Music Festival** (Instagram @dhakamusicfestival; festival account
 @sonicpulsefestival; site sonicpulsefestival.com). One night: Friday 25
 September 2026, 4:00 PM through 9:30 AM Saturday — 17.5 continuous hours.
 Dhaka; **venue TBA (OPEN — likely the single largest unbooked cost)**.
-Capacity **800+ attendees**, 18+ only, NID-verified entry. Two stages running
+Capacity **800+ attendees**, **open to all ages** (strict 18+ removed 13 Aug 2026), ID-verified entry — NID, passport or birth certificate. Two stages running
 in sequence: Main Stage (4 PM – 4:30 AM) and Sunrise Stage (4:30 – 9:30 AM).
 
 ## 2. Revenue
@@ -91,7 +91,7 @@ agreed blueprint)**.
 - Activities infrastructure: STYX lit boats + lake operation, NEON LAGOON
   pool operation, EMBER RITES fire performers, STARSIDE telescopes/guide,
   WARPAINT UV artists and paint, bazaar and feast-lane build-out.
-- Operations: venue rental, security (18+ NID-checked, overnight), gate
+- Operations: venue rental, security (ID-checked entry, overnight), gate
   staff, medical, sanitation, drinking water, weather contingency (event
   proceeds in light rain), insurance, permits (event, fire — the midnight
   burn — and possibly drone), cleaning/strike, artist fees for the six

@@ -1,7 +1,7 @@
 # SONIC PULSE — VENUE CONTRACT CONTEXT
 
 Brief for the contracts session drafting the **venue agreement**. Written
-9 Aug 2026; the event is **47 days out and the venue is still not booked** —
+13 Aug 2026; the event is **43 days out and the venue is still not booked** —
 this is the critical path, and every other workstream (permits, security,
 decor, installation placement, the address email to ticket holders) is
 blocked behind it.
@@ -22,7 +22,7 @@ never invent a value; raise it as a question for the owner.
 - **Sonic Pulse**, organised by **Dhaka Music Festival** (@dhakamusicfestival).
 - **Friday 25 September 2026, 4:00 PM → Saturday 26 September, 9:30 AM** —
   **17.5 continuous hours**, overnight, single night, no second day.
-- **800+ attendees**, strictly **18+**, NID-verified at entry.
+- **800+ attendees**, **all ages** (the strict 18+ rule was removed 13 Aug 2026), ID-verified at entry (NID, passport or birth certificate).
 - Two stages running **in sequence, never simultaneously**: Main Stage
   4:00 PM – 4:30 AM, Sunrise Stage 4:30 – 9:30 AM.
 - Nine large-scale art installations, nine activity zones, a night market,
@@ -46,7 +46,7 @@ to the installation contract.
 | **Ritual ground** — open, defensible, away from structures | EMBER RITES fire performance; **THE GREAT BURN** at midnight | **Hard**, and permit-critical |
 | **Lanes / market area** | BAZAAR OF ECHOES; FEAST QUARTER (open-flame cooking one side, cold service opposite) | **Hard** |
 | **Dark zone** away from stage rigs | STARSIDE guided stargazing, 4:30–6:30 AM | Flexible in placement, needed in principle |
-| **Single controllable entrance** | COILGATE serpent arch — every guest enters through it; also NID/age control | **Hard** |
+| **Single controllable entrance** | COILGATE serpent arch — every guest enters through it; also ID/age control | **Hard** |
 | **Grass area for raised structures** | CLOUD NINE — nine raised bamboo net bays guests lie in | **Hard** |
 | **East-facing sightline** | Sunrise Stage — the closing sets are staged against sunrise | **Hard** (signature moment) |
 
@@ -109,7 +109,7 @@ supplied, or organiser-supplied-with-venue-permission**, and who bears cost:
 
 ## 5. Dates, load-in and access window
 
-**Owner confirmation (9 Aug 2026): the installations are fabricated
+**Owner confirmation (13 Aug 2026): the installations are fabricated
 OFF SITE and transported to the venue on the day of the festival.** This
 supersedes the earlier assumption that they were built on site, and it
 changes what the venue contract must secure — the risk moves from a long
@@ -157,7 +157,7 @@ and who pays:
 - Structural sign-off for the 40 ft stage and both climbable installations.
 - Food-service and hygiene approvals for the Feast Quarter.
 - **Alcohol licence — not required. The event is alcohol-free (owner
-  decision, 9 Aug 2026); see §8.** If a candidate venue mandates in-house
+  decision, 13 Aug 2026); see §8.** If a candidate venue mandates in-house
   bar service or a minimum bar spend, that conflicts with the event's own
   policy and must be negotiated out.
 - **Drone permission: not secured**, airspace and venue rules unresolved —
@@ -199,7 +199,7 @@ All **OPEN** — no venue figure exists anywhere in the project:
 
 The published site previously contradicted itself (the FAQ promised "a
 fully stocked bar" while the policy page banned alcohol outright). **Owner
-decision, 9 Aug 2026: there is no bar. No alcohol, narcotics or illegal
+decision, 13 Aug 2026: there is no bar. No alcohol, narcotics or illegal
 substances are permitted anywhere on the premises.** The website copy is
 being corrected accordingly (REDESIGN_PLAN.md §8.25).
 

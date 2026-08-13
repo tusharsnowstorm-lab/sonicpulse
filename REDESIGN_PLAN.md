@@ -2189,3 +2189,342 @@ status must update `CONTRACTS_CONTEXT.md` in the same execution, or
 state why not.
 
 Not linked from the website; no code changes.
+
+### 8.27 Age policy — remove the strict 18+ restriction site-wide (added 13 Aug 2026, owner-requested)
+
+Owner decision: **the event is no longer strictly 18+; remove the age
+restriction from the website entirely.** This supersedes the 18+ facts
+stated in §8.0-era content and in every companion context file.
+
+**The enabling fact, checked before planning:** Bangladesh issues NIDs at
+18, so an all-ages event cannot require an NID from every attendee.
+The *current* ticket flow already handles this —
+`src/components/dashboard/AddTicketForm.tsx` and `ProfileSection.tsx`
+already accept **NID, passport, or birth certificate**. Only the legacy
+`RegistrationForm.tsx` hard-codes NID plus an 18+ date-of-birth gate.
+So this amendment is copy plus one validation removal, not a rebuild.
+
+**Files: three edits. All copy verbatim.**
+
+1. **`src/data/faq.ts`** — four answers change:
+
+   a. `age-limit` — the **question** becomes "Is there a minimum age to
+      attend?" and the answer becomes, verbatim: "Sonic Pulse is open to
+      all ages. Every attendee registers with a valid ID — a National ID,
+      passport, or birth certificate — and the name on the ticket must
+      match the ID presented at the gate."
+
+   b. `why-nid` — the **question** becomes "Why do I need to provide an
+      ID?" and the answer becomes, verbatim: "ID verification helps us
+      keep the event safe and is required under our venue permit
+      conditions. We accept a National ID, passport, or birth
+      certificate. Your data is stored securely and used only for this
+      event."
+
+   c. `nid-data-protection` — the **question** becomes "How is my ID data
+      stored and protected?" and the answer becomes, verbatim: "Your ID
+      document is stored in a private, encrypted cloud storage — it is
+      never publicly accessible. Only authorised staff can access it, and
+      access is logged. We comply with Bangladesh Digital Security Act
+      obligations."
+      (The `id` fields of all three items stay unchanged — they are
+      anchor keys, not copy.)
+
+   d. `what-to-bring` — answer becomes, verbatim: "Your printed or
+      digital ticket (QR code), your original ID matching your
+      registration, comfortable clothes, ear protection (optional but
+      recommended), and your energy."
+
+2. **`src/app/(main)/tickets/TicketsGate.tsx`** — the "How it works" line
+   currently reads "Register ticket with your NID". Replace that phrase
+   so the sentence reads, verbatim: "Sign up → Register ticket with your
+   ID → We review within 24h → Approved tickets can be downloaded with QR
+   code." (Unreachable while `TICKETS_LIVE = false`, fixed now so it
+   cannot ship stale.)
+
+3. **`src/components/tickets/RegistrationForm.tsx`** — remove the 18+
+   gate. The `dateOfBirth` field currently carries a `.refine(...)`
+   enforcing "You must be 18 or older to attend". Delete that `.refine()`
+   call so the field is `dateOfBirth: z.string()`, keeping date-of-birth
+   collection itself. Leave every other field alone.
+
+**Scope fences.** The policy page needs no edit — it never stated an age
+rule, and its "matching photo ID" wording is already ID-neutral. The
+dashboard ID-type system, admin, gate scanner, and the `nidNumber` field
+inside the legacy `RegistrationForm.tsx` are untouched: that file is dead
+code behind `TICKETS_LIVE = false`, and its NID-only field and any
+deletion of the file are a separate amendment, not this one.
+
+**Owner decisions this creates — flagged, not invented.** Removing the
+age bar raises questions the website cannot answer on its own, and this
+amendment deliberately writes no policy for them:
+- **Are minors admitted unaccompanied?** The event runs overnight for
+  17.5 hours and includes open flame, two climbable structures, boats and
+  a pool. A guardian/accompaniment rule is an owner decision; once made,
+  it belongs on the policy page in a follow-up amendment.
+- **Does the venue's permit or insurance assume an 18+ crowd?** Both are
+  still unsigned; tell the contracts session, since it changes security
+  scope and liability cover (`CONTRACTS_CONTEXT.md` §5, §7).
+- The event being alcohol-free (§8.25) makes an all-ages event coherent;
+  that decision and this one support each other.
+
+**Reversibility.** Pure copy plus one validation line; restore the
+previous strings and the `.refine()` to revert.
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Local dev on port 3100, counting with `grep -o … | wc -l`:
+  - `/faq` → `18 or older` **0**, `open to all ages` **≥1**,
+    `passport, or birth certificate` **≥2**
+- Source greps: `grep -c '18 or older' src/components/tickets/RegistrationForm.tsx`
+  → **0**; `grep -rc 'your NID' "src/app/(main)/tickets/TicketsGate.tsx"` → **0**.
+- Regression: `grep -c 'Digital Security Act' src/data/faq.ts` → **1**
+  (the data-protection promise must survive the rewrite).
+- Playwright at 1280×800 and 375×812:
+  `scrollWidth - clientWidth === 0` on `/faq`.
+
+**Companion-file note (planner-done, no executor action):**
+`EVENT_CONTEXT.md`, `OPS_CONTEXT.md`, `FINANCE_CONTEXT.md`,
+`VENUE_CONTRACT_CONTEXT.md` and `CONTRACTS_CONTEXT.md` all stated
+"strictly 18+" and are corrected in the same pass, along with their
+as-of dates (several read 9 Aug; today is 13 Aug, 43 days out).
+
+### 8.28 /wayfinder — Wayfinder volunteer programme page (added 13 Aug 2026, owner-requested)
+
+The owner is announcing the volunteer programme on Instagram tonight, and
+the poster's call to action points at the website — so the page must
+exist. **WAYFINDER is a locked name** from here on, lockup
+`WAYFINDER · The Volunteer Corps`; never renamed or paraphrased.
+
+Owner answers, now settled: **50 Wayfinders**, **two 8-hour shifts**,
+certificates issued by **Dhaka Music Festival alone**, eligibility is
+**both final-year undergraduates and HSC/A-level finishers**.
+
+**Planner decision — the shift arithmetic doesn't close, and here is the
+resolution.** The event runs 17.5 hours; two 8-hour shifts cover 16.
+Shifts are therefore defined as:
+- **Shift A · Dusk — 3:00 PM to 11:00 PM** (starts an hour before gates
+  for briefing), 25 Wayfinders.
+- **Shift B · Dawn — 11:00 PM to 7:00 AM**, 25 Wayfinders.
+This leaves **7:00–9:30 AM uncovered**. Rather than change the owner's
+two-shift structure, the form carries an opt-in checkbox for staying to
+the close; the owner assigns roughly ten willing Shift B volunteers to
+it. This is flagged to the owner as a real gap with a chosen mitigation,
+not a silent fix.
+
+This mirrors the **First Pulse architecture exactly** (§8.5, hardened by
+§8.16 and §8.19) — same flag pattern, same graceful degradation, same
+error copy discipline. Build it by reading those sections alongside this
+one.
+
+**Pre-staged by the planner:** `supabase-wayfinder.sql` is committed at
+the repo root. **The owner must run it in the Supabase project whose ref
+is `ytgwocaresxghgyiwikr`** — the project holding `user_profiles` (see
+§8.19; running it in the wrong project is exactly the failure that broke
+First Pulse for weeks).
+
+**Files: five creates, four edits.**
+
+1. **Create `src/data/wayfinder.ts`:**
+
+```ts
+/**
+ * Wayfinder volunteer programme — see REDESIGN_PLAN.md §8.28.
+ *
+ * WAYFINDER_LIVE: master switch for the public /wayfinder page and its
+ * nav entries. Flip to false once all 50 places are filled; the page
+ * then shows the closed card instead of the form.
+ */
+export const WAYFINDER_LIVE = true
+
+export const WAYFINDER_TOTAL = 50
+
+export type WayfinderShift = {
+  id: 'dusk' | 'dawn'
+  label: string
+  time: string
+  blurb: string
+  places: number
+}
+
+export const wayfinderShifts: WayfinderShift[] = [
+  {
+    id: 'dusk',
+    label: 'Shift A · Dusk',
+    time: '3:00 PM – 11:00 PM',
+    blurb: 'Briefing before gates, the arrival rush, sunset, and the first sets.',
+    places: 25,
+  },
+  {
+    id: 'dawn',
+    label: 'Shift B · Dawn',
+    time: '11:00 PM – 7:00 AM',
+    blurb: 'Night Rituals, the Great Burn at midnight, the quiet hours, and sunrise.',
+    places: 25,
+  },
+]
+```
+
+2. **Create `supabase-wayfinder.sql`** (planner has already written this
+   file; executor does not author it — verify it exists and reference it
+   in the owner note).
+
+3. **Create `src/app/api/wayfinder/route.ts`** — copy the structure of
+   `src/app/api/first-pulse/route.ts` exactly, including its §8.16/§8.19
+   hardening, changing only:
+   - table `wayfinder_applications`; reference prefix `WF-`
+   - required fields: `fullName`, `email`, `phone`, `institution`,
+     `level`, `shiftPreference`
+   - optional: `graduationYear`, `dateOfBirth`, `instagramHandle`,
+     `motivation` (≤600 chars), `emergencyContactName`,
+     `emergencyContactPhone`, `stayToClose` (boolean), `notes`
+   - 400 copy for over-length motivation, verbatim: "Tell us in 600
+     characters or fewer."
+   - the 500, 409, 503 branches and their copy are **identical in
+     wording** to First Pulse's current state except the noun: 409 reads,
+     verbatim, "You've already applied — the application we have on file
+     is the one that counts."; 500 reads, verbatim, "Something went wrong
+     on our end. Try again in a minute, or email your application to
+     hello@sonicpulsefestival.com."
+   - missing-table check matches `'42P01' || 'PGRST205'` (§8.19)
+   - confirmation email subject, verbatim: "Application received —
+     Wayfinder"; body mirrors the First Pulse template with the reference
+     code block, and its closing line reads, verbatim: "We'll confirm
+     shifts and briefing details closer to the event. Questions? Reply to
+     this email or message us on Instagram @sonicpulsefestival. Sonic
+     Pulse is organised by Dhaka Music Festival — @dhakamusicfestival."
+
+4. **Create `src/components/wayfinder/WayfinderForm.tsx`** — clone
+   `FirstPulseForm.tsx`'s structure, styles and status machine
+   (`idle | submitting | success | not_open | already_applied | error`),
+   with these fields in this order (labels verbatim):
+   - "Full name" (required)
+   - "Email" (required, `type="email"`)
+   - "Phone" (required, `inputMode="tel"`)
+   - "School / college / university" (required)
+   - "Where you are in your studies" (required, `<select>`, options
+     verbatim: "Final-year undergraduate", "HSC / A-level finisher",
+     "Other")
+   - "Expected graduation year" (optional, `type="number"`, min 2026,
+     max 2032)
+   - "Date of birth" (required, `type="date"`) — **no age validation**;
+     see the owner decision below
+   - "Shift preference" (required, `<select>`, options verbatim: "Shift A
+     · Dusk — 3:00 PM to 11:00 PM", "Shift B · Dawn — 11:00 PM to 7:00
+     AM", "Either shift works")
+   - Checkbox, label verbatim: "I can stay to the close (7:00–9:30 AM)"
+   - "Why you want to do this" (optional textarea, 600-char counter in
+     the same style as First Pulse's bio counter)
+   - "Emergency contact name" (required)
+   - "Emergency contact phone" (required, `inputMode="tel"`)
+   - "Instagram / socials" (optional)
+   - "Anything we should know" (optional textarea — accessibility needs,
+     medical notes)
+   - Submit label, verbatim: "Apply to be a Wayfinder →"; submitting
+     state "Sending…"
+   - Fine print under the button, verbatim: "Certificates are issued by
+     Dhaka Music Festival on completion of your shift."
+   - **success card** — heading verbatim "You're on the list.", body
+     verbatim "We'll confirm your shift and briefing details closer to
+     the event.", then the reference-code block styled exactly as First
+     Pulse's.
+   - **not_open card** — heading verbatim "Applications open soon.", body
+     verbatim "Check back shortly, or follow @sonicpulsefestival for the
+     announcement."
+   - **already_applied card** — heading verbatim "You've already
+     applied.", body verbatim "The application we have on file is the one
+     that counts. Questions? Email hello@sonicpulsefestival.com."
+
+5. **Create `src/app/(main)/wayfinder/page.tsx`** — mirror
+   `first-pulse/page.tsx`'s two-column layout.
+   - `metadata`: title "Wayfinder — Sonic Pulse", description "Join the
+     Wayfinder volunteer corps. Guide the night at Sonic Pulse 2026."
+   - `PageHeader`: eyebrow "Volunteer programme", title "Wayfinder", sub
+     "Guide the night."
+   - Left column heading, verbatim: "What a Wayfinder does"
+   - First paragraph, verbatim: "Eight hundred people walk into a field
+     they have never seen before, in the dark, for seventeen and a half
+     hours. Wayfinders are the reason none of them feel lost. You are the
+     festival on the ground — the person who knows where the water is,
+     which way the Sunrise Stage is, and what happens at midnight."
+   - Second paragraph, verbatim: "Fifty Wayfinders work the night in two
+     shifts. Bring patience, a good sense of direction, and the
+     willingness to answer the same question forty times without losing
+     your warmth."
+   - Three points in the First Pulse arrow-list style, verbatim:
+     - "A certificate that counts" / "Every Wayfinder who completes a
+       shift receives a certificate of service from Dhaka Music Festival
+       — written for university applications."
+     - "Open to graduating students" / "Final-year undergraduates and HSC
+       or A-level finishers are both welcome to apply."
+     - "Inside the whole night" / "Two stages, nine art installations,
+       and the Great Burn at midnight — you are in the room for all of
+       it."
+   - Then a shift block rendering `wayfinderShifts` — each row shows
+     `label`, `time`, `blurb` and "{places} places", styled with the
+     existing card tokens (`var(--bg-elevated)`, `var(--border)`,
+     `var(--radius-card)`).
+   - Right column: `<WayfinderForm />` when `WAYFINDER_LIVE`, otherwise a
+     closed card in the not_open card's styling with heading verbatim
+     "Wayfinder applications are closed." and body verbatim "All fifty
+     places are filled for 2026. Follow @sonicpulsefestival for the next
+     call."
+
+6. **Create `src/app/api/admin/wayfinder/route.ts` and
+   `src/app/admin/WayfinderTab.tsx`** — clone the First Pulse admin route
+   and tab (`src/app/api/admin/first-pulse/route.ts`,
+   `src/app/admin/FirstPulseTab.tsx`), swapping the table and fields, and
+   keeping the `'42P01' || 'PGRST205'` not-ready check. Register the tab
+   in the admin page beside First Pulse with the label "Wayfinder".
+
+7. **Edit `src/components/layout/Navbar.tsx` and
+   `src/components/layout/MobileMenu.tsx`** — import `WAYFINDER_LIVE`
+   from `@/data/wayfinder` and add to each `navLinks` array, immediately
+   after the First Pulse entry, using the same conditional-spread pattern
+   already used for tickets:
+   `...(WAYFINDER_LIVE ? [{ href: '/wayfinder', label: 'Wayfinder' }] : []),`
+
+8. **Edit `src/components/layout/Footer.tsx`** — import `WAYFINDER_LIVE`
+   and add the same conditional entry to `supportLinks`, after First
+   Pulse.
+
+**Owner decisions — flagged, not invented.**
+- **Volunteer minimum age.** §8.27 removed the attendee 18+ bar, so the
+  form deliberately carries **no age gate** — it collects date of birth
+  so the owner can apply whatever rule they choose. If Wayfinders must be
+  18+, or if under-18s need guardian consent, that is a follow-up
+  amendment and a line of form copy.
+- **The 7:00–9:30 AM coverage gap** and its opt-in mitigation, above.
+- The certificate's wording and issuance process sit outside the website.
+
+**Failure/empty states.** Table missing → 503 "Applications open soon."
+card (never a 500, per §8.19). Duplicate email → the calm already-applied
+card. Flag off → the closed card, and the nav entries disappear.
+
+**Reversibility.** `WAYFINDER_LIVE = false` closes applications and hides
+every nav entry in one line. Full removal means deleting the five created
+files and reverting the three nav edits.
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only);
+  `npm run build`.
+- Local dev on port 3100 (local env reaches the real project — clean up
+  after), counting with `grep -o … | wc -l`:
+  - `/wayfinder` → HTTP 200; `Guide the night.` **≥1**;
+    `certificate of service` **≥1**; `Shift A · Dusk` **≥1**;
+    `Shift B · Dawn` **≥1**
+  - `/` → `>Wayfinder<` **≥1** (nav entry present)
+- API, against the real table once the owner has run the SQL:
+  - POST a valid payload with email `wf-verify@example.com` → **201** with
+    a `WF-` reference code
+  - POST the same email again → **409** with the already-applied copy
+  - **Cleanup (mandatory):** delete that row via Supabase REST and
+    confirm zero rows remain for that email; never print the service key.
+  - If the SQL has not been run yet, the same POST must return **503**
+    `not_open` — that is a pass, not a failure, and the executor should
+    report which of the two outcomes occurred.
+- Playwright at 1280×800 and 375×812: fill and submit the form → the
+  "You're on the list." card; `scrollWidth - clientWidth === 0` on
+  `/wayfinder` **and** on `/` (the nav gains a seventh item — confirm the
+  desktop navbar does not overflow at 1280).

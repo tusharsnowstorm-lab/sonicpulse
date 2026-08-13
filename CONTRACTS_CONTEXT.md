@@ -2,7 +2,7 @@
 
 Master brief for the contracts session, which owns **every agreement the
 festival signs**: vendors, artists, venue, media, volunteers, stall-holders
-and the published attendee terms. Written 9 Aug 2026 — **the event is 47
+and the published attendee terms. Written 13 Aug 2026 — **the event is 43
 days out**.
 
 Companions: `VENUE_CONTRACT_CONTEXT.md` (venue deep-dive — site
@@ -13,7 +13,7 @@ workstream status).
 
 Currency BDT (৳); the owner sometimes writes 1,00,000 for 100,000.
 **Never invent a figure, date, or party name marked OPEN** — raise it as a
-question. Statuses are as of 9 Aug 2026; verify anything that may have moved.
+question. Statuses are as of 13 Aug 2026; verify anything that may have moved.
 
 ## 1. The organiser and the event
 
@@ -26,11 +26,11 @@ question. Statuses are as of 9 Aug 2026; verify anything that may have moved.
   contracting party — establish this before signing anything further.
 - Event: **Friday 25 September 2026, 4:00 PM → Saturday 26 September,
   9:30 AM** — 17.5 continuous hours, **one night, no second day**. Dhaka,
-  **venue TBA**. **800+ attendees, strictly 18+, NID-verified.**
+  **venue TBA**. **800+ attendees, open to all ages** (strict 18+ removed 13 Aug 2026), ID-verified at entry (NID, passport or birth certificate).
 - Two stages in sequence: Main Stage 4:00 PM – 4:30 AM, Sunrise Stage
   4:30 – 9:30 AM. Nine art installations, nine activity zones, a night
   market, a food quarter, and a **midnight fire ceremony (THE GREAT BURN)**.
-- **The event is alcohol-free** (owner decision, 9 Aug 2026): no alcohol,
+- **The event is alcohol-free** (owner decision, 13 Aug 2026): no alcohol,
   narcotics or illegal substances anywhere on the premises.
 
 ## 2. Contract register
@@ -100,7 +100,7 @@ Bangladeshi courts to read multi-year restraints narrowly.
 
 **Two live issues to resolve in this contract:**
 
-1. **"Delivered by 20 Sep" is now ambiguous.** The owner confirmed (9 Aug)
+1. **"Delivered by 20 Sep" is now ambiguous.** The owner confirmed (13 Aug)
    that **installations are fabricated off site and transported to the
    venue on festival day (25 Sep)**. So the 20 Sep milestone sensibly
    means *fabrication complete and inspected at the workshop*, with
@@ -129,7 +129,7 @@ standing space, no slack before 4 PM gates), permits, and commercial terms.
   generators, redundancy and overnight fuel. Continuous-operation
   obligations and failure remedies matter more than usual — there is no
   second day to recover a dead stage.
-- **Ground security.** 18+ enforcement and NID checks at the gate,
+- **Ground security.** ID checks at the gate (all ages since 13 Aug 2026),
   overnight coverage, marshals for two climbable structures, the ember
   line and burn perimeter at midnight, lake and pool watch. Enforcement of
   the alcohol-free and no-harassment policies is theirs; **licensed bar
@@ -164,12 +164,16 @@ standing space, no slack before 4 PM gates), permits, and commercial terms.
   guides, unpaid, receiving **certificates of service** for university
   applications. Draft as a volunteer agreement, not employment: no wage,
   no employment relationship, defined shifts and duties, code of conduct,
-  liability waiver, and what the certificate attests. **Two live issues:**
-  the event is strictly 18+ while "graduating students" may include
-  under-18s — if minors participate, that needs guardian consent and a
-  separate safeguarding position; and the certificate's signatory
-  (organiser alone or co-signed with an institution) is undecided. The
-  programme name is proposed but not yet confirmed by the owner.
+  liability waiver, and what the certificate attests. Settled 13 Aug 2026:
+  **50 Wayfinders**, **two 8-hour shifts** (Dusk 3:00 PM–11:00 PM, Dawn
+  11:00 PM–7:00 AM), certificates issued by **Dhaka Music Festival alone**,
+  open to **final-year undergraduates and HSC/A-level finishers**. The
+  programme name **WAYFINDER** is locked. **Live issue:** "graduating
+  students" may include under-18s, and while the event itself is now all
+  ages, volunteers work an unpaid overnight shift in a guest-facing role —
+  a **volunteer minimum age, and guardian consent if minors are accepted,
+  is an OPEN owner decision**. The application form collects date of birth
+  so any rule can be applied.
 - **Creator / media-pass agreements.** Currently informal barter — a free
   ticket in exchange for coverage. Paper it lightly but clearly: what
   coverage is expected (posts, stories, tagging @sonicpulsefestival),
@@ -194,7 +198,7 @@ facing contract. Every vendor agreement must be consistent with them:
   cancellation does not leave the organiser paying twice.
 - **Tickets non-transferable**; one ticket, one entry; name must match the
   NID presented at the gate.
-- **18+ only**, NID verification enforced strictly.
+- **All ages** — the strict 18+ rule was removed on 13 Aug 2026. ID verification (NID, passport or birth certificate) is still enforced at the gate. A guardian/accompaniment policy for minors is an OPEN owner decision that affects security scope, venue permit and insurance.
 - **Prohibited**: professional cameras/recording equipment, outside food
   and drinks, alcohol, narcotics and illegal substances, weapons, glass
   bottles, personal speakers.
