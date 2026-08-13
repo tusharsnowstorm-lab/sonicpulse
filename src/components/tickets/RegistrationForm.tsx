@@ -9,13 +9,7 @@ import { ticketTiers, MAX_TICKETS_PER_ORDER } from '@/data/tickets'
 
 const schema = z.object({
   fullName: z.string().min(2, 'Name must be at least 2 characters'),
-  dateOfBirth: z.string().refine((val) => {
-    const dob = new Date(val)
-    const today = new Date()
-    const age = today.getFullYear() - dob.getFullYear()
-    const m = today.getMonth() - dob.getMonth()
-    return age > 18 || (age === 18 && (m > 0 || (m === 0 && today.getDate() >= dob.getDate())))
-  }, 'You must be 18 or older to attend'),
+  dateOfBirth: z.string(),
   email: z.string().email('Enter a valid email address'),
   phone: z.string().regex(/^\+?880\d{10}$/, 'Enter a valid Bangladesh phone number (+880XXXXXXXXXX)'),
   instagramHandle: z.string().min(1, 'Instagram handle is required').regex(/^@?[\w.]+$/, 'Enter a valid Instagram handle'),

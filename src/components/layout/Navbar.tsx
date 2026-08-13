@@ -8,6 +8,7 @@ import MobileMenu from './MobileMenu'
 import { PillLink } from '@/components/ui/PillButton'
 import { TICKETS_LIVE } from '@/data/tickets'
 import { SIGNIN_LIVE } from '@/data/auth'
+import { WAYFINDER_LIVE } from '@/data/wayfinder'
 
 // Auth state is optional — if Supabase env vars aren't configured yet the
 // navbar still renders and the hamburger button still works.
@@ -167,6 +168,7 @@ const navLinks = [
   { href: '/echoes', label: 'Echoes' },
   ...(TICKETS_LIVE ? [{ href: '/tickets', label: 'Tickets' }] : []),
   { href: '/first-pulse', label: 'First Pulse' },
+  ...(WAYFINDER_LIVE ? [{ href: '/wayfinder', label: 'Wayfinder' }] : []),
   { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },
 ]

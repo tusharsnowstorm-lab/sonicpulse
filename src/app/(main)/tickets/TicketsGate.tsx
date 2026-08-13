@@ -118,7 +118,7 @@ export default function TicketsGate() {
           style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: 'rgba(255,255,255,0.65)' }}
         >
           <strong style={{ color: '#fff' }}>How it works: </strong>
-          Sign up → Register ticket with your NID → We review within 24h → Approved tickets can be downloaded with QR code.
+          Sign up → Register ticket with your ID → We review within 24h → Approved tickets can be downloaded with QR code.
         </div>
       </div>
     </div>

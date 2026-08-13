@@ -7,6 +7,7 @@ import { X, User } from 'lucide-react'
 import PillButton, { PillLink } from '@/components/ui/PillButton'
 import { TICKETS_LIVE } from '@/data/tickets'
 import { SIGNIN_LIVE } from '@/data/auth'
+import { WAYFINDER_LIVE } from '@/data/wayfinder'
 
 const navLinks = [
   { href: '/lineup', label: 'Lineup' },
@@ -14,6 +15,7 @@ const navLinks = [
   { href: '/echoes', label: 'Echoes' },
   ...(TICKETS_LIVE ? [{ href: '/tickets', label: 'Tickets' }] : []),
   { href: '/first-pulse', label: 'First Pulse' },
+  ...(WAYFINDER_LIVE ? [{ href: '/wayfinder', label: 'Wayfinder' }] : []),
   { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },
 ]

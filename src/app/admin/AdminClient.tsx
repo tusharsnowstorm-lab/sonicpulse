@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { CheckCircle, XCircle, Clock, ExternalLink } from 'lucide-react'
 import { ticketTiers } from '@/data/tickets'
 import FirstPulseTab from './FirstPulseTab'
+import WayfinderTab from './WayfinderTab'
 
 const ID_TYPE_LABELS: Record<string, string> = {
   nid: 'NID',
@@ -32,7 +33,7 @@ const TIER_LABELS: Record<string, string> = Object.fromEntries(ticketTiers.map((
 const STATUS_TABS = ['pending', 'approved', 'rejected'] as const
 
 export default function AdminClient() {
-  const [surface, setSurface] = useState<'tickets' | 'first-pulse'>('tickets')
+  const [surface, setSurface] = useState<'tickets' | 'first-pulse' | 'wayfinder'>('tickets')
   const [tickets, setTickets] = useState<Ticket[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'pending' | 'approved' | 'rejected'>('pending')
@@ -114,7 +115,7 @@ export default function AdminClient() {
       <div className="max-w-[1100px] mx-auto px-4 py-10">
         {/* Surface switcher */}
         <div className="flex gap-2 mb-8 flex-wrap">
-          {(['tickets', 'first-pulse'] as const).map((s) => (
+          {(['tickets', 'first-pulse', 'wayfinder'] as const).map((s) => (
             <button
               key={s}
               onClick={() => setSurface(s)}
@@ -126,7 +127,7 @@ export default function AdminClient() {
                 touchAction: 'manipulation',
               }}
             >
-              {s === 'tickets' ? 'Tickets' : 'First Pulse'}
+              {s === 'tickets' ? 'Tickets' : s === 'first-pulse' ? 'First Pulse' : 'Wayfinder'}
             </button>
           ))}
         </div>
@@ -173,8 +174,10 @@ export default function AdminClient() {
               </div>
             )}
           </>
-        ) : (
+        ) : surface === 'first-pulse' ? (
           <FirstPulseTab />
+        ) : (
+          <WayfinderTab />
         )}
       </div>
     </main>

@@ -34,21 +34,21 @@ export const faqs: FAQItem[] = [
   {
     id: 'age-limit',
     category: 'Event Basics',
-    question: 'What is the minimum age to attend?',
-    answer: 'You must be 18 or older to attend. Valid government-issued ID (NID) is required at entry. This is enforced strictly.',
+    question: 'Is there a minimum age to attend?',
+    answer: 'Sonic Pulse is open to all ages. Every attendee registers with a valid ID — a National ID, passport, or birth certificate — and the name on the ticket must match the ID presented at the gate.',
   },
   // Tickets & Registration
   {
     id: 'why-nid',
     category: 'Tickets & Registration',
-    question: 'Why do I need to provide my National ID?',
-    answer: 'NID verification helps us maintain a safe event and is required under our venue permit conditions. Your data is stored securely and used only for this event.',
+    question: 'Why do I need to provide an ID?',
+    answer: 'ID verification helps us keep the event safe and is required under our venue permit conditions. We accept a National ID, passport, or birth certificate. Your data is stored securely and used only for this event.',
   },
   {
     id: 'nid-data-protection',
     category: 'Tickets & Registration',
-    question: 'How is my NID data stored and protected?',
-    answer: 'Your NID document is stored in a private, encrypted cloud storage — it is never publicly accessible. Only authorised staff can access it, and access is logged. We comply with Bangladesh Digital Security Act obligations.',
+    question: 'How is my ID data stored and protected?',
+    answer: 'Your ID document is stored in a private, encrypted cloud storage — it is never publicly accessible. Only authorised staff can access it, and access is logged. We comply with Bangladesh Digital Security Act obligations.',
   },
   {
     id: 'ticket-transfer',
@@ -79,7 +79,7 @@ export const faqs: FAQItem[] = [
     id: 'what-to-bring',
     category: 'At the Event',
     question: 'What should I bring?',
-    answer: 'Your printed or digital ticket (QR code), your original NID (must match registration), comfortable clothes, ear protection (optional but recommended), and your energy.',
+    answer: 'Your printed or digital ticket (QR code), your original ID matching your registration, comfortable clothes, ear protection (optional but recommended), and your energy.',
   },
   {
     id: 'prohibited',
