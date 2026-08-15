@@ -4,18 +4,16 @@ import { timetableRows } from '@/data/lineup'
 function Row({ row }: { row: (typeof timetableRows)[number] }) {
   const inner = (
     <div
-      className="grid items-baseline"
+      className="flex flex-wrap items-baseline gap-y-1 gap-x-[18px] px-4 py-[15px] sm:grid sm:px-6"
       style={{
         gridTemplateColumns: '170px 1fr auto',
-        gap: 18,
-        padding: '15px 24px',
         background: row.ritual ? 'linear-gradient(90deg, var(--accent-faint), transparent 55%)' : 'transparent',
       }}
     >
-      <span style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, fontSize: 14, letterSpacing: '0.04em', color: '#fff' }}>
+      <span className="order-1 sm:order-none" style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, fontSize: 14, letterSpacing: '0.04em', color: '#fff' }}>
         {row.time}
       </span>
-      <span>
+      <span className="order-3 basis-full min-w-0 sm:order-none sm:basis-auto">
         <span style={{ fontWeight: 700, fontSize: 15, color: '#fff' }}>{row.name}</span>
         {row.sub && (
           <span style={{ display: 'block', fontWeight: 400, fontSize: 12.5, color: 'var(--text-dim)', marginTop: 2 }}>
@@ -24,6 +22,7 @@ function Row({ row }: { row: (typeof timetableRows)[number] }) {
         )}
       </span>
       <span
+        className="order-2 ml-auto whitespace-nowrap sm:order-none sm:ml-0"
         style={{
           fontSize: 11,
           letterSpacing: '0.16em',
