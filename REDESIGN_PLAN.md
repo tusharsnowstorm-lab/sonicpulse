@@ -2560,3 +2560,114 @@ comparison date in both the client and server checks below.
 **Verification:** date of birth yielding age 16 → 400 "Wayfinders must
 be 17 or older to apply." on both client (before submit) and server;
 age exactly 17 → passes.
+
+### 8.30 Timetable clipping on narrow phones — responsive NightTimetable rows (added 14 Aug 2026, owner-reported)
+
+Owner screenshot from a Samsung Galaxy S25 (≈360 CSS px viewport): on
+the lineup timetable, act names wrap word-per-line into a sliver column
+("Fly / on / the / Wall"), tags are cut off at the right edge ("NIGH…",
+"RITU…"), and there is no horizontal scroll to reach them.
+
+**Reproduced and measured (14 Aug 2026, local dev + Playwright):**
+
+| Viewport | Rows clipped (of 9) | Worst overhang | Page scrollWidth − clientWidth |
+| --- | --- | --- | --- |
+| 360 px | 4 | 29 px | 0 |
+| 375 px | 1 | 15 px | 0 |
+| 412 px | 0 | 0 | 0 |
+
+**Root cause:** `src/components/lineup/NightTimetable.tsx` lays every
+row as `gridTemplateColumns: '170px 1fr auto'` with `gap: 18` and
+`padding: '15px 24px'`. On a 360 px viewport the fixed 170 px time
+column + 48 px padding + 36 px of gaps + the tag's natural width leave
+the name column ~60 px, and the row's minimum content width exceeds the
+card, whose `overflow: hidden` (needed for the rounded corners) clips
+the excess with no scrollbar.
+
+**Why the §4 gates missed it:** the protocol checks
+`scrollWidth - clientWidth === 0` at page level — which passed at every
+width above, because the clipping happens *inside* an
+`overflow: hidden` container. **Protocol note, extending §4:** mobile
+gates on content inside rounded/overflow-hidden cards must also assert
+element-edge visibility (rightmost child's `getBoundingClientRect().right`
+≤ viewport width), not just page scroll. The verification gate below is
+the template.
+
+**The fix — one file, `src/components/lineup/NightTimetable.tsx`.**
+Below `sm` (640 px) the row becomes a two-line stack: line 1 is time
+(left) and tag (right), line 2 is the name with its sub-line at full
+width. At `sm` and above the current three-column grid renders exactly
+as today. Implemented with flex-wrap + order utilities so the same
+three children serve both layouts — no duplication, no new components.
+
+Replace the `inner` markup of `Row` with, verbatim (only classNames and
+the container's style change; all text/color/font styles stay as they
+are today):
+
+```tsx
+const inner = (
+  <div
+    className="flex flex-wrap items-baseline gap-y-1 gap-x-[18px] px-4 py-[15px] sm:grid sm:px-6"
+    style={{
+      gridTemplateColumns: '170px 1fr auto',
+      background: row.ritual ? 'linear-gradient(90deg, var(--accent-faint), transparent 55%)' : 'transparent',
+    }}
+  >
+    <span className="order-1 sm:order-none" style={{ fontVariantNumeric: 'tabular-nums', fontWeight: 700, fontSize: 14, letterSpacing: '0.04em', color: '#fff' }}>
+      {row.time}
+    </span>
+    <span className="order-3 basis-full min-w-0 sm:order-none sm:basis-auto">
+      <span style={{ fontWeight: 700, fontSize: 15, color: '#fff' }}>{row.name}</span>
+      {row.sub && (
+        <span style={{ display: 'block', fontWeight: 400, fontSize: 12.5, color: 'var(--text-dim)', marginTop: 2 }}>
+          {row.sub}
+        </span>
+      )}
+    </span>
+    <span
+      className="order-2 ml-auto whitespace-nowrap sm:order-none sm:ml-0"
+      style={{
+        fontSize: 11,
+        letterSpacing: '0.16em',
+        textTransform: 'uppercase',
+        fontWeight: 600,
+        color: row.ritual ? 'var(--accent-magenta)' : 'var(--text-label-muted)',
+      }}
+    >
+      {row.tag}
+    </span>
+  </div>
+)
+```
+
+How it resolves each symptom: the name gets `basis-full` on mobile (a
+full-width second line — no more sliver column), the tag sits on line 1
+hard-right via `ml-auto` inside the viewport (no more clipping), the
+fixed 170 px column simply does not exist below `sm`, and mobile
+horizontal padding drops 24→16 px for breathing room. The inline
+`gridTemplateColumns` is inert below `sm` (the container is flex there)
+and restores today's exact desktop layout at `sm+` where `sm:grid`
+applies. The ritual-row gradient is on the container and is unaffected.
+
+**Scope fences.** `timetableRows` data, the card wrapper, the caption
+line under the table, and both consuming pages (`/lineup`,
+`/schedule`) are untouched. No other component changes.
+
+**Reversibility.** Single-component markup change; revert the one JSX
+block to restore the old behaviour.
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Playwright clip probe on **both** `/lineup` and `/schedule` at
+  **360×800, 375×812, 412×915**: select all row containers (the divs
+  whose inline `gridTemplateColumns` is `'170px 1fr auto'`) and assert
+  for every row that `lastElementChild.getBoundingClientRect().right`
+  ≤ `document.documentElement.clientWidth + 1` → **0 clipped rows at
+  every width** (baseline before fix: 4 clipped at 360). Also
+  `scrollWidth - clientWidth === 0` at each width.
+- Desktop regression at 1280×800: for the same row containers assert
+  `getComputedStyle(row).display === 'grid'` and 0 clipped rows —
+  today's desktop layout must be pixel-equivalent in structure.
+- Content greps unchanged pages: `/lineup` → `Night Rituals` ≥1,
+  `Starside Hours` ≥1 (rows all render).
