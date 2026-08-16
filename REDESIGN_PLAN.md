@@ -2820,3 +2820,56 @@ branches run before the DB call and are fully testable.
 - Live, after ship **and** after the owner runs the SQL: POST a test
   application with `"gender": "prefer_not_to_say"` → 201; delete the
   row via the dashboard afterwards (this session cannot — §8.19).
+
+### 8.32 Admin access while sign-in is off (added 14 Aug 2026, owner-requested)
+
+Owner asked how to reach `/admin` while `SIGNIN_LIVE = false` (§8.15),
+and to allow admin login for **tushar.snowstorm@gmail.com**.
+
+**Diagnosis: no code change is needed — both mechanisms already exist.**
+
+1. **`/admin` gating is independent of `SIGNIN_LIVE`.** `src/app/admin/page.tsx`
+   checks only two things: is there a signed-in user, and is that
+   user's email in the `ADMIN_EMAILS` env var. It does not read
+   `SIGNIN_LIVE` at all. The flag only hides the public "Sign in" entry
+   points (nav/menu/footer) and swaps the `/login` card's content
+   (§8.15) — it never blocks authentication itself.
+2. **The sign-in card already has an escape hatch**, built in §8.15
+   specifically for this situation: `/login?open=1` shows the full
+   "Continue with Google" card regardless of the flag
+   (`signinOpen = SIGNIN_LIVE || signinOverride`, read client-side from
+   the URL). This is intentionally undocumented on-site, not secret —
+   §8.15 already recorded it as "a soft switch, not a security
+   boundary."
+
+**So reaching `/admin` is two steps, both owner-side, zero deploys:**
+
+1. **Vercel → sonicpulse project → Settings → Environment Variables →
+   `ADMIN_EMAILS`.** Add `tushar.snowstorm@gmail.com` — comma-separated
+   if other admin emails already exist, e.g.
+   `existing@example.com,tushar.snowstorm@gmail.com`. Apply to
+   Production (and Preview if used). **Redeploy** — env edits do not
+   take effect until the next deploy, same rule as every other env var
+   in this project (§8.16, §8.19).
+2. **Visit `sonicpulsefestival.com/login?open=1`** → "Continue with
+   Google" → sign in with the Google account for
+   tushar.snowstorm@gmail.com. The callback lands on `/dashboard` by
+   default (`src/app/auth/callback/route.ts`, unless the email is also
+   in `GATE_STAFF_EMAILS`, which sends it to `/gate` instead — keep the
+   two lists mutually exclusive for this address unless gate access is
+   also wanted). From there, navigate to **`/admin`** directly.
+
+Once signed in, ordinary navigation works normally regardless of the
+flag: the desktop navbar's Account link and the footer's Dashboard link
+are gated on `user`, not on `SIGNIN_LIVE` (`src/components/layout/Navbar.tsx`,
+`Footer.tsx` — "existing signed-in sessions are unaffected," per §8.15).
+The session persists (Supabase cookie) until sign-out, so `?open=1` is
+only needed once per browser/device.
+
+**Scope fences.** No files touched. `SIGNIN_LIVE`, the closed-card copy,
+and every other §8.15 behaviour are unchanged — this section is a
+diagnosis plus an owner runbook, not a code amendment.
+
+**Verification (owner, after both steps).** `/admin` loads the tickets
+tab (not a redirect to `/` or `/login`) and the Wayfinder/First Pulse
+tabs are reachable via the surface switcher.
