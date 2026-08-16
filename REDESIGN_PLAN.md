@@ -2671,3 +2671,152 @@ block to restore the old behaviour.
   today's desktop layout must be pixel-equivalent in structure.
 - Content greps unchanged pages: `/lineup` → `Night Rituals` ≥1,
   `Starside Hours` ≥1 (rows all render).
+
+### 8.31 Wayfinder gender field (added 14 Aug 2026, owner-requested)
+
+The owner asked for a gender breakdown of Wayfinder applicants; the
+form never collected gender (the §8.28 spec did not include it), so no
+breakdown exists. This amendment adds the field.
+
+**Planner decisions, made now:**
+
+- **Required select, three options** — "Female", "Male", "Prefer not to
+  say" (stored as `female` / `male` / `prefer_not_to_say`). Required
+  rather than optional so the breakdown has no silent blanks, with
+  "Prefer not to say" as the no-disclosure escape valve — a volunteer
+  sign-up must never force disclosure, but an optional field would make
+  blanks and refusals indistinguishable. This deliberately differs from
+  the ticket flow's required male/female binary: Wayfinder is a
+  student-facing programme, and the operational need (shift balance,
+  safeguarding) is served equally well with the third option.
+- **Existing applications keep `gender = NULL`** ("not stated") — the
+  data cannot be recovered retroactively. If the owner wants it for
+  early applicants, contacting them is an off-site task, not code.
+- **Deploy-order independence.** The live table needs an
+  `ALTER TABLE`; the owner may run it before or after the code ships.
+  If the column is missing when the API inserts, PostgREST fails with
+  code `PGRST204` ("column not found" — the column sibling of §8.19's
+  `PGRST205`); the API then **retries the insert without the gender
+  field** so an application is never lost to a lagging migration. Same
+  graceful-degradation discipline as §8.16/§8.19.
+
+**Pre-staged by the planner:** `supabase-wayfinder-gender.sql` at the
+repo root (a single additive `alter table … add column if not exists`
+with a check constraint permitting NULL). **Owner runs it in the
+project whose ref is `ytgwocaresxghgyiwikr`.**
+
+**Files: three edits (the SQL file already exists).**
+
+1. **`src/components/wayfinder/WayfinderForm.tsx`**
+   - Add `gender: ''` to `initialForm`.
+   - Insert a new field block between "Date of birth" and "Shift
+     preference", exactly matching the existing select pattern:
+
+```tsx
+      <div>
+        <label style={labelStyle} htmlFor="wf-gender">Gender <Required /></label>
+        <select id="wf-gender" style={fieldStyle} required value={form.gender} onChange={set('gender')}>
+          <option value="">Select one</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="prefer_not_to_say">Prefer not to say</option>
+        </select>
+      </div>
+```
+
+2. **`src/app/api/wayfinder/route.ts`**
+   - Parse `const gender = (body.gender ?? '').trim()` with the other
+     fields; add `!gender` to the required-fields check; add a
+     constant `const GENDERS = ['female', 'male', 'prefer_not_to_say']`
+     beside `LEVELS`/`SHIFTS` and include
+     `!GENDERS.includes(gender)` in the enum-validation check.
+   - Include `gender` in the insert payload.
+   - **Missing-column fallback**, immediately after the insert and
+     before the existing `if (dbError)` branches — verbatim:
+
+```ts
+    let insertError = dbError
+    if (insertError && insertError.code === 'PGRST204' && /gender/.test(insertError.message ?? '')) {
+      // Gender column not migrated yet (supabase-wayfinder-gender.sql
+      // not run) — never lose an application to a lagging migration.
+      console.error('Wayfinder: gender column missing — run supabase-wayfinder-gender.sql. Inserting without gender.')
+      const retry = await supabase.from('wayfinder_applications').insert({
+        full_name: fullName,
+        email,
+        phone,
+        institution,
+        level,
+        graduation_year: graduationYear,
+        date_of_birth: dateOfBirth || null,
+        shift_preference: shiftPreference,
+        stay_to_close: stayToClose,
+        motivation: motivation || null,
+        emergency_contact_name: emergencyContactName,
+        emergency_contact_phone: emergencyContactPhone,
+        instagram_handle: instagramHandle || null,
+        notes: notes || null,
+        status: 'pending',
+        reference_code: referenceCode,
+      })
+      insertError = retry.error
+    }
+```
+
+     …and the subsequent branches test `insertError` instead of
+     `dbError` (rename in place; the `42P01 || PGRST205`, `23505`,
+     logging and 500 branches are otherwise unchanged).
+
+3. **`src/app/admin/WayfinderTab.tsx`**
+   - Extend the `Application` type with
+     `gender: 'female' | 'male' | 'prefer_not_to_say' | null`.
+   - Add a labels map beside the existing ones:
+     `const GENDER_LABEL: Record<string, string> = { female: 'Female', male: 'Male', prefer_not_to_say: 'Prefer not to say' }`.
+   - In the second detail grid (the `grid-cols-1 sm:grid-cols-2` block
+     with Emergency contact and Date of birth), add a third cell,
+     exactly in the established cell pattern, label "Gender", value
+     `{app.gender ? GENDER_LABEL[app.gender] : '—'}`.
+
+**Scope fences.** First Pulse, tickets, and the dashboard gender field
+are untouched. `supabase-wayfinder.sql` is history — do not edit it;
+the new column ships only via `supabase-wayfinder-gender.sql`. No
+change to `wayfinder.ts` data, nav, or page copy.
+
+**Failure/empty states.** Column missing → fallback insert without
+gender (application saved, loud server log naming the SQL file); admin
+shows "—" for any application without a stored gender (legacy rows and
+fallback-era rows alike).
+
+**Reversibility.** Remove the three code edits; the column can stay
+(nullable, harmless) or be dropped with
+`alter table public.wayfinder_applications drop column gender;`.
+
+**For the owner's original question**, once the column is live —
+breakdown SQL to run in the dashboard:
+
+```sql
+select coalesce(gender, 'not stated') as gender, count(*)
+from public.wayfinder_applications
+group by 1 order by 2 desc;
+```
+
+**Verification gates (executor).** Local env points at the wrong
+project (§8.19), so the table is missing locally and DB-dependent
+paths return 503 — that is expected and is itself a pass; validation
+branches run before the DB call and are fully testable.
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Local dev on port 3100:
+  - POST valid payload **without** `gender` → 400 "All required fields
+    must be filled in."
+  - POST with `"gender": "nonsense"` → 400 same copy.
+  - POST with `"gender": "female"` and all required fields → 503
+    `not_open` locally (reaches the DB call = validation passed).
+- Playwright at 375×812: `/wayfinder` renders a `#wf-gender` select
+  with exactly 4 options ("Select one", "Female", "Male", "Prefer not
+  to say"); `scrollWidth - clientWidth === 0` at 375×812 and 1280×800.
+- Source grep: `grep -c 'PGRST204' src/app/api/wayfinder/route.ts` → ≥1
+  (fallback present); `grep -c 'gender' src/app/admin/WayfinderTab.tsx`
+  → ≥3.
+- Live, after ship **and** after the owner runs the SQL: POST a test
+  application with `"gender": "prefer_not_to_say"` → 201; delete the
+  row via the dashboard afterwards (this session cannot — §8.19).
