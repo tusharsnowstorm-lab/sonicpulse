@@ -8,6 +8,7 @@ type Application = {
   phone: string
   institution: string
   level: 'undergraduate_final' | 'hsc_alevel' | 'other'
+  gender: 'female' | 'male' | 'prefer_not_to_say' | null
   graduation_year: number | null
   date_of_birth: string | null
   shift_preference: 'dusk' | 'dawn' | 'either'
@@ -36,6 +37,12 @@ const LEVEL_LABEL: Record<Application['level'], string> = {
   undergraduate_final: 'Final-year undergraduate',
   hsc_alevel: 'HSC / A-level finisher',
   other: 'Other',
+}
+
+const GENDER_LABEL: Record<string, string> = {
+  female: 'Female',
+  male: 'Male',
+  prefer_not_to_say: 'Prefer not to say',
 }
 
 const SHIFT_LABEL: Record<string, string> = {
@@ -200,6 +207,10 @@ export default function WayfinderTab() {
                         <p className="text-sm" style={{ color: '#fff' }}>{app.date_of_birth}</p>
                       </div>
                     )}
+                    <div>
+                      <p className="text-xs mb-1" style={{ color: 'var(--text-label-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Gender</p>
+                      <p className="text-sm" style={{ color: '#fff' }}>{app.gender ? GENDER_LABEL[app.gender] : '—'}</p>
+                    </div>
                   </div>
 
                   {app.notes && (

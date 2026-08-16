@@ -34,6 +34,7 @@ const initialForm = {
   level: '',
   graduationYear: '',
   dateOfBirth: '',
+  gender: '',
   shiftPreference: '',
   motivation: '',
   emergencyContactName: '',
@@ -187,6 +188,16 @@ export default function WayfinderForm() {
       <div>
         <label style={labelStyle} htmlFor="wf-dob">Date of birth <Required /></label>
         <input id="wf-dob" type="date" style={fieldStyle} required value={form.dateOfBirth} onChange={set('dateOfBirth')} />
+      </div>
+
+      <div>
+        <label style={labelStyle} htmlFor="wf-gender">Gender <Required /></label>
+        <select id="wf-gender" style={fieldStyle} required value={form.gender} onChange={set('gender')}>
+          <option value="">Select one</option>
+          <option value="female">Female</option>
+          <option value="male">Male</option>
+          <option value="prefer_not_to_say">Prefer not to say</option>
+        </select>
       </div>
 
       <div>

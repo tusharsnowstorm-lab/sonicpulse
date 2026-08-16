@@ -8,6 +8,7 @@ function generateRef(): string {
 
 const LEVELS = ['undergraduate_final', 'hsc_alevel', 'other']
 const SHIFTS = ['dusk', 'dawn', 'either']
+const GENDERS = ['female', 'male', 'prefer_not_to_say']
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,6 +19,7 @@ export async function POST(req: NextRequest) {
     const phone = (body.phone ?? '').trim()
     const institution = (body.institution ?? '').trim()
     const level = (body.level ?? '').trim()
+    const gender = (body.gender ?? '').trim()
     const shiftPreference = (body.shiftPreference ?? '').trim()
     const emergencyContactName = (body.emergencyContactName ?? '').trim()
     const emergencyContactPhone = (body.emergencyContactPhone ?? '').trim()
@@ -35,6 +37,7 @@ export async function POST(req: NextRequest) {
       !phone ||
       !institution ||
       !level ||
+      !gender ||
       !shiftPreference ||
       !dateOfBirth ||
       !emergencyContactName ||
@@ -43,7 +46,7 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: 'All required fields must be filled in.' }, { status: 400 })
     }
 
-    if (!LEVELS.includes(level) || !SHIFTS.includes(shiftPreference)) {
+    if (!LEVELS.includes(level) || !SHIFTS.includes(shiftPreference) || !GENDERS.includes(gender)) {
       return Response.json({ error: 'All required fields must be filled in.' }, { status: 400 })
     }
 
@@ -80,6 +83,7 @@ export async function POST(req: NextRequest) {
       phone,
       institution,
       level,
+      gender,
       graduation_year: graduationYear,
       date_of_birth: dateOfBirth || null,
       shift_preference: shiftPreference,
@@ -93,19 +97,45 @@ export async function POST(req: NextRequest) {
       reference_code: referenceCode,
     })
 
-    if (dbError) {
+    let insertError = dbError
+    if (insertError && insertError.code === 'PGRST204' && /gender/.test(insertError.message ?? '')) {
+      // Gender column not migrated yet (supabase-wayfinder-gender.sql
+      // not run) — never lose an application to a lagging migration.
+      console.error('Wayfinder: gender column missing — run supabase-wayfinder-gender.sql. Inserting without gender.')
+      const retry = await supabase.from('wayfinder_applications').insert({
+        full_name: fullName,
+        email,
+        phone,
+        institution,
+        level,
+        graduation_year: graduationYear,
+        date_of_birth: dateOfBirth || null,
+        shift_preference: shiftPreference,
+        stay_to_close: stayToClose,
+        motivation: motivation || null,
+        emergency_contact_name: emergencyContactName,
+        emergency_contact_phone: emergencyContactPhone,
+        instagram_handle: instagramHandle || null,
+        notes: notes || null,
+        status: 'pending',
+        reference_code: referenceCode,
+      })
+      insertError = retry.error
+    }
+
+    if (insertError) {
       // Table not created yet — degrade gracefully instead of a hard 500.
       // PostgREST reports a missing table as PGRST205; the raw Postgres
       // code (42P01) only surfaces via direct SQL. Both are checked.
-      if (dbError.code === '42P01' || dbError.code === 'PGRST205') {
+      if (insertError.code === '42P01' || insertError.code === 'PGRST205') {
         return Response.json({ error: 'not_open', message: 'Applications open soon.' }, { status: 503 })
       }
       // Duplicate email (unique index on lower(email))
-      if (dbError.code === '23505') {
+      if (insertError.code === '23505') {
         return Response.json({ error: "You've already applied — the application we have on file is the one that counts." }, { status: 409 })
       }
-      console.error('Wayfinder DB insert error:', dbError.code, dbError.message, dbError.details)
-      if (/api key|jwt|authoriz/i.test(dbError.message ?? '')) {
+      console.error('Wayfinder DB insert error:', insertError.code, insertError.message, insertError.details)
+      if (/api key|jwt|authoriz/i.test(insertError.message ?? '')) {
         console.error('Wayfinder: Supabase rejected the server credentials — re-paste SUPABASE_SERVICE_ROLE_KEY (and NEXT_PUBLIC_SUPABASE_URL) in Vercel env, then redeploy. See REDESIGN_PLAN.md §8.19.')
       }
       return Response.json({ error: 'Something went wrong on our end. Try again in a minute, or email your application to hello@sonicpulsefestival.com.' }, { status: 500 })
