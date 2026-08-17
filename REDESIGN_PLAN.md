@@ -2946,3 +2946,170 @@ follow in §8.34 under the companion-file maintenance rules.
 **Verification for the artifact build (when it happens):** page opens
 locally in a browser; every image loads from the repo path; grep counts
 for all twelve lockups ≥1; no external network requests in the HTML.
+
+### 8.34 The Twelve Echoes — build architecture (added 17 Aug 2026, owner-decided)
+
+Owner decisions, superseding §8.33 on three points:
+- **THE NINE ECHOES becomes THE TWELVE ECHOES.** The owner chose option
+  B knowingly; the §8.33 "Three Murmurs" tier is dead. THE TWELVE
+  ECHOES is now the locked name; every "Nine Echoes"/"nine" reference
+  site-wide is renamed by this amendment.
+- **`CREATOR_BRIEF.html` will not be built** — the website itself
+  serves as the shareable lore reference. §8.33's artifact section is
+  void; its lesson (commit shareable deliverables) stands.
+- **The vendor conversation has already happened** — §8.33's contract
+  flag is resolved; commercial terms remain OPEN for the finance file.
+
+Final names (owner-locked): **SWAYBLOOM · The Four Swings**,
+**OVERSTORY · The Woven Crossing**, **SHOAL · The School of Light**.
+
+**Planner decision — trail renumbering, spatial not appended.** The
+echoes are "gate to burn, in trail order"; the three new pieces sit
+mid-trail (swings by the walkway, the fish-light at the lake shore
+where its lore surfaces, the net in the grove canopy above Mycelia),
+so appending them as X–XII would break the trail's logic. The trail
+renumbers to: I COILGATE (The Gate) · II GLOWTIDE (The Walkway) ·
+**III SWAYBLOOM (The Wayside)** · IV EVENT HORIZON (The Bridge) ·
+**V SHOAL (The Shore)** · VI MYCELIA (Overhead) · **VII OVERSTORY (The
+Canopy)** · VIII EMBERHART (The Keeper) · IX CHROMA (The Climb) ·
+X THE EMPTY THRONE (The Overlook) · XI CLOUD NINE (The Rest) ·
+XII ICARUS (The Finale). Ids and image filenames of existing echoes do
+not change — only `roman` and array position; ICARUS ending the trail
+as the twelfth that burns is the point.
+
+**Pre-staged by the planner (already committed):**
+`public/images/echoes/swaybloom.webp`, `overstory.webp`, `shoal.webp`
+(928×1152 concept renders; if the owner later supplies 4k upscales,
+they replace these files under the same names, no code change).
+
+**Files: five code edits + four companion edits.**
+
+1. **`src/data/echoes.ts`** — header comment becomes
+   `/** The Twelve Echoes — gate to burn, in trail order. */`. The
+   array is reordered/renumbered to the trail above: existing entries
+   keep every field except `roman` and `phase` (phases keep their
+   existing names; only the three new phases are new). Insert the three
+   new entries at positions III, V, VII, verbatim:
+
+```ts
+  {
+    id: 'swaybloom',
+    roman: 'III',
+    phase: 'The Wayside',
+    name: 'SWAYBLOOM',
+    tail: 'The Four Swings',
+    where: 'Beside the Glowtide walkway — four arches in a row',
+    lore: 'Four gardens that refused to stay planted. The night the Signal fell, everything that heard it learned to move — and the gardens listened longest. Now they swing: four bamboo arches wearing wreaths of living flowers, swaying to the same slow rhythm the Glowtide jellies migrate to. Sit, and the garden takes you with it.',
+    onSite: 'Four bamboo arch swings wrapped in fresh flower wreaths, lantern-lit, petals loose in the air.',
+    image: '/images/echoes/swaybloom.webp',
+  },
+```
+
+```ts
+  {
+    id: 'shoal',
+    roman: 'V',
+    phase: 'The Shore',
+    name: 'SHOAL',
+    tail: 'The School of Light',
+    where: 'The lake shore, past the bridge — stand inside the light',
+    lore: 'The boat crews of Styx swear the water under Event Horizon plays a note nothing on land does. The Shoal is where that note surfaced: a school of fish hanging mid-air above a bowl of still water, swimming in the light that pours through them and casting their river across the ground. Stand in the cascade and you stand in the school.',
+    onSite: 'A bamboo pyramid of hanging translucent fish above a water bowl — light falls through them and floods the ground in moving colour.',
+    image: '/images/echoes/shoal.webp',
+  },
+```
+
+```ts
+  {
+    id: 'overstory',
+    roman: 'VII',
+    phase: 'The Canopy',
+    name: 'OVERSTORY',
+    tail: 'The Woven Crossing',
+    where: 'Strung through the grove branches — shoes off, walk up',
+    lore: 'Mycelia dreams below the grass; the Overstory is where the dream surfaces. The forest wove its threads into a crossing strung branch to branch, so the ground-bound could visit. Walk it slowly — the trees are carrying you, and they know it.',
+    onSite: 'A hand-woven walkable net laced through the grove canopy, edges marked in warm string light.',
+    image: '/images/echoes/overstory.webp',
+  },
+```
+
+   Renumbering of existing entries: EVENT HORIZON `roman: 'IV'`,
+   MYCELIA `'VI'`, EMBERHART `'VIII'`, CHROMA `'IX'`, THE EMPTY THRONE
+   `'X'`, CLOUD NINE `'XI'`, ICARUS `'XII'`. COILGATE and GLOWTIDE
+   unchanged.
+
+2. **`src/data/activities.ts`** — four copy touches, verbatim swaps:
+   `(Echo IX)` → `(Echo XII)` (Great Burn); `Doubles as Echo VIII in
+   the lore` → `Doubles as Echo XI in the lore` (Cloud Nine);
+   `(Echo III)` → `(Echo IV)` (Styx); `miniatures of the Nine Echoes`
+   → `miniatures of the Twelve Echoes` (Bazaar).
+
+3. **`src/app/(main)/echoes/page.tsx`** — metadata title
+   `'The Twelve Echoes — Sonic Pulse'`; metadata description
+   `'Twelve installations, one lore — gate to burn.'`; PageHeader
+   title `"The Twelve Echoes"`; sub becomes
+   `` `Twelve installations, one lore — walk them all before sunrise.${CONCEPT_ART_NOTE_LIVE ? '*' : ''}` ``;
+   in the founding-myth paragraph, `into nine echoes` → `into twelve
+   echoes` (single word swap; the rest of the myth is untouched).
+
+4. **`src/components/home/EchoesTeaser.tsx`** — `Nine towering
+   installations, one founding myth.` → `Twelve towering
+   installations, one founding myth.`; `Walk all nine echoes →` →
+   `Walk all twelve echoes →`. (The teaser's `featured` slice logic is
+   untouched — it still shows the first three with images, which after
+   reordering are COILGATE, GLOWTIDE, SWAYBLOOM.)
+
+5. **`src/data/concept-art.ts`** — comment only: `Nine Echoes` →
+   `Twelve Echoes`.
+
+6. **`EVENT_CONTEXT.md`** — three edits: "9 large-scale themed art
+   installations (\"The Nine Echoes\")" → "12 large-scale themed art
+   installations (\"The Twelve Echoes\")"; the section heading "The
+   Nine Echoes (installation trail, gate → ritual ground)" → "The
+   Twelve Echoes (installation trail, gate → ritual ground)"; the
+   numbered list gains the three new pieces at positions 3, 5, 7 with
+   one-line descriptions matching the data file and renumbers the rest
+   to match the trail above.
+
+7. **`VENUE_CONTRACT_CONTEXT.md`** — §1 bullet "Nine large-scale art
+   installations" → "Twelve large-scale art installations"; §2 table
+   gains one row: "Flat ground near walkway + grove rigging + shore
+   placement | SWAYBLOOM swings, OVERSTORY canopy net, SHOAL light
+   pyramid (three additional builds, vendor engaged) | Hard".
+8. **`FINANCE_CONTEXT.md`** — §4 gains one line under known remaining
+   scope: "Three additional Echoes — SWAYBLOOM (four swings), OVERSTORY
+   (canopy net), SHOAL (fish-light pyramid): vendor engaged, terms
+   **OPEN**."
+9. **`OPS_CONTEXT.md`** — workstream 2 gains one sentence: "Three
+   further installations (SWAYBLOOM, OVERSTORY, SHOAL) added 17 Aug —
+   vendor engaged; terms, build timeline and load-in impact OPEN."
+
+**Scope fences.** `EchoPanel.tsx` is data-driven — no edit. Emails,
+admin, FAQ, JSON-LD, nav: untouched. The OVERSTORY net and CLOUD NINE
+nets are different structures; no copy conflates them.
+
+**Failure/empty states.** None new — all three entries ship with
+committed images, so the no-image placeholder path isn't exercised.
+
+**Reversibility.** Revert the five code edits and delete the three
+webp files; companion edits revert with them.
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only
+  — 7 errors / 9 warnings); `npm run build`.
+- Local dev on port 3100, counting with `grep -o … | wc -l`:
+  - `/echoes` → `The Twelve Echoes` ≥1, `SWAYBLOOM` ≥1, `OVERSTORY` ≥1,
+    `SHOAL` ≥1, `The Four Swings` ≥1, `Nine Echoes` **0**
+  - `/` → `twelve echoes` ≥1, `Twelve towering` ≥1
+  - `/activities` → `Echo XII` ≥1, `Echo XI` ≥1, `Echo IV` ≥1,
+    `Nine Echoes` **0**
+- Roman order sanity: on `/echoes`, the panels render I…XII in trail
+  order — assert via grep that `>III<`-adjacent markup or the rendered
+  sequence includes SWAYBLOOM before EVENT HORIZON (mechanical check:
+  in `src/data/echoes.ts`, `grep -n "roman"` lists I,II,III,IV,V,VI,
+  VII,VIII,IX,X,XI,XII in file order).
+- Images: `curl -o /dev/null -w '%{http_code}'` for
+  `/images/echoes/swaybloom.webp`, `overstory.webp`, `shoal.webp` →
+  200 each.
+- Playwright at 1280×800 and 375×812:
+  `scrollWidth - clientWidth === 0` on `/echoes` and `/`.
