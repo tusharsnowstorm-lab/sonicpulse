@@ -82,7 +82,7 @@ agreed blueprint)**.
 
 ## 4. Known remaining physical scope (all OPEN — no vendor, no numbers)
 
-- The other three Echoes: EVENT HORIZON (bridge-of-light dressing), CLOUD
+- The other three Echoes: EVENT HORIZON (portal-of-light dressing), CLOUD
   NINE (nine guest-rated net bays), ICARUS (monumental kite, deliberately
   burned at midnight — a consumable build plus burn-crew/fire-safety cost).
 - Three additional Echoes — SWAYBLOOM (four swings), OVERSTORY (canopy

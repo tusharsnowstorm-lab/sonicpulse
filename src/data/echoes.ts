@@ -48,9 +48,9 @@ export const echoes: Echo[] = [
   {
     id: 'event-horizon',
     roman: 'IV',
-    phase: 'The Bridge',
+    phase: 'The Portal',
     name: 'EVENT HORIZON',
-    tail: 'Bridge of Light',
+    tail: 'Portal of Light',
     where: 'The short bridge across the lake, into the alcove',
     lore: 'A bridge strung with so much light it stops being a bridge. Cross it with a question and the alcove on the other side answers quietly. Everyone comes back across the Horizon a little lighter than they went.',
     onSite: 'Tunnel-of-light dressing over the existing bridge; the Styx boats pass beneath.',

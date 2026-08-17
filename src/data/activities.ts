@@ -62,7 +62,7 @@ export const activities: Activity[] = [
     name: 'STYX',
     tail: 'The Silent Ferry',
     hook: 'Glide black water in a glowing boat between carved stone lanterns. The quietest set of the night is out here.',
-    extended: 'Circuit-lit boats, two to four seekers each, drifting a channel of carved stone lanterns. Mist on the water, the far stage reduced to a heartbeat. The route passes under Event Horizon, the bridge of light (Echo IV) — and boat crews swear the water under the bridge plays a note nothing on land does.',
+    extended: 'Circuit-lit boats, two to four seekers each, drifting a channel of carved stone lanterns. Mist on the water, the far stage reduced to a heartbeat. The route passes under Event Horizon, the portal of light (Echo IV) — and boat crews swear the water under the bridge plays a note nothing on land does.',
     image: '/images/activities/styx.webp',
   },
   {

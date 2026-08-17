@@ -40,7 +40,7 @@ nine activities. Single night — there is no recovery day.
    the organiser giving them **work every 4 months** (lapses if none within
    6 months of the festival) — the first post-event engagement needs a
    scheduled reminder around Nov 2026–Jan 2027. The other three Echoes — Event Horizon
-   (bridge of light), Cloud Nine (guest-rated star nets), Icarus (the kite
+   (portal of light), Cloud Nine (guest-rated star nets), Icarus (the kite
    that burns) — have **no builder assigned**. Three further installations
    (SWAYBLOOM, OVERSTORY, SHOAL) added 17 Aug — vendor engaged; terms,
    build timeline and load-in impact OPEN.

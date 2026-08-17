@@ -67,7 +67,7 @@ tallest approximately 40 ft, built to an agreed blueprint** (the blueprint
 is the controlling document and should be attached).
 
 Not in this vendor's scope: the other three Echoes — **EVENT HORIZON**
-(bridge-of-light dressing), **CLOUD NINE** (nine guest-loaded net bays),
+(portal-of-light dressing), **CLOUD NINE** (nine guest-loaded net bays),
 **ICARUS** (the kite burned at midnight) — plus activities, general site
 lighting, and the second stage.
 

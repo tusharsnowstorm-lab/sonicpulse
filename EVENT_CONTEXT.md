@@ -59,7 +59,7 @@ be walked as a trail:
 1. **COILGATE · The First Loop** — entrance arch: a coiled serpent guests walk through; ember-lit scales, teal glass eye. Every guest's first and last frame.
 2. **GLOWTIDE · The Migration of Dreams** — avenue of glowing jellyfish suspended overhead along the main walkway.
 3. **SWAYBLOOM · The Four Swings** — four bamboo arch swings wrapped in fresh flower wreaths beside the Glowtide walkway.
-4. **EVENT HORIZON · Bridge of Light** — the lake bridge dressed as a tunnel of light; boats pass beneath it.
+4. **EVENT HORIZON · Portal of Light** — the lake bridge dressed as a tunnel of light; boats pass beneath it.
 5. **SHOAL · The School of Light** — a bamboo pyramid of hanging translucent fish above a water bowl on the lake shore; light falls through them and floods the ground in moving colour.
 6. **MYCELIA · Dream of the Forest Floor** — five giant lit mushroom-medusa canopies hanging in the grove.
 7. **OVERSTORY · The Woven Crossing** — a hand-woven walkable net laced through the grove canopy above Mycelia.
