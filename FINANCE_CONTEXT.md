@@ -85,6 +85,8 @@ agreed blueprint)**.
 - The other three Echoes: EVENT HORIZON (bridge-of-light dressing), CLOUD
   NINE (nine guest-rated net bays), ICARUS (monumental kite, deliberately
   burned at midnight — a consumable build plus burn-crew/fire-safety cost).
+- Three additional Echoes — SWAYBLOOM (four swings), OVERSTORY (canopy
+  net), SHOAL (fish-light pyramid): vendor engaged, terms **OPEN**.
 - Production: sound systems for two stages, stage/production lighting, UV
   rigs, all installation power and distribution, generators/redundancy for
   17.5 continuous hours.

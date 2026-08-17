@@ -6,8 +6,8 @@ import { echoes } from '@/data/echoes'
 import { CONCEPT_ART_NOTE_LIVE } from '@/data/concept-art'
 
 export const metadata: Metadata = {
-  title: 'The Nine Echoes — Sonic Pulse',
-  description: 'Nine installations, one lore — gate to burn.',
+  title: 'The Twelve Echoes — Sonic Pulse',
+  description: 'Twelve installations, one lore — gate to burn.',
 }
 
 export default function EchoesPage() {
@@ -15,8 +15,8 @@ export default function EchoesPage() {
     <div className="max-w-[1200px] mx-auto px-4" style={{ padding: '64px 6vw 100px' }}>
       <PageHeader
         eyebrow="Art installations"
-        title="The Nine Echoes"
-        sub={`Nine installations, one lore — walk them all before sunrise.${CONCEPT_ART_NOTE_LIVE ? '*' : ''}`}
+        title="The Twelve Echoes"
+        sub={`Twelve installations, one lore — walk them all before sunrise.${CONCEPT_ART_NOTE_LIVE ? '*' : ''}`}
       />
 
       <div
@@ -36,12 +36,12 @@ export default function EchoesPage() {
         </h2>
         <p style={{ color: 'var(--text-dim)', maxWidth: '66ch', lineHeight: 1.7 }}>
           Long before this city had a name, something crossed the sky over the delta and fell into the wetlands.
-          It didn&apos;t die. It scattered — into nine echoes that sank into the grass, the water and the trees,
+          It didn&apos;t die. It scattered — into twelve echoes that sank into the grass, the water and the trees,
           and waited. The glyphs you&apos;ll find burned into stone and steel across the grounds are its handwriting.
         </p>
         <p style={{ color: 'var(--text-dim)', maxWidth: '66ch', lineHeight: 1.7, marginTop: 14 }}>
           One night a year, when eight hundred heartbeats land in the same field, the echoes wake. For seventeen
-          and a half hours this place remembers what it is: a landing ground. Walk all nine before sunrise and the
+          and a half hours this place remembers what it is: a landing ground. Walk all twelve before sunrise and the
           Loop closes with you inside it.
         </p>
         <p style={{ color: '#fff', fontWeight: 600, marginTop: 14 }}>
@@ -56,8 +56,9 @@ export default function EchoesPage() {
       </div>
 
       <p style={{ marginTop: 30, fontSize: 13.5, color: 'var(--text-dim)', maxWidth: '70ch' }}>
-        Enter the Loop (I), ride the tide (II), cross the horizon (III), walk the forest&apos;s dream (IV), meet
-        the keeper (V), climb (VI), reign (VII), rest (VIII), release (IX). Nine stations, one arc — gate to burn.
+        Enter the Loop (I), ride the tide (II), swing in the garden (III), cross the horizon (IV), stand in the
+        light (V), walk the forest&apos;s dream (VI), cross the canopy (VII), meet the keeper (VIII), climb (IX),
+        reign (X), rest (XI), release (XII). Twelve stations, one arc — gate to burn.
       </p>
       <ConceptArtNote />
     </div>

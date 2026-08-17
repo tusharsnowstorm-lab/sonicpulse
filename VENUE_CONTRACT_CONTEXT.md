@@ -25,7 +25,7 @@ never invent a value; raise it as a question for the owner.
 - **800+ attendees**, **all ages** (the strict 18+ rule was removed 13 Aug 2026), ID-verified at entry (NID, passport or birth certificate).
 - Two stages running **in sequence, never simultaneously**: Main Stage
   4:00 PM – 4:30 AM, Sunrise Stage 4:30 – 9:30 AM.
-- Nine large-scale art installations, nine activity zones, a night market,
+- Twelve large-scale art installations, nine activity zones, a night market,
   a food quarter, and a midnight fire ceremony.
 - Primarily **outdoors with covered areas**; the event **proceeds in light
   rain** (published policy) — so the site must remain safe and operable wet.
@@ -49,6 +49,7 @@ to the installation contract.
 | **Single controllable entrance** | COILGATE serpent arch — every guest enters through it; also ID/age control | **Hard** |
 | **Grass area for raised structures** | CLOUD NINE — nine raised bamboo net bays guests lie in | **Hard** |
 | **East-facing sightline** | Sunrise Stage — the closing sets are staged against sunrise | **Hard** (signature moment) |
+| **Flat ground near walkway + grove rigging + shore placement** | SWAYBLOOM swings, OVERSTORY canopy net, SHOAL light pyramid (three additional builds, vendor engaged) | **Hard** |
 
 ## 3. Structural, load and safety demands to disclose in writing
 

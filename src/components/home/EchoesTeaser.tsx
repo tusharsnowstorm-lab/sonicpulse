@@ -11,7 +11,7 @@ export default function EchoesTeaser() {
   return (
     <Section eyebrow="Art installations" title="Before language, there was frequency.">
       <p style={{ maxWidth: 560, margin: '0 auto 48px', color: 'var(--text-dim)', fontSize: 15, lineHeight: 1.7 }}>
-        Nine towering installations, one founding myth. Twelve feet tall and lit for the night — walk them all
+        Twelve towering installations, one founding myth. Twelve feet tall and lit for the night — walk them all
         before sunrise and the Loop closes with you inside it.
       </p>
       <div
@@ -36,7 +36,7 @@ export default function EchoesTeaser() {
         ))}
       </div>
       <PillLink href="/echoes" variant="outline" style={{ marginTop: 44 }}>
-        Walk all nine echoes →
+        Walk all twelve echoes →
       </PillLink>
       <ConceptArtNote centered />
     </Section>

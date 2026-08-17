@@ -25,7 +25,7 @@ export const activities: Activity[] = [
     name: 'THE GREAT BURN',
     tail: 'Night of Release',
     hook: "One match. Twelve feet of lore. The whole night's weight, released at once.",
-    extended: "All night, Icarus — the giant kite (Echo IX) — collects paper ribbons where guests write the thing they came to let go of. Then the drums stop, the field goes dark, and the kite takes its only flight: as fire. A minute of silence, then the heaviest drop of the night. This is the moment people will describe badly to their friends for a year.",
+    extended: "All night, Icarus — the giant kite (Echo XII) — collects paper ribbons where guests write the thing they came to let go of. Then the drums stop, the field goes dark, and the kite takes its only flight: as fire. A minute of silence, then the heaviest drop of the night. This is the moment people will describe badly to their friends for a year.",
     caption: 'Midnight, inside the Night Rituals block.',
     image: '/images/activities/great-burn.webp',
   },
@@ -62,7 +62,7 @@ export const activities: Activity[] = [
     name: 'STYX',
     tail: 'The Silent Ferry',
     hook: 'Glide black water in a glowing boat between carved stone lanterns. The quietest set of the night is out here.',
-    extended: 'Circuit-lit boats, two to four seekers each, drifting a channel of carved stone lanterns. Mist on the water, the far stage reduced to a heartbeat. The route passes under Event Horizon, the bridge of light (Echo III) — and boat crews swear the water under the bridge plays a note nothing on land does.',
+    extended: 'Circuit-lit boats, two to four seekers each, drifting a channel of carved stone lanterns. Mist on the water, the far stage reduced to a heartbeat. The route passes under Event Horizon, the bridge of light (Echo IV) — and boat crews swear the water under the bridge plays a note nothing on land does.',
     image: '/images/activities/styx.webp',
   },
   {
@@ -71,7 +71,7 @@ export const activities: Activity[] = [
     name: 'BAZAAR OF ECHOES',
     tail: 'Trades of Wonder',
     hook: 'A night bazaar of makers — wearables, prints, and oddities that glow in the temple lanes.',
-    extended: 'Designers, UV jewellers, print artists and the installation crews selling miniatures of the Nine Echoes. Everything under strings of neon in the temple lanes. At 3 AM the bazaar runs a barter hour — money down, trades only — which is exactly as chaotic and beautiful as it sounds.',
+    extended: 'Designers, UV jewellers, print artists and the installation crews selling miniatures of the Twelve Echoes. Everything under strings of neon in the temple lanes. At 3 AM the bazaar runs a barter hour — money down, trades only — which is exactly as chaotic and beautiful as it sounds.',
     image: '/images/activities/bazaar-of-echoes.webp',
   },
   {
@@ -89,7 +89,7 @@ export const activities: Activity[] = [
     name: 'CLOUD NINE',
     tail: 'The Star Nets',
     hook: 'Raised star-nets over the grass. Sit, sprawl, sink — the mesh hums with the far stage\'s bass.',
-    extended: 'A hive of lit nets stretched between bamboo pillars, raised off the grass — nine bays around a floating center. Shoes off, climb in, lie back. The netting carries the sub-bass like a slow heartbeat and the sky does the rest. Doubles as Echo VIII in the lore. Best hours: 4 to 6 AM, between the peak and the sunrise sets. The only place on the grounds where doing nothing is doing everything.',
+    extended: 'A hive of lit nets stretched between bamboo pillars, raised off the grass — nine bays around a floating center. Shoes off, climb in, lie back. The netting carries the sub-bass like a slow heartbeat and the sky does the rest. Doubles as Echo XI in the lore. Best hours: 4 to 6 AM, between the peak and the sunrise sets. The only place on the grounds where doing nothing is doing everything.',
     image: '/images/echoes/cloud-nine.webp',
   },
 ]

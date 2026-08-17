@@ -41,7 +41,9 @@ nine activities. Single night — there is no recovery day.
    6 months of the festival) — the first post-event engagement needs a
    scheduled reminder around Nov 2026–Jan 2027. The other three Echoes — Event Horizon
    (bridge of light), Cloud Nine (guest-rated star nets), Icarus (the kite
-   that burns) — have **no builder assigned**.
+   that burns) — have **no builder assigned**. Three further installations
+   (SWAYBLOOM, OVERSTORY, SHOAL) added 17 Aug — vendor engaged; terms,
+   build timeline and load-in impact OPEN.
 3. **Light & sound** — NO VENDOR. Scope: full production sound + lighting
    for two stages across 17.5 h, UV rigs (Warpaint and stage design depend
    on them), plus power distribution to nine lit installations.

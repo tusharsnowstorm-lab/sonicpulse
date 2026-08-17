@@ -10,7 +10,7 @@ export type Echo = {
   image: string | null
 }
 
-/** The Nine Echoes — gate to burn, in trail order. */
+/** The Twelve Echoes — gate to burn, in trail order. */
 export const echoes: Echo[] = [
   {
     id: 'coilgate',
@@ -35,8 +35,19 @@ export const echoes: Echo[] = [
     image: '/images/echoes/glowtide.webp',
   },
   {
-    id: 'event-horizon',
+    id: 'swaybloom',
     roman: 'III',
+    phase: 'The Wayside',
+    name: 'SWAYBLOOM',
+    tail: 'The Four Swings',
+    where: 'Beside the Glowtide walkway — four arches in a row',
+    lore: 'Four gardens that refused to stay planted. The night the Signal fell, everything that heard it learned to move — and the gardens listened longest. Now they swing: four bamboo arches wearing wreaths of living flowers, swaying to the same slow rhythm the Glowtide jellies migrate to. Sit, and the garden takes you with it.',
+    onSite: 'Four bamboo arch swings wrapped in fresh flower wreaths, lantern-lit, petals loose in the air.',
+    image: '/images/echoes/swaybloom.webp',
+  },
+  {
+    id: 'event-horizon',
+    roman: 'IV',
     phase: 'The Bridge',
     name: 'EVENT HORIZON',
     tail: 'Bridge of Light',
@@ -46,8 +57,19 @@ export const echoes: Echo[] = [
     image: null,
   },
   {
+    id: 'shoal',
+    roman: 'V',
+    phase: 'The Shore',
+    name: 'SHOAL',
+    tail: 'The School of Light',
+    where: 'The lake shore, past the bridge — stand inside the light',
+    lore: 'The boat crews of Styx swear the water under Event Horizon plays a note nothing on land does. The Shoal is where that note surfaced: a school of fish hanging mid-air above a bowl of still water, swimming in the light that pours through them and casting their river across the ground. Stand in the cascade and you stand in the school.',
+    onSite: 'A bamboo pyramid of hanging translucent fish above a water bowl — light falls through them and floods the ground in moving colour.',
+    image: '/images/echoes/shoal.webp',
+  },
+  {
     id: 'mycelia',
-    roman: 'IV',
+    roman: 'VI',
     phase: 'Overhead',
     name: 'MYCELIA',
     tail: 'Dream of the Forest Floor',
@@ -57,8 +79,19 @@ export const echoes: Echo[] = [
     image: '/images/echoes/mycelia.webp',
   },
   {
+    id: 'overstory',
+    roman: 'VII',
+    phase: 'The Canopy',
+    name: 'OVERSTORY',
+    tail: 'The Woven Crossing',
+    where: 'Strung through the grove branches — shoes off, walk up',
+    lore: 'Mycelia dreams below the grass; the Overstory is where the dream surfaces. The forest wove its threads into a crossing strung branch to branch, so the ground-bound could visit. Walk it slowly — the trees are carrying you, and they know it.',
+    onSite: 'A hand-woven walkable net laced through the grove canopy, edges marked in warm string light.',
+    image: '/images/echoes/overstory.webp',
+  },
+  {
     id: 'emberhart',
-    roman: 'V',
+    roman: 'VIII',
     phase: 'The Keeper',
     name: 'EMBERHART',
     tail: 'Keeper of the Wilds',
@@ -69,7 +102,7 @@ export const echoes: Echo[] = [
   },
   {
     id: 'chroma',
-    roman: 'VI',
+    roman: 'IX',
     phase: 'The Climb',
     name: 'CHROMA',
     tail: 'Beast of Broken Light',
@@ -80,7 +113,7 @@ export const echoes: Echo[] = [
   },
   {
     id: 'empty-throne',
-    roman: 'VII',
+    roman: 'X',
     phase: 'The Overlook',
     name: 'THE EMPTY THRONE',
     tail: 'Seat of No King',
@@ -91,7 +124,7 @@ export const echoes: Echo[] = [
   },
   {
     id: 'cloud-nine',
-    roman: 'VIII',
+    roman: 'XI',
     phase: 'The Rest',
     name: 'CLOUD NINE',
     tail: 'The Star Nets',
@@ -102,7 +135,7 @@ export const echoes: Echo[] = [
   },
   {
     id: 'icarus',
-    roman: 'IX',
+    roman: 'XII',
     phase: 'The Finale',
     name: 'ICARUS',
     tail: 'The Last Transmission',

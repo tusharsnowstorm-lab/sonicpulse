@@ -23,7 +23,7 @@ underground-electronic-music-centred.
 - 17.5 hours continuous, overnight, one night only — no second chance at any shot
 - 2 stages running **in sequence** (never overlapping): Main Stage 4:00 PM – 4:30 AM, Sunrise Stage 4:30 – 9:30 AM
 - 10 programme blocks (8 artist sets + 2 ritual blocks)
-- 9 large-scale themed art installations ("The Nine Echoes") along a trail from gate to ritual ground
+- 12 large-scale themed art installations ("The Twelve Echoes") along a trail from gate to ritual ground
 - 9 named activities running through the night, several of them visual set-pieces
 - 800+ attendees, all ages, single entrance through an installation arch
 - Approx. 14 hours of the event are in darkness or low light
@@ -51,20 +51,23 @@ underground-electronic-music-centred.
 | 6:30 – 8:00 AM | Drip | Sunrise set (sunrise ~05:45–06:00 local) |
 | 8:00 – 9:30 AM | Rii | Closing set, full morning light |
 
-## The Nine Echoes (installation trail, gate → ritual ground)
+## The Twelve Echoes (installation trail, gate → ritual ground)
 
 All monumental scale (12 ft+ unless noted), all internally lit, all placed to
 be walked as a trail:
 
 1. **COILGATE · The First Loop** — entrance arch: a coiled serpent guests walk through; ember-lit scales, teal glass eye. Every guest's first and last frame.
 2. **GLOWTIDE · The Migration of Dreams** — avenue of glowing jellyfish suspended overhead along the main walkway.
-3. **EVENT HORIZON · Bridge of Light** — the lake bridge dressed as a tunnel of light; boats pass beneath it.
-4. **MYCELIA · Dream of the Forest Floor** — five giant lit mushroom-medusa canopies hanging in the grove.
-5. **EMBERHART · Keeper of the Wilds** — monumental antlered stag over the open field, ember-lit eyes.
-6. **CHROMA · Beast of Broken Light** — climbable iridescent beast; lit staircase up the mane; a horn that throws a light beam.
-7. **THE EMPTY THRONE · Seat of No King** — climbable oversized chair, twin flame torches; the grounds' highest guest vantage point.
-8. **CLOUD NINE · The Star Nets** — nine raised bamboo-framed net bays guests lie in; edge-lit; doubles as an activity.
-9. **ICARUS · The Last Transmission** — monumental bamboo-and-woven-light kite at the ritual ground; collects written ribbons all night, then is **ceremonially burned at midnight (THE GREAT BURN)**. Exists only until midnight — a one-take event.
+3. **SWAYBLOOM · The Four Swings** — four bamboo arch swings wrapped in fresh flower wreaths beside the Glowtide walkway.
+4. **EVENT HORIZON · Bridge of Light** — the lake bridge dressed as a tunnel of light; boats pass beneath it.
+5. **SHOAL · The School of Light** — a bamboo pyramid of hanging translucent fish above a water bowl on the lake shore; light falls through them and floods the ground in moving colour.
+6. **MYCELIA · Dream of the Forest Floor** — five giant lit mushroom-medusa canopies hanging in the grove.
+7. **OVERSTORY · The Woven Crossing** — a hand-woven walkable net laced through the grove canopy above Mycelia.
+8. **EMBERHART · Keeper of the Wilds** — monumental antlered stag over the open field, ember-lit eyes.
+9. **CHROMA · Beast of Broken Light** — climbable iridescent beast; lit staircase up the mane; a horn that throws a light beam.
+10. **THE EMPTY THRONE · Seat of No King** — climbable oversized chair, twin flame torches; the grounds' highest guest vantage point.
+11. **CLOUD NINE · The Star Nets** — nine raised bamboo-framed net bays guests lie in; edge-lit; doubles as an activity.
+12. **ICARUS · The Last Transmission** — monumental bamboo-and-woven-light kite at the ritual ground; collects written ribbons all night, then is **ceremonially burned at midnight (THE GREAT BURN)**. Exists only until midnight — a one-take event.
 
 ## Activities (running through the night)
 
@@ -76,7 +79,7 @@ be walked as a trail:
 - **STYX · The Silent Ferry** — lit boats (2–4 guests) drifting a lantern-lined lake channel, passing under Event Horizon.
 - **BAZAAR OF ECHOES · Trades of Wonder** — night market in the temple lanes; 3 AM barter hour.
 - **FEAST QUARTER · Fire and Ice** — open-flame cooking lane opposite a cold side (iced chai, kulfi); never closes while music plays.
-- **CLOUD NINE · The Star Nets** — see Echoes VIII; best 4–6 AM.
+- **CLOUD NINE · The Star Nets** — see Echoes XI; best 4–6 AM.
 
 ## Light conditions across the night
 
@@ -106,7 +109,7 @@ be walked as a trail:
 ## What full coverage actually spans (scale implications)
 
 Any production quote should be read against this reality: two stage locations
-plus a nine-installation trail, a lake (boats), a pool, a market lane and a
+plus a twelve-installation trail, a lake (boats), a pool, a market lane and a
 ritual ground; 17.5 continuous hours of which ~14 are night; fire, water, UV
 and smoke environments; a hard one-take set-piece at midnight and a second at
 sunrise — meaning crew shifts (no single operator can cover 4 PM to 9:30 AM

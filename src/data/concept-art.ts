@@ -1,5 +1,5 @@
 /**
- * The activities and Nine Echoes imagery are AI-generated concept renders.
+ * The activities and Twelve Echoes imagery are AI-generated concept renders.
  * This note discloses that until real photography replaces them, at which
  * point flip the flag to false (or remove the component in a later
  * amendment). See REDESIGN_PLAN.md §8.10.
