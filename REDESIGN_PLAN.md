@@ -3113,3 +3113,58 @@ webp files; companion edits revert with them.
   200 each.
 - Playwright at 1280×800 and 375×812:
   `scrollWidth - clientWidth === 0` on `/echoes` and `/`.
+
+### 8.35 EVENT HORIZON tail rename: Bridge of Light → Portal of Light (added 17 Aug 2026, owner-decided)
+
+Owner decision: the locked lockup **EVENT HORIZON · Bridge of Light**
+becomes **EVENT HORIZON · Portal of Light**, everywhere on the website.
+Historical plan sections are append-only and are not rewritten.
+
+**Planner judgment calls, made now:**
+- **The phase label renames too: `'The Bridge'` → `'The Portal'`.** The
+  trail reads Gate → Walkway → Wayside → **Portal** → Shore …, which
+  carries the owner's intent into the trail itself. (Veto to keep "The
+  Bridge" if preferred; one-word revert.)
+- **The lore body is deliberately untouched.** Its first line — "A
+  bridge strung with so much light it stops being a bridge." — now
+  lands *better* under the Portal name: the sentence explains the
+  rename. The `where` and `onSite` fields describe the physical bridge
+  and stay accurate; the object is a bridge, the Echo is a portal.
+
+**Files: two code edits + four companion edits. All verbatim.**
+
+1. **`src/data/echoes.ts`** (event-horizon entry): `tail: 'Bridge of
+   Light'` → `tail: 'Portal of Light'`; `phase: 'The Bridge'` →
+   `phase: 'The Portal'`. Nothing else in the entry changes.
+2. **`src/data/activities.ts`** (STYX extended): `the bridge of light
+   (Echo IV)` → `the portal of light (Echo IV)`. The later phrase "the
+   water under the bridge" stays — it is the physical bridge.
+3. **`EVENT_CONTEXT.md`** list item 4: `**EVENT HORIZON · Bridge of
+   Light**` → `**EVENT HORIZON · Portal of Light**` (physical
+   description after the dash unchanged).
+4. **`FINANCE_CONTEXT.md`**: `EVENT HORIZON (bridge-of-light dressing)`
+   → `EVENT HORIZON (portal-of-light dressing)`.
+5. **`OPS_CONTEXT.md`**: `Event Horizon (bridge of light)` →
+   `Event Horizon (portal of light)`.
+6. **`CONTRACTS_CONTEXT.md`**: `(bridge-of-light dressing)` →
+   `(portal-of-light dressing)`.
+
+**Scope fences.** `VENUE_CONTRACT_CONTEXT.md`'s "bridge dressed as a
+tunnel of light" and "lake with a short bridge" rows describe the
+physical structure, not the lockup — untouched. The echoes page's
+closing trail line says "cross the horizon (IV)" — no bridge word,
+untouched. REDESIGN_PLAN.md history untouched.
+
+**Reversibility.** Six string swaps; revert verbatim.
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Local dev on port 3100, counting with `grep -o … | wc -l`:
+  - `/echoes` → `Portal of Light` ≥1, `The Portal` ≥1,
+    `Bridge of Light` **0**
+  - `/activities` → `portal of light` ≥1, `bridge of light` **0**
+    (case-sensitive greps; "under the bridge" may and should remain)
+- Source grep: `grep -rci "bridge of light" src/` → 0 across files.
+- Playwright at 1280×800 and 375×812:
+  `scrollWidth - clientWidth === 0` on `/echoes`.
