@@ -2873,3 +2873,76 @@ diagnosis plus an owner runbook, not a code amendment.
 **Verification (owner, after both steps).** `/admin` loads the tickets
 tab (not a redirect to `/` or `/login`) and the Wayfinder/First Pulse
 tabs are reachable via the surface switcher.
+
+### 8.33 The Three Murmurs — new installations: lore canon + creator-brief artifact (added 16 Aug 2026, owner-requested)
+
+The owner is adding three installations: four flower-wreathed bamboo
+swings, a walkable net strung across tree branches, and a bamboo
+pyramid where hanging fish cast a cascade of colored light over a
+water bowl. Sequence the owner set: **lore artifact first, website
+changes only after the owner finalises pictures and lore** (that later
+work will be its own amendment, §8.34, deliberately not written yet).
+
+**Naming decision, proposed for owner veto — the Nine stay Nine.**
+THE NINE ECHOES is a locked name; growing it to twelve would break it.
+The trio therefore ships as a companion tier: **THE THREE MURMURS** —
+in the lore, the Nine Echoes are what the Signal proclaimed; the
+Murmurs are what it said softly. Human-scale, restful, touchable.
+(Veto option B: fold them into a renamed Twelve Echoes — requires a
+site-wide rename sweep and breaks a locked name; not recommended.)
+
+**Names and lore, drafted (owner finalises; NAME · Tail lockups):**
+
+1. **SWAYBLOOM · The Four Gardens** — the swings.
+   Hook: "Four gardens that refused to stay planted."
+   Lore: the night the Signal fell, everything that heard it learned to
+   move. The gardens listened longest — so they became swings: four
+   bamboo arches wearing wreaths of living flowers, swaying to the same
+   slow rhythm the Glowtide jellies migrate to. Sit, and the garden
+   takes you with it.
+2. **OVERSTORY · The Woven Crossing** — the tree net.
+   Hook: "Walk where only birds have opinions."
+   Lore: Mycelia dreams below the grass; the Overstory is where the
+   dream surfaces. The forest wove its threads into a crossing strung
+   branch to branch so the ground-bound could visit. Walk it slowly —
+   the trees are carrying you, and they know it.
+3. **SHOAL · The School of Light** — the fish pyramid.
+   Hook: "The fish that traded water for light."
+   Lore: the Styx boat crews swear the water under Event Horizon plays
+   a note nothing on land does. The Shoal is where that note surfaced:
+   a school of fish hanging mid-air above a bowl of still water,
+   swimming in the light that pours through them and casting their
+   river across the ground. Stand in the cascade and you stand in the
+   school.
+
+Each Murmur deliberately interlocks with an existing Echo (Glowtide,
+Mycelia, Styx/Event Horizon) so the mythology stays one web.
+
+**The artifact.** The content-creator brief built in an earlier session
+(activities + installations + lore, shareable HTML) was **never
+committed to the repo** — it lived only as a session deliverable, which
+is why updating it now means rebuilding it. Lesson recorded: shareable
+deliverables that will need future updates must land in the repo.
+When the owner finalises names, lore and pictures, the planner rebuilds
+it as **`CREATOR_BRIEF.html` at the repo root** — one self-contained
+dark-theme page (inline styles, festival identity) covering: the nine
+activities, the Nine Echoes, the Three Murmurs, each with lockup, hook,
+lore, concept image, plus the standing content rules (tag
+@sonicpulsefestival, organiser credit @dhakamusicfestival, no live
+streaming during the event, locked names never paraphrased). Planner
+executes its own plan on finalisation (same §8.21 reasoning); mockup
+images are committed under `public/images/murmurs/` as
+`swaybloom.webp`, `overstory.webp`, `shoal.webp` (~1600w) at that point.
+
+**Contract flag (owner must action before commissioning builds):** the
+installation vendor's contract makes them the **exclusive
+art-installation provider until end-2028** — the Three Murmurs must be
+offered to that vendor (they also conveniently count toward the
+every-4-months work commitment), or built with their written consent.
+Tell the contracts session; `CONTRACTS_CONTEXT.md` gains this note in
+§8.34. Finance (three new OPEN cost lines) and ops (workstream 2 grows)
+follow in §8.34 under the companion-file maintenance rules.
+
+**Verification for the artifact build (when it happens):** page opens
+locally in a browser; every image loads from the repo path; grep counts
+for all twelve lockups ≥1; no external network requests in the HTML.
