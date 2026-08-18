@@ -3168,3 +3168,90 @@ untouched. REDESIGN_PLAN.md history untouched.
 - Source grep: `grep -rci "bridge of light" src/` → 0 across files.
 - Playwright at 1280×800 and 375×812:
   `scrollWidth - clientWidth === 0` on `/echoes`.
+
+### 8.36 Creator-casting story — 4K export of the chosen "Checklist" visual (added 18 Aug 2026, owner-requested)
+
+**Context (record, not tasks).** On 18 Aug 2026 three Instagram-story
+visuals (1080×1920 concept, rendered 768×1376) were generated via the
+Higgsfield MCP for the owner's creator-casting callout — recruiting
+content creators to shoot the official hype reel as a collab on
+@sonicpulsefestival. The owner reviewed all three and picked the
+**"Checklist — GET FEATURED. GET SEEN."** variant. The other two are
+recorded here in case the owner later wants them too: "Direct" =
+Higgsfield job `df7042bc-5a54-40ab-92bb-aec999700477`, "Signal/Lore" =
+job `91c1256d-5c54-4f8e-8aa0-6628b545edcc`. A design-canvas mock of all
+three also exists as Claude artifact
+`https://claude.ai/code/artifact/c1a06a13-06fe-4f0f-9ae4-a9387d556e65`
+(not needed for this task).
+
+**Task.** Produce a 4K upscale of the chosen visual and hand the file
+to the owner in chat. This is a media-delivery task: **zero website
+code changes**. `src/`, `public/`, and all context docs are untouched.
+
+**Source of truth.** Higgsfield completed image job
+`eac4a900-4e07-438a-b954-ea2ec8391fa4` — a 768×1376 PNG. A backup copy
+is already committed by the planner at
+`marketing/creator-casting/story-checklist-768x1376.png` (this repo).
+
+**Steps (mechanical, in order).**
+
+1. Load tool schemas: `ToolSearch` with query
+   `select:mcp__Higgsfield__upscale_image,mcp__Higgsfield__jobs_wait`.
+2. Call `mcp__Higgsfield__upscale_image` with exactly:
+   `params: { image_id: "eac4a900-4e07-438a-b954-ea2ec8391fa4",
+   width: 768, height: 1376, resolution: "4k" }`. Omit `provider`
+   (defaults to bytedance). This tool takes no prompt and no count.
+   Do NOT preflight with `get_cost` — the owner has already asked for
+   this file. If the call errors on insufficient credits, report the
+   exact error to the owner and stop; do not switch providers,
+   resolutions, or models.
+3. Poll the returned job with `mcp__Higgsfield__jobs_wait`
+   (`jobs: [{index: 1, job_id: <returned id>}]`, `timeout_seconds: 15`),
+   repeating until `all_terminal` is true.
+4. Download `result_url` with `curl -sS -o` into the session scratchpad
+   as `story-checklist-4k.<ext>`, keeping whatever file extension the
+   URL carries (the upscaler may emit png, jpg, or webp).
+5. Verify with PIL (`python3`, `PIL.Image.open`): image opens; height
+   ≥ 3000 px; width/height within 0.55–0.57 (source ratio is
+   768/1376 ≈ 0.558). Then `Read` the image and confirm all five copy
+   blocks survived the upscale verbatim: eyebrow
+   "NOW CASTING — HYPE REEL"; headline "GET FEATURED. / GET SEEN.";
+   the three card rows "Official collab post with @sonicpulsefestival",
+   "Your cut, in the credits, on our page",
+   "One night. One reel. Maximum chaos."; button
+   "DM \"REEL\" TO APPLY"; footer
+   "SONIC PULSE · 25 SEPT 2026 · SPOTS LIMITED". Any failed gate or
+   mangled text → report to the owner with the image attached; do not
+   retry-loop more than one fresh upscale attempt.
+6. Deliver via `SendUserFile`: the 4K file, `display: "render"`,
+   `status: "normal"`, caption exactly:
+   "4K upscale of the Checklist story — ready to post."
+7. Repo hygiene: commit nothing. `git status` must be clean at the end
+   (the backup PNG and this plan section are already committed by the
+   planner). Do not commit the 4K output — it is a chat deliverable,
+   not a site asset.
+
+**Fallback (only if step 2 rejects the `image_id` — e.g. job expired
+or not found).** Load `mcp__Higgsfield__media_upload` and
+`mcp__Higgsfield__media_confirm` via ToolSearch. Upload the committed
+backup: `media_upload` with `filename:
+"story-checklist-768x1376.png"`, `content_type: "image/png"`; PUT the
+bytes of `marketing/creator-casting/story-checklist-768x1376.png` to
+the returned `upload_url` (curl, per the tool's returned
+instructions); `media_confirm`; then rerun step 2 with `image_id` =
+the returned media_id (same width/height/resolution). If the fallback
+also fails, report the exact error and stop — do NOT regenerate the
+artwork from a prompt; regeneration changes the creative the owner
+approved.
+
+**Scope fences.** No changes to `src/`, `public/`, any `*_CONTEXT.md`,
+or earlier plan sections. No website verification gates apply (no code
+changed). Do not touch the claude.ai design artifact.
+
+**Reversibility.** Delete `marketing/creator-casting/` to drop the
+backup; the 4K file exists only in chat.
+
+**Executor invocation (owner).** Run on Sonnet for token efficiency:
+switch the session model to `claude-sonnet-5` (or open a fresh Sonnet
+session on branch `claude/event-website-updates-1e8rib`) and prompt:
+"execute §8.36 of REDESIGN_PLAN.md".
