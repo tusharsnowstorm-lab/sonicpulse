@@ -3255,3 +3255,28 @@ backup; the 4K file exists only in chat.
 switch the session model to `claude-sonnet-5` (or open a fresh Sonnet
 session on branch `claude/event-website-updates-1e8rib`) and prompt:
 "execute §8.36 of REDESIGN_PLAN.md".
+
+### 8.37 GATE_CONTEXT.md — gate-scanning handoff brief for Afterhours (added 18 Aug 2026, owner-requested)
+
+Owner decision: Afterhours (the ticketing app) will take over ticketing
+and gate scanning; guests will log in to Afterhours from the Sonic Pulse
+website. The owner asked for a complete, accurate, up-to-date context
+file so the session coding Afterhours has the full gate-scanning
+picture: in/out tracking, gate-staff logins (or better alternatives),
+and every feature already shipped on the web.
+
+Executed directly by the planner (owner authorised "build the context
+file yourself if token efficient"): **`GATE_CONTEXT.md`** created at the
+repo root, sourced by reading the live implementation — `/gate`,
+`/verify/[referenceCode]`, `QrScanner`, `/api/gate/scan`,
+`/api/tickets` (+ transfer, admin), `gate-auth.ts`, `TicketCard`
+(QR generation), `email.ts`, `data/tickets.ts`, `data/auth.ts`. The
+brief records: the derived entry/exit presence model and its
+server-side-enforcement gap, roles/allowlists, the `user_tickets` /
+`ticket_scans` schema, reference-code + QR format, the staff and public
+verify views, wristband policy, tier facts, Afterhours requirements
+(parity + live occupancy + offline tolerance + staff accounts), open
+owner decisions (auth unification, website-gate fallback), and known
+bugs not to replicate (3:00 PM email, legacy `/api/register`).
+
+No website code changed. Website behaviour is unaffected.
