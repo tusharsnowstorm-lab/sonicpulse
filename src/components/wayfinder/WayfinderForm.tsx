@@ -241,8 +241,8 @@ export default function WayfinderForm() {
       </div>
 
       <div>
-        <label style={labelStyle} htmlFor="wf-ig">Instagram / socials</label>
-        <input id="wf-ig" style={fieldStyle} value={form.instagramHandle} onChange={set('instagramHandle')} placeholder="@yourhandle" />
+        <label style={labelStyle} htmlFor="wf-ig">Instagram handle <Required /></label>
+        <input id="wf-ig" style={fieldStyle} required value={form.instagramHandle} onChange={set('instagramHandle')} placeholder="@yourhandle" />
       </div>
 
       <div>

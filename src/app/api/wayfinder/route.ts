@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const emergencyContactName = (body.emergencyContactName ?? '').trim()
     const emergencyContactPhone = (body.emergencyContactPhone ?? '').trim()
     const motivation = (body.motivation ?? '').trim()
-    const instagramHandle = (body.instagramHandle ?? '').trim()
+    const instagramHandle = (body.instagramHandle ?? '').trim().replace(/^@/, '')
     const notes = (body.notes ?? '').trim()
     const dateOfBirth = (body.dateOfBirth ?? '').trim()
     const stayToClose = body.stayToClose === true
@@ -41,7 +41,8 @@ export async function POST(req: NextRequest) {
       !shiftPreference ||
       !dateOfBirth ||
       !emergencyContactName ||
-      !emergencyContactPhone
+      !emergencyContactPhone ||
+      !instagramHandle
     ) {
       return Response.json({ error: 'All required fields must be filled in.' }, { status: 400 })
     }
@@ -91,7 +92,7 @@ export async function POST(req: NextRequest) {
       motivation: motivation || null,
       emergency_contact_name: emergencyContactName,
       emergency_contact_phone: emergencyContactPhone,
-      instagram_handle: instagramHandle || null,
+      instagram_handle: instagramHandle,
       notes: notes || null,
       status: 'pending',
       reference_code: referenceCode,
@@ -115,7 +116,7 @@ export async function POST(req: NextRequest) {
         motivation: motivation || null,
         emergency_contact_name: emergencyContactName,
         emergency_contact_phone: emergencyContactPhone,
-        instagram_handle: instagramHandle || null,
+        instagram_handle: instagramHandle,
         notes: notes || null,
         status: 'pending',
         reference_code: referenceCode,
