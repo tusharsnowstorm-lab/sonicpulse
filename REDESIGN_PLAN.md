@@ -3280,3 +3280,70 @@ owner decisions (auth unification, website-gate fallback), and known
 bugs not to replicate (3:00 PM email, legacy `/api/register`).
 
 No website code changed. Website behaviour is unaffected.
+
+### 8.38 Wayfinder — Instagram handle becomes a mandatory field (added 19 Aug 2026, owner-requested)
+
+Owner decision: the Wayfinder application's Instagram field, currently
+optional ("Instagram / socials"), becomes **required**.
+
+**Planner judgment calls, made now:**
+- Label copy becomes **"Instagram handle"** (the owner's words; the
+  "/ socials" catch-all drops because the field is now a hard
+  requirement and must be one specific thing).
+- The API strips a single leading `@` before storing, matching the
+  ticket flow's convention (`replace(/^@/, '')`), so the DB holds bare
+  handles regardless of how applicants type them.
+- The DB column `wayfinder_applications.instagram_handle` **stays
+  nullable** — historic applications were submitted without handles and
+  a NOT NULL constraint would fail on them. Enforcement is
+  application-level only. No migration.
+- No new error copy: an empty handle trips the existing
+  "All required fields must be filled in." response.
+
+**Files: two code edits.**
+
+1. **`src/components/wayfinder/WayfinderForm.tsx`** — the Instagram
+   field block (currently `<label … htmlFor="wf-ig">Instagram /
+   socials</label>` with a non-required input):
+   - Label becomes exactly: `Instagram handle <Required />`
+     (same `<Required />` marker component the other mandatory fields
+     use).
+   - Add the `required` attribute to the `wf-ig` input. Everything else
+     about the block (id, style, placeholder `@yourhandle`, `set(
+     'instagramHandle')`) is unchanged. Field position in the form is
+     unchanged.
+2. **`src/app/api/wayfinder/route.ts`**:
+   - Parse line becomes:
+     `const instagramHandle = (body.instagramHandle ?? '').trim().replace(/^@/, '')`
+   - Add `!instagramHandle ||` to the big required-fields `if` (insert
+     after `!emergencyContactPhone` — order inside the check is
+     cosmetic; the response is the same either way).
+   - In BOTH insert payloads (the main insert AND the gender-column
+     fallback retry insert), `instagram_handle: instagramHandle || null`
+     becomes `instagram_handle: instagramHandle`.
+
+**Scope fences.** `src/app/admin/WayfinderTab.tsx` is untouched — it
+already renders a null handle gracefully and strips `@` for display.
+The `notes` optional field, the email template, the DB schema and every
+other wayfinder validation rule are untouched.
+
+**Reversibility.** Three-line revert (label, `required` attr, API
+check); no data change.
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Local dev on port 3100:
+  - `curl -s http://localhost:3100/wayfinder | grep -c "Instagram handle"`
+    → ≥1, and `grep -c "Instagram / socials"` → 0.
+  - `curl -s -o /dev/null -w '%{http_code}' -X POST
+    http://localhost:3100/api/wayfinder -H 'Content-Type:
+    application/json' -d '{"fullName":"T","email":"t@t.co","phone":"0",
+    "institution":"T","level":"other","gender":"female",
+    "shiftPreference":"either","dateOfBirth":"2000-01-01",
+    "emergencyContactName":"T","emergencyContactPhone":"0"}'`
+    → **400** (missing handle rejected before any DB write).
+  - Do NOT smoke-test the success path — it would insert a real row
+    into the production `wayfinder_applications` table. The 400 path
+    proves the enforcement; the insert-payload change is covered by
+    tsc + code review of the diff.
