@@ -3866,3 +3866,25 @@ the admin tab, or any other wayfinder copy. §8.38's rules stand. The
   the source greps + diff review.
 - Playwright at 1280×800 and 375×812:
   `scrollWidth - clientWidth === 0` on `/wayfinder`.
+
+### 8.43 Main-branch merge + workflow change: push to main (added 20 Aug 2026, owner-decided)
+
+Executed directly by the planner (owner authorised "do it urself if
+it's token efficient"):
+
+- **Merged** `claude/event-website-updates-1e8rib` into `main`
+  (fast-forward, `b337fcb` → `8959ede`) and pushed. Everything from
+  §8.35 through §8.42 — Portal of Light rename, mandatory Instagram
+  handle, the full Afterhours ticket hand-off, accounts/gate flip-offs,
+  website-not-app copy, follow-back verification — is now on `main`
+  and deploys to production.
+- **Workflow change, standing rule:** from 20 Aug 2026, all changes
+  are pushed to `main` directly unless the owner asks for them to be
+  parked in a branch. The `claude/event-website-updates-1e8rib` branch
+  is retained as history but is no longer the working branch.
+- **Venue stays TBA on the site.** The Afterhours event page briefly
+  showed "Hatirjheel Amphitheatre"; the owner's decision is that
+  Afterhours will change it back to TBA. The SP website's "Venue is
+  TBA — full address will be sent to registered attendees" copy is
+  CORRECT and must not be "fixed" to name the venue. Naming the venue
+  publicly is an owner decision for a future amendment.
