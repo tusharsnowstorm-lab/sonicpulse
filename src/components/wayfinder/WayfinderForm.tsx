@@ -115,6 +115,9 @@ export default function WayfinderForm() {
         <p style={{ fontSize: 14, color: 'var(--text-dim)', marginBottom: 20 }}>
           We&apos;ll confirm your shift and briefing details closer to the event.
         </p>
+        <p style={{ fontSize: 13, color: 'var(--text-dim)', marginBottom: 20 }}>
+          One step now: follow <strong style={{ color: '#fff' }}>@dhakamusicfestival</strong> and accept the follow request it sends back — that&apos;s how we verify applicants.
+        </p>
         <p style={{ fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-label-muted)', marginBottom: 6 }}>
           Reference code
         </p>
@@ -243,6 +246,9 @@ export default function WayfinderForm() {
       <div>
         <label style={labelStyle} htmlFor="wf-ig">Instagram handle <Required /></label>
         <input id="wf-ig" style={fieldStyle} required value={form.instagramHandle} onChange={set('instagramHandle')} placeholder="@yourhandle" />
+        <p style={{ fontSize: 12, color: 'var(--text-label-muted)', marginTop: 6, lineHeight: 1.5 }}>
+          Follow @dhakamusicfestival and accept the follow request it sends back — that&apos;s how we verify applicants.
+        </p>
       </div>
 
       <div>

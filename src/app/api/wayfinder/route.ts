@@ -156,6 +156,7 @@ export async function POST(req: NextRequest) {
             <p style="color:#6B6B7E;margin:0 0 24px;">Wayfinder — Sonic Pulse, 25 September 2026</p>
             <p style="margin:0 0 16px;">Hi <strong>${fullName}</strong>,</p>
             <p style="margin:0 0 16px;">We've received your application to join the Wayfinder volunteer corps. Fifty Wayfinders work the night in two shifts, guiding guests across the grounds from gates to sunrise.</p>
+            <p style="margin:0 0 16px;">One step now: follow <strong>@dhakamusicfestival</strong> on Instagram and accept the follow request we send back — that's how we verify applicants.</p>
             <div style="background:#0D0D14;border:1px solid #1E1E2E;border-radius:4px;padding:16px;margin:24px 0;">
               <p style="margin:0 0 8px;font-size:12px;color:#6B6B7E;letter-spacing:0.2em;text-transform:uppercase;">Reference Code</p>
               <p style="margin:0;font-family:monospace;font-size:18px;color:#FF3FC2;font-weight:bold;">${referenceCode}</p>
