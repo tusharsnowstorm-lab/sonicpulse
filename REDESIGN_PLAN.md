@@ -3888,3 +3888,111 @@ it's token efficient"):
   TBA — full address will be sent to registered attendees" copy is
   CORRECT and must not be "fixed" to name the venue. Naming the venue
   publicly is an owner decision for a future amendment.
+
+### 8.44 Partner-announcement visuals, round 4 — three ALL-NEW samples, Sonnet-executed (added 20 Aug 2026, owner-requested)
+
+Owner decision: the next sample set uses **no existing art** — not
+`hero-visual.jpg`, not any previously generated plate. Three absolutely
+new visuals. The planner makes every creative call below; a Sonnet
+executor runs the pipeline mechanically. The two standing owner notes
+carry over: (1) the top lockup from sample P4 (eyebrow + SONIC PULSE ×
+afterhours), (2) the serif declaration reading **"registration, live."**
+
+**Session dependency (hard).** This section runs in the SAME session
+that produced rounds 1–3 (owner switches model, context persists). It
+depends on these existing files in
+`/tmp/claude-0/-home-user-sonicpulse/38675d22-8609-5e00-8371-e3609f99025a/scratchpad/ah-posts/`
+(called `$AH` below): `s3.html` (the proven lockup+declaration tile
+template), `fonts-inline.css`, `render4.js`. If ANY is missing, STOP
+and tell the owner — do not rebuild them by improvisation.
+
+**Brand guardrails (unchanged law, from AFTERHOURS_SIGNIN_HANDOFF.md +
+the 21 Aug brand doc, as applied in rounds 1–3):** no prices; no venue
+name or depiction; no App Store / Google Play badges; CTA is
+"tickets in the afterhours app — www.onlyafterhours.com"; PEGI-3-clean
+imagery (no alcohol, drugs, smoking); "afterhours" always lowercase
+Marcellus bone — never magenta; magenta only on SP-side elements; no
+exclamation marks; one dominant glow per canvas; never AI-generate
+Afterhours app UI; doors 3:30 PM is the only time stated.
+
+**The three concepts (locked — executor invents nothing):**
+- **N1 · GLOWTIDE** — an avenue of softly glowing jellyfish lanterns
+  floating above a dark walkway, sparse crowd silhouettes beneath
+  (SonicPulse's Echo II made photographic; brand-true, art-new).
+- **N2 · THE DOOR** — a single free-standing doorway of pale light in
+  an empty dark field, a few small silhouettes walking toward it (the
+  registration metaphor: the night has one way in).
+- **N3 · THE DOT** — one small glowing orb hovering above a dark crowd
+  at a night show (the afterhours starlight dot made physical, over an
+  SP crowd — the partnership in one image).
+
+**Step 1 — generate (batch of 3, then targeted retries).** Tool:
+`mcp__Higgsfield__generate_image_batch`, model `nano_banana_pro`,
+`aspect_ratio: "1:1"`, one request per concept, prompts VERBATIM:
+
+- N1: `Cinematic night photograph, square, full-bleed with no border or frame. A long straight walkway at night lined overhead with dozens of softly glowing translucent jellyfish-shaped paper lanterns floating in two loose rows, drifting away toward a dark horizon. Beneath them, sparse small crowd silhouettes strolling, seen from behind. Deep blue-black night (#050508 base) with a gentle magenta-and-cyan tint in the lantern glow and haze. The lantern avenue is the single dominant light source; sky above is dark with sparse faint stars. Subtle 35mm film grain, matte, cinematic restraint. Upper quarter and lower fifth of frame stay dark for typography. No text, no logos, no watermark, no readable faces, no drinks, no smoking.`
+- N2: `Cinematic night photograph, square, full-bleed with no border or frame. A vast empty dark field at night under a near-black deep blue starry sky (#050508 base). In the middle distance stands a single free-standing rectangular doorway made of soft pale white-violet light — an open glowing door frame with nothing around it, its light spilling gently onto the grass. Three or four small human silhouettes walk toward it from different directions, seen from far behind. The doorway is the only light source. Subtle magenta tint in its halo. Subtle 35mm film grain, matte, cinematic restraint. Upper third of frame is dark empty sky for typography. No text, no logos, no watermark, no readable faces, no drinks, no smoking.`
+- N3: `Cinematic night photograph, square, full-bleed with no border or frame. A dark festival crowd seen from behind in the lower quarter of frame, lit only faintly. Hovering in the dark air above their heads, dead center: one single small glowing orb of warm white light, like a bright star come down low, casting a soft halo into thin haze. Nothing else emits light — no stage, no beams, no phone screens. Deep blue-black night sky (#050508 base) with sparse faint stars. Subtle 35mm film grain, matte, cinematic restraint. Top quarter and bottom fifth stay very dark for typography. No text, no logos, no watermark, no readable faces, no drinks, no smoking.`
+
+Poll with `mcp__Higgsfield__jobs_wait` until terminal; download each
+`result_url` with curl into `$AH` as `bg-n1.png`, `bg-n2.png`,
+`bg-n3.png`.
+
+**Step 2 — QC each plate** (Read the image, judge against ALL of):
+(a) zero legible text/letters/logos; (b) no border, frame, or white
+edge band; (c) no readable faces (silhouettes fine); (d) no bottles,
+drinks, smoke; (e) ONE dominant light source; (f) the top ~25% and
+bottom ~20% are dark enough that bone text will read after the scrims
+below. A plate failing any point → regenerate ONCE with the identical
+prompt and re-QC. If the retry also fails, drop that concept from the
+delivery and report which concept failed and on which checklist point —
+do NOT write a new prompt. Budget cap: 6 generations total.
+
+**Step 3 — build tiles.** In `$AH`, run this python VERBATIM (it
+derives each tile from `s3.html` exactly as rounds 2–3 did):
+```python
+import base64
+def b64(p): return base64.b64encode(open(p,'rb').read()).decode()
+s3 = open('s3.html').read()
+SCRIM_FULL = '<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,5,8,.82) 0%,rgba(5,5,8,.55) 22%,transparent 40%,transparent 55%,rgba(5,5,8,.6) 78%,rgba(5,5,8,.88) 100%)"></div>'
+SCRIM_TOP  = '<div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,5,8,.8) 0%,rgba(5,5,8,.45) 26%,transparent 44%,transparent 62%,rgba(5,5,8,.55) 82%,rgba(5,5,8,.85) 100%)"></div>'
+ANCHOR = '<div class="eyebrow" style="position:absolute;top:88px'
+for name, bg, scrim, decl in [
+    ('n1','bg-n1.png',SCRIM_FULL,'top:600px;font-size:88px'),
+    ('n2','bg-n2.png',SCRIM_TOP, 'top:470px;font-size:96px'),
+    ('n3','bg-n3.png',SCRIM_FULL,'top:640px;font-size:92px'),
+]:
+    t = s3.replace(b64('bg-crowd-sq.png'), b64(bg))
+    t = t.replace(ANCHOR, scrim + ANCHOR)
+    t = t.replace('top:560px;font-size:88px', decl)
+    open(f'{name}.html','w').write(t)
+print('n1 n2 n3 built')
+```
+(If a concept was dropped in Step 2, omit its tuple.)
+
+**Step 4 — render + finalize.** From `$AH`:
+`NODE_PATH=$(npm root -g) node render4.js n1 n2 n3` (only surviving
+tiles), then downscale each `out-<n>@2x.png` to
+`final-<n>-1080x1080.png` with PIL LANCZOS exactly as rounds 2–3.
+
+**Step 5 — proof + deliver.** Read each final and verify: the strings
+`OFFICIAL TICKETING PARTNER`, `SONIC PULSE`, `afterhours`,
+`registration, live.`, `FRI 25 SEPT`, `DOORS 3:30 PM`,
+`www.onlyafterhours.com` all render exactly and legibly (no clipping,
+no overlap with a bright area); the plate shows no rule violations
+missed in Step 2. Then send the finals with SendUserFile,
+`status: "normal"`, `display: "render"`, caption VERBATIM:
+`Round 4 — three all-new visuals (Glowtide, the Door, the Dot). Nothing existing reused; awaiting your pick.`
+Nothing is posted anywhere; no repo changes — `git status` must show a
+clean tree at the end.
+
+**Scope fences.** Do not touch the website code, the design canvas
+artifact, or rounds 1–3 files beyond reading `s3.html`/`bg-crowd-sq.png`
+as template inputs. Do not reuse `hero-visual.jpg`, any `bg-*` plate
+from earlier rounds, or the app screenshots, as visible imagery.
+
+**Reversibility.** Nothing persists outside the scratchpad; re-running
+overwrites `bg-n*.png` and `final-n*.png`.
+
+**Executor invocation (owner).** Switch to Sonnet and prompt:
+"execute §8.44 of REDESIGN_PLAN.md".
