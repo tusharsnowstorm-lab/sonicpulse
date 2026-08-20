@@ -1,6 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 import { getUser } from '@/lib/supabase-server'
 import { isGateStaff } from '@/lib/gate-auth'
+import { GATE_LIVE } from '@/data/auth'
+import { AFTERHOURS_EVENT_URL } from '@/data/tickets'
+import Image from 'next/image'
+import { PillLink } from '@/components/ui/PillButton'
 import VerifyClient from './VerifyClient'
 
 export const metadata = { title: 'Ticket Verification — Sonic Pulse' }
@@ -8,6 +12,21 @@ export const metadata = { title: 'Ticket Verification — Sonic Pulse' }
 type Props = { params: Promise<{ referenceCode: string }> }
 
 export default async function VerifyPage({ params }: Props) {
+  if (!GATE_LIVE) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center px-4" style={{ background: 'var(--bg-void)' }}>
+        <div className="w-full max-w-sm text-center">
+          <p className="mb-6" style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.32em', fontFamily: 'var(--font-montserrat)', color: '#fff' }}>SONIC PULSE</p>
+          <Image src="/images/brand/afterhours-logo.webp" alt="Afterhours" width={72} height={72} style={{ borderRadius: 16, margin: '0 auto 20px' }} />
+          <h1 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>Ticketing has moved</h1>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Tickets and entry for Sonic Pulse are handled in the Afterhours app. Your entry QR lives in the app wallet — this page is no longer used at the gate.</p>
+          <PillLink href={AFTERHOURS_EVENT_URL} variant="primary" style={{ marginTop: 24 }}>Open Afterhours →</PillLink>
+          <p className="text-xs mt-8" style={{ color: 'var(--text-muted)' }}>Sonic Pulse · 25 September 2026</p>
+        </div>
+      </main>
+    )
+  }
+
   const { referenceCode } = await params
 
   const admin = createClient(

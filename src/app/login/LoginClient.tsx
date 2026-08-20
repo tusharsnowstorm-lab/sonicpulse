@@ -56,15 +56,13 @@ export default function LoginClient() {
     e.preventDefault()
     setGateError(null)
     setGateLoading(true)
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
     setGateLoading(false)
     if (error) {
       setGateError('Invalid email or password.')
       return
     }
-    const gateEmails = (process.env.NEXT_PUBLIC_GATE_STAFF_EMAILS ?? '').split(',').map((e) => e.trim().toLowerCase()).filter(Boolean)
-    const userEmail = data.user?.email?.toLowerCase() ?? ''
-    window.location.href = gateEmails.includes(userEmail) ? '/gate' : '/dashboard'
+    window.location.href = '/admin'
   }
 
   const inputStyle: React.CSSProperties = {
@@ -151,7 +149,7 @@ export default function LoginClient() {
             className="w-full text-xs py-2 transition-colors cursor-pointer"
             style={{ color: 'rgba(255,255,255,0.5)', fontFamily: 'var(--font-montserrat)', letterSpacing: '0.1em', touchAction: 'manipulation' }}
           >
-            {showGateLogin ? 'Hide' : 'Gate staff login'}
+            {showGateLogin ? 'Hide' : 'Staff login'}
           </button>
 
           {showGateLogin && (
@@ -164,7 +162,7 @@ export default function LoginClient() {
                 className="text-xs font-bold tracking-widest uppercase"
                 style={{ color: 'var(--accent-magenta)', fontFamily: 'var(--font-montserrat)' }}
               >
-                Gate staff access
+                Staff access
               </p>
 
               <div>
@@ -176,7 +174,7 @@ export default function LoginClient() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   style={inputStyle}
-                  placeholder="gate@sonicpulsefestival.com"
+                  placeholder="staff@sonicpulsefestival.com"
                   required
                   autoComplete="username"
                 />
@@ -212,7 +210,7 @@ export default function LoginClient() {
                   touchAction: 'manipulation',
                 }}
               >
-                {gateLoading ? 'Signing in…' : 'Sign in as gate staff'}
+                {gateLoading ? 'Signing in…' : 'Sign in'}
               </button>
             </form>
           )}

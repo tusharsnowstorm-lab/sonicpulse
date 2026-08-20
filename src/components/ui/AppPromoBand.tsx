@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { APP_NAME, AFTERHOURS_EVENT_URL } from '@/data/tickets'
 import { PillLink } from './PillButton'
 
@@ -38,9 +39,7 @@ export default function AppPromoBand() {
         }}
       >
         <div style={{ width: 180, height: 240, background: '#101014', border: '2px solid var(--border-strong)', borderBottom: 'none', borderRadius: '28px 28px 0 0', padding: '20px 16px' }}>
-          <p style={{ fontSize: 8, letterSpacing: '0.28em', color: 'var(--accent-magenta)', textAlign: 'center', marginBottom: 14 }}>
-            {APP_NAME.toUpperCase()}
-          </p>
+          <Image src="/images/brand/afterhours-logo.webp" alt="Afterhours" width={44} height={44} style={{ borderRadius: 10, margin: '0 auto 12px', display: 'block' }} />
           <div style={{ background: 'var(--accent-faint)', border: '1px solid var(--accent-soft)', borderRadius: 10, padding: 10, marginBottom: 8 }}>
             <p style={{ fontSize: 10, margin: 0, color: '#fff' }}>SonicPulse Festival</p>
             <p style={{ fontSize: 8.5, margin: 0, color: 'var(--accent-magenta)' }}>Early Bird — on sale</p>

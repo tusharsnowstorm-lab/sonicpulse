@@ -232,7 +232,9 @@ state, with a clear "already inside — scanned at <time> by <staff>" error).
 - **Does the website `/gate` stay as a fallback scanner** after Afterhours
   ships, or is it retired? (If both run, they must share one scan log —
   split-brain presence tracking at a single gate would be worse than either
-  alone.)
+  alone.) ANSWERED 20 Aug 2026 (§8.40): retired — the website's /gate,
+  /verify and scan API are flag-gated off; Afterhours is the only
+  scanner.
 - Payment inside Afterhours (the app prices imply in-app purchase) is out of
   scope for this brief — separate context.
 

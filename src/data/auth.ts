@@ -20,3 +20,13 @@
 export const SIGNIN_LIVE = false
 export const APPLE_SIGNIN_LIVE = false
 export const AFTERHOURS_SHARED_ACCOUNT_LIVE = false
+
+/**
+ * §8.40 (20 Aug 2026): guest accounts and gate ops moved to
+ * Afterhours. GUEST_ACCOUNTS_LIVE gates /dashboard;
+ * GATE_LIVE gates /gate, /verify and /api/gate/scan. Both flip
+ * back to true to restore. /login remains for staff/admin ops.
+ * SIGNIN_LIVE above stays false permanently (supersedes §8.15).
+ */
+export const GUEST_ACCOUNTS_LIVE = false
+export const GATE_LIVE = false

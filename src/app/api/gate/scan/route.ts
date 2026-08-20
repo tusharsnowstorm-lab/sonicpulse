@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { getUser } from '@/lib/supabase-server'
 import { isGateStaff } from '@/lib/gate-auth'
+import { GATE_LIVE } from '@/data/auth'
 
 function serviceClient() {
   return createClient(
@@ -11,6 +12,10 @@ function serviceClient() {
 }
 
 export async function POST(req: NextRequest) {
+  if (!GATE_LIVE) {
+    return NextResponse.json({ error: 'Gate scanning has moved to the Afterhours app.' }, { status: 410 })
+  }
+
   const user = await getUser()
   if (!user || !isGateStaff(user.email)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
