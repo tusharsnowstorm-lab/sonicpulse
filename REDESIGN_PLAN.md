@@ -3347,3 +3347,165 @@ check); no data change.
     into the production `wayfinder_applications` table. The 400 path
     proves the enforcement; the insert-payload change is covered by
     tsc + code review of the diff.
+
+### 8.39 Afterhours hand-off — SP ticket/sign-in surfaces point at the app (added 19 Aug 2026, owner-requested)
+
+Owner decision: **Afterhours is the sign-up and ticketing platform for
+festival-goers.** The SP website sends guests to the app and never shows
+a price again. Source of truth: `AFTERHOURS_SIGNIN_HANDOFF.md` (repo
+root — committed with this amendment; written by the Afterhours
+canonical session 18 Aug 2026, owner-endorsed). Registration opens in
+the app 19 Aug.
+
+**Supersessions (explicit):**
+- §8.9's "flip `TICKETS_LIVE` to true to bring them all back" is
+  SUPERSEDED: `TICKETS_LIVE` stays **false permanently**. The internal
+  ticket application never reopens (two ticketing paths = split-brain at
+  the gate). The internal flow's code (dashboard, verify, gate, admin,
+  APIs) is retained ONLY to serve tickets already issued through the
+  website.
+- The website-price-minus-৳1,000 app-discount scheme (`appPrice`,
+  `APP_DISCOUNT`) is DEAD — owner-ratified 18 Aug. Those numbers are
+  removed from the codebase, not just hidden.
+
+**Locked link facts (use exactly; always `www.`):**
+- Event page (ALL "Get tickets" CTAs):
+  `https://www.onlyafterhours.com/events/sonicpulse-festival-26`
+- Generic sign-in (only where tickets aren't the subject):
+  `https://www.onlyafterhours.com/tonight?auth=1`
+- App sign-in methods: Google, Apple, email magic link — passwordless.
+  Never write "create an account with a password".
+- No prices, no "from ৳X", no bKash number, anywhere on SP. Gate times:
+  SP keeps saying gates 4:00 PM; do NOT add a doors time (the app shows
+  doors 3:30 PM — the app is the source for it).
+
+**Files — edits in build order:**
+
+1. **`src/data/tickets.ts`**
+   - Delete the `appPrice` field from the `TicketTier` type, its
+     doc-comment line, and all three tier values. Delete
+     `export const APP_DISCOUNT = 1000`. Keep `APP_NAME = 'Afterhours'`.
+   - Below `TICKETS_LIVE` add (verbatim):
+     ```ts
+     /**
+      * Afterhours hand-off (REDESIGN_PLAN §8.39). The app is the only
+      * ticket + price surface. TICKETS_LIVE stays false permanently —
+      * the internal application flow serves already-issued tickets only.
+      * Flip AFTERHOURS_TICKETS_LIVE to false to pull the app CTAs.
+      */
+     export const AFTERHOURS_TICKETS_LIVE = true
+     export const AFTERHOURS_EVENT_URL = 'https://www.onlyafterhours.com/events/sonicpulse-festival-26'
+     export const AFTERHOURS_SIGNIN_URL = 'https://www.onlyafterhours.com/tonight?auth=1'
+     export const TICKETS_CTA_LIVE = TICKETS_LIVE || AFTERHOURS_TICKETS_LIVE
+     ```
+     (`AFTERHOURS_SIGNIN_URL` is exported for future use even though no
+     surface links it in this amendment — the handoff names it and a
+     later amendment will want it findable in one place.)
+2. **CTA gating swap — 4 files, mechanical.** In
+   `src/components/home/Hero.tsx`, `src/components/layout/Navbar.tsx`,
+   `src/components/layout/MobileMenu.tsx`,
+   `src/components/layout/Footer.tsx`: change the import
+   `TICKETS_LIVE` → `TICKETS_CTA_LIVE` (from `@/data/tickets`) and every
+   `TICKETS_LIVE` condition in the file to `TICKETS_CTA_LIVE`. Labels
+   ("Get tickets", "Tickets") and hrefs (`/tickets`) are UNCHANGED — the
+   internal /tickets page is the click target and does the handing off.
+3. **`src/app/(main)/tickets/page.tsx`** — replace the component body's
+   logic with three branches in this order (imports adjust to match:
+   add `AFTERHOURS_TICKETS_LIVE`, `AFTERHOURS_EVENT_URL`, and
+   `AppPromoBand`; keep existing imports otherwise; metadata unchanged):
+   - **If `AFTERHOURS_TICKETS_LIVE`** → return the hand-off page (no
+     auth check, no redirect):
+     - `PageHeader` with eyebrow `25 September 2026`, title
+       `Tickets live in the Afterhours app`, sub
+       `Sign up in the app, pick your tier, and your ticket is a QR pass in your wallet — verified once, scanned at the gate.`
+     - CTA row (same flex row pattern as the current not-open branch):
+       `<PillLink href={AFTERHOURS_EVENT_URL} variant="primary">Get tickets in the app →</PillLink>`
+       and `<PillLink href="/lineup" variant="ghost">See the lineup</PillLink>`.
+       Same tab — no `target`.
+     - Info card, same style object as TicketsGate's "How it works" card
+       (`background: 'var(--bg-elevated)', border: '1px solid
+       var(--border)'`, rounded, text-left, `marginTop: 40`, maxWidth
+       640), copy verbatim:
+       `<strong>How it works: </strong>Sign in with Google, Apple, or an email magic link → pick your tier → pay by bKash inside the app → verify your ID before the gate. One ticket per person, and the name must match the ID you bring.`
+     - Small print paragraph under the card (fontSize 12.5, color
+       `var(--text-label-muted)`, marginTop 14), verbatim:
+       `Your Sonic Pulse website account doesn't carry over — sign up fresh in the app (same email is fine). Trouble signing in or paying? support@onlyafterhours.com.`
+     - `<AppPromoBand />` below, wrapped in a div with `marginTop: 56`.
+   - **Else if `!TICKETS_LIVE`** → the existing "Tickets open soon"
+     block, with its sub changed to exactly:
+     `Ticket announcements land on @sonicpulsefestival first.`
+     (the old "Prices and registration go live shortly" promised prices
+     that will never appear).
+   - **Else** → existing behaviour (signed-in redirect to /dashboard,
+     `<TicketsGate />`).
+4. **`src/components/ui/AppPromoBand.tsx`** — rewrite as a
+   no-price app panel. Same layout/structure and styles; content
+   changes only (verbatim):
+   - Import change: `import { APP_NAME, AFTERHOURS_EVENT_URL } from
+     '@/data/tickets'` and `import { PillLink } from './PillButton'`
+     (drop `APP_DISCOUNT`, drop default `PillButton`).
+   - Doc comment becomes: `/** Afterhours hand-off panel — the app is
+     the only ticket surface. No prices here (§8.39). */`
+   - h3: `Tickets live in the Afterhours app.`
+   - p: `Sign up with <span style={{ color: 'var(--accent-magenta)', fontWeight: 600 }}>Google, Apple, or a magic link</span> — your ticket is a QR pass in the {APP_NAME} wallet. No PDFs, no printouts.`
+   - Button: `<PillLink href={AFTERHOURS_EVENT_URL}>Get tickets in the app</PillLink>`
+   - Phone mock: the tier row's two lines become
+     `SonicPulse Festival` (line 1, unchanged style) and
+     `Early Bird — on sale` (line 2, unchanged style). Everything else
+     in the mock stays.
+5. **`src/app/(main)/tickets/TicketsGate.tsx`** — delete the
+   `৳{tier.appPrice.toLocaleString()} in the app` `<p>` block (3 lines)
+   so the file compiles without `appPrice`. Nothing else — this branch
+   is permanently dark behind `TICKETS_LIVE`.
+6. **`src/components/home/TicketsTeaser.tsx`** — same: delete its
+   `appPrice` `<p>` block. Nothing else.
+7. **`src/data/faq.ts`** — four answer rewrites + one addition, copy
+   verbatim:
+   - NEW first entry in the `Tickets & Registration` category, before
+     `why-nid`:
+     `{ id: 'where-to-buy', category: 'Tickets & Registration', question: 'Where do I buy tickets?', answer: 'Tickets are sold only in the Afterhours app. Sign up with Google, Apple, or an email magic link, pick your tier, and pay by bKash inside the app. Tier announcements land on @sonicpulsefestival first.' },`
+   - `ticket-transfer` answer →
+     `Transfers happen inside the Afterhours app, and the new holder goes through the same ID verification. The name on the ticket must always match the ID presented at entry.`
+   - `lost-ticket` answer →
+     `Your ticket is a QR pass in the Afterhours app wallet — it can't be lost or forgotten at home. If you can't sign in to the app, email support@onlyafterhours.com.`
+   - `door-sales` answer →
+     `No. All tickets are bought in advance in the Afterhours app — ID verification takes time and cannot be done at the gate.`
+   - `what-to-bring` answer →
+     `The Afterhours app with your ticket QR ready, your original ID matching your registration, comfortable clothes, ear protection (optional but recommended), and your energy.`
+8. **`GATE_CONTEXT.md`** (companion edit) — in §1, the first bullet's
+   sentence about app pricing (`The website currently sells tickets
+   in-app cheaper already: every tier has an ` + "`appPrice`" + ` =
+   website price − ৳1,000 …`) is replaced with:
+   `App tier names/prices are owned by Afterhours (Early Bird / Phase 2 / Final Phase); the old website-price-minus-৳1,000 scheme is dead and its fields were removed from the codebase (§8.39). SP shows no prices.`
+
+**Scope fences.** `SIGNIN_LIVE`, `APPLE_SIGNIN_LIVE`,
+`AFTERHOURS_SHARED_ACCOUNT_LIVE` and the whole `/login` page are
+untouched (gate staff still sign in there). Dashboard, verify, gate,
+admin, and all APIs untouched. `price` values in `ticketTiers` stay in
+the data file (never rendered anywhere live). FAQ entries `why-nid`,
+`nid-data-protection`, `refund-policy` and everything outside the five
+listed are untouched. No email template changes. No gate-time changes
+anywhere.
+
+**Failure modes.** All content is static — no network calls, no new
+failure states. If the owner flips `AFTERHOURS_TICKETS_LIVE` to false,
+/tickets falls back to the "Tickets open soon" card and every app CTA
+(nav, hero, footer, mobile menu) disappears with it.
+
+**Reversibility.** `AFTERHOURS_TICKETS_LIVE = false` hides every new
+surface; the `appPrice`/`APP_DISCOUNT` deletion is permanent
+(owner-ratified — restoring it would need a new amendment).
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Source greps: `grep -rn "appPrice\|APP_DISCOUNT" src/` → no matches.
+- Local dev on port 3100:
+  - `/tickets` → `Tickets live in the Afterhours app` ≥1,
+    `onlyafterhours.com/events/sonicpulse-festival-26` ≥1,
+    `support@onlyafterhours.com` ≥1.
+  - `/` (home) → `Get tickets` ≥1 (nav CTA is back), and `৳` **0**.
+  - `/tickets` → `৳` **0**. `/faq` → `Afterhours` ≥3, `non-transferable`
+    **0**.
+- Playwright at 1280×800 and 375×812:
+  `scrollWidth - clientWidth === 0` on `/tickets`.
