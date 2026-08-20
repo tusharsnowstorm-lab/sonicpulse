@@ -2,7 +2,7 @@ import Image from 'next/image'
 import { APP_NAME, AFTERHOURS_EVENT_URL } from '@/data/tickets'
 import { PillLink } from './PillButton'
 
-/** Afterhours hand-off panel — the app is the only ticket surface. No prices here (§8.39). */
+/** Afterhours hand-off panel — registration is on the Afterhours website for now; the app is coming later. No prices here (§8.39, §8.41). */
 export default function AppPromoBand() {
   return (
     <div
@@ -21,12 +21,12 @@ export default function AppPromoBand() {
     >
       <div style={{ padding: '60px 50px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
         <h3 style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.02em', color: '#fff', fontFamily: 'var(--font-montserrat)', margin: 0 }}>
-          Tickets live in the Afterhours app.
+          Tickets are open on Afterhours.
         </h3>
         <p style={{ fontSize: 14, fontWeight: 500, color: 'rgba(255,255,255,0.65)', margin: '12px 0 30px', maxWidth: 340, lineHeight: 1.65 }}>
-          Sign up with <span style={{ color: 'var(--accent-magenta)', fontWeight: 600 }}>Google, Apple, or a magic link</span> — your ticket is a QR pass in the {APP_NAME} wallet. No PDFs, no printouts.
+          Sign up with <span style={{ color: 'var(--accent-magenta)', fontWeight: 600 }}>Google, Apple, or a magic link</span> at onlyafterhours.com — your ticket stays on your {APP_NAME} account, ready to show at the gate.
         </p>
-        <PillLink href={AFTERHOURS_EVENT_URL}>Get tickets in the app</PillLink>
+        <PillLink href={AFTERHOURS_EVENT_URL}>Register on Afterhours</PillLink>
       </div>
       <div
         style={{

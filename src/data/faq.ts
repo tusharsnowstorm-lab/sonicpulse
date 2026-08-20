@@ -42,7 +42,7 @@ export const faqs: FAQItem[] = [
     id: 'where-to-buy',
     category: 'Tickets & Registration',
     question: 'Where do I buy tickets?',
-    answer: 'Tickets are sold only in the Afterhours app. Sign up with Google, Apple, or an email magic link, pick your tier, and pay by bKash inside the app. Tier announcements land on @sonicpulsefestival first.',
+    answer: 'Tickets are sold only through Afterhours at onlyafterhours.com. Sign up with Google, Apple, or an email magic link, pick your tier, and pay by bKash on the site — the Afterhours app is coming soon. Tier announcements land on @sonicpulsefestival first.',
   },
   {
     id: 'why-nid',
@@ -60,19 +60,19 @@ export const faqs: FAQItem[] = [
     id: 'ticket-transfer',
     category: 'Tickets & Registration',
     question: 'Can I transfer my ticket to someone else?',
-    answer: 'Transfers happen inside the Afterhours app, and the new holder goes through the same ID verification. The name on the ticket must always match the ID presented at entry.',
+    answer: 'Transfers happen through Afterhours, and the new holder goes through the same ID verification. The name on the ticket must always match the ID presented at entry.',
   },
   {
     id: 'lost-ticket',
     category: 'Tickets & Registration',
     question: 'What if I lose my ticket/QR code?',
-    answer: 'Your ticket is a QR pass in the Afterhours app wallet — it can\'t be lost or forgotten at home. If you can\'t sign in to the app, email support@onlyafterhours.com.',
+    answer: 'Your ticket lives in your Afterhours account, so it can\'t be lost or forgotten at home. If you can\'t sign in, email support@onlyafterhours.com.',
   },
   {
     id: 'door-sales',
     category: 'Tickets & Registration',
     question: 'Can I buy tickets at the door?',
-    answer: 'No. All tickets are bought in advance in the Afterhours app — ID verification takes time and cannot be done at the gate.',
+    answer: 'No. All tickets are bought in advance through Afterhours — ID verification takes time and cannot be done at the gate.',
   },
   {
     id: 'refund-policy',
@@ -85,7 +85,7 @@ export const faqs: FAQItem[] = [
     id: 'what-to-bring',
     category: 'At the Event',
     question: 'What should I bring?',
-    answer: 'The Afterhours app with your ticket QR ready, your original ID matching your registration, comfortable clothes, ear protection (optional but recommended), and your energy.',
+    answer: 'Your ticket QR ready in your Afterhours account, your original ID matching your registration, comfortable clothes, ear protection (optional but recommended), and your energy.',
   },
   {
     id: 'prohibited',

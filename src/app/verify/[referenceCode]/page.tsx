@@ -19,8 +19,8 @@ export default async function VerifyPage({ params }: Props) {
           <p className="mb-6" style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.32em', fontFamily: 'var(--font-montserrat)', color: '#fff' }}>SONIC PULSE</p>
           <Image src="/images/brand/afterhours-logo.webp" alt="Afterhours" width={72} height={72} style={{ borderRadius: 16, margin: '0 auto 20px' }} />
           <h1 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>Ticketing has moved</h1>
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Tickets and entry for Sonic Pulse are handled in the Afterhours app. Your entry QR lives in the app wallet — this page is no longer used at the gate.</p>
-          <PillLink href={AFTERHOURS_EVENT_URL} variant="primary" style={{ marginTop: 24 }}>Open Afterhours →</PillLink>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Tickets and entry for Sonic Pulse are handled by Afterhours. Register and manage your ticket at onlyafterhours.com — this page is no longer used at the gate.</p>
+          <PillLink href={AFTERHOURS_EVENT_URL} variant="primary" style={{ marginTop: 24 }}>Go to Afterhours →</PillLink>
           <p className="text-xs mt-8" style={{ color: 'var(--text-muted)' }}>Sonic Pulse · 25 September 2026</p>
         </div>
       </main>

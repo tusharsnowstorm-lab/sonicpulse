@@ -18,10 +18,12 @@ export const APP_NAME = 'Afterhours'
 export const TICKETS_LIVE = false
 
 /**
- * Afterhours hand-off (REDESIGN_PLAN §8.39). The app is the only
- * ticket + price surface. TICKETS_LIVE stays false permanently —
- * the internal application flow serves already-issued tickets only.
- * Flip AFTERHOURS_TICKETS_LIVE to false to pull the app CTAs.
+ * Afterhours hand-off (REDESIGN_PLAN §8.39, updated §8.41). Afterhours
+ * is the only ticket + price surface. Initial registration is on the
+ * Afterhours website (onlyafterhours.com) — the Afterhours app is
+ * coming later. TICKETS_LIVE stays false permanently — the internal
+ * application flow serves already-issued tickets only. Flip
+ * AFTERHOURS_TICKETS_LIVE to false to pull the Afterhours CTAs.
  */
 export const AFTERHOURS_TICKETS_LIVE = true
 export const AFTERHOURS_EVENT_URL = 'https://www.onlyafterhours.com/events/sonicpulse-festival-26'

@@ -13,7 +13,7 @@ function serviceClient() {
 
 export async function POST(req: NextRequest) {
   if (!GATE_LIVE) {
-    return NextResponse.json({ error: 'Gate scanning has moved to the Afterhours app.' }, { status: 410 })
+    return NextResponse.json({ error: 'Gate scanning has moved to Afterhours.' }, { status: 410 })
   }
 
   const user = await getUser()
