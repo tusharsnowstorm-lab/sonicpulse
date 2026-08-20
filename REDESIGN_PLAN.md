@@ -3656,3 +3656,149 @@ relabel and logo swap are cosmetic one-line reverts.
 - Playwright at 1280×800 and 375×812:
   `scrollWidth - clientWidth === 0` on `/verify/SP-TESTCODE` and
   `/tickets`.
+
+### 8.41 Correction: initial Afterhours registration is on the website, not "the app" (added 20 Aug 2026, owner-requested)
+
+Owner correction: **the Afterhours mobile app is not out yet — it's
+coming soon.** Initial guest registration happens on the Afterhours
+**website**, `onlyafterhours.com` (the same domain §8.39's links
+already point to). §8.39 and §8.40's copy wrote "the Afterhours app"
+throughout as if the app already existed and handled sign-up — that
+framing is SUPERSEDED on this narrow point everywhere it appears
+(the URLs, flags and page/route structure those sections built are
+correct and untouched; only prose claiming guests act "in the app"
+today is wrong). `AFTERHOURS_SIGNIN_HANDOFF.md` (§8.39's source
+document) is left as-is — a historical record — but its "the app"
+framing is superseded the same way.
+
+**Planner judgment calls, made now:**
+- Every place that claimed a current-tense app action ("in the app",
+  "inside the app", "app wallet") is rewritten to name the website
+  directly (`onlyafterhours.com`) or the brand generically
+  (`Afterhours`, matching the existing `{APP_NAME}` usage pattern).
+- Exactly two places get a brief, clearly future-tense mention that
+  the app is coming — the `/tickets` hand-off page (the most-seen
+  surface) and the FAQ's `where-to-buy` answer. No other surface
+  repeats this to avoid clutter.
+- No behavioural/code change: no flags added or renamed, no routes
+  added, no gating logic touched. This is a copy-only correction — six
+  files, string literals and JSX text only.
+- The `AFTERHOURS_EVENT_URL` / `AFTERHOURS_SIGNIN_URL` constant names
+  and values are untouched — they already point at the website
+  (`www.onlyafterhours.com`), which is exactly right for "initial
+  registration is on the website."
+
+**Files — edits in build order (old → new, verbatim):**
+
+1. **`src/data/tickets.ts`** — the doc comment above
+   `AFTERHOURS_TICKETS_LIVE` (added in §8.39):
+   - Old:
+     ```
+     /**
+      * Afterhours hand-off (REDESIGN_PLAN §8.39). The app is the only
+      * ticket + price surface. TICKETS_LIVE stays false permanently —
+      * the internal application flow serves already-issued tickets only.
+      * Flip AFTERHOURS_TICKETS_LIVE to false to pull the app CTAs.
+      */
+     ```
+   - New:
+     ```
+     /**
+      * Afterhours hand-off (REDESIGN_PLAN §8.39, updated §8.41). Afterhours
+      * is the only ticket + price surface. Initial registration is on the
+      * Afterhours website (onlyafterhours.com) — the Afterhours app is
+      * coming later. TICKETS_LIVE stays false permanently — the internal
+      * application flow serves already-issued tickets only. Flip
+      * AFTERHOURS_TICKETS_LIVE to false to pull the Afterhours CTAs.
+      */
+     ```
+2. **`src/app/(main)/tickets/page.tsx`** — the `AFTERHOURS_TICKETS_LIVE`
+   branch, four string changes:
+   - `title="Tickets live in the Afterhours app"` →
+     `title="Register for tickets on Afterhours"`
+   - `sub="Sign up in the app, pick your tier, and your ticket is a QR pass in your wallet — verified once, scanned at the gate."`
+     → `sub="Sign up at onlyafterhours.com, pick your tier, and hold your ticket there — the Afterhours app is on the way."`
+   - `<PillLink href={AFTERHOURS_EVENT_URL} variant="primary">Get tickets in the app →</PillLink>`
+     → `<PillLink href={AFTERHOURS_EVENT_URL} variant="primary">Register on Afterhours →</PillLink>`
+   - Info card body `Sign in with Google, Apple, or an email magic link → pick your tier → pay by bKash inside the app → verify your ID before the gate. One ticket per person, and the name must match the ID you bring.`
+     → `Sign in with Google, Apple, or an email magic link at onlyafterhours.com → pick your tier → pay by bKash → verify your ID before the gate. One ticket per person, and the name must match the ID you bring.`
+   - Small print `Your Sonic Pulse website account doesn&apos;t carry over — sign up fresh in the app (same email is fine). Trouble signing in or paying? support@onlyafterhours.com.`
+     → `Your Sonic Pulse website account doesn&apos;t carry over — sign up fresh at onlyafterhours.com (same email is fine). Trouble signing in or paying? support@onlyafterhours.com.`
+3. **`src/components/ui/AppPromoBand.tsx`**:
+   - Doc comment `/** Afterhours hand-off panel — the app is the only ticket surface. No prices here (§8.39). */`
+     → `/** Afterhours hand-off panel — registration is on the Afterhours website for now; the app is coming later. No prices here (§8.39, §8.41). */`
+   - `Tickets live in the Afterhours app.` → `Tickets are open on Afterhours.`
+   - `Sign up with <span style={{ color: 'var(--accent-magenta)', fontWeight: 600 }}>Google, Apple, or a magic link</span> — your ticket is a QR pass in the {APP_NAME} wallet. No PDFs, no printouts.`
+     → `Sign up with <span style={{ color: 'var(--accent-magenta)', fontWeight: 600 }}>Google, Apple, or a magic link</span> at onlyafterhours.com — your ticket stays on your {APP_NAME} account, ready to show at the gate.`
+   - `<PillLink href={AFTERHOURS_EVENT_URL}>Get tickets in the app</PillLink>`
+     → `<PillLink href={AFTERHOURS_EVENT_URL}>Register on Afterhours</PillLink>`
+   - The phone-mock visual, logo, and the `SonicPulse Festival` /
+     `Early Bird — on sale` mock rows are UNCHANGED.
+4. **`src/app/verify/[referenceCode]/page.tsx`** — the `!GATE_LIVE`
+   moved-card (added in §8.40):
+   - `Tickets and entry for Sonic Pulse are handled in the Afterhours app. Your entry QR lives in the app wallet — this page is no longer used at the gate.`
+     → `Tickets and entry for Sonic Pulse are handled by Afterhours. Register and manage your ticket at onlyafterhours.com — this page is no longer used at the gate.`
+   - `<PillLink href={AFTERHOURS_EVENT_URL} variant="primary" style={{ marginTop: 24 }}>Open Afterhours →</PillLink>`
+     → `<PillLink href={AFTERHOURS_EVENT_URL} variant="primary" style={{ marginTop: 24 }}>Go to Afterhours →</PillLink>`
+5. **`src/app/api/gate/scan/route.ts`** — the `!GATE_LIVE` 410 body
+   (added in §8.40):
+   - `{ error: 'Gate scanning has moved to the Afterhours app.' }`
+     → `{ error: 'Gate scanning has moved to Afterhours.' }`
+6. **`src/data/faq.ts`** — five answers (four from §8.39, one —
+   `where-to-buy` — also from §8.39):
+   - `where-to-buy` answer, old:
+     `'Tickets are sold only in the Afterhours app. Sign up with Google, Apple, or an email magic link, pick your tier, and pay by bKash inside the app. Tier announcements land on @sonicpulsefestival first.'`
+     new:
+     `'Tickets are sold only through Afterhours at onlyafterhours.com. Sign up with Google, Apple, or an email magic link, pick your tier, and pay by bKash on the site — the Afterhours app is coming soon. Tier announcements land on @sonicpulsefestival first.'`
+   - `ticket-transfer` answer, old:
+     `'Transfers happen inside the Afterhours app, and the new holder goes through the same ID verification. The name on the ticket must always match the ID presented at entry.'`
+     new:
+     `'Transfers happen through Afterhours, and the new holder goes through the same ID verification. The name on the ticket must always match the ID presented at entry.'`
+   - `lost-ticket` answer, old:
+     `'Your ticket is a QR pass in the Afterhours app wallet — it can\'t be lost or forgotten at home. If you can\'t sign in to the app, email support@onlyafterhours.com.'`
+     new:
+     `'Your ticket lives in your Afterhours account, so it can\'t be lost or forgotten at home. If you can\'t sign in, email support@onlyafterhours.com.'`
+   - `door-sales` answer, old:
+     `'No. All tickets are bought in advance in the Afterhours app — ID verification takes time and cannot be done at the gate.'`
+     new:
+     `'No. All tickets are bought in advance through Afterhours — ID verification takes time and cannot be done at the gate.'`
+   - `what-to-bring` answer, old:
+     `'The Afterhours app with your ticket QR ready, your original ID matching your registration, comfortable clothes, ear protection (optional but recommended), and your energy.'`
+     new:
+     `'Your ticket QR ready in your Afterhours account, your original ID matching your registration, comfortable clothes, ear protection (optional but recommended), and your energy.'`
+
+**Scope fences.** No flags added, renamed, or flipped — `TICKETS_LIVE`,
+`AFTERHOURS_TICKETS_LIVE`, `GATE_LIVE`, `GUEST_ACCOUNTS_LIVE` and every
+value from §8.39/§8.40 are untouched. No routing/redirect logic
+touched. `AFTERHOURS_EVENT_URL`, `AFTERHOURS_SIGNIN_URL`,
+`AFTERHOURS_SHARED_ACCOUNT_LIVE` untouched. `GATE_CONTEXT.md` and
+`AFTERHOURS_SIGNIN_HANDOFF.md` untouched (the former's "app" language
+describes the future gate-scanning build for whoever builds it into
+Afterhours, a different concern from guest registration; the latter is
+a historical handoff record — its supersession is recorded here, not
+by editing it). The `public/images/brand/afterhours-logo.webp` asset
+and its two usages (moved-card, AppPromoBand) are untouched — the logo
+is a brand mark, not an app-existence claim.
+
+**Reversibility.** Six string-literal edits; revert verbatim from this
+section if the app ships ahead of schedule and copy needs to flip back
+to app-first framing (a future amendment, not this one).
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Source greps (old copy fully gone):
+  `grep -rn "app wallet\|inside the app\|in the app\|Get tickets in the app\|Tickets live in the Afterhours app\|Open Afterhours" src/`
+  → 0 matches.
+- Local dev on port 3100:
+  - `/tickets` → grep `onlyafterhours.com` ≥3, `Register on Afterhours`
+    ≥1, `Afterhours app is on the way` ≥1.
+  - `/verify/SP-TESTCODE` → grep `Go to Afterhours` ≥1,
+    `onlyafterhours.com` ≥1.
+  - `/faq` → grep `Afterhours app is coming soon` ≥1, `app wallet` **0**.
+  - `POST /api/gate/scan` (`-d '{"ticketId":"x","scanType":"entry"}'`)
+    → body contains `"Gate scanning has moved to Afterhours."` exactly
+    (no "the ... app" wording).
+- Playwright at 1280×800 and 375×812:
+  `scrollWidth - clientWidth === 0` on `/tickets` and
+  `/verify/SP-TESTCODE`.
