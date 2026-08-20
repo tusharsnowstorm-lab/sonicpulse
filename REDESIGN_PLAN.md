@@ -3802,3 +3802,67 @@ to app-first framing (a future amendment, not this one).
 - Playwright at 1280×800 and 375×812:
   `scrollWidth - clientWidth === 0` on `/tickets` and
   `/verify/SP-TESTCODE`.
+
+### 8.42 Wayfinder — Instagram follow-back verification step (added 20 Aug 2026, owner-requested)
+
+Owner decision: Wayfinder applicants must **follow @dhakamusicfestival
+and accept the follow request it sends back**, so the team can verify
+applicants through Instagram (private accounts included). Builds on
+§8.38 (Instagram handle is already mandatory).
+
+**Planner judgment calls, made now:**
+- The instruction appears in THREE places, verbatim-identical wording
+  so applicants see one consistent rule: under the form's Instagram
+  handle field, on the post-submit success card, and in the
+  confirmation email. Nowhere else (the page intro stays minimal).
+- Wording is imperative and explains why: "Follow @dhakamusicfestival
+  and accept the follow request it sends back — that's how we verify
+  applicants." ("it sends back" because the page sends the request to
+  the applicant, matching the owner's "accept its follow request".)
+- No validation/enforcement change — the site cannot check Instagram
+  follows; this is instruction copy only. No schema, flag, or API
+  behaviour change.
+
+**Files — three edits.**
+
+1. **`src/components/wayfinder/WayfinderForm.tsx`** — in the Instagram
+   handle field block (id `wf-ig`), directly AFTER the `<input …>` line
+   and inside the same `<div>`, add:
+   ```tsx
+   <p style={{ fontSize: 12, color: 'var(--text-label-muted)', marginTop: 6, lineHeight: 1.5 }}>
+     Follow @dhakamusicfestival and accept the follow request it sends back — that&apos;s how we verify applicants.
+   </p>
+   ```
+2. **Same file, the `status === 'success'` card** — after the
+   "We&apos;ll confirm your shift and briefing details closer to the
+   event." `<p>` and before the "Reference code" label `<p>`, add:
+   ```tsx
+   <p style={{ fontSize: 13, color: 'var(--text-dim)', marginBottom: 20 }}>
+     One step now: follow <strong style={{ color: '#fff' }}>@dhakamusicfestival</strong> and accept the follow request it sends back — that&apos;s how we verify applicants.
+   </p>
+   ```
+3. **`src/app/api/wayfinder/route.ts`** — in the confirmation email
+   HTML, directly after the `<p>` ending "…guiding guests across the
+   grounds from gates to sunrise.</p>" add:
+   ```html
+   <p style="margin:0 0 16px;">One step now: follow <strong>@dhakamusicfestival</strong> on Instagram and accept the follow request we send back — that's how we verify applicants.</p>
+   ```
+
+**Scope fences.** No changes to validation, required fields, the DB,
+the admin tab, or any other wayfinder copy. §8.38's rules stand. The
+`/wayfinder` page intro (`PageHeader`) is untouched.
+
+**Reversibility.** Three copy blocks; delete to revert.
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Local dev on port 3100: `/wayfinder` → grep
+  `accept the follow request` ≥1 and `@dhakamusicfestival` ≥1.
+- Source grep: `grep -c "accept the follow request" src/components/wayfinder/WayfinderForm.tsx` → 2;
+  `grep -c "accept the follow request" src/app/api/wayfinder/route.ts` → 1.
+- Do NOT smoke-test the submit path (writes a real production row —
+  §8.38's rule applies); the success-card and email copy are covered by
+  the source greps + diff review.
+- Playwright at 1280×800 and 375×812:
+  `scrollWidth - clientWidth === 0` on `/wayfinder`.
