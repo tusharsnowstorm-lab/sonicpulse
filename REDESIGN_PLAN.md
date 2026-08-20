@@ -3509,3 +3509,150 @@ surface; the `appPrice`/`APP_DISCOUNT` deletion is permanent
     **0**.
 - Playwright at 1280×800 and 375×812:
   `scrollWidth - clientWidth === 0` on `/tickets`.
+
+### 8.40 Accounts, ticketing internals and gate ops flip OFF — carried by Afterhours (added 20 Aug 2026, owner-requested)
+
+Owner decision: **no more account sign-ups on Sonic Pulse.** Accounts,
+ticket functions and gate scanning are carried by Afterhours. The
+website flips those surfaces off. Owner supplied the Afterhours logo —
+pre-staged by the planner at
+`public/images/brand/afterhours-logo.webp` (512×512 chip, glowing
+"ah." wordmark on near-black; committed with this amendment).
+
+**Supersessions (explicit):**
+- §8.15's "flip `SIGNIN_LIVE` to true to restore" is SUPERSEDED:
+  public sign-in never returns. `SIGNIN_LIVE` stays false permanently
+  (its value is untouched by this amendment — only its meaning).
+- GATE_CONTEXT.md §9's open question "does the website /gate stay as a
+  fallback scanner" is ANSWERED: no — the website gate is retired
+  (20 Aug 2026, this section). Afterhours is the only scanner.
+- §8.13/8.14's Apple-provider work is moot; `APPLE_SIGNIN_LIVE` stays
+  false, untouched.
+
+**Planner judgment calls, made now:**
+- **Hide, not delete.** Two new flags gate everything; flipping them
+  true restores the surfaces. No code is deleted, no DB change.
+- **`/login` SURVIVES** — it is the only way staff/admins sign in for
+  `/admin` (First Pulse, Wayfinder, influencers — programs that remain
+  website functions). Its public sign-in cards are already hidden by
+  `SIGNIN_LIVE=false`. Its "Gate staff" labels are renamed to "Staff"
+  (gate is gone; admins use that form) and post-login routing goes to
+  `/admin` (the old routing sent staff to `/gate`, which now
+  redirects home).
+- **`/verify/<ref>` becomes a "Ticketing has moved" card** rather than
+  a 404 — old website QR codes and reference-code emails exist in the
+  wild; anyone scanning one gets pointed at Afterhours.
+- Admin panel, its APIs, wayfinder, first-pulse, contact — all stay.
+  Ticket APIs (`/api/tickets`, transfer, register) are left as-is:
+  they are auth-gated (unreachable with guest accounts off) or already
+  503-gated by `TICKETS_LIVE=false`.
+
+**Files — edits in build order:**
+
+1. **`src/data/auth.ts`** — append at the end (verbatim):
+   ```ts
+   /**
+    * §8.40 (20 Aug 2026): guest accounts and gate ops moved to
+    * Afterhours. GUEST_ACCOUNTS_LIVE gates /dashboard;
+    * GATE_LIVE gates /gate, /verify and /api/gate/scan. Both flip
+    * back to true to restore. /login remains for staff/admin ops.
+    * SIGNIN_LIVE above stays false permanently (supersedes §8.15).
+    */
+   export const GUEST_ACCOUNTS_LIVE = false
+   export const GATE_LIVE = false
+   ```
+2. **`src/app/dashboard/page.tsx`** — import `GUEST_ACCOUNTS_LIVE`
+   from `@/data/auth`; first line of the component body:
+   `if (!GUEST_ACCOUNTS_LIVE) redirect('/')` (before the getUser call).
+3. **`src/app/gate/page.tsx`** — import `GATE_LIVE` from
+   `@/data/auth`; first line of the component body:
+   `if (!GATE_LIVE) redirect('/')`.
+4. **`src/app/api/gate/scan/route.ts`** — import `GATE_LIVE` from
+   `@/data/auth`; first lines of `POST`, before `getUser()`:
+   ```ts
+   if (!GATE_LIVE) {
+     return NextResponse.json({ error: 'Gate scanning has moved to the Afterhours app.' }, { status: 410 })
+   }
+   ```
+5. **`src/app/verify/[referenceCode]/page.tsx`** — add imports:
+   `GATE_LIVE` from `@/data/auth`, `AFTERHOURS_EVENT_URL` from
+   `@/data/tickets`, `Image` from `next/image`, `{ PillLink }` from
+   `@/components/ui/PillButton`. First thing in the component body
+   (before creating the admin client or any await):
+   ```tsx
+   if (!GATE_LIVE) {
+     return (
+       <main className="min-h-screen flex flex-col items-center justify-center px-4" style={{ background: 'var(--bg-void)' }}>
+         <div className="w-full max-w-sm text-center">
+           <p className="mb-6" style={{ fontSize: 13, fontWeight: 700, letterSpacing: '0.32em', fontFamily: 'var(--font-montserrat)', color: '#fff' }}>SONIC PULSE</p>
+           <Image src="/images/brand/afterhours-logo.webp" alt="Afterhours" width={72} height={72} style={{ borderRadius: 16, margin: '0 auto 20px' }} />
+           <h1 className="text-xl font-bold mb-2" style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-space-grotesk)' }}>Ticketing has moved</h1>
+           <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Tickets and entry for Sonic Pulse are handled in the Afterhours app. Your entry QR lives in the app wallet — this page is no longer used at the gate.</p>
+           <PillLink href={AFTERHOURS_EVENT_URL} variant="primary" style={{ marginTop: 24 }}>Open Afterhours →</PillLink>
+           <p className="text-xs mt-8" style={{ color: 'var(--text-muted)' }}>Sonic Pulse · 25 September 2026</p>
+         </div>
+       </main>
+     )
+   }
+   ```
+   Everything below it is unchanged.
+6. **`src/app/login/LoginClient.tsx`** — four small changes:
+   - Post-login routing line
+     `window.location.href = gateEmails.includes(userEmail) ? '/gate' : '/dashboard'`
+     becomes `window.location.href = '/admin'` (delete the now-unused
+     `gateEmails`/`userEmail` lines above it if nothing else uses
+     them — lint must stay at baseline, no new unused-var warnings).
+   - Toggle text `'Gate staff login'` → `'Staff login'` (inside
+     `{showGateLogin ? 'Hide' : 'Gate staff login'}`).
+   - Heading `Gate staff access` → `Staff access`.
+   - Button label `'Sign in as gate staff'` → `'Sign in'` (the
+     loading state `'Signing in…'` stays).
+   - Placeholder `gate@sonicpulsefestival.com` →
+     `staff@sonicpulsefestival.com`.
+7. **`src/components/ui/AppPromoBand.tsx`** — in the phone mock,
+   replace the wordmark `<p …>{APP_NAME.toUpperCase()}</p>` with:
+   `<Image src="/images/brand/afterhours-logo.webp" alt="Afterhours" width={44} height={44} style={{ borderRadius: 10, margin: '0 auto 12px', display: 'block' }} />`
+   Add `import Image from 'next/image'` (NOT `<img>` — that would add
+   a lint warning and break the 7/9 baseline). If `APP_NAME` is then
+   unused in the file, remove it from the import.
+8. **`GATE_CONTEXT.md`** — in §9, the bullet asking "**Does the
+   website `/gate` stay as a fallback scanner**…" gets appended (same
+   bullet, after "would be worse than either alone.)"):
+   ` ANSWERED 20 Aug 2026 (§8.40): retired — the website's /gate,
+   /verify and scan API are flag-gated off; Afterhours is the only
+   scanner.`
+
+**Scope fences.** `/admin` + all `/api/admin/*` untouched.
+`/api/tickets`, `/api/tickets/transfer`, `/api/register`,
+`/auth/callback` untouched. `SIGNIN_LIVE`, `APPLE_SIGNIN_LIVE`,
+`AFTERHOURS_SHARED_ACCOUNT_LIVE` values untouched. §8.39's /tickets
+hand-off page, nav CTAs, FAQ untouched (AppPromoBand's logo swap is
+the only §8.39 surface touched). No DB changes, no email changes, no
+gate-time changes.
+
+**Failure modes.** All static: redirects and a 410. Old QR scans land
+on the moved-card (200). If the logo file were missing the Image
+simply 404s in the browser — but it is committed with this amendment,
+so it cannot be.
+
+**Reversibility.** `GUEST_ACCOUNTS_LIVE = true` restores /dashboard;
+`GATE_LIVE = true` restores /gate, /verify and the scan API. Login
+relabel and logo swap are cosmetic one-line reverts.
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Local dev on port 3100 (`curl -s -o /dev/null -w '%{http_code}'`
+  unless noted):
+  - `/dashboard` → 307. `/gate` → 307. `/login` → 200.
+  - `POST /api/gate/scan` with `-H 'Content-Type: application/json'
+    -d '{"ticketId":"x","scanType":"entry"}'` → **410**.
+  - `/verify/SP-TESTCODE` → 200; page grep: `Ticketing has moved` ≥1,
+    `Identity Check` **0**, `afterhours-logo.webp` ≥1.
+  - `/images/brand/afterhours-logo.webp` → 200.
+  - `/tickets` → grep `afterhours-logo.webp` ≥1 (AppPromoBand logo).
+  - `/login` page grep: `Staff login` ≥1, `Gate staff` **0**.
+  - `/` → `Get tickets` ≥1 (§8.39 regression: nav CTA still present).
+- Playwright at 1280×800 and 375×812:
+  `scrollWidth - clientWidth === 0` on `/verify/SP-TESTCODE` and
+  `/tickets`.
