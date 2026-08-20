@@ -1,7 +1,7 @@
-import { APP_DISCOUNT, APP_NAME } from '@/data/tickets'
-import PillButton from './PillButton'
+import { APP_NAME, AFTERHOURS_EVENT_URL } from '@/data/tickets'
+import { PillLink } from './PillButton'
 
-/** "Save ৳1,000 on every tier" panel promoting the Afterhours app discount. */
+/** Afterhours hand-off panel — the app is the only ticket surface. No prices here (§8.39). */
 export default function AppPromoBand() {
   return (
     <div
@@ -20,12 +20,12 @@ export default function AppPromoBand() {
     >
       <div style={{ padding: '60px 50px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'flex-start' }}>
         <h3 style={{ fontSize: 28, fontWeight: 700, letterSpacing: '-0.02em', color: '#fff', fontFamily: 'var(--font-montserrat)', margin: 0 }}>
-          Save ৳{APP_DISCOUNT.toLocaleString()} on every tier.
+          Tickets live in the Afterhours app.
         </h3>
         <p style={{ fontSize: 14, fontWeight: 500, color: 'rgba(255,255,255,0.65)', margin: '12px 0 30px', maxWidth: 340, lineHeight: 1.65 }}>
-          Book inside the <span style={{ color: 'var(--accent-magenta)', fontWeight: 600 }}>{APP_NAME} app</span> and every ticket drops by ৳{APP_DISCOUNT.toLocaleString()}. Same tiers, same night.
+          Sign up with <span style={{ color: 'var(--accent-magenta)', fontWeight: 600 }}>Google, Apple, or a magic link</span> — your ticket is a QR pass in the {APP_NAME} wallet. No PDFs, no printouts.
         </p>
-        <PillButton>Get the app</PillButton>
+        <PillLink href={AFTERHOURS_EVENT_URL}>Get tickets in the app</PillLink>
       </div>
       <div
         style={{
@@ -42,8 +42,8 @@ export default function AppPromoBand() {
             {APP_NAME.toUpperCase()}
           </p>
           <div style={{ background: 'var(--accent-faint)', border: '1px solid var(--accent-soft)', borderRadius: 10, padding: 10, marginBottom: 8 }}>
-            <p style={{ fontSize: 10, margin: 0, color: '#fff' }}>Rhythm — ৳5,500</p>
-            <p style={{ fontSize: 8.5, margin: 0, color: 'var(--accent-magenta)' }}>You save ৳{APP_DISCOUNT.toLocaleString()}</p>
+            <p style={{ fontSize: 10, margin: 0, color: '#fff' }}>SonicPulse Festival</p>
+            <p style={{ fontSize: 8.5, margin: 0, color: 'var(--accent-magenta)' }}>Early Bird — on sale</p>
           </div>
           <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 8, height: 26, marginBottom: 7 }} />
           <div style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 8, height: 26, marginBottom: 7 }} />

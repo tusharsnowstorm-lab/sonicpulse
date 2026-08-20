@@ -37,9 +37,6 @@ export default function TicketsTeaser() {
               <p style={{ fontSize: 34, fontWeight: 700, letterSpacing: '-0.02em', color: '#fff', fontFamily: 'var(--font-montserrat)', margin: 0 }}>
                 ৳{tier.price.toLocaleString()}
               </p>
-              <p style={{ fontSize: 12, color: 'var(--accent-magenta)', marginTop: 8 }}>
-                ৳{tier.appPrice.toLocaleString()} in the app
-              </p>
               <ul style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.65)', lineHeight: 2.1, marginTop: 22, listStyle: 'none', padding: 0 }}>
                 {tier.perks.map((perk) => (
                   <li key={perk}>{perk}</li>

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { TICKETS_LIVE } from '@/data/tickets'
+import { TICKETS_CTA_LIVE } from '@/data/tickets'
 import { SIGNIN_LIVE } from '@/data/auth'
 import { WAYFINDER_LIVE } from '@/data/wayfinder'
 
@@ -35,7 +35,7 @@ const eventLinks = [
   { href: '/activities', label: 'Activities' },
   { href: '/echoes', label: 'Echoes' },
   { href: '/schedule', label: 'Schedule' },
-  ...(TICKETS_LIVE ? [{ href: '/tickets', label: 'Tickets' }] : []),
+  ...(TICKETS_CTA_LIVE ? [{ href: '/tickets', label: 'Tickets' }] : []),
 ]
 
 const supportLinks = [

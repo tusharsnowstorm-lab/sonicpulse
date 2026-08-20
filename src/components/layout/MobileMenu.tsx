@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { X, User } from 'lucide-react'
 import PillButton, { PillLink } from '@/components/ui/PillButton'
-import { TICKETS_LIVE } from '@/data/tickets'
+import { TICKETS_CTA_LIVE } from '@/data/tickets'
 import { SIGNIN_LIVE } from '@/data/auth'
 import { WAYFINDER_LIVE } from '@/data/wayfinder'
 
@@ -13,7 +13,7 @@ const navLinks = [
   { href: '/lineup', label: 'Lineup' },
   { href: '/activities', label: 'Activities' },
   { href: '/echoes', label: 'Echoes' },
-  ...(TICKETS_LIVE ? [{ href: '/tickets', label: 'Tickets' }] : []),
+  ...(TICKETS_CTA_LIVE ? [{ href: '/tickets', label: 'Tickets' }] : []),
   { href: '/first-pulse', label: 'First Pulse' },
   ...(WAYFINDER_LIVE ? [{ href: '/wayfinder', label: 'Wayfinder' }] : []),
   { href: '/faq', label: 'FAQ' },
@@ -136,7 +136,7 @@ export default function MobileMenu({ onClose }: Props) {
           </PillLink>
         ) : null}
 
-        {TICKETS_LIVE && (
+        {TICKETS_CTA_LIVE && (
           <PillButton onClick={() => { onClose(); window.location.href = '/tickets' }} variant="primary" className="w-full">
             Get tickets
           </PillButton>

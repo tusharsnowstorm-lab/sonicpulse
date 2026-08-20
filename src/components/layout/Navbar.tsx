@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { Menu, User } from 'lucide-react'
 import MobileMenu from './MobileMenu'
 import { PillLink } from '@/components/ui/PillButton'
-import { TICKETS_LIVE } from '@/data/tickets'
+import { TICKETS_CTA_LIVE } from '@/data/tickets'
 import { SIGNIN_LIVE } from '@/data/auth'
 import { WAYFINDER_LIVE } from '@/data/wayfinder'
 
@@ -133,7 +133,7 @@ export default function Navbar() {
                 Sign in
               </Link>
             ) : null}
-            {TICKETS_LIVE && (
+            {TICKETS_CTA_LIVE && (
               <PillLink href="/tickets" variant="primary" style={{ padding: '10px 24px', fontSize: 12.5 }}>
                 Get tickets
               </PillLink>
@@ -166,7 +166,7 @@ const navLinks = [
   { href: '/lineup', label: 'Lineup' },
   { href: '/activities', label: 'Activities' },
   { href: '/echoes', label: 'Echoes' },
-  ...(TICKETS_LIVE ? [{ href: '/tickets', label: 'Tickets' }] : []),
+  ...(TICKETS_CTA_LIVE ? [{ href: '/tickets', label: 'Tickets' }] : []),
   { href: '/first-pulse', label: 'First Pulse' },
   ...(WAYFINDER_LIVE ? [{ href: '/wayfinder', label: 'Wayfinder' }] : []),
   { href: '/faq', label: 'FAQ' },

@@ -11,9 +11,10 @@ are locked — never rename, translate or paraphrase them.
 
 - **Afterhours becomes the ticketing platform.** All guests will log in to
   Afterhours from the Sonic Pulse website; ticketing and gate scanning move
-  to (or are replicated in) the app. The website currently sells tickets
-  in-app cheaper already: every tier has an `appPrice` = website price −
-  ৳1,000 (`APP_DISCOUNT` in `src/data/tickets.ts`; `APP_NAME = 'Afterhours'`).
+  to (or are replicated in) the app. App tier names/prices are owned by
+  Afterhours (Early Bird / Phase 2 / Final Phase); the old
+  website-price-minus-৳1,000 scheme is dead and its fields were removed
+  from the codebase (§8.39). SP shows no prices.
 - **The app must keep track of who's in and who's out** — the entry/exit
   presence model below is the heart of the system, and a live "currently
   inside" count is the natural extension the website never built.
