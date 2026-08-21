@@ -4093,3 +4093,23 @@ Delivered as `final-n8-1080x1080.png`.
 Reusable technique: for busy plates, profile row luminance in 60px
 bands before choosing type placement — cheaper and more reliable than
 render-and-eyeball iterations.
+
+### 8.49 Partner-post CTA change — sonicpulsefestival.com/tickets (added 20 Aug 2026, owner-decided)
+
+Owner decision on the N8 composite, applied to ALL future SP-side
+partner posts: the footer CTA is now
+**`register at  sonicpulsefestival.com/tickets`** (owner picked variant
+B over a literal link swap that would have left the stale "tickets in
+the afterhours app" wording).
+
+This SUPERSEDES, for SP-side social creative only, the CTA line named
+in `AFTERHOURS_SIGNIN_HANDOFF.md` / the Afterhours brand doc
+("tickets in the afterhours app — www.onlyafterhours.com"). Rationale:
+SP's own `/tickets` page is the §8.39 hand-off surface and already
+routes to the Afterhours event page, so pointing at it keeps traffic on
+SP first; and "register at" is consistent with §8.41 (the Afterhours
+app is not out yet — registration happens on the web). The Afterhours
+website remains the destination one click later; nothing about the
+partnership framing changes. Afterhours' own channels are unaffected.
+
+Approved artwork: `final-n8b-1080x1080.png` (N8 · The Walk-In).
