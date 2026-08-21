@@ -4050,3 +4050,22 @@ before QC as always (§8.45: defect on 3 of 7 plates).
 **Tile build when the plate passes QC:** from `s3.html` with
 SCRIM_FULL and declaration `top:470px;font-size:92px`; render via
 `render4.js n6`; downscale to `final-n6-1080x1080.png`.
+
+### 8.47 Partner visuals — N7 · THE SIGNAL, owner-generated plate composited (added 20 Aug 2026, owner-requested)
+
+New concept locked and shipped: **N7 · THE SIGNAL** — the founding
+myth itself, a single streak of light falling into the wetlands (the
+prompt was given to the owner in-chat; the owner generated the plate
+in Higgsfield directly since the MCP connector was down, and uploaded
+it back). Planner-executed composite per the §8.45 precedent: corner
+check passed (no border defect), plate upscaled 1024→2048 LANCZOS,
+tile built from `s3.html` with SCRIM_FULL and declaration
+`top:690px;font-size:88px` (the dark field band between the impact
+bloom and the water), rendered and delivered as
+`final-n7-1080x1080.png`.
+
+Process note now proven twice: when the Higgsfield MCP is down, the
+locked-prompt-to-owner hand-off (§8.46 pattern) works — the owner
+generates in the Higgsfield UI and uploads the plate; QC and composite
+happen here. N5 (Kite) and N6 (Coilgate) both remain available via
+their locked prompts whenever wanted.
