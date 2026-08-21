@@ -3996,3 +3996,32 @@ overwrites `bg-n*.png` and `final-n*.png`.
 
 **Executor invocation (owner).** Switch to Sonnet and prompt:
 "execute §8.44 of REDESIGN_PLAN.md".
+
+### 8.45 Partner visuals round 5 — two more posts, planner-executed (added 20 Aug 2026, owner-requested)
+
+Owner asked for two more posts and authorised the planner to run it
+directly if that beat a plan+handoff on tokens — it did, so this is a
+record, not a forward spec. Same §8.44 pipeline and guardrails, same
+locked lockup + "registration, live." declaration, all-new imagery.
+
+Two new concepts: **N4 · THE FERRY** (one circuit-lit boat on black
+water — Styx) and **N5 · THE KITE** (a giant lit kite in a dark sky —
+Icarus).
+
+Outcome: **N4 delivered** (`final-n4-1080x1080.png`, passed QC first
+generation). **N5 not delivered** — its first generation hit the same
+pure-white letterbox border defect §8.44 saw on N3; the identical-prompt
+retry was still generating when the Higgsfield MCP server disconnected
+and moved to a re-authorization-required state. The retry job id is
+`6616ff56-a9d5-4410-8cd8-ed56821a69ab`.
+
+To finish N5 later: the owner re-authorizes Higgsfield (claude.ai
+connector settings, or `claude mcp` / `/mcp` in an interactive
+session), then a session polls that job id (or regenerates with the
+§8.44-style kite prompt), corner-checks for the white border, and
+builds the tile from `s3.html` with SCRIM_FULL and declaration
+`top:470px;font-size:92px`.
+
+Note for future rounds: the white-border defect has now appeared on 3
+of 7 nano_banana_pro plates. Corner-pixel checking before QC is
+cheap and should stay in every visual pipeline.
