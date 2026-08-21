@@ -4069,3 +4069,27 @@ locked-prompt-to-owner hand-off (§8.46 pattern) works — the owner
 generates in the Higgsfield UI and uploads the plate; QC and composite
 happen here. N5 (Kite) and N6 (Coilgate) both remain available via
 their locked prompts whenever wanted.
+
+### 8.48 Partner visuals — N8 · THE WALK-IN, feed-native neon composite (added 20 Aug 2026, owner-requested)
+
+Owner supplied the SP Instagram grid as reference; the visual read
+(saturated magenta + cyan on deep violet-blue, dense haze, laser fans,
+UV-rimmed crowd silhouettes, hyper-real concept-render finish rather
+than the film-restraint look of N1–N7) drove a new prompt handed to the
+owner in-chat. Owner generated in the Higgsfield UI and uploaded;
+composited here per the §8.47 pattern.
+
+**N8 · THE WALK-IN** — first-person view down a neon-lined entrance
+path, crowd walking in, laser fan at the vanishing point.
+
+Composite notes: corner check passed; plate upscaled 1024→2048;
+declaration placement chosen by measuring a row-band luminance profile
+rather than by eye — bands 0–300 (mean 8–35) carry the lockup, the
+420–540 laser convergence peaks at mean 110 and is avoided entirely,
+and the declaration sits at `top:790px;font-size:84px` over the dark
+foreground asphalt (mean 24→18), clear of the diverging neon lines.
+Delivered as `final-n8-1080x1080.png`.
+
+Reusable technique: for busy plates, profile row luminance in 60px
+bands before choosing type placement — cheaper and more reliable than
+render-and-eyeball iterations.
