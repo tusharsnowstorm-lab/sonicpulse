@@ -4025,3 +4025,28 @@ builds the tile from `s3.html` with SCRIM_FULL and declaration
 Note for future rounds: the white-border defect has now appeared on 3
 of 7 nano_banana_pro plates. Corner-pixel checking before QC is
 cheap and should stay in every visual pipeline.
+
+### 8.46 Partner visuals — N6 · COILGATE, prompt locked, awaiting Higgsfield (added 20 Aug 2026, owner-requested)
+
+Owner asked for one more visual based on the COILGATE installation
+(Echo I, `src/data/echoes.ts`: entrance arch, a coiled serpent guests
+walk through, ember-lit scales, teal glass eye — "the first thing every
+guest sees"). Conceptually the strongest fit yet for this campaign: the
+gate you walk through, under "registration, live."
+
+**Blocked, not abandoned.** The Higgsfield MCP server is disconnected
+and requires re-authorization (same block as §8.45's N5 kite), so no
+generation was attempted. Prompt is locked below so the next session
+runs one call and composites.
+
+**Locked prompt (verbatim, `nano_banana_pro`, `aspect_ratio: "1:1"`):**
+`Cinematic night photograph, square, full-bleed with no border or frame. A monumental archway at a night festival entrance, built as an enormous coiled serpent curving up and over the path to form a gate people walk through. Its overlapping scales glow softly from within with warm ember-orange light — the single dominant light source in the scene — and set into its head is one small dark teal glass eye catching a faint highlight. A few small silhouetted figures walk beneath the arch from behind, dwarfed by it. Deep blue-black night sky (#050508 base) with sparse faint stars beyond the arch. Thin haze, subtle 35mm film grain, matte, cinematic restraint. Top fifth and bottom fifth of frame stay very dark for typography. No text, no logos, no watermark, no readable faces, no drinks, no smoking.`
+
+**Guardrail note.** The installation's ember scales AND teal eye risk
+breaking the one-glow law, so the prompt makes the scales dominant and
+demotes the eye to a non-emitting highlight. Corner-pixel border check
+before QC as always (§8.45: defect on 3 of 7 plates).
+
+**Tile build when the plate passes QC:** from `s3.html` with
+SCRIM_FULL and declaration `top:470px;font-size:92px`; render via
+`render4.js n6`; downscale to `final-n6-1080x1080.png`.
