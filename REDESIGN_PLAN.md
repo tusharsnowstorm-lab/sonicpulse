@@ -4113,3 +4113,25 @@ website remains the destination one click later; nothing about the
 partnership framing changes. Afterhours' own channels are unaffected.
 
 Approved artwork: `final-n8b-1080x1080.png` (N8 · The Walk-In).
+
+### 8.50 Partner visuals — N9 · LOOK UP, reel cut 1080×1920 (added 20 Aug 2026, owner-requested)
+
+Owner-approved reel creative. Concept **N9 · LOOK UP** — low camera
+inside the crowd tilted skyward, laser fan spreading from the crowd
+line to the top corners. First vertical attempt (a 9:16 restatement of
+N8's walk-in path) was rejected by the owner; the replacement concept
+is vertical-native (ground-to-sky) rather than a re-crop, which is the
+lesson to carry into future 9:16 work.
+
+Composite: owner-generated plate (Higgsfield UI, 768×1376) upscaled to
+2160×3840; corner check passed. Row-luminance profiling put the only
+usable dark zones at the top (mean 10–30) and the bottom crowd band
+(mean 8–2), with y480–1440 laser-bright (mean 45–88), so ALL type sits
+in one upper block: lockup 250–500, declaration 620, micro 790, CTA
+838. This doubles as reel-UI safety — the caption/audio rail and action
+buttons overlay the lower crowd, which carries no type.
+
+Built from a purpose-made 1080×1920 template (`n9.html`, `render5.js`)
+rather than the square `s3.html`; type scaled up for phone viewing
+(declaration 104px, lockup 52/76px). Footer uses the §8.49 CTA.
+Delivered as `final-n9-reel-1080x1920.png`.
