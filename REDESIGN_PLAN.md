@@ -4135,3 +4135,54 @@ Built from a purpose-made 1080×1920 template (`n9.html`, `render5.js`)
 rather than the square `s3.html`; type scaled up for phone viewing
 (declaration 104px, lockup 52/76px). Footer uses the §8.49 CTA.
 Delivered as `final-n9-reel-1080x1920.png`.
+
+### 8.51 Lineup — Fly on the Wall poster supplied (added 22 Aug 2026, owner-requested)
+
+Owner supplied the Fly on the Wall artist poster, replacing the
+placeholder state set when the act was added. Asset is **pre-staged by
+the planner** and committed with this amendment at
+`public/images/artists/fly-on-the-wall-poster.webp` — 1200×1489 WEBP,
+q82, ~107 KB, matching the other artist posters exactly in dimensions
+and weight (peers 93–129 KB). Source was 3291×4096 (ratio 0.803 vs the
+poster ratio 0.806); centre-cropped 12 px of height, so the SONIC PULSE
+wordmark and the FLYONTHEWALL name are both fully intact.
+
+**Planner judgment calls, made now:**
+- **`placeholder: true` STAYS.** The act is still incomplete — no bio
+  copy, no `bioCard`. The flag is declared on the `Act` type but
+  consumed by no component (`ArtistSlider` branches on `act.poster`,
+  and the bio card renders behind `act.bioCard &&`), so it changes no
+  output; it remains an accurate data marker until the bio lands.
+- **`bioCard` stays `null`.** The slider renders that block
+  conditionally, so there is no broken or empty state.
+- **The bio placeholder line is reworded, not filled in.** Leaving
+  "Poster and bio pending" while a poster renders is a visible
+  contradiction on `/lineup`. The executor does NOT write artist bio
+  copy — that is owner content.
+
+**File — one edit.** `src/data/lineup.ts`, the `fly-on-the-wall` entry:
+- `poster: null,` → `poster: '/images/artists/fly-on-the-wall-poster.webp',`
+- `bio: 'Poster and bio pending — the owner will supply these assets closer to the event.',`
+  → `bio: 'Bio pending — the owner will supply this closer to the event.',`
+- `time`, `tag`, `hook`, `bioCard: null` and `placeholder: true` are
+  UNCHANGED.
+
+**Scope fences.** No other act is touched. The timetable array lower in
+the same file (the `7:00 – 8:30 PM` row) is untouched — it carries no
+image. `ArtistSlider` and the `/lineup` page are untouched; the poster
+renders through the existing `act.poster` branch. No other asset is
+added or deleted.
+
+**Reversibility.** Restore `poster: null` and the original bio string;
+delete the webp.
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Local dev on port 3100:
+  - `/lineup` → grep `fly-on-the-wall-poster.webp` ≥1, and
+    `Poster and bio pending` **0**.
+  - `curl -o /dev/null -w '%{http_code}'`
+    `/images/artists/fly-on-the-wall-poster.webp` → **200**.
+- Playwright at 1280×800 and 375×812:
+  `scrollWidth - clientWidth === 0` on `/lineup`.
