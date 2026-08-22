@@ -4186,3 +4186,53 @@ delete the webp.
     `/images/artists/fly-on-the-wall-poster.webp` → **200**.
 - Playwright at 1280×800 and 375×812:
   `scrollWidth - clientWidth === 0` on `/lineup`.
+
+### 8.52 Lineup — Fly on the Wall bio copy supplied (added 22 Aug 2026, owner-requested)
+
+Owner supplied the bio copy by pointing at the artist poster staged in
+§8.51 (the attached image is the same 3291×4096 source, not a new
+asset — no file was added, replaced or deleted). §8.51 deliberately left
+the bio as a placeholder because "the executor does NOT write artist bio
+copy — that is owner content"; that condition is now met, so the copy
+lands.
+
+**File — one edit.** `src/data/lineup.ts`, the `fly-on-the-wall` entry:
+- `bio:` placeholder string → the poster copy, transcribed and set in
+  house voice to match the peer bios (single paragraph, third person):
+  "Lives in the space just below the surface. Melodic house, indie dance
+  and trance woven into journeys that drift between deep grooves and
+  hypnosis — music that makes you lose track of time without losing the
+  groove. Designed to pull you somewhere between zoning in and zoning out
+  entirely. The pulse found something fluid."
+- `time`, `tag`, `hook`, `poster`, `bioCard: null` and
+  `placeholder: true` are UNCHANGED.
+
+**Source defect, handled not propagated.** The poster's body copy carries
+a corrupted fragment — "…without losing the groove.gh to make you forget
+you're moving." The ".gh to" is a broken word ending (most likely
+"…enough to…" from a lost clause). It was NOT transcribed verbatim; the
+sentence is closed at "groove" and the lost clause dropped rather than
+guessed. If the owner supplies the intended wording, it slots into the
+same sentence.
+
+**`placeholder: true` STAYS.** §8.51 kept the flag on two grounds — no
+bio copy, no `bioCard`. The first is now resolved; the second is not, so
+the marker is still accurate. Independently re-verified this amendment:
+`placeholder` is declared on the `Act` type and set on two entries but
+read by no component, so it changes no rendered output either way. It
+flips to `false` when a bio card lands.
+
+**Scope fences.** No other act is touched. The `hook` ("The early
+current") is unchanged — the owner asked for the bio only. The timetable
+array is untouched. `ArtistSlider` and `/lineup` are untouched; the bio
+renders through the existing field.
+
+**Reversibility.** Restore the previous one-line placeholder bio string.
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Local dev on port 3100: `/lineup` → grep `zoning in and zoning out` ≥1,
+  and `Bio pending` **0**.
+- Playwright at 1280×800 and 375×812:
+  `scrollWidth - clientWidth === 0` on `/lineup`.

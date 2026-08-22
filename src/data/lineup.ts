@@ -69,7 +69,7 @@ export const acts: Act[] = [
     time: '7:00 – 8:30 PM',
     tag: 'Dusk',
     hook: 'The early current',
-    bio: 'Bio pending — the owner will supply this closer to the event.',
+    bio: 'Lives in the space just below the surface. Melodic house, indie dance and trance woven into journeys that drift between deep grooves and hypnosis — music that makes you lose track of time without losing the groove. Designed to pull you somewhere between zoning in and zoning out entirely. The pulse found something fluid.',
     poster: '/images/artists/fly-on-the-wall-poster.webp',
     bioCard: null,
     placeholder: true,
