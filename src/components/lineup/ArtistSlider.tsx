@@ -5,7 +5,9 @@ import Image from 'next/image'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { acts } from '@/data/lineup'
 
-function Slide({ act }: { act: (typeof acts)[number] }) {
+const SLIDE_GAP = 20
+
+function Slide({ act, activeIndex, count }: { act: (typeof acts)[number]; activeIndex: number; count: number }) {
   const [bioOpen, setBioOpen] = useState(false)
 
   return (
@@ -44,6 +46,34 @@ function Slide({ act }: { act: (typeof acts)[number] }) {
             </span>
           </div>
         )}
+        <div
+          className="flex md:hidden items-end justify-center"
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            gap: 6,
+            padding: '28px 0 12px',
+            zIndex: 2,
+            pointerEvents: 'none',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.55), transparent)',
+          }}
+        >
+          {Array.from({ length: count }, (_, i) => (
+            <span
+              key={i}
+              style={{
+                width: i === activeIndex ? 18 : 6,
+                height: 6,
+                borderRadius: 999,
+                background: i === activeIndex ? 'var(--accent-magenta)' : 'rgba(255,255,255,0.45)',
+                transition: 'width 200ms ease, background 200ms ease',
+              }}
+            />
+          ))}
+        </div>
       </div>
 
       <div className="md:col-span-7 flex flex-col gap-4" style={{ padding: '34px 36px 30px' }} id={act.href ? undefined : act.id}>
@@ -139,15 +169,15 @@ export default function ArtistSlider() {
     const track = trackRef.current
     if (!track) return
     const clamped = Math.max(0, Math.min(acts.length - 1, i))
-    track.scrollTo({ left: clamped * (track.clientWidth + 20), behavior: 'smooth' })
+    track.scrollTo({ left: clamped * (track.clientWidth + SLIDE_GAP), behavior: 'smooth' })
   }
 
   useEffect(() => {
     const track = trackRef.current
     if (!track) return
     const onScroll = () => {
-      const i = Math.round(track.scrollLeft / track.clientWidth)
-      setIndex(i)
+      const i = Math.round(track.scrollLeft / (track.clientWidth + SLIDE_GAP))
+      setIndex(Math.max(0, Math.min(acts.length - 1, i)))
     }
     track.addEventListener('scroll', onScroll, { passive: true })
     return () => track.removeEventListener('scroll', onScroll)
@@ -158,10 +188,10 @@ export default function ArtistSlider() {
       <div
         ref={trackRef}
         className="flex"
-        style={{ gap: 20, overflowX: 'auto', scrollSnapType: 'x mandatory', scrollbarWidth: 'none' }}
+        style={{ gap: SLIDE_GAP, overflowX: 'auto', scrollSnapType: 'x mandatory', scrollbarWidth: 'none' }}
       >
         {acts.map((act) => (
-          <Slide key={act.id} act={act} />
+          <Slide key={act.id} act={act} activeIndex={index} count={acts.length} />
         ))}
       </div>
 
