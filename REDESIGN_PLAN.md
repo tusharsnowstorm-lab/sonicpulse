@@ -4236,3 +4236,173 @@ renders through the existing field.
   and `Bio pending` **0**.
 - Playwright at 1280×800 and 375×812:
   `scrollWidth - clientWidth === 0` on `/lineup`.
+
+### 8.53 Lineup — swipe affordance on the artist photo (added 22 Aug 2026, owner-requested)
+
+Owner request: a small indication (dots) at the bottom of the artist
+photos on `/lineup`, so guests intuitively understand that left/right
+swipes move to the next/previous artist.
+
+**Diagnosis — the dots already exist; they are below the fold.**
+`ArtistSlider.tsx` already renders a dot row plus prev/next chevrons
+(current lines 168–208), but they sit beneath the *entire* card.
+Measured on the running app (Playwright, `/lineup`):
+
+| Viewport | Photo block | Card | Dot row | Verdict |
+|---|---|---|---|---|
+| 390×844 (mobile) | y 295–684 | y 294–**1159** (864 tall) | y **1195** | **351 px below the first fold** |
+| 1280×800 (desktop) | y 331–722 | y 330–723 | y 759 | 41 px **above** the fold — already visible |
+
+So the affordance is invisible exactly where swiping is the only way to
+navigate. Two compounding causes: the card (864 px) is taller than the
+viewport (844 px), and each slide is `flex: 0 0 100%` — measured slide
+width 343 px against a track `clientWidth` of 343 px, i.e. **zero peek**
+of the next card. Nothing on the first screen suggests a second artist
+exists. This is a placement fix, not a new feature.
+
+**Scoped to mobile.** Desktop already shows the dot row above the fold
+and has chevrons, so the new overlay is mobile-only (`md:hidden`, the
+Tailwind breakpoint already used in this file). This deliberately avoids
+two dot rows visible in one glance on desktop.
+
+**Slide count is 7, not 8.** `acts` has 7 entries; the page heading says
+"8 artists" because `First Pulse ×2` is one slide counted as two acts
+(`ARTIST_COUNT = acts.length + 1`). The overlay renders **`acts.length`
+= 7 dots**. Do not use `ARTIST_COUNT`.
+
+#### File — `src/components/lineup/ArtistSlider.tsx` (only file touched)
+
+**Edit 1 — module constant.** Add above `function Slide`:
+```ts
+const SLIDE_GAP = 20
+```
+
+**Edit 2 — `Slide` signature.** Replace:
+```ts
+function Slide({ act }: { act: (typeof acts)[number] }) {
+```
+with:
+```ts
+function Slide({ act, activeIndex, count }: { act: (typeof acts)[number]; activeIndex: number; count: number }) {
+```
+
+**Edit 3 — the overlay.** Inside the photo block — the
+`<div className="md:col-span-5 relative" style={{ minHeight: 340 }}>` —
+insert this as the **last child**, after the `{act.poster ? … : …}`
+ternary closes, so it paints above the image:
+```tsx
+<div
+  className="flex md:hidden items-end justify-center"
+  aria-hidden="true"
+  style={{
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    gap: 6,
+    padding: '28px 0 12px',
+    zIndex: 2,
+    pointerEvents: 'none',
+    background: 'linear-gradient(to top, rgba(0,0,0,0.55), transparent)',
+  }}
+>
+  {Array.from({ length: count }, (_, i) => (
+    <span
+      key={i}
+      style={{
+        width: i === activeIndex ? 18 : 6,
+        height: 6,
+        borderRadius: 999,
+        background: i === activeIndex ? 'var(--accent-magenta)' : 'rgba(255,255,255,0.45)',
+        transition: 'width 200ms ease, background 200ms ease',
+      }}
+    />
+  ))}
+</div>
+```
+
+**CRITICAL — do not set `display` in the inline `style` object.** Inline
+styles outrank Tailwind's class rules, so a `display: 'flex'` in `style`
+would defeat `md:hidden` and the overlay would show on desktop too.
+Display is carried by the `flex md:hidden` classes only. Everything else
+stays inline, matching this file's existing mixed convention.
+
+The overlay renders on **every** slide, including `First Pulse ×2`
+(`poster: null`, the gradient placeholder branch) — it communicates
+carousel position, not photo content.
+
+**Edit 4 — call site.** Replace:
+```tsx
+<Slide key={act.id} act={act} />
+```
+with:
+```tsx
+<Slide key={act.id} act={act} activeIndex={index} count={acts.length} />
+```
+
+**Edit 5 — fix the active-index drift.** The dots become the primary
+affordance, so the active one must be exact. Measured slide pitch is
+**363 px** (`clientWidth` 343 + gap 20). `go()` already uses
+`clientWidth + 20` and is correct; `onScroll` divides by `clientWidth`
+alone, drifting by `i × 20 / clientWidth`. At 7 acts on a 390 px screen
+this still rounds correctly, so it is currently invisible — but it
+breaks the active dot at ~10 acts on that same screen, and every future
+act added makes it worse. Fix now, and clamp against iOS overscroll
+bounce:
+
+- In `go()`, replace the literal `20` with `SLIDE_GAP`:
+  `track.scrollTo({ left: clamped * (track.clientWidth + SLIDE_GAP), behavior: 'smooth' })`
+- In the `onScroll` handler, replace:
+  ```ts
+  const i = Math.round(track.scrollLeft / track.clientWidth)
+  setIndex(i)
+  ```
+  with:
+  ```ts
+  const i = Math.round(track.scrollLeft / (track.clientWidth + SLIDE_GAP))
+  setIndex(Math.max(0, Math.min(acts.length - 1, i)))
+  ```
+- In the track's inline style, replace `gap: 20` with `gap: SLIDE_GAP`.
+
+#### Scope fences
+
+- The existing bottom bar (interactive dot buttons + chevrons) is
+  **unchanged** and stays the accessible control. The overlay is
+  decorative only — `aria-hidden="true"` and `pointerEvents: 'none'` —
+  so screen readers and keyboard users are unaffected and there is no
+  second `role="tablist"` in the DOM.
+- No change to `Slide`'s bio-card state, the `href` CTA, `src/data/lineup.ts`,
+  the `/lineup` page, or any other component or route.
+- No new asset, dependency or icon. `lucide-react` imports stay as they are.
+
+#### Considered and deliberately excluded
+
+- **Edge peek** (making slides ~88% width so the next card's edge shows)
+  is the single strongest swipe cue and the measurements above show the
+  current 0 px peek is half the problem. It is excluded here because it
+  changes card width and page rhythm on every viewport, which is more
+  visual change than this request asked for. Recorded so a future
+  amendment can take it up deliberately.
+- **Enlarging the bottom dot buttons** (currently 8×8 px, below the 44 px
+  touch-target minimum) is a real accessibility gap but is separate work.
+- **A one-time animated "swipe" nudge** — rejected as noise.
+
+#### Reversibility
+
+Delete the Edit 3 overlay block, revert the Edit 2/4 props, and restore
+the two `onScroll`/`go()` lines. No data, asset or flag is involved.
+
+#### Verification gates (executor)
+
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Local dev on port 3100, Playwright:
+  - **390×844** — the overlay's bounding rect `bottom` is **≤ 844**
+    (visible without scrolling, expected ≈ 684); it contains exactly
+    **7** dot spans; computed `display` is **`flex`**.
+  - **1280×800** — the overlay's computed `display` is **`none`**.
+  - **Active dot tracks scroll:** call the next-chevron three times at
+    390×844, wait for smooth scroll to settle, then assert the wide
+    (18 px) dot is at **index 3** in the overlay *and* the bottom row's
+    magenta dot is at index 3.
+  - `scrollWidth - clientWidth === 0` on `/lineup` at both sizes.
