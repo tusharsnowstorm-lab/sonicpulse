@@ -116,7 +116,8 @@ export default function WayfinderForm() {
           We&apos;ll confirm your shift and briefing details closer to the event.
         </p>
         <p style={{ fontSize: 13, color: 'var(--text-dim)', marginBottom: 20 }}>
-          One step now: follow <strong style={{ color: '#fff' }}>@dhakamusicfestival</strong> and accept the follow request it sends back — that&apos;s how we verify applicants.
+          One step now: follow <strong style={{ color: '#fff' }}>@dhakamusicfestival</strong>{' '}
+          and accept the follow request it sends back — that&apos;s how we verify applicants.
         </p>
         <p style={{ fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-label-muted)', marginBottom: 6 }}>
           Reference code

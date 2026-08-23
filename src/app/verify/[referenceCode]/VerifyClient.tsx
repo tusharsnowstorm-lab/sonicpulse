@@ -303,7 +303,8 @@ export default function VerifyClient({ ticket, scans, isGateStaff, nidSignedUrl,
               <div className="rounded-lg px-4 py-3 flex gap-3" style={{ background: 'rgba(255,45,107,0.07)', border: '1px solid rgba(255,45,107,0.2)' }}>
                 <AlertTriangle size={16} className="shrink-0 mt-0.5" style={{ color: 'var(--accent-pulse)' }} />
                 <p className="text-xs leading-relaxed" style={{ color: 'rgba(240,240,248,0.8)' }}>
-                  <strong style={{ color: 'var(--accent-pulse)' }}>Wristband check required.</strong> Verify the attendee&apos;s wristband is present and intact before confirming re-entry. Do not allow re-entry without a wristband.
+                  <strong style={{ color: 'var(--accent-pulse)' }}>Wristband check required.</strong>{' '}
+                  Verify the attendee&apos;s wristband is present and intact before confirming re-entry. Do not allow re-entry without a wristband.
                 </p>
               </div>
             )}
