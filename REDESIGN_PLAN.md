@@ -4406,3 +4406,119 @@ the two `onScroll`/`go()` lines. No data, asset or flag is involved.
     (18 px) dot is at **index 3** in the overlay *and* the bottom row's
     magenta dot is at index 3.
   - `scrollWidth - clientWidth === 0` on `/lineup` at both sizes.
+
+### 8.54 Missing space after `@dhakamusicfestival` — SWC JSX entity whitespace bug (added 23 Aug 2026, owner-requested)
+
+Owner reported the Wayfinder success card rendering
+"…follow **@dhakamusicfestival**and accept the follow request…" with no
+space after the handle.
+
+**The source is not wrong.** `WayfinderForm.tsx:119` contains a real
+U+0020 after `</strong>` (verified with `od -c`), and it has been there
+since commit `8959ede`. The space is destroyed at build time, so no
+amount of reading the source reveals it.
+
+**Root cause — reproduced in a controlled experiment.** A throwaway
+route was built with four variants and the prerendered HTML inspected:
+
+| Variant | Text node after `</strong>` | Rendered |
+|---|---|---|
+| A | `␣and accept the thing.` | space **kept** |
+| B | `␣— accept the thing.` | space **kept** |
+| C | `␣and accept that&apos;s it.` | space **STRIPPED** |
+| D | same as A, all on one line | space **kept** |
+| F | `␣and accept that&rsquo;s it.` | space **STRIPPED** |
+| G | `␣and accept that’s it.` (literal ’) | space **kept** |
+
+**When a JSX text node contains an HTML entity, SWC's entity-decoding
+path discards that node's leading whitespace.** Any entity triggers it
+(`&apos;` and `&rsquo;` both reproduce); the entity does not need to be
+adjacent to the space — it can sit at the far end of the sentence. This
+is why `AddTicketForm.tsx:85`, structurally identical but with no entity
+in its trailing text node, renders correctly.
+
+**Blast radius — exactly two sites**, established two independent ways:
+a source scan for "inline element, space, then an entity in the same
+text node", and a ground-truth scan of the compiled bundles for
+`}),"<letter>`. Both agree:
+
+1. `src/components/wayfinder/WayfinderForm.tsx:119` — compiles to
+   `}),"and accept the follow request…` (the reported bug).
+2. `src/app/verify/[referenceCode]/VerifyClient.tsx:306` — compiles to
+   `}),"Verify the attendee's wristband…`, i.e. the gate-staff re-entry
+   warning renders "Wristband check required.**V**erify the attendee's…".
+   **Not reported by the owner; found by this sweep and fixed here.**
+
+Explicitly checked and NOT affected: the email templates in
+`src/app/api/wayfinder/route.ts`, `first-pulse/route.ts` and
+`register/route.ts` build plain HTML strings, never JSX, so entity
+decoding never runs on them. No change there.
+
+#### Fix — `{' '}`, two files
+
+**Edit 1 — `src/components/wayfinder/WayfinderForm.tsx`.** Replace line 119:
+```tsx
+          One step now: follow <strong style={{ color: '#fff' }}>@dhakamusicfestival</strong> and accept the follow request it sends back — that&apos;s how we verify applicants.
+```
+with these two lines:
+```tsx
+          One step now: follow <strong style={{ color: '#fff' }}>@dhakamusicfestival</strong>{' '}
+          and accept the follow request it sends back — that&apos;s how we verify applicants.
+```
+
+**Edit 2 — `src/app/verify/[referenceCode]/VerifyClient.tsx`.** Replace line 306:
+```tsx
+                  <strong style={{ color: 'var(--accent-pulse)' }}>Wristband check required.</strong> Verify the attendee&apos;s wristband is present and intact before confirming re-entry. Do not allow re-entry without a wristband.
+```
+with these two lines:
+```tsx
+                  <strong style={{ color: 'var(--accent-pulse)' }}>Wristband check required.</strong>{' '}
+                  Verify the attendee&apos;s wristband is present and intact before confirming re-entry. Do not allow re-entry without a wristband.
+```
+
+`{' '}` is an expression child, not text, so entity decoding never
+touches it. The following text node then begins with a newline, whose
+leading whitespace normal JSX rules trim as usual — the single rendered
+space comes from `{' '}` alone. Verified working (variant E of the
+experiment). No copy changes: every word, the em dash and both `&apos;`
+entities stay exactly as they are.
+
+#### Considered and rejected
+
+- **Replacing `&apos;` with a literal `’`** also fixes it (variant G) but
+  changes the rendered glyph from a straight to a curly apostrophe and
+  would make these two strings inconsistent with the `&apos;` used
+  everywhere else in the codebase.
+- **`&nbsp;`** — wrong semantics; it would suppress the line break the
+  paragraph needs at that point.
+- **Reordering the sentence to move the entity** — fragile, and it edits
+  owner-approved copy to work around a compiler bug.
+
+#### House rule for future amendments
+
+In JSX, when an inline element (`<strong>`, `<em>`, `<a>`, `<code>`,
+`<span>`) is followed by a space and the same text node contains an HTML
+entity, write the space as `{' '}`. Reviewing the source will not reveal
+the defect — only the built output shows it.
+
+#### Reversibility
+
+Rejoin each pair of lines back into one and delete the `{' '}`. No data,
+asset, flag or dependency involved.
+
+#### Verification gates (executor)
+
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- **Compiled-output gates, run after `npm run build`** — these are the
+  only checks that can see this bug:
+  - `grep -r '}),"and accept the follow request' .next/` → **0 matches**
+  - `grep -r '}),"Verify the attendee' .next/` → **0 matches**
+  - `grep -rc '@dhakamusicfestival"}),"  *"' .next/server/` → **≥1**,
+    confirming a standalone space child now sits between the handle and
+    the following sentence.
+- Source gate: `grep -c "</strong>{' '}" src/components/wayfinder/WayfinderForm.tsx`
+  and the same against `src/app/verify/[referenceCode]/VerifyClient.tsx`
+  → **1** each.
+- Do **not** smoke-test by submitting the Wayfinder form: that writes a
+  real application row to Supabase. The compiled-output gates cover it.
