@@ -56,6 +56,7 @@ const Required = () => <em style={{ color: 'var(--accent-magenta)', fontStyle: '
 export default function WayfinderForm() {
   const [form, setForm] = useState(initialForm)
   const [stayToClose, setStayToClose] = useState(false)
+  const [mainAccountConfirmed, setMainAccountConfirmed] = useState(false)
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState('')
   const [referenceCode, setReferenceCode] = useState('')
@@ -117,7 +118,7 @@ export default function WayfinderForm() {
         </p>
         <p style={{ fontSize: 13, color: 'var(--text-dim)', marginBottom: 20 }}>
           One step now: follow <strong style={{ color: '#fff' }}>@dhakamusicfestival</strong>{' '}
-          and accept the follow request it sends back — that&apos;s how we verify applicants.
+          and accept the follow request it sends back — that&apos;s how we verify applicants. Apply with your main account — not an alt, second or fluff account.
         </p>
         <p style={{ fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-label-muted)', marginBottom: 6 }}>
           Reference code
@@ -248,9 +249,20 @@ export default function WayfinderForm() {
         <label style={labelStyle} htmlFor="wf-ig">Instagram handle <Required /></label>
         <input id="wf-ig" style={fieldStyle} required value={form.instagramHandle} onChange={set('instagramHandle')} placeholder="@yourhandle" />
         <p style={{ fontSize: 12, color: 'var(--text-label-muted)', marginTop: 6, lineHeight: 1.5 }}>
-          Follow @dhakamusicfestival and accept the follow request it sends back — that&apos;s how we verify applicants.
+          Follow @dhakamusicfestival and accept the follow request it sends back — that&apos;s how we verify applicants. Apply with your main account — not an alt, second or fluff account.
         </p>
       </div>
+
+      <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13.5, color: 'rgba(255,255,255,0.75)', lineHeight: 1.5, cursor: 'pointer' }}>
+        <input
+          type="checkbox"
+          required
+          checked={mainAccountConfirmed}
+          onChange={(e) => setMainAccountConfirmed(e.target.checked)}
+          style={{ marginTop: 3, accentColor: 'var(--accent-magenta)', width: 16, height: 16, touchAction: 'manipulation' }}
+        />
+        This is my main Instagram account, not an alt, second or fluff account.
+      </label>
 
       <div>
         <label style={labelStyle} htmlFor="wf-notes">Anything we should know</label>
