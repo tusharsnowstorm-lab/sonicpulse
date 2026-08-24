@@ -4522,3 +4522,145 @@ asset, flag or dependency involved.
   → **1** each.
 - Do **not** smoke-test by submitting the Wayfinder form: that writes a
   real application row to Supabase. The compiled-output gates cover it.
+
+### 8.55 Wayfinder — main-account requirement for Instagram verification (added 23 Aug 2026, owner-requested)
+
+Owner restated the Wayfinder verification rule and added a new
+condition: applicants must follow **@dhakamusicfestival** and accept the
+follow request back, **and must apply with their main Instagram account
+— not an alt, fluff or second account.**
+
+The follow-and-accept half already ships on three surfaces (§8.42). Only
+the main-account condition is new. This amendment extends §8.42 rather
+than replacing it: every existing sentence stays exactly as written, and
+one sentence is appended after it on each of the same three surfaces.
+
+**Locked copy — one sentence, verbatim-identical on all three surfaces:**
+
+> Apply with your main account — not an alt, second or fluff account.
+
+"fluff account" is the owner's own term and the one this audience uses
+for the exact account type being excluded; it is kept deliberately. The
+em dash is a real em dash (—), not a hyphen.
+
+#### Files — four edits
+
+**Edit 1 — `src/components/wayfinder/WayfinderForm.tsx`, line 251** (the
+Instagram field hint). Replace:
+```tsx
+          Follow @dhakamusicfestival and accept the follow request it sends back — that&apos;s how we verify applicants.
+```
+with:
+```tsx
+          Follow @dhakamusicfestival and accept the follow request it sends back — that&apos;s how we verify applicants. Apply with your main account — not an alt, second or fluff account.
+```
+
+**Edit 2 — same file, line 120** (the success card). Replace:
+```tsx
+          and accept the follow request it sends back — that&apos;s how we verify applicants.
+```
+with:
+```tsx
+          and accept the follow request it sends back — that&apos;s how we verify applicants. Apply with your main account — not an alt, second or fluff account.
+```
+**Do not touch line 119.** It ends with `</strong>{' '}` — that `{' '}`
+is the §8.54 fix for the SWC entity-whitespace bug and removing it
+re-breaks the missing space after the handle.
+
+**Edit 3 — `src/app/api/wayfinder/route.ts`, line 159** (confirmation
+email). Replace:
+```
+            <p style="margin:0 0 16px;">One step now: follow <strong>@dhakamusicfestival</strong> on Instagram and accept the follow request we send back — that's how we verify applicants.</p>
+```
+with:
+```
+            <p style="margin:0 0 16px;">One step now: follow <strong>@dhakamusicfestival</strong> on Instagram and accept the follow request we send back — that's how we verify applicants. Apply with your main account — not an alt, second or fluff account.</p>
+```
+This is a JS template string, not JSX: the apostrophe in "that's" stays
+a raw `'` and must NOT be converted to `&apos;`. The email's "we send
+back" (vs the site's "it sends back") is a deliberate §8.42 distinction —
+leave it.
+
+**Edit 4 — same file as Edits 1–2: a required affirmation checkbox.**
+Copy alone informs; the owner said applicants *must* use their main
+account, so the form gets one deliberate moment of commitment.
+
+4a. After line 58 (`const [stayToClose, setStayToClose] = useState(false)`)
+add:
+```tsx
+  const [mainAccountConfirmed, setMainAccountConfirmed] = useState(false)
+```
+
+4b. Immediately after the Instagram field block's closing `</div>` (the
+line after the `<p>` edited in Edit 1) and BEFORE the `<div>` holding
+"Anything we should know", insert:
+```tsx
+      <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13.5, color: 'rgba(255,255,255,0.75)', lineHeight: 1.5, cursor: 'pointer' }}>
+        <input
+          type="checkbox"
+          required
+          checked={mainAccountConfirmed}
+          onChange={(e) => setMainAccountConfirmed(e.target.checked)}
+          style={{ marginTop: 3, accentColor: 'var(--accent-magenta)', width: 16, height: 16, touchAction: 'manipulation' }}
+        />
+        This is my main Instagram account, not an alt, second or fluff account.
+      </label>
+```
+The label wording is first-person because a checkbox is an affirmation,
+not an instruction — the one deliberate exception to the verbatim rule
+above. Styling is copied exactly from the existing `stayToClose`
+checkbox so the two match.
+
+**The checkbox is NOT submitted and NOT stored.** `handleSubmit` and the
+`JSON.stringify({ ...form, stayToClose })` body stay untouched, and no
+column is added. Because the field is `required`, every stored row would
+read `true` and carry zero information — storing it would cost the owner
+a SQL migration to record a constant. Native HTML validation blocks
+submit while it is unchecked, which is the entire behavioural point.
+
+#### Scope fences
+
+- No API, schema, env var or flag change. No SQL for the owner to run.
+- `src/data/wayfinder.ts`, `WAYFINDER_LIVE`, the shift data, the admin
+  tab and `/api/admin/wayfinder` are untouched.
+- The age check, the 600-character motivation counter and every other
+  field are untouched.
+
+#### Considered and rejected
+
+- **A fourth bullet in the `points` list on `/wayfinder`.** §8.42 ruled
+  the page intro stays minimal, and that still holds: the field hint sits
+  directly above the Instagram input, which is the decisive moment —
+  earlier placement would not change behaviour.
+- **Storing the confirmation.** See above: a required checkbox stores a
+  constant.
+- **Rewriting the §8.42 sentence to fold both rules into one.** Two rules
+  read more clearly as two sentences, and leaving the first untouched
+  keeps the diff to one appended sentence per surface.
+
+#### Reversibility
+
+Delete the appended sentence from all three surfaces, delete the
+checkbox `<label>` block and its `useState` line. Nothing else changes.
+
+#### Verification gates (executor)
+
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Source gates:
+  - `grep -c "not an alt, second or fluff account" src/components/wayfinder/WayfinderForm.tsx` → **3**
+    (field hint, success card, checkbox label).
+  - `grep -c "not an alt, second or fluff account" src/app/api/wayfinder/route.ts` → **1**.
+  - `grep -c "</strong>{' '}" src/components/wayfinder/WayfinderForm.tsx` → **1**
+    (§8.54 regression guard).
+- **§8.54 regression gate**, after `npm run build`:
+  `grep -r '}),"and accept the follow request' .next/` → **0 matches**.
+- Playwright on `/wayfinder` at 375×812 and 1280×800:
+  - The checkbox is present and reports `required === true` and
+    `checkValidity() === false` while unchecked; after
+    `.check()`, `checkValidity() === true`.
+  - The field hint text contains "not an alt, second or fluff account".
+  - `scrollWidth - clientWidth === 0`.
+- **Do NOT submit the form.** A submission writes a real application row
+  to Supabase and sends an email. Validate the checkbox via
+  `checkValidity()` only, never by submitting.
