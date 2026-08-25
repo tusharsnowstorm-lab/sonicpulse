@@ -26,6 +26,7 @@ import datetime
 import html
 import json
 import os
+import re
 import subprocess
 import sys
 import urllib.parse
@@ -82,10 +83,20 @@ def birth_year(row):
 
 
 def handle(row):
-    h = (row.get("instagram_handle") or "").strip()
-    if not h:
+    """Normalise a free-text Instagram field to @handle form.
+
+    Applicants type whatever they like: a bare handle, an @handle, a full
+    profile URL with tracking params, or two handles at once.
+    """
+    raw = (row.get("instagram_handle") or "").strip()
+    if not raw:
         return DASH
-    return h if h.startswith("@") else "@" + h
+    if "instagram.com/" in raw.lower():
+        tail = re.split(r"instagram\.com/", raw, flags=re.I)[-1]
+        name = re.split(r"[/?#]", tail)[0].lstrip("@")
+        return "@" + name if name else DASH
+    parts = [p.lstrip("@") for p in re.split(r"[\s/,]+", raw) if p.strip("@/, ")]
+    return " / ".join("@" + p for p in parts) if parts else DASH
 
 
 def build_rows(data):
