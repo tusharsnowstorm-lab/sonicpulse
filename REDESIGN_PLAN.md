@@ -4664,3 +4664,192 @@ checkbox `<label>` block and its `useState` line. Nothing else changes.
 - **Do NOT submit the form.** A submission writes a real application row
   to Supabase and sends an email. Validate the checkbox via
   `checkValidity()` only, never by submitting.
+
+### 8.56 FAQ — link the relevant answers to /policy (added 26 Aug 2026, owner-requested)
+
+Owner asked why the rules page seemed to be missing. It is not — `/policy`
+("Event policy and rules") is intact and builds as a static route, carrying
+"No narcotics or alcohol", "No personal speakers allowed", "Safe space — no
+harassment or bullying", "No live streaming during the event", "One ticket,
+one entry", "Tickets are non-refundable", "Respect attendees and staff" and
+"Venue rules apply".
+
+**The real problem is discoverability.** `/policy` is absent from
+`Navbar.tsx` (which lists Lineup, Activities, Echoes, Tickets, First Pulse,
+Wayfinder, FAQ, Contact) and is reachable from exactly one place site-wide:
+a "Policy" entry in the Footer's Support column (`Footer.tsx:46`). Guests
+looking for the rules land on the FAQ first, and the FAQ never points onward.
+This amendment adds that pointer.
+
+#### Technical constraint (measured, not assumed)
+
+`FAQItem.answer` is a plain `string`, rendered as `<p>{answer}</p>` in
+`src/components/ui/Accordion.tsx:40`. A link cannot be embedded in the string
+without introducing JSX into a `.ts` data file or a markdown parser — both
+rejected. Instead the `FAQItem` type gains an optional structured `link`,
+and the Accordion renders it as a real anchor beneath the answer.
+
+`AccordionItem` has **two** consumers — `src/components/faq/FAQList.tsx:46`
+and `src/components/home/FAQTeaser.tsx:13`. Both pass props explicitly, so
+adding one optional prop breaks neither; the teaser simply never passes it.
+
+**Panel height is safe.** The open panel is capped at `maxHeight: '400px'`
+(`Accordion.tsx:38`), so a taller panel would clip. Measured on the running
+app at 375×812 with every answer expanded: the tallest panel is **179px**
+("Where do I buy tickets?", "Will there be food and drinks?", "What stages
+are there"), and the tallest of the three answers receiving a link is
+**157px** ("Is alcohol served at the event?"). A link line adds roughly 35px,
+landing near 192px against a 400px cap. **Do NOT change `maxHeight`** — there
+is 200px+ of headroom and touching it is out of scope.
+
+#### Which answers get the link — three, and only three
+
+Chosen because `/policy` genuinely elaborates on each; other FAQ entries are
+left alone because the policy page adds nothing to them.
+
+1. `prohibited` — "What is prohibited at the venue?"
+2. `alcohol-free` — "Is alcohol served at the event?"
+3. `refund-policy` — "What is your refund policy?"
+
+**Locked link copy, identical on all three** (§5 voice: sentence case, no
+exclamation marks):
+
+> Read the full event policy →
+
+The arrow is a literal `→` (U+2192), matching `ContactDetails.tsx` and the
+tickets page. `href` is `/policy` with **no anchor** — the policy rows carry
+no `id` attributes, so there is nothing to deep-link to.
+
+#### Files — three edits
+
+**Edit 1 — `src/data/faq.ts`.** Extend the type. Replace:
+```ts
+export type FAQItem = {
+  id: string
+  category: string
+  question: string
+  answer: string
+}
+```
+with:
+```ts
+export type FAQItem = {
+  id: string
+  category: string
+  question: string
+  answer: string
+  link?: { href: string; label: string }
+}
+```
+Then add this exact property as the last line of each of the three entries
+above, after `answer:` and before the closing `},`:
+```ts
+    link: { href: '/policy', label: 'Read the full event policy →' },
+```
+Apply to `id: 'refund-policy'` (currently line 78), `id: 'prohibited'`
+(line 91) and `id: 'alcohol-free'` (line 109). No other entry is touched, and
+no `answer` string changes.
+
+**Edit 2 — `src/components/ui/Accordion.tsx`.** Add the import at the top,
+directly after the `lucide-react` import:
+```tsx
+import Link from 'next/link'
+```
+Extend `AccordionItemProps`:
+```tsx
+type AccordionItemProps = {
+  question: string
+  answer: string
+  link?: { href: string; label: string }
+  defaultOpen?: boolean
+}
+```
+Update the signature:
+```tsx
+export function AccordionItem({ question, answer, link, defaultOpen = false }: AccordionItemProps) {
+```
+Replace the answer paragraph (line 40):
+```tsx
+        <p className="text-[var(--text-muted)] text-sm pb-5 leading-relaxed">{answer}</p>
+```
+with:
+```tsx
+        <p className="text-[var(--text-muted)] text-sm leading-relaxed">{answer}</p>
+        {link && (
+          <Link
+            href={link.href}
+            className="inline-block text-sm font-semibold mt-2"
+            style={{ color: 'var(--accent-magenta)', touchAction: 'manipulation' }}
+          >
+            {link.label}
+          </Link>
+        )}
+        <div className="pb-5" />
+```
+The `pb-5` moves off the paragraph onto a trailing spacer so the link sits
+between the answer and the existing bottom padding rather than after it.
+
+Extend `AccordionProps` and pass the prop through:
+```tsx
+type AccordionProps = {
+  items: { id: string; question: string; answer: string; link?: { href: string; label: string } }[]
+}
+```
+```tsx
+        <AccordionItem key={item.id} question={item.question} answer={item.answer} link={item.link} />
+```
+
+**Edit 3 — `src/components/faq/FAQList.tsx`, line 46.** Replace:
+```tsx
+              <AccordionItem key={item.id} question={item.question} answer={item.answer} />
+```
+with:
+```tsx
+              <AccordionItem key={item.id} question={item.question} answer={item.answer} link={item.link} />
+```
+
+#### Scope fences
+
+- **`src/components/home/FAQTeaser.tsx` is NOT touched.** It renders a short
+  teaser on the home page and must keep passing no `link`, so no policy links
+  appear there. The optional prop makes this safe.
+- `Navbar.tsx` and `Footer.tsx` are untouched — no nav entry is added.
+- `src/app/(main)/policy/page.tsx` is untouched. No `id` anchors are added.
+- No `answer` string, question, or category is reworded.
+- `maxHeight` in `Accordion.tsx` stays `'400px'` (see measurement above).
+
+#### Considered and rejected
+
+- **Adding Policy to the top nav.** The navbar already carries eight items
+  and a ninth crowds it at 375px. Recorded for a future amendment if the
+  owner wants it despite that.
+- **A standing "Read the full event policy" link at the foot of `/faq`.**
+  Would help discoverability more broadly, but the owner asked specifically
+  for links in the answers; this stays available as a follow-up.
+- **Deep-linking to individual policy rows.** Requires adding `id`s to
+  `PolicyRow`, which is a change to the policy page and out of scope.
+
+#### Reversibility
+
+Delete the three `link:` lines in `faq.ts`, revert the `link` prop through
+`Accordion.tsx` and `FAQList.tsx`, and restore `pb-5` onto the answer `<p>`.
+No data, asset or flag involved.
+
+#### Verification gates (executor)
+
+- §4: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Source gates:
+  - `grep -c "Read the full event policy" src/data/faq.ts` → **3**
+  - `grep -c "Read the full event policy" src/components/home/FAQTeaser.tsx` → **0**
+  - `grep -c "maxHeight: open ? '400px'" src/components/ui/Accordion.tsx` → **1**
+- Dev server on port 3100, Playwright at 375×812 and 1280×800 on `/faq`:
+  - Expand all answers; exactly **3** anchors with `href="/policy"` are
+    present in the accordion.
+  - Each of those three sits inside the panel for `prohibited`,
+    `alcohol-free` and `refund-policy` respectively.
+  - No expanded panel's `scrollHeight` exceeds **400** (clipping guard).
+  - `scrollWidth - clientWidth === 0`.
+- On `/` (home): `0` anchors with `href="/policy"` inside the FAQ teaser
+  (the footer's Policy link is outside the teaser and does not count — scope
+  the selector to the teaser section).
