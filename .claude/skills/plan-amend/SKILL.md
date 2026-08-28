@@ -77,10 +77,12 @@ Work in this order:
    for every create/edit/delete. Copy in quotes. Data shapes sketched. Verification
    gates listed (§4 protocol plus any change-specific greps).
 
-5. **Ship the plan.** Commit on the designated `claude/*` working branch with a message
-   describing the plan (not the future feature as if built), push, and reply to the
-   owner with: the judgment calls you made, anything only they can do (run SQL, supply
-   missing art — flag these loudly), and the exact executor invocation to use.
+5. **Ship the plan.** Commit **on `main` and push** (§8.43 standing rule — the old
+   `claude/*` branch is retained history, never the working branch; if a fresh
+   container checks it out, move to `main` before committing). The message describes
+   the plan (not the future feature as if built). Reply to the owner with: the
+   judgment calls you made, anything only they can do (run SQL, supply missing art —
+   flag these loudly), and the exact executor invocation to use.
 
 ### Executor-grade checklist (run before shipping the plan)
 
@@ -105,10 +107,10 @@ Work in this order:
   `npm run build`; dev-server smoke test with `curl` content checks for the new/changed
   copy; Playwright at 1280×800 and 375×812 with `scrollWidth - clientWidth === 0` on
   every touched page; the plan's regression greps.
-- Git: commit on the designated `claude/*` branch and push. Merging to `main`
-  deploys via Vercel — do it when the owner has asked to ship (this owner's standing
-  pattern), then poll the live site until the change is verifiably visible. Never leave
-  a "deployed" claim unverified.
+- Git: commit **on `main` and push** (§8.43 standing rule — this deploys via Vercel
+  directly; the `claude/*` branch is history only, so if a fresh container checks it
+  out, move to `main` first). If asked to verify the deploy, poll the live site until
+  the change is verifiably visible. Never leave a "deployed" claim unverified.
 
 ## House rules (both roles)
 
@@ -120,3 +122,29 @@ Work in this order:
   renamed, translated or paraphrased — the full lockup is `NAME · Tail`.
 - The plan is append-only history: never rewrite old sections to match new reality;
   supersede them explicitly in the new amendment.
+
+## Standing facts (learned the hard way — verify, don't re-derive)
+
+- **Containers are recycled between turns.** At session start check
+  `git branch --show-current` (must be `main`) and that `node_modules` exists
+  (`npm install` if wiped). A recycled checkout can come back on the retired
+  `claude/*` branch; committing there makes `git push origin main` silently no-op.
+- **Lint baseline is 7 errors / 9 warnings**, all pre-existing
+  (`react/no-unescaped-entities` in ContactForm, AddTicketForm, RegistrationForm,
+  plus warnings). That exact count passes; anything above it is yours.
+- **Playwright is installed globally, not in the repo.** Run scripts with
+  `NODE_PATH=/opt/node22/lib/node_modules node script.js` (CommonJS `require`;
+  ESM ignores NODE_PATH — use `createRequire('/opt/node22/lib/node_modules/')`)
+  and launch with `executablePath: '/opt/pw-browsers/chromium'`. Never run
+  `playwright install`.
+- **Never submit the Wayfinder or First Pulse forms in a smoke test** — they write
+  real Supabase rows and send real email. Validate with `input.checkValidity()`.
+- **SWC strips a leading space from any JSX text node containing an HTML entity**
+  (§8.54). After an inline element, write the space as `{' '}` when the same text
+  node contains `&apos;` etc. — source review cannot see this defect, only built
+  output can. Two sites depend on the existing fix: `WayfinderForm.tsx` (success
+  card) and `VerifyClient.tsx` (wristband warning). Do not "tidy" those `{' '}`.
+- **`navLinks` is declared twice** — `Navbar.tsx` (desktop, ≥1024px) and
+  `MobileMenu.tsx` (the only nav below 1024px). Any nav change edits both (§8.57).
+- **Venue stays TBA everywhere** (§8.43); prices and venue never appear on
+  generated partner visuals (§8.44 guardrails).
