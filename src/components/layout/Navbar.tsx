@@ -171,4 +171,5 @@ const navLinks = [
   ...(WAYFINDER_LIVE ? [{ href: '/wayfinder', label: 'Wayfinder' }] : []),
   { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },
+  { href: '/policy', label: 'Policy' },
 ]
