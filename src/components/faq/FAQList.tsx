@@ -43,7 +43,7 @@ export default function FAQList() {
               {category}
             </h2>
             {items.map((item) => (
-              <AccordionItem key={item.id} question={item.question} answer={item.answer} />
+              <AccordionItem key={item.id} question={item.question} answer={item.answer} link={item.link} />
             ))}
           </section>
         ))}

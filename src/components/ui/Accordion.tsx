@@ -1,14 +1,16 @@
 ﻿'use client'
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
+import Link from 'next/link'
 
 type AccordionItemProps = {
   question: string
   answer: string
+  link?: { href: string; label: string }
   defaultOpen?: boolean
 }
 
-export function AccordionItem({ question, answer, defaultOpen = false }: AccordionItemProps) {
+export function AccordionItem({ question, answer, link, defaultOpen = false }: AccordionItemProps) {
   const [open, setOpen] = useState(defaultOpen)
 
   return (
@@ -37,21 +39,31 @@ export function AccordionItem({ question, answer, defaultOpen = false }: Accordi
         className="overflow-hidden transition-all duration-250"
         style={{ maxHeight: open ? '400px' : '0' }}
       >
-        <p className="text-[var(--text-muted)] text-sm pb-5 leading-relaxed">{answer}</p>
+        <p className="text-[var(--text-muted)] text-sm leading-relaxed">{answer}</p>
+        {link && (
+          <Link
+            href={link.href}
+            className="inline-block text-sm font-semibold mt-2"
+            style={{ color: 'var(--accent-magenta)', touchAction: 'manipulation' }}
+          >
+            {link.label}
+          </Link>
+        )}
+        <div className="pb-5" />
       </div>
     </div>
   )
 }
 
 type AccordionProps = {
-  items: { id: string; question: string; answer: string }[]
+  items: { id: string; question: string; answer: string; link?: { href: string; label: string } }[]
 }
 
 export default function Accordion({ items }: AccordionProps) {
   return (
     <div className="divide-y divide-[var(--border)]">
       {items.map((item) => (
-        <AccordionItem key={item.id} question={item.question} answer={item.answer} />
+        <AccordionItem key={item.id} question={item.question} answer={item.answer} link={item.link} />
       ))}
     </div>
   )

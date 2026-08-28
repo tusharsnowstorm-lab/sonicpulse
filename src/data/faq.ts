@@ -3,6 +3,7 @@ export type FAQItem = {
   category: string
   question: string
   answer: string
+  link?: { href: string; label: string }
 }
 
 export const faqs: FAQItem[] = [
@@ -79,6 +80,7 @@ export const faqs: FAQItem[] = [
     category: 'Tickets & Registration',
     question: 'What is your refund policy?',
     answer: 'All tickets are non-refundable. If the event is cancelled due to circumstances outside the organiser\'s control, your ticket will carry over to the next edition of Sonic Pulse.',
+    link: { href: '/policy', label: 'Read the full event policy →' },
   },
   // At the Event
   {
@@ -92,6 +94,7 @@ export const faqs: FAQItem[] = [
     category: 'At the Event',
     question: 'What is prohibited at the venue?',
     answer: 'Professional cameras/recording equipment, outside food and drinks, alcohol, narcotics and illegal substances, weapons of any kind, and glass bottles. Security checks are thorough.',
+    link: { href: '/policy', label: 'Read the full event policy →' },
   },
   {
     id: 'parking',
@@ -110,6 +113,7 @@ export const faqs: FAQItem[] = [
     category: 'At the Event',
     question: 'Is alcohol served at the event?',
     answer: 'No. Sonic Pulse is an alcohol-free event. Alcohol, narcotics and illegal substances are not permitted anywhere on the premises, and anyone suspected of being intoxicated may be denied entry or removed. Gate checks are thorough.',
+    link: { href: '/policy', label: 'Read the full event policy →' },
   },
   {
     id: 'stages',
