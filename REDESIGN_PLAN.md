@@ -4853,3 +4853,121 @@ No data, asset or flag involved.
 - On `/` (home): `0` anchors with `href="/policy"` inside the FAQ teaser
   (the footer's Policy link is outside the teaser and does not count — scope
   the selector to the teaser section).
+
+### 8.57 Nav — add Policy to the navbar (added 26 Aug 2026, owner-requested)
+
+**§8.56 is superseded on one point.** Its "Considered and rejected" list
+declined to add Policy to the top nav, reasoning that "the navbar already
+carries eight items and a ninth crowds it at 375px". The owner has decided
+otherwise, and the reasoning was wrong on the facts as well — measurement
+below. The §8.56 FAQ links stay exactly as built; this amendment adds the
+nav entry alongside them.
+
+#### The crowding concern was unfounded — measured
+
+The desktop nav is `hidden lg:flex` (`Navbar.tsx:97`), so it only renders at
+**≥1024px**; below that the hamburger takes over and 375px never shows the
+horizontal nav at all. The tightest real case is therefore 1024px, not 375px.
+
+Measured on the running app by cloning a nav link, relabelling it "Policy"
+and re-measuring the free space between the logo's right edge and the nav's
+left edge:
+
+| Viewport | Free space now | With Policy added |
+|---|---|---|
+| 1024px | 109px | **48px** |
+| 1152px | 237px | 176px |
+| 1280px | 285px | 224px |
+
+A "Policy" link costs 37px plus the 24px flex gap = 61px. At the tightest
+width it leaves 48px of clear space and the row does not overflow
+(`scrollWidth === clientWidth` at every width tested). It fits.
+
+#### `navLinks` is duplicated — BOTH copies must change
+
+`navLinks` is declared twice, independently and byte-identically:
+`src/components/layout/Navbar.tsx:165` (desktop row) and
+`src/components/layout/MobileMenu.tsx:12` (hamburger drawer). Editing only
+one silently desyncs desktop from mobile. Since the drawer is the *only*
+nav below 1024px, omitting it there would leave phone users exactly where
+they started — which is the problem this change exists to fix.
+
+The duplication itself is pre-existing and is NOT refactored here; extracting
+a shared module is a separate change. Recorded so a future amendment can take
+it up deliberately.
+
+#### The entry
+
+- **Label:** `Policy` — matching the existing Footer entry (`Footer.tsx:46`)
+  so the same page is never called two different things. Sentence case per §5.
+- **href:** `/policy`, no anchor.
+- **Position:** last, after `Contact`. Policy is a reference page, not a
+  destination people browse to first, and last also mirrors the Footer's
+  Support column ordering.
+- **No flag gate.** `/policy` is always live — unlike `/tickets`
+  (`TICKETS_CTA_LIVE`) and `/wayfinder` (`WAYFINDER_LIVE`), it has no
+  master switch and must never be conditional.
+
+#### Files — two edits, identical change
+
+**Edit 1 — `src/components/layout/Navbar.tsx`.** In the `navLinks` array
+(currently lines 165–174), replace:
+```ts
+  { href: '/contact', label: 'Contact' },
+]
+```
+with:
+```ts
+  { href: '/contact', label: 'Contact' },
+  { href: '/policy', label: 'Policy' },
+]
+```
+
+**Edit 2 — `src/components/layout/MobileMenu.tsx`.** In its `navLinks` array
+(currently lines 12–21), make the **exact same** replacement:
+```ts
+  { href: '/contact', label: 'Contact' },
+]
+```
+with:
+```ts
+  { href: '/contact', label: 'Contact' },
+  { href: '/policy', label: 'Policy' },
+]
+```
+
+Both files already render `navLinks` with an active-state check against
+`pathname`, so `/policy` will highlight correctly when open with no further
+change. No styling, no new import, no component change.
+
+#### Scope fences
+
+- `src/app/(main)/policy/page.tsx` is untouched.
+- `Footer.tsx` is untouched — its existing Policy link stays where it is.
+  Two links to the same page from nav and footer is intended, not duplication
+  to clean up.
+- The §8.56 FAQ answer links are untouched.
+- No existing nav label, href or order changes; `Policy` is appended only.
+- The `navLinks` duplication is not refactored.
+
+#### Reversibility
+
+Delete the one added line from each of the two files.
+
+#### Verification gates (executor)
+
+- §4: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Source gates:
+  - `grep -c "href: '/policy', label: 'Policy'" src/components/layout/Navbar.tsx` → **1**
+  - `grep -c "href: '/policy', label: 'Policy'" src/components/layout/MobileMenu.tsx` → **1**
+- Dev server on port 3100, Playwright:
+  - **1024×800** on `/lineup`: the desktop nav contains an anchor with
+    `href="/policy"` and text `Policy`; free space between the logo's right
+    edge and the nav's left edge is **> 20px**; `scrollWidth - clientWidth === 0`.
+  - **1280×800** on `/lineup`: same anchor present; no overflow.
+  - **375×812** on `/lineup`: the desktop nav is `display: none`; open the
+    hamburger and assert the drawer contains an anchor with `href="/policy"`
+    and text `Policy`; `scrollWidth - clientWidth === 0` with the drawer open.
+  - On `/policy` at 1280×800: the nav's Policy anchor renders in the active
+    colour `rgb(255, 255, 255)` while a non-active link (e.g. `/faq`) does not.
