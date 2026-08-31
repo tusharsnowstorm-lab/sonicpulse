@@ -1,28 +1,12 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
+import {
+  type WayfinderApplication, type ColumnSet,
+  GENDER_LABEL, LEVEL_LABEL, SHIFT_LABEL,
+  ageOnEventNight, downloadBlob, exportRows, instagramHandles, toCsv,
+} from './wayfinderExport'
 
-type Application = {
-  id: string
-  full_name: string
-  email: string
-  phone: string
-  institution: string
-  level: 'undergraduate_final' | 'hsc_alevel' | 'other'
-  gender: 'female' | 'male' | 'prefer_not_to_say' | null
-  graduation_year: number | null
-  date_of_birth: string | null
-  shift_preference: 'dusk' | 'dawn' | 'either'
-  stay_to_close: boolean
-  motivation: string | null
-  emergency_contact_name: string
-  emergency_contact_phone: string
-  instagram_handle: string | null
-  notes: string | null
-  status: 'pending' | 'shortlisted' | 'accepted' | 'rejected'
-  assigned_shift: 'dusk' | 'dawn' | null
-  reference_code: string
-  created_at: string
-}
+type Application = WayfinderApplication
 
 const STATUS_TABS = ['pending', 'shortlisted', 'accepted', 'rejected'] as const
 
@@ -33,23 +17,12 @@ const STATUS_STYLE: Record<string, { bg: string; border: string; color: string }
   rejected: { bg: 'rgba(226,75,74,0.1)', border: '1px solid rgba(226,75,74,0.3)', color: '#e24b4a' },
 }
 
-const LEVEL_LABEL: Record<Application['level'], string> = {
-  undergraduate_final: 'Final-year undergraduate',
-  hsc_alevel: 'HSC / A-level finisher',
-  other: 'Other',
-}
-
-const GENDER_LABEL: Record<string, string> = {
-  female: 'Female',
-  male: 'Male',
-  prefer_not_to_say: 'Prefer not to say',
-}
-
-const SHIFT_LABEL: Record<string, string> = {
-  dusk: 'Shift A · Dusk',
-  dawn: 'Shift B · Dawn',
-  either: 'Either shift',
-}
+const SELECT_STYLE = {
+  background: 'var(--bg-elevated)',
+  border: '1px solid var(--border)',
+  color: 'rgba(255,255,255,0.65)',
+  touchAction: 'manipulation',
+} as const
 
 export default function WayfinderTab() {
   const [applications, setApplications] = useState<Application[]>([])
@@ -57,6 +30,12 @@ export default function WayfinderTab() {
   const [notReady, setNotReady] = useState(false)
   const [activeTab, setActiveTab] = useState<(typeof STATUS_TABS)[number]>('pending')
   const [actionLoading, setActionLoading] = useState<string | null>(null)
+  const [query, setQuery] = useState('')
+  const [genderFilter, setGenderFilter] = useState('any')
+  const [levelFilter, setLevelFilter] = useState('any')
+  const [shiftFilter, setShiftFilter] = useState('any')
+  const [columnSet, setColumnSet] = useState<ColumnSet>('everything')
+  const [copied, setCopied] = useState(false)
 
   const fetchApplications = useCallback(async () => {
     setLoading(true)
@@ -92,12 +71,47 @@ export default function WayfinderTab() {
     setActionLoading(null)
   }
 
-  const filtered = applications.filter((a) => a.status === activeTab)
+  const q = query.trim().toLowerCase().replace(/^@/, '')
+  const matchesFilters = (a: Application) => {
+    if (q) {
+      const haystack = [a.full_name, a.email, a.phone, a.institution, a.instagram_handle ?? '', a.reference_code]
+        .join(' ').toLowerCase()
+      if (!haystack.includes(q)) return false
+    }
+    if (genderFilter === 'none') { if (a.gender !== null) return false }
+    else if (genderFilter !== 'any' && a.gender !== genderFilter) return false
+    if (levelFilter !== 'any' && a.level !== levelFilter) return false
+    if (shiftFilter === 'close') { if (!a.stay_to_close) return false }
+    else if (shiftFilter === 'unassigned') { if (a.assigned_shift !== null) return false }
+    else if (shiftFilter !== 'any' && a.assigned_shift !== shiftFilter) return false
+    return true
+  }
+  const filtered = applications.filter((a) => a.status === activeTab && matchesFilters(a))
+  const filtersActive = q !== '' || genderFilter !== 'any' || levelFilter !== 'any' || shiftFilter !== 'any'
   const counts = Object.fromEntries(STATUS_TABS.map((s) => [s, applications.filter((a) => a.status === s).length]))
   const accepted = applications.filter((a) => a.status === 'accepted')
   const duskCount = accepted.filter((a) => a.assigned_shift === 'dusk').length
   const dawnCount = accepted.filter((a) => a.assigned_shift === 'dawn').length
   const closeCount = accepted.filter((a) => a.stay_to_close).length
+  const femaleCount = accepted.filter((a) => a.gender === 'female').length
+  const maleCount = accepted.filter((a) => a.gender === 'male').length
+  const unstatedCount = accepted.length - femaleCount - maleCount
+
+  const stamp = () => new Date().toISOString().slice(0, 10)
+  const handleDownloadCsv = () => {
+    const { headers, rows } = exportRows(filtered, columnSet)
+    downloadBlob(`wayfinder-${columnSet}-${activeTab}-${stamp()}.csv`, 'text/csv;charset=utf-8', toCsv(headers, rows))
+  }
+  const handleCopyJson = () => {
+    const { headers, rows } = exportRows(filtered, columnSet)
+    const json = JSON.stringify(rows.map((r) => Object.fromEntries(headers.map((h, i) => [h, r[i]]))))
+    const fallback = () => downloadBlob(`wayfinder-${columnSet}-${activeTab}-${stamp()}.json`, 'application/json', json)
+    if (!navigator.clipboard) { fallback(); return }
+    navigator.clipboard.writeText(json).then(
+      () => { setCopied(true); setTimeout(() => setCopied(false), 2000) },
+      fallback,
+    )
+  }
 
   if (notReady) {
     return (
@@ -114,7 +128,7 @@ export default function WayfinderTab() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold mb-1" style={{ color: '#fff', fontFamily: 'var(--font-montserrat)' }}>Wayfinder applications</h1>
         <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
-          Fifty places across two shifts. Accepted: {accepted.length}/50 · Dusk {duskCount}/25 · Dawn {dawnCount}/25 · can stay to close {closeCount}
+          Fifty places across two shifts. Accepted: {accepted.length}/50 · Dusk {duskCount}/25 · Dawn {dawnCount}/25 · can stay to close {closeCount} · {femaleCount} female · {maleCount} male · {unstatedCount} not stated
         </p>
       </div>
 
@@ -137,11 +151,65 @@ export default function WayfinderTab() {
         ))}
       </div>
 
+      {!loading && applications.length > 0 && (
+        <>
+          <div className="flex gap-2 mb-3 flex-wrap items-center">
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search name, contact or institution"
+              className="text-sm px-4 py-2 rounded-full flex-1"
+              style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: '#fff', minWidth: 200, touchAction: 'manipulation' }}
+            />
+            <select value={genderFilter} onChange={(e) => setGenderFilter(e.target.value)} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
+              <option value="any">Any gender</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="prefer_not_to_say">Prefer not to say</option>
+              <option value="none">Not stated</option>
+            </select>
+            <select value={levelFilter} onChange={(e) => setLevelFilter(e.target.value)} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
+              <option value="any">Any level</option>
+              <option value="undergraduate_final">Final-year undergraduate</option>
+              <option value="hsc_alevel">HSC / A-level finisher</option>
+              <option value="other">Other</option>
+            </select>
+            <select value={shiftFilter} onChange={(e) => setShiftFilter(e.target.value)} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
+              <option value="any">Any shift</option>
+              <option value="dusk">Assigned dusk</option>
+              <option value="dawn">Assigned dawn</option>
+              <option value="unassigned">Unassigned</option>
+              <option value="close">Can stay to close</option>
+            </select>
+          </div>
+          <div className="flex gap-2 mb-6 flex-wrap items-center">
+            <select value={columnSet} onChange={(e) => setColumnSet(e.target.value as ColumnSet)} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
+              <option value="everything">Everything</option>
+              <option value="summary">Summary</option>
+              <option value="contacts">Contacts</option>
+            </select>
+            <button onClick={handleDownloadCsv} className="text-sm px-4 py-2 rounded-full cursor-pointer font-semibold" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', color: 'rgba(255,255,255,0.65)', touchAction: 'manipulation' }}>
+              Download CSV
+            </button>
+            <button onClick={handleCopyJson} className="text-sm px-4 py-2 rounded-full cursor-pointer font-semibold" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', color: 'rgba(255,255,255,0.65)', touchAction: 'manipulation' }}>
+              {copied ? 'Copied' : 'Copy JSON'}
+            </button>
+            {filtersActive && (
+              <span className="text-xs ml-auto" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                Showing {filtered.length} of {counts[activeTab]}
+              </span>
+            )}
+          </div>
+        </>
+      )}
+
       {loading ? (
         <div className="space-y-4">{[1, 2, 3].map((i) => <div key={i} className="rounded-2xl h-32 animate-pulse" style={{ background: 'var(--bg-elevated)' }} />)}</div>
       ) : filtered.length === 0 ? (
         <div className="rounded-2xl p-10 text-center" style={{ background: 'var(--bg-elevated)', border: '1px dashed var(--border)' }}>
-          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>No {activeTab} applications.</p>
+          <p className="text-sm" style={{ color: 'rgba(255,255,255,0.65)' }}>
+            {counts[activeTab] === 0 ? `No ${activeTab} applications.` : 'No applications match these filters.'}
+          </p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -204,7 +272,9 @@ export default function WayfinderTab() {
                     {app.date_of_birth && (
                       <div>
                         <p className="text-xs mb-1" style={{ color: 'var(--text-label-muted)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Date of birth</p>
-                        <p className="text-sm" style={{ color: '#fff' }}>{app.date_of_birth}</p>
+                        <p className="text-sm" style={{ color: '#fff' }}>
+                          {app.date_of_birth}{ageOnEventNight(app.date_of_birth) !== null ? ` · ${ageOnEventNight(app.date_of_birth)} on event night` : ''}
+                        </p>
                       </div>
                     )}
                     <div>
@@ -218,11 +288,11 @@ export default function WayfinderTab() {
                   )}
 
                   <div className="flex items-center gap-3 flex-wrap">
-                    {app.instagram_handle && (
-                      <a href={`https://instagram.com/${app.instagram_handle.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-xs px-3 py-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.65)' }}>
-                        @{app.instagram_handle.replace('@', '')}
+                    {instagramHandles(app.instagram_handle).map((h) => (
+                      <a key={h} href={`https://instagram.com/${h}`} target="_blank" rel="noopener noreferrer" className="text-xs px-3 py-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.65)' }}>
+                        @{h}
                       </a>
-                    )}
+                    ))}
                     {(['dusk', 'dawn'] as const).map((s) => (
                       <button
                         key={s}

@@ -42,3 +42,7 @@ next-env.d.ts
 
 # Claude agent worktrees (temporary, per-session)
 .claude/worktrees/
+
+# python (scripts/)
+__pycache__/
+*.pyc

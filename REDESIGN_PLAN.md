@@ -4971,3 +4971,414 @@ Delete the one added line from each of the two files.
     and text `Policy`; `scrollWidth - clientWidth === 0` with the drawer open.
   - On `/policy` at 1280×800: the nav's Policy anchor renders in the active
     colour `rgb(255, 255, 255)` while a non-active link (e.g. `/faq`) does not.
+### 8.58 Admin Wayfinder — search, filters, exports, age display, Instagram-link fix (added 31 Aug 2026, owner-requested)
+
+Owner request, verbatim intent: "Make a filter function and the suggested export
+function and other functions that might be useful." Context: the owner needed
+accepted-applicant tables (summary and contact-sheet views) and could only get the
+data out of `/admin` via devtools console snippets — impossible from a phone. This
+amendment gives the admin Wayfinder tab first-class filtering and export, plus two
+small data-quality fixes that real applications exposed. Everything is client-side
+on data the tab already fetches; **no API, SQL, or schema changes**. No earlier
+section is superseded.
+
+Real-data facts that shaped the decisions (state of the live table, 25 Aug 2026,
+15 accepted): one applicant pasted a full profile URL with an `igsh` tracking
+param into the Instagram field, one pasted two handles separated by `//`, three
+pre-§8.31 rows have `gender = NULL`, and the card's existing Instagram pill
+(`instagram_handle.replace('@','')`) builds a broken link for the URL case.
+
+**Decisions, all locked:**
+
+- Filters compose with the existing status chips (chips keep their absolute
+  per-status counts): a free-text search plus three pill selects. Search matches,
+  case-insensitively, the concatenation of `full_name`, `email`, `phone`,
+  `institution`, `instagram_handle` (null → empty) and `reference_code`; a leading
+  `@` in the query is stripped before matching.
+- Export always acts on **exactly the rows currently visible** (active status chip
+  + filters + search), sorted by `full_name` case-insensitively — so the chips are
+  also the export's status selector. Three column sets via one select —
+  Everything / Summary / Contacts — and two actions: **Download CSV** (RFC 4180,
+  CRLF, UTF-8 with BOM so Bangla names survive Excel) and **Copy JSON** (array of
+  `{header: value}` objects, compact). Clipboard failure or absence falls back to
+  downloading the same content as a `.json` file — no alert, no error state.
+- Instagram values are normalised everywhere they are displayed or exported:
+  profile URLs reduce to the username (query/fragment dropped), multi-handle
+  entries split into separate handles, `@` prefixes stripped and re-applied. The
+  card renders one pill per handle, fixing the broken-link bug.
+- Age is computed against the event night, 25 Sep 2026 (§8.0), UTC-safe, and shown
+  on the card next to date of birth and in the Everything CSV. The subtitle line
+  gains a gender split for accepted applicants; rows with `prefer_not_to_say` or
+  `NULL` gender are deliberately lumped as "not stated" (zero
+  `prefer_not_to_say` rows exist today).
+- Existing card list keeps its `created_at` (API) order; only exports sort by name.
+  No in-page table view — on a 375px screen the CSV/JSON exports are the tabular
+  surface. If the owner wants an in-page roster later, that is its own amendment.
+
+**Edit 1 — create `src/app/admin/wayfinderExport.ts`** with exactly this content
+(the `WayfinderApplication` type is the tab's current `Application` type moved
+verbatim; the three label maps move from `WayfinderTab.tsx` unchanged):
+
+```ts
+// Pure helpers for the admin Wayfinder tab: filtering support, CSV/JSON export,
+// Instagram normalisation, age computation. Client-side only. See §8.58.
+
+export type WayfinderApplication = {
+  id: string
+  full_name: string
+  email: string
+  phone: string
+  institution: string
+  level: 'undergraduate_final' | 'hsc_alevel' | 'other'
+  gender: 'female' | 'male' | 'prefer_not_to_say' | null
+  graduation_year: number | null
+  date_of_birth: string | null
+  shift_preference: 'dusk' | 'dawn' | 'either'
+  stay_to_close: boolean
+  motivation: string | null
+  emergency_contact_name: string
+  emergency_contact_phone: string
+  instagram_handle: string | null
+  notes: string | null
+  status: 'pending' | 'shortlisted' | 'accepted' | 'rejected'
+  assigned_shift: 'dusk' | 'dawn' | null
+  reference_code: string
+  created_at: string
+}
+
+export const LEVEL_LABEL: Record<WayfinderApplication['level'], string> = {
+  undergraduate_final: 'Final-year undergraduate',
+  hsc_alevel: 'HSC / A-level finisher',
+  other: 'Other',
+}
+
+export const GENDER_LABEL: Record<string, string> = {
+  female: 'Female',
+  male: 'Male',
+  prefer_not_to_say: 'Prefer not to say',
+}
+
+export const SHIFT_LABEL: Record<string, string> = {
+  dusk: 'Shift A · Dusk',
+  dawn: 'Shift B · Dawn',
+  either: 'Either shift',
+}
+
+// Normalise a free-text Instagram field: applicants paste bare handles,
+// @handles, full profile URLs with tracking params, or several handles at
+// once. Returns bare handles, no '@'. Empty array when nothing usable.
+export function instagramHandles(raw: string | null): string[] {
+  const value = (raw ?? '').trim()
+  if (!value) return []
+  if (value.toLowerCase().includes('instagram.com/')) {
+    const tail = value.split(/instagram\.com\//i).pop() ?? ''
+    const name = tail.split(/[/?#]/)[0].replace(/^@+/, '')
+    return name ? [name] : []
+  }
+  return value
+    .split(/[\s/,]+/)
+    .map((part) => part.replace(/^@+/, ''))
+    .filter(Boolean)
+}
+
+// Age on the event night, 25 Sep 2026 (§8.0). UTC arithmetic so the result
+// does not depend on the viewer's timezone. Null when dob is missing/bad.
+const EVENT_NIGHT = { year: 2026, month: 8, day: 25 } // month is 0-based
+export function ageOnEventNight(dob: string | null): number | null {
+  if (!dob) return null
+  const d = new Date(dob.slice(0, 10) + 'T00:00:00Z')
+  if (isNaN(d.getTime())) return null
+  let age = EVENT_NIGHT.year - d.getUTCFullYear()
+  if (
+    d.getUTCMonth() > EVENT_NIGHT.month ||
+    (d.getUTCMonth() === EVENT_NIGHT.month && d.getUTCDate() > EVENT_NIGHT.day)
+  ) age--
+  return age
+}
+
+export type ColumnSet = 'everything' | 'summary' | 'contacts'
+
+const igDisplay = (a: WayfinderApplication) =>
+  instagramHandles(a.instagram_handle).map((h) => '@' + h).join(' / ')
+
+const COLUMNS: Record<ColumnSet, [string, (a: WayfinderApplication) => string][]> = {
+  everything: [
+    ['Reference', (a) => a.reference_code],
+    ['Name', (a) => a.full_name],
+    ['Gender', (a) => (a.gender ? GENDER_LABEL[a.gender] : '')],
+    ['Email', (a) => a.email],
+    ['Phone', (a) => a.phone],
+    ['Institution', (a) => a.institution],
+    ['Level', (a) => LEVEL_LABEL[a.level]],
+    ['Graduation year', (a) => (a.graduation_year ? String(a.graduation_year) : '')],
+    ['Date of birth', (a) => a.date_of_birth ?? ''],
+    ['Age on event night', (a) => {
+      const n = ageOnEventNight(a.date_of_birth)
+      return n === null ? '' : String(n)
+    }],
+    ['Shift preference', (a) => SHIFT_LABEL[a.shift_preference]],
+    ['Can stay to close', (a) => (a.stay_to_close ? 'yes' : 'no')],
+    ['Assigned shift', (a) => (a.assigned_shift ? SHIFT_LABEL[a.assigned_shift] : '')],
+    ['Status', (a) => a.status],
+    ['Instagram', igDisplay],
+    ['Emergency contact', (a) => a.emergency_contact_name],
+    ['Emergency phone', (a) => a.emergency_contact_phone],
+    ['Motivation', (a) => a.motivation ?? ''],
+    ['Notes', (a) => a.notes ?? ''],
+    ['Applied', (a) => a.created_at],
+  ],
+  summary: [
+    ['Name', (a) => a.full_name],
+    ['Gender', (a) => (a.gender ? GENDER_LABEL[a.gender] : '')],
+    ['Instagram', igDisplay],
+    ['Institution', (a) => a.institution],
+    ['Level', (a) => LEVEL_LABEL[a.level]],
+    ['Birth year', (a) => (a.date_of_birth ? a.date_of_birth.slice(0, 4) : '')],
+  ],
+  contacts: [
+    ['Name', (a) => a.full_name],
+    ['Instagram', igDisplay],
+    ['Phone', (a) => a.phone],
+    ['Emergency contact', (a) => a.emergency_contact_name],
+    ['Emergency phone', (a) => a.emergency_contact_phone],
+  ],
+}
+
+export function exportRows(apps: WayfinderApplication[], set: ColumnSet): { headers: string[]; rows: string[][] } {
+  const cols = COLUMNS[set]
+  const sorted = [...apps].sort((a, b) =>
+    a.full_name.toLowerCase().localeCompare(b.full_name.toLowerCase(), 'en'))
+  return { headers: cols.map(([h]) => h), rows: sorted.map((a) => cols.map(([, fn]) => fn(a))) }
+}
+
+// RFC 4180: CRLF line ends, fields containing quotes/commas/newlines are
+// quoted with doubled quotes. Leading BOM so Excel opens UTF-8 correctly.
+export function toCsv(headers: string[], rows: string[][]): string {
+  const esc = (v: string) => (/[",\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v)
+  return '\uFEFF' + [headers, ...rows].map((r) => r.map(esc).join(',')).join('\r\n')
+}
+
+export function downloadBlob(filename: string, mime: string, content: string) {
+  const url = URL.createObjectURL(new Blob([content], { type: mime }))
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+```
+
+**Edit 2 — `src/app/admin/WayfinderTab.tsx`**, eight surgical changes. Line
+numbers refer to the file as of commit `fbb5d2a`; anchor by the quoted code if
+drift has occurred.
+
+2a. Replace the local `type Application` block (lines 4–25) and the three label
+maps `LEVEL_LABEL`, `GENDER_LABEL`, `SHIFT_LABEL` (lines 36–52) with:
+
+```tsx
+import {
+  type WayfinderApplication, type ColumnSet,
+  GENDER_LABEL, LEVEL_LABEL, SHIFT_LABEL,
+  ageOnEventNight, downloadBlob, exportRows, instagramHandles, toCsv,
+} from './wayfinderExport'
+
+type Application = WayfinderApplication
+```
+
+(`STATUS_TABS` and `STATUS_STYLE` stay where they are.) Add at module level,
+after `STATUS_STYLE`:
+
+```tsx
+const SELECT_STYLE = {
+  background: 'var(--bg-elevated)',
+  border: '1px solid var(--border)',
+  color: 'rgba(255,255,255,0.65)',
+  touchAction: 'manipulation',
+} as const
+```
+
+2b. After the `actionLoading` state (line 59), add:
+
+```tsx
+const [query, setQuery] = useState('')
+const [genderFilter, setGenderFilter] = useState('any')
+const [levelFilter, setLevelFilter] = useState('any')
+const [shiftFilter, setShiftFilter] = useState('any')
+const [columnSet, setColumnSet] = useState<ColumnSet>('everything')
+const [copied, setCopied] = useState(false)
+```
+
+2c. Replace line 95 (`const filtered = applications.filter((a) => a.status === activeTab)`) with:
+
+```tsx
+const q = query.trim().toLowerCase().replace(/^@/, '')
+const matchesFilters = (a: Application) => {
+  if (q) {
+    const haystack = [a.full_name, a.email, a.phone, a.institution, a.instagram_handle ?? '', a.reference_code]
+      .join(' ').toLowerCase()
+    if (!haystack.includes(q)) return false
+  }
+  if (genderFilter === 'none') { if (a.gender !== null) return false }
+  else if (genderFilter !== 'any' && a.gender !== genderFilter) return false
+  if (levelFilter !== 'any' && a.level !== levelFilter) return false
+  if (shiftFilter === 'close') { if (!a.stay_to_close) return false }
+  else if (shiftFilter === 'unassigned') { if (a.assigned_shift !== null) return false }
+  else if (shiftFilter !== 'any' && a.assigned_shift !== shiftFilter) return false
+  return true
+}
+const filtered = applications.filter((a) => a.status === activeTab && matchesFilters(a))
+const filtersActive = q !== '' || genderFilter !== 'any' || levelFilter !== 'any' || shiftFilter !== 'any'
+```
+
+2d. After the `closeCount` line (line 100), add the gender split and export
+handlers:
+
+```tsx
+const femaleCount = accepted.filter((a) => a.gender === 'female').length
+const maleCount = accepted.filter((a) => a.gender === 'male').length
+const unstatedCount = accepted.length - femaleCount - maleCount
+
+const stamp = () => new Date().toISOString().slice(0, 10)
+const handleDownloadCsv = () => {
+  const { headers, rows } = exportRows(filtered, columnSet)
+  downloadBlob(`wayfinder-${columnSet}-${activeTab}-${stamp()}.csv`, 'text/csv;charset=utf-8', toCsv(headers, rows))
+}
+const handleCopyJson = () => {
+  const { headers, rows } = exportRows(filtered, columnSet)
+  const json = JSON.stringify(rows.map((r) => Object.fromEntries(headers.map((h, i) => [h, r[i]]))))
+  const fallback = () => downloadBlob(`wayfinder-${columnSet}-${activeTab}-${stamp()}.json`, 'application/json', json)
+  if (!navigator.clipboard) { fallback(); return }
+  navigator.clipboard.writeText(json).then(
+    () => { setCopied(true); setTimeout(() => setCopied(false), 2000) },
+    fallback,
+  )
+}
+```
+
+2e. Replace the subtitle text on line 117 so it ends with the gender split —
+the full line becomes:
+
+```tsx
+Fifty places across two shifts. Accepted: {accepted.length}/50 · Dusk {duskCount}/25 · Dawn {dawnCount}/25 · can stay to close {closeCount} · {femaleCount} female · {maleCount} male · {unstatedCount} not stated
+```
+
+2f. Immediately after the status-chip `</div>` (line 138), insert the toolbar.
+It renders only once applications exist; `notReady` already early-returns above:
+
+```tsx
+{!loading && applications.length > 0 && (
+  <>
+    <div className="flex gap-2 mb-3 flex-wrap items-center">
+      <input
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search name, contact or institution"
+        className="text-sm px-4 py-2 rounded-full flex-1"
+        style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: '#fff', minWidth: 200, touchAction: 'manipulation' }}
+      />
+      <select value={genderFilter} onChange={(e) => setGenderFilter(e.target.value)} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
+        <option value="any">Any gender</option>
+        <option value="female">Female</option>
+        <option value="male">Male</option>
+        <option value="prefer_not_to_say">Prefer not to say</option>
+        <option value="none">Not stated</option>
+      </select>
+      <select value={levelFilter} onChange={(e) => setLevelFilter(e.target.value)} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
+        <option value="any">Any level</option>
+        <option value="undergraduate_final">Final-year undergraduate</option>
+        <option value="hsc_alevel">HSC / A-level finisher</option>
+        <option value="other">Other</option>
+      </select>
+      <select value={shiftFilter} onChange={(e) => setShiftFilter(e.target.value)} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
+        <option value="any">Any shift</option>
+        <option value="dusk">Assigned dusk</option>
+        <option value="dawn">Assigned dawn</option>
+        <option value="unassigned">Unassigned</option>
+        <option value="close">Can stay to close</option>
+      </select>
+    </div>
+    <div className="flex gap-2 mb-6 flex-wrap items-center">
+      <select value={columnSet} onChange={(e) => setColumnSet(e.target.value as ColumnSet)} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
+        <option value="everything">Everything</option>
+        <option value="summary">Summary</option>
+        <option value="contacts">Contacts</option>
+      </select>
+      <button onClick={handleDownloadCsv} className="text-sm px-4 py-2 rounded-full cursor-pointer font-semibold" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', color: 'rgba(255,255,255,0.65)', touchAction: 'manipulation' }}>
+        Download CSV
+      </button>
+      <button onClick={handleCopyJson} className="text-sm px-4 py-2 rounded-full cursor-pointer font-semibold" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', color: 'rgba(255,255,255,0.65)', touchAction: 'manipulation' }}>
+        {copied ? 'Copied' : 'Copy JSON'}
+      </button>
+      {filtersActive && (
+        <span className="text-xs ml-auto" style={{ color: 'rgba(255,255,255,0.5)' }}>
+          Showing {filtered.length} of {counts[activeTab]}
+        </span>
+      )}
+    </div>
+  </>
+)}
+```
+
+2g. In the empty state (line 144), replace the paragraph content
+`No {activeTab} applications.` with:
+
+```tsx
+{counts[activeTab] === 0 ? `No ${activeTab} applications.` : 'No applications match these filters.'}
+```
+
+2h. Two card fixes. Replace the date-of-birth paragraph (line 207) with:
+
+```tsx
+<p className="text-sm" style={{ color: '#fff' }}>
+  {app.date_of_birth}{ageOnEventNight(app.date_of_birth) !== null ? ` · ${ageOnEventNight(app.date_of_birth)} on event night` : ''}
+</p>
+```
+
+and replace the single Instagram pill block (lines 221–225,
+`{app.instagram_handle && ( <a … )}`) with one pill per normalised handle:
+
+```tsx
+{instagramHandles(app.instagram_handle).map((h) => (
+  <a key={h} href={`https://instagram.com/${h}`} target="_blank" rel="noopener noreferrer" className="text-xs px-3 py-1.5 rounded-full" style={{ background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.65)' }}>
+    @{h}
+  </a>
+))}
+```
+
+**Failure and empty states, all specified:** `notReady` and the loading skeleton
+are unchanged and render before the toolbar exists; the toolbar never renders
+with zero applications; a filter set that excludes everything shows "No
+applications match these filters." in the existing dashed empty card; clipboard
+unavailable/denied silently downloads the `.json` instead; malformed or missing
+`date_of_birth` yields no age suffix and an empty CSV cell; `instagram_handle`
+values with no extractable handle render no pill and export as empty string.
+
+**Scope fences — do not touch:** `src/app/api/admin/wayfinder/route.ts`, the
+public `/wayfinder` page and `WayfinderForm.tsx` (§8.42/§8.55 copy rules stand),
+`FirstPulseTab.tsx`, `AdminClient.tsx`, `src/data/wayfinder.ts`,
+`scripts/wayfinders-png.py`, and all SQL files. No new dependencies.
+
+**Reversibility:** additive UI plus two in-place fixes; no flag — restoration is
+`git revert` of the execution commit. Nothing for the owner to run or supply
+before execution.
+
+**Verification gates (§4 protocol, adapted — `/admin` is auth-gated, so
+interactive checks are owner-side after deploy):**
+
+- `npx tsc --noEmit` clean; `npm run lint` with no new failures (baseline via
+  `git stash -u` if unsure); `npm run build` passes.
+- Greps: `grep -c "Download CSV" src/app/admin/WayfinderTab.tsx` → 1;
+  `grep -c "No applications match these filters." src/app/admin/WayfinderTab.tsx` → 1;
+  `grep -c "instagram_handle.replace" src/app/admin/WayfinderTab.tsx` → 0;
+  `grep -c "instagram.com/" src/app/admin/wayfinderExport.ts` → 2 (comment + code).
+- Playwright at 1280×800 and 375×812: `/wayfinder` and `/login` load with
+  `scrollWidth - clientWidth === 0` (global-regression check; `/admin` redirects
+  signed-out, which is itself the expected behaviour to confirm).
+- Owner-side after deploy, on a phone: search narrows the list; each select
+  filters; Download CSV on the accepted chip with Contacts selected produces
+  `wayfinder-contacts-accepted-<date>.csv` opening with Bangla names intact;
+  Copy JSON shows "Copied" and pastes valid JSON; the WF-NSK9XKWH-era card that
+  held a pasted profile URL now shows a working `@adil_azbab` pill; date-of-birth
+  lines show "· NN on event night".
