@@ -1,9 +1,13 @@
 #!/usr/bin/env python3
 """
-Render accepted Wayfinder applications as a PNG summary table.
+Render accepted Wayfinder applications as a PNG table.
+
+Two views:
+  summary  (default) name, gender, Instagram, institution, education level, birth year
+  contacts           name, Instagram, phone, emergency contact name and phone
 
 Data source, in order of preference:
-  1. argv[1] as a path to JSON, or "-" for stdin. Accepts either a bare array
+  1. --input as a path to JSON, or "-" for stdin. Accepts either a bare array
      of wayfinder_applications rows or the {"applications": [...]} shape that
      /api/admin/wayfinder returns.
   2. SONICPULSE_SUPABASE_URL + SONICPULSE_SUPABASE_SERVICE_ROLE_KEY, which is
@@ -15,13 +19,14 @@ Data source, in order of preference:
 Only rows with status == 'accepted' are included.
 
 Usage:
-    python3 scripts/wayfinders-png.py                     # fetch, write accepted-wayfinders.png
-    python3 scripts/wayfinders-png.py export.json out.png  # render a saved export
+    python3 scripts/wayfinders-png.py
+    python3 scripts/wayfinders-png.py --view contacts --input export.json
 
 Requires Chromium (present in Claude Code web sessions at the path below) and,
 for tight cropping, Pillow (`pip install pillow`) - without it the PNG simply
 carries extra space at the bottom.
 """
+import argparse
 import datetime
 import html
 import json
@@ -36,7 +41,10 @@ CHROME = os.environ.get(
     "CHROME_PATH", "/opt/pw-browsers/chromium-1194/chrome-linux/chrome"
 )
 
-COLUMNS = "full_name,gender,instagram_handle,institution,level,date_of_birth,status"
+FETCH_COLUMNS = (
+    "full_name,gender,instagram_handle,institution,level,date_of_birth,"
+    "phone,emergency_contact_name,emergency_contact_phone,status"
+)
 
 LEVELS = {
     "undergraduate_final": "Undergraduate (final year)",
@@ -47,29 +55,23 @@ GENDERS = {"female": "Female", "male": "Male", "prefer_not_to_say": "Prefer not 
 DASH = "—"
 
 
-def fetch():
-    base = os.environ.get("SONICPULSE_SUPABASE_URL")
-    key = os.environ.get("SONICPULSE_SUPABASE_SERVICE_ROLE_KEY")
-    if not base or not key:
-        sys.exit(
-            "No input given and SONICPULSE_SUPABASE_URL / "
-            "SONICPULSE_SUPABASE_SERVICE_ROLE_KEY are not set.\n"
-            "Either set them in the web environment (they apply to NEW sessions), "
-            "or pass a JSON export from /api/admin/wayfinder as the first argument."
-        )
-    url = (
-        base.rstrip("/")
-        + "/rest/v1/wayfinder_applications?"
-        + urllib.parse.urlencode({"select": COLUMNS, "status": "eq.accepted"})
-    )
-    req = urllib.request.Request(
-        url, headers={"apikey": key, "Authorization": "Bearer " + key}
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=30) as r:
-            return json.loads(r.read().decode())
-    except urllib.error.HTTPError as e:
-        sys.exit(f"Supabase returned {e.code}: {e.read().decode()[:300]}")
+def text(row, field):
+    v = (row.get(field) or "").strip()
+    return v if v else DASH
+
+
+def phone(row, field):
+    v = re.sub(r"\s+", " ", (row.get(field) or "").strip())
+    return v if v else DASH
+
+
+def gender(row):
+    return GENDERS.get((row.get("gender") or "").lower(), DASH)
+
+
+def level(row):
+    raw = (row.get("level") or "").lower()
+    return LEVELS.get(raw, (row.get("level") or DASH))
 
 
 def birth_year(row):
@@ -99,31 +101,53 @@ def handle(row):
     return " / ".join("@" + p for p in parts) if parts else DASH
 
 
+# Each view is a list of (header, cell function). "nowrap" headers are kept on
+# one line so phone numbers and handles never break mid-value.
+VIEWS = {
+    "summary": [
+        ("Name", lambda r: text(r, "full_name")),
+        ("Gender", gender),
+        ("Instagram", handle),
+        ("Institution", lambda r: text(r, "institution")),
+        ("Education level", level),
+        ("Birth year", birth_year),
+    ],
+    "contacts": [
+        ("Name", lambda r: text(r, "full_name")),
+        ("Instagram", handle),
+        ("Phone", lambda r: phone(r, "phone")),
+        ("Emergency contact", lambda r: text(r, "emergency_contact_name")),
+        ("Emergency phone", lambda r: phone(r, "emergency_contact_phone")),
+    ],
+}
+NOWRAP = {"Instagram", "Phone", "Emergency phone", "Birth year"}
+
+
 def build_rows(data):
     rows = [r for r in data if (r.get("status") or "accepted").lower() == "accepted"]
     rows.sort(key=lambda r: (r.get("full_name") or "").lower())
     return rows
 
 
-def render_html(rows):
-    head = ["#", "Name", "Gender", "Instagram", "Institution", "Education level", "Birth year"]
-    body = []
-    for i, r in enumerate(rows, 1):
-        body.append([
-            str(i),
-            (r.get("full_name") or DASH).strip(),
-            GENDERS.get((r.get("gender") or "").lower(), DASH),
-            handle(r),
-            (r.get("institution") or DASH).strip(),
-            LEVELS.get((r.get("level") or "").lower(), (r.get("level") or DASH)),
-            birth_year(r),
-        ])
-    th = "".join(f"<th>{html.escape(h)}</th>" for h in head)
-    trs = "".join(
-        "<tr>" + "".join(f"<td>{html.escape(c)}</td>" for c in row) + "</tr>"
-        for row in body
+def render_html(rows, view):
+    cols = VIEWS[view]
+    missing = [h for h, fn in cols if all(fn(r) == DASH for r in rows)]
+    th = '<th class="idx">#</th>' + "".join(
+        f'<th{" class=nw" if h in NOWRAP else ""}>{html.escape(h)}</th>' for h, _ in cols
     )
+    trs = ""
+    for i, r in enumerate(rows, 1):
+        tds = f'<td class="idx">{i}</td>' + "".join(
+            f'<td{" class=nw" if h in NOWRAP else ""}>{html.escape(fn(r))}</td>'
+            for h, fn in cols
+        )
+        trs += f"<tr>{tds}</tr>"
     plural = "application" if len(rows) == 1 else "applications"
+    title = "Accepted Wayfinders" + (" — contacts" if view == "contacts" else "")
+    warn = (
+        f'<p class="warn">No data in: {html.escape(", ".join(missing))}</p>'
+        if missing else ""
+    )
     return f"""<!doctype html><meta charset="utf-8">
 <style>
   * {{ box-sizing: border-box; }}
@@ -131,19 +155,45 @@ def render_html(rows):
          font-family: -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }}
   h1 {{ margin:0 0 4px; font-size:26px; letter-spacing:-0.01em; }}
   .sub {{ margin:0 0 24px; font-size:13px; color:#9ca3af; }}
+  .warn {{ margin:-16px 0 20px; font-size:13px; color:#fbbf24; }}
   table {{ border-collapse:collapse; width:100%; font-size:14px; }}
   thead th {{ text-align:left; padding:12px 14px; background:#17181f; color:#c7c9d1;
               font-size:12px; text-transform:uppercase; letter-spacing:0.06em;
               border-bottom:1px solid #2a2c36; white-space:nowrap; }}
   tbody td {{ padding:11px 14px; border-bottom:1px solid #1d1f27; vertical-align:top; }}
   tbody tr:nth-child(even) {{ background:#101118; }}
-  tbody td:first-child {{ color:#6b7280; width:44px; }}
-  tbody td:nth-child(4) {{ color:#8ab4f8; white-space:nowrap; }}
-  tbody td:last-child {{ white-space:nowrap; }}
+  .idx {{ color:#6b7280; width:44px; }}
+  .nw {{ white-space:nowrap; }}
+  tbody td:nth-child(3) {{ color:#8ab4f8; }}
 </style>
-<h1>Sonic Pulse &mdash; Accepted Wayfinders</h1>
-<p class="sub">{len(rows)} accepted {plural}</p>
+<h1>Sonic Pulse &mdash; {html.escape(title)}</h1>
+<p class="sub">{len(rows)} accepted {plural}</p>{warn}
 <table><thead><tr>{th}</tr></thead><tbody>{trs}</tbody></table>"""
+
+
+def fetch():
+    base = os.environ.get("SONICPULSE_SUPABASE_URL")
+    key = os.environ.get("SONICPULSE_SUPABASE_SERVICE_ROLE_KEY")
+    if not base or not key:
+        sys.exit(
+            "No --input given and SONICPULSE_SUPABASE_URL / "
+            "SONICPULSE_SUPABASE_SERVICE_ROLE_KEY are not set.\n"
+            "Either set them in the web environment (they apply to NEW sessions), "
+            "or pass a JSON export from /api/admin/wayfinder via --input."
+        )
+    url = (
+        base.rstrip("/")
+        + "/rest/v1/wayfinder_applications?"
+        + urllib.parse.urlencode({"select": FETCH_COLUMNS, "status": "eq.accepted"})
+    )
+    req = urllib.request.Request(
+        url, headers={"apikey": key, "Authorization": "Bearer " + key}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            return json.loads(r.read().decode())
+    except urllib.error.HTTPError as e:
+        sys.exit(f"Supabase returned {e.code}: {e.read().decode()[:300]}")
 
 
 def crop(out):
@@ -161,13 +211,18 @@ def crop(out):
 
 
 def main():
-    src = sys.argv[1] if len(sys.argv) > 1 else None
-    out = os.path.abspath(sys.argv[2] if len(sys.argv) > 2 else "accepted-wayfinders.png")
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[1])
+    ap.add_argument("--view", choices=sorted(VIEWS), default="summary")
+    ap.add_argument("--input", help='JSON export path, or "-" for stdin')
+    ap.add_argument("--out", default="accepted-wayfinders.png")
+    args = ap.parse_args()
+    out = os.path.abspath(args.out)
 
-    if src is None:
+    if args.input is None:
         data = fetch()
     else:
-        data = json.loads(sys.stdin.read() if src == "-" else open(src).read())
+        raw = sys.stdin.read() if args.input == "-" else open(args.input).read()
+        data = json.loads(raw)
     if isinstance(data, dict):
         data = data.get("applications", [])
     rows = build_rows(data)
@@ -176,7 +231,7 @@ def main():
 
     tmp = out + ".html"
     with open(tmp, "w") as f:
-        f.write(render_html(rows))
+        f.write(render_html(rows, args.view))
 
     # Render tall, then crop: row heights vary with text wrapping, so a
     # computed height would clip some tables and pad others.
@@ -189,7 +244,7 @@ def main():
     )
     os.remove(tmp)
     crop(out)
-    print(f"Wrote {out} ({len(rows)} accepted)")
+    print(f"Wrote {out} ({len(rows)} accepted, view={args.view})")
 
 
 if __name__ == "__main__":
