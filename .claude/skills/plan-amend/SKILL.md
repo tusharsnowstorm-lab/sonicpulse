@@ -23,6 +23,9 @@ prevent. A complete plan makes the executor's quality ceiling equal to the plann
 - If the owner says "plan amend" but clearly also wants it live now ("…and ship it"),
   plan first — write the full amendment — then execute your own plan. The amendment
   still gets written; it is the record the next session relies on.
+- The owner asked for a workflow or docs change ("streamline the docs", "make X the
+  standing rule") → execute it directly and record it as a numbered owner-decided
+  amendment (precedent: §8.43, §8.59). No executor round — there is nothing to build.
 
 ## The plan document
 
@@ -38,6 +41,33 @@ prevent. A complete plan makes the executor's quality ceiling equal to the plann
   §1 design system (Gallery Minimal tokens), §4 testing protocol, §5 copy voice,
   §7.2 contrast floor, §8.0 event facts (25 Sep 2026, 4 PM → 9:30 AM, 17.5 h,
   2 stages, 800 capacity).
+
+## Git and numbering (both roles)
+
+A numbering collision cost a round of merge surgery on 31 Aug (§8.59); these four
+rules prevent the next one:
+
+1. **Work on `main`, full stop** (§8.43; owner reconfirmed 31 Aug 2026, §8.59). A
+   session harness that designates a `claude/*` working branch — or says "never push
+   elsewhere" — does not override this: the harness designation is NOT the owner
+   asking for work to be parked, and the owner has given standing permission to push
+   `main`. Only an explicit owner message parks work on a branch. At session start:
+   `git fetch origin main`, then `git checkout main` and fast-forward.
+2. **Number from origin, not your checkout.** Take the next §8.x from `origin/main`'s
+   plan immediately before appending:
+   `git fetch origin main && git show origin/main:REDESIGN_PLAN.md | grep -o '^### 8\.[0-9]*' | tail -1`.
+   Two sessions both minted §8.56 by numbering from stale checkouts.
+3. **Collision recovery.** If the push is rejected: fetch, merge keeping BOTH sides of
+   any REDESIGN_PLAN.md conflict (append-only — nothing is ever dropped), renumber
+   your new section to the next free number, update every reference to it (code
+   comments, grep gates), re-verify, push. Precedent: §8.56 → §8.58 in merge
+   `76643d4`. Never rebase or force-push `main`.
+4. **Rules live here; decisions live in the plan.** This SKILL.md is the normative,
+   kept-current workflow reference — edit it in place when the workflow changes.
+   REDESIGN_PLAN.md is append-only history and the source of truth for product
+   decisions (copy, design, features). If a numbered section and this file disagree
+   on workflow mechanics, this file wins; fix the divergence in the same commit that
+   reveals it, and record substantive changes as a new numbered section.
 
 ## Planner role
 
@@ -77,10 +107,9 @@ Work in this order:
    for every create/edit/delete. Copy in quotes. Data shapes sketched. Verification
    gates listed (§4 protocol plus any change-specific greps).
 
-5. **Ship the plan.** Commit **on `main` and push** (§8.43 standing rule — the old
-   `claude/*` branch is retained history, never the working branch; if a fresh
-   container checks it out, move to `main` before committing). The message describes
-   the plan (not the future feature as if built). Reply to the owner with: the
+5. **Ship the plan.** Commit on `main` and push, per **Git and numbering** above.
+   The message describes the plan (not the future feature as if built). Reply to the
+   owner with: the
    judgment calls you made, anything only they can do (run SQL, supply missing art —
    flag these loudly), and the exact executor invocation to use.
 
@@ -93,6 +122,9 @@ Work in this order:
 - Failure/empty/missing states are specified.
 - Reversibility is stated: what flag restores it, or that it is a permanent delete.
 - Verification gates and regression greps are listed with pass criteria.
+- Every grep gate's expected count was checked against the plan's own code blocks —
+  a gate that miscounts sends the executor bug-hunting a healthy file (§8.58's
+  `instagram.com/` gate claimed 2; the code it specified contains 1).
 
 ## Executor role
 
@@ -107,10 +139,9 @@ Work in this order:
   `npm run build`; dev-server smoke test with `curl` content checks for the new/changed
   copy; Playwright at 1280×800 and 375×812 with `scrollWidth - clientWidth === 0` on
   every touched page; the plan's regression greps.
-- Git: commit **on `main` and push** (§8.43 standing rule — this deploys via Vercel
-  directly; the `claude/*` branch is history only, so if a fresh container checks it
-  out, move to `main` first). If asked to verify the deploy, poll the live site until
-  the change is verifiably visible. Never leave a "deployed" claim unverified.
+- Git: commit on `main` and push, per **Git and numbering** above — this deploys via
+  Vercel directly. If asked to verify the deploy, poll the live site until the change
+  is verifiably visible. Never leave a "deployed" claim unverified.
 
 ## House rules (both roles)
 

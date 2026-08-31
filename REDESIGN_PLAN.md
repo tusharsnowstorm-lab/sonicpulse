@@ -5382,3 +5382,29 @@ interactive checks are owner-side after deploy):**
   Copy JSON shows "Copied" and pastes valid JSON; the WF-NSK9XKWH-era card that
   held a pasted profile URL now shows a working `@adil_azbab` pill; date-of-birth
   lines show "· NN on event night".
+
+### 8.59 Workflow — colliding rules eliminated, doc authority settled (added 31 Aug 2026, owner-decided)
+
+Executed directly by the planner (owner: "Streamline the plan docs so no more
+colliding rules exist. I want future plan amend sessions to go efficiently").
+Two collisions bit on 31 Aug and both are now closed:
+
+1. **Branch rule.** A remote session's harness designated a `claude/*` working
+   branch and forbade pushing elsewhere, so the §8.58 work sat undeployed on
+   that branch while the owner looked for it on the live site. Owner ruling:
+   §8.43 stands — a harness-designated branch is NOT "the owner asking for work
+   to be parked in a branch", and the owner grants standing permission to push
+   `main` from any session. §8.43 is clarified on this one point, not
+   superseded.
+2. **Numbering.** Two sessions independently minted §8.56 (FAQ → /policy,
+   26 Aug; admin Wayfinder, 31 Aug) by numbering from stale checkouts. The
+   admin amendment was renumbered §8.56 → §8.58 in merge `76643d4`, keeping
+   both sides. The skill now requires taking the next §8.x from `origin/main`
+   immediately before appending, and documents keep-both-and-renumber recovery.
+
+**Doc authority, from today:** `.claude/skills/plan-amend/SKILL.md` is the
+normative workflow reference and is edited in place as the workflow evolves
+(its new "Git and numbering" section carries the rules above). REDESIGN_PLAN.md
+stays append-only history and the source of truth for product decisions —
+copy, design, features. Where the two disagree on workflow mechanics, the
+skill wins, and the divergence is fixed in the commit that reveals it.
