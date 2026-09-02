@@ -4971,3 +4971,173 @@ Delete the one added line from each of the two files.
     and text `Policy`; `scrollWidth - clientWidth === 0` with the drawer open.
   - On `/policy` at 1280×800: the nav's Policy anchor renders in the active
     colour `rgb(255, 255, 255)` while a non-active link (e.g. `/faq`) does not.
+
+### 8.58 Wayfinder — drop the 17+ rule; eligibility is school students and recent graduates (added 27 Aug 2026, owner-requested)
+
+Owner decision: the Wayfinder programme no longer requires applicants to
+be 17 or older. Eligibility copy now says the programme is for **students
+still in school or recent graduates**. This completes the §8.55-era
+redesign of Wayfinder into a community outreach programme (the offline
+parental permission form already exists for exactly this audience) and
+supersedes the §8.28-era age rule wherever it appears.
+
+**No new lower age bound is introduced.** Date of birth stays a required
+field — it feeds the under-18 permission-form process and the admin view —
+but no age is rejected. The server keeps its date-validity (NaN) check.
+
+**The under-18 line is grounded in owner process, not invented:** the
+owner's permission form states a student cannot be placed on a shift until
+the signed form is held. The eligibility copy references that process.
+
+#### Where the 17+ rule lives — all four surfaces change
+
+1. `src/components/wayfinder/WayfinderForm.tsx` — client-side age gate in
+   `handleSubmit` (currently lines 71–80).
+2. `src/app/api/wayfinder/route.ts` — server-side age gate (currently
+   lines 57–64, inside the validation run).
+3. `src/app/(main)/wayfinder/page.tsx` — the "Open to graduating
+   students" bullet (currently lines 16–19 of the `points` array).
+4. The `level` select offers no school-student option, contradicting the
+   new eligibility — a class-10 student cannot answer "Where you are in
+   your studies". Labels are rewritten **without changing stored values**
+   (`undergraduate_final` / `hsc_alevel` / `other` stay — the DB check
+   constraint in `supabase-wayfinder.sql` allows only those three, so no
+   migration and no SQL for the owner). The admin tab's `LEVEL_LABEL` map
+   is updated to match so staff read the same words applicants picked.
+   Historic rows adopt the new broader labels — accepted drift, recorded.
+
+#### Files — five edits
+
+**Edit 1 — `src/components/wayfinder/WayfinderForm.tsx`.** In
+`handleSubmit`, delete the age gate. Replace:
+```tsx
+    setErrorMsg('')
+
+    const dob = new Date(form.dateOfBirth)
+    const today = new Date()
+    const age = today.getFullYear() - dob.getFullYear()
+    const m = today.getMonth() - dob.getMonth()
+    const isAtLeast17 = age > 17 || (age === 17 && (m > 0 || (m === 0 && today.getDate() >= dob.getDate())))
+    if (!isAtLeast17) {
+      setErrorMsg('Wayfinders must be 17 or older to apply.')
+      setStatus('error')
+      return
+    }
+
+    setStatus('submitting')
+```
+with:
+```tsx
+    setErrorMsg('')
+    setStatus('submitting')
+```
+
+**Edit 2 — same file, the level select** (currently lines 181–184).
+Replace:
+```tsx
+          <option value="">Select one</option>
+          <option value="undergraduate_final">Final-year undergraduate</option>
+          <option value="hsc_alevel">HSC / A-level finisher</option>
+          <option value="other">Other</option>
+```
+with (school first — the primary audience now; values UNCHANGED):
+```tsx
+          <option value="">Select one</option>
+          <option value="hsc_alevel">School student — SSC, HSC or A-levels</option>
+          <option value="undergraduate_final">University student or recent graduate</option>
+          <option value="other">Other</option>
+```
+
+**Edit 3 — `src/app/api/wayfinder/route.ts`.** Delete the age gate,
+keep the validity check. Replace:
+```ts
+    const today = new Date()
+    const age = today.getFullYear() - dob.getFullYear()
+    const m = today.getMonth() - dob.getMonth()
+    const isAtLeast17 = age > 17 || (age === 17 && (m > 0 || (m === 0 && today.getDate() >= dob.getDate())))
+    if (!isAtLeast17) {
+      return Response.json({ error: 'Wayfinders must be 17 or older to apply.' }, { status: 400 })
+    }
+
+    if (motivation.length > 600) {
+```
+with:
+```ts
+    if (motivation.length > 600) {
+```
+(The `const dob = new Date(dateOfBirth)` / NaN check directly above stays
+exactly as it is.)
+
+**Edit 4 — `src/app/(main)/wayfinder/page.tsx`.** Replace the bullet:
+```ts
+  {
+    title: 'Open to graduating students',
+    body: 'Final-year undergraduates and HSC or A-level finishers, 17 or older, are welcome to apply.',
+  },
+```
+with:
+```ts
+  {
+    title: 'Open to school students and recent graduates',
+    body: 'Students still in school and recent graduates are welcome to apply. Applicants under 18 will be sent a parent or guardian permission form to return before their shift is confirmed.',
+  },
+```
+
+**Edit 5 — `src/app/admin/WayfinderTab.tsx`** (currently lines 36–40).
+Replace:
+```ts
+const LEVEL_LABEL: Record<Application['level'], string> = {
+  undergraduate_final: 'Final-year undergraduate',
+  hsc_alevel: 'HSC / A-level finisher',
+  other: 'Other',
+}
+```
+with:
+```ts
+const LEVEL_LABEL: Record<Application['level'], string> = {
+  undergraduate_final: 'University student or recent graduate',
+  hsc_alevel: 'School student — SSC, HSC or A-levels',
+  other: 'Other',
+}
+```
+
+#### Scope fences
+
+- Date of birth stays required in the form and the API; only the age
+  comparison goes.
+- The §8.55 main-account checkbox, §8.42/§8.55 Instagram copy (including
+  the `{' '}` on the success card — §8.54), the emergency-contact fields,
+  the 600-char motivation limit, and the graduation-year 2026–2032 bounds
+  are untouched.
+- No schema change; `supabase-wayfinder.sql` and the level check
+  constraint are untouched. No SQL for the owner.
+- First Pulse, the FAQ, the confirmation email, and the admin API routes
+  are untouched (none mention the age rule — verified by grep).
+
+#### Reversibility
+
+Re-add the two deleted age blocks verbatim from this section's
+"Replace" excerpts, and restore the three copy strings. No data change.
+
+#### Verification gates (executor)
+
+- §4: `npx tsc --noEmit`; `npm run lint` (baseline 7 errors / 9
+  warnings); `npm run build`.
+- Regression greps, all against `src/`:
+  - `grep -rn "isAtLeast17" src/` → **0 matches**
+  - `grep -rn "17 or older" src/` → **0 matches**
+  - `grep -c "School student — SSC, HSC or A-levels" src/components/wayfinder/WayfinderForm.tsx` → **1**
+  - `grep -c "School student — SSC, HSC or A-levels" src/app/admin/WayfinderTab.tsx` → **1**
+  - `grep -c "permission form" 'src/app/(main)/wayfinder/page.tsx'` → **1**
+- Dev server on port 3100, Playwright at 375×812 and 1280×800 on
+  `/wayfinder`:
+  - Page contains "Open to school students and recent graduates" and the
+    under-18 sentence.
+  - The `#wf-level` select's option labels are, in order: "Select one",
+    "School student — SSC, HSC or A-levels", "University student or
+    recent graduate", "Other" — and option VALUES are unchanged
+    (`hsc_alevel`, `undergraduate_final`, `other`).
+  - `scrollWidth - clientWidth === 0`.
+- **Do NOT submit the form** (writes a real Supabase row and sends
+  email). The removal of the client gate is verified by grep, not by
+  submitting an under-17 date of birth.
