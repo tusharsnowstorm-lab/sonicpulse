@@ -14,8 +14,8 @@ const points = [
     body: 'Every Wayfinder who completes a shift receives a certificate of service from Dhaka Music Festival — written for university applications.',
   },
   {
-    title: 'Open to graduating students',
-    body: 'Final-year undergraduates and HSC or A-level finishers, 17 or older, are welcome to apply.',
+    title: 'Open to school students and recent graduates',
+    body: 'Students still in school and recent graduates are welcome to apply. Applicants under 18 will be sent a parent or guardian permission form to return before their shift is confirmed.',
   },
   {
     title: 'Inside the whole night',

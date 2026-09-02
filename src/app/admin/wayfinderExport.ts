@@ -25,8 +25,8 @@ export type WayfinderApplication = {
 }
 
 export const LEVEL_LABEL: Record<WayfinderApplication['level'], string> = {
-  undergraduate_final: 'Final-year undergraduate',
-  hsc_alevel: 'HSC / A-level finisher',
+  undergraduate_final: 'University student or recent graduate',
+  hsc_alevel: 'School student — SSC, HSC or A-levels',
   other: 'Other',
 }
 

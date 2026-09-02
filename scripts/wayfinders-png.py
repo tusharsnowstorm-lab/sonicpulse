@@ -47,8 +47,8 @@ FETCH_COLUMNS = (
 )
 
 LEVELS = {
-    "undergraduate_final": "Undergraduate (final year)",
-    "hsc_alevel": "HSC / A Level",
+    "undergraduate_final": "University student or recent graduate",
+    "hsc_alevel": "School student — SSC, HSC or A-levels",
     "other": "Other",
 }
 GENDERS = {"female": "Female", "male": "Male", "prefer_not_to_say": "Prefer not to say"}

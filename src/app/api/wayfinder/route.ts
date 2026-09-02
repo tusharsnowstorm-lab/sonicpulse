@@ -55,14 +55,6 @@ export async function POST(req: NextRequest) {
     if (Number.isNaN(dob.getTime())) {
       return Response.json({ error: 'Enter a valid date of birth.' }, { status: 400 })
     }
-    const today = new Date()
-    const age = today.getFullYear() - dob.getFullYear()
-    const m = today.getMonth() - dob.getMonth()
-    const isAtLeast17 = age > 17 || (age === 17 && (m > 0 || (m === 0 && today.getDate() >= dob.getDate())))
-    if (!isAtLeast17) {
-      return Response.json({ error: 'Wayfinders must be 17 or older to apply.' }, { status: 400 })
-    }
-
     if (motivation.length > 600) {
       return Response.json({ error: 'Tell us in 600 characters or fewer.' }, { status: 400 })
     }
