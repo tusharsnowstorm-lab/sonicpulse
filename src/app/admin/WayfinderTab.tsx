@@ -24,6 +24,8 @@ const SELECT_STYLE = {
   touchAction: 'manipulation',
 } as const
 
+type SortOrder = 'newest' | 'oldest'
+
 export default function WayfinderTab() {
   const [applications, setApplications] = useState<Application[]>([])
   const [loading, setLoading] = useState(true)
@@ -35,6 +37,7 @@ export default function WayfinderTab() {
   const [levelFilter, setLevelFilter] = useState('any')
   const [shiftFilter, setShiftFilter] = useState('any')
   const [columnSet, setColumnSet] = useState<ColumnSet>('everything')
+  const [sortOrder, setSortOrder] = useState<SortOrder>('newest')
   const [copied, setCopied] = useState(false)
 
   const fetchApplications = useCallback(async () => {
@@ -86,7 +89,13 @@ export default function WayfinderTab() {
     else if (shiftFilter !== 'any' && a.assigned_shift !== shiftFilter) return false
     return true
   }
-  const filtered = applications.filter((a) => a.status === activeTab && matchesFilters(a))
+  const filtered = applications
+    .filter((a) => a.status === activeTab && matchesFilters(a))
+    .sort((a, b) => {
+      const delta = Date.parse(b.created_at) - Date.parse(a.created_at)
+      if (Number.isNaN(delta)) return 0
+      return sortOrder === 'newest' ? delta : -delta
+    })
   const filtersActive = q !== '' || genderFilter !== 'any' || levelFilter !== 'any' || shiftFilter !== 'any'
   const counts = Object.fromEntries(STATUS_TABS.map((s) => [s, applications.filter((a) => a.status === s).length]))
   const accepted = applications.filter((a) => a.status === 'accepted')
@@ -183,6 +192,10 @@ export default function WayfinderTab() {
             </select>
           </div>
           <div className="flex gap-2 mb-6 flex-wrap items-center">
+            <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value as SortOrder)} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+            </select>
             <select value={columnSet} onChange={(e) => setColumnSet(e.target.value as ColumnSet)} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
               <option value="everything">Everything</option>
               <option value="summary">Summary</option>
