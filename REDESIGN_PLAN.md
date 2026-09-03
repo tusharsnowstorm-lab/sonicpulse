@@ -5735,3 +5735,295 @@ Delete the `SortOrder` type, the `sortOrder` state line and the new
   exception is thrown.
 - Confirm by reading the diff that the export handlers were not edited and
   still call `exportRows(filtered, columnSet)`.
+
+### 8.62 Admin Wayfinder — batch status and shift actions (added 31 Aug 2026, owner-requested)
+
+Owner asked to batch approve applicants and batch assign shifts on the admin
+Wayfinder page. Today every action is per-card: accepting forty applicants
+is forty clicks and forty refetches.
+
+**Independent of §8.61.** That amendment adds a sort control to the same
+file but touches different anchors (the `SELECT_STYLE` block, the
+`columnSet` state, the `filtered` assignment, and the export toolbar's first
+child). Every anchor below is identified by content, not line number, so
+§8.62 applies cleanly whether §8.61 has been executed or not, in either
+order. Sorting changes order, never membership, so selection is unaffected
+by it.
+
+#### The API takes ids in bulk — one query, not N requests
+
+`PATCH /api/admin/wayfinder` currently updates one row via
+`.eq('id', applicationId)`. Looping it client-side would mean forty
+round trips and a half-applied batch if one failed midway. Instead the route
+accepts an optional `applicationIds` array and switches to `.in('id', ids)`
+— a single Supabase update, so a batch either lands or does not. The
+existing `applicationId` field keeps working unchanged, so the per-card
+buttons need no edit.
+
+#### Selection rules — settled
+
+- Selection is a `Set<string>` of application ids, held in the tab.
+- **Selection clears whenever the visible set changes** — on a status-tab
+  switch and on any change to the search box or the gender/level/shift
+  filters. This is the one rule that prevents the dangerous case: acting on
+  rows that were selected under a previous filter and are no longer on
+  screen. The cost is that narrowing then re-widening loses the selection;
+  that is the accepted trade.
+- Clearing is done in the change handlers, NOT in a `useEffect`. An effect
+  that calls `setState` would trip `react-hooks/set-state-in-effect`, which
+  is already suppressed once in this file for the mount fetch; adding a
+  second suppression to work around a lint rule is worse than calling the
+  helper in five handlers.
+- Select-all selects exactly the currently filtered rows. The checkbox is
+  checked when every filtered row is selected; no indeterminate state (it
+  would need a ref for one cosmetic detail).
+
+#### Confirmation and failure
+
+- Every batch action goes through `window.confirm` first, with this exact
+  copy, `label` being the button's own word and the plural switching on
+  count: `Apply "<label>" to <N> application(s)?` — implemented as
+  `` `Apply "${label}" to ${ids.length} application${ids.length === 1 ? '' : 's'}?` ``.
+  A mis-aimed batch reject is the worst outcome here and one dialog prevents it.
+- On a non-OK response the bar shows the server's `error`, or
+  `Could not apply that change. Nothing was updated.` — accurate because
+  `.in()` is a single statement. The list is NOT refetched on failure, so
+  the selection survives for a retry.
+- Both action groups (status and shift) show on every status tab, matching
+  the per-card buttons, which are already unrestricted by tab.
+
+#### Files — two files
+
+**Edit 1 — `src/app/api/admin/wayfinder/route.ts`.** In `PATCH`, replace:
+```ts
+  const { applicationId, status, assignedShift } = await req.json()
+
+  if (!applicationId) {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+  }
+```
+with:
+```ts
+  const { applicationId, applicationIds, status, assignedShift } = await req.json()
+
+  const ids: string[] = Array.isArray(applicationIds)
+    ? applicationIds
+    : applicationId ? [applicationId] : []
+
+  if (ids.length === 0 || ids.length > 200 || ids.some((id) => typeof id !== 'string' || id === '')) {
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
+  }
+```
+and replace:
+```ts
+    .update(update)
+    .eq('id', applicationId)
+```
+with:
+```ts
+    .update(update)
+    .in('id', ids)
+```
+The 200 cap is a guard against a malformed or hostile payload; the whole
+programme is 50 places, so it is never reached in normal use.
+
+**Edit 2 — `src/app/admin/WayfinderTab.tsx`, six hunks.**
+
+2a. After `const [copied, setCopied] = useState(false)` add:
+```ts
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [batchLoading, setBatchLoading] = useState(false)
+  const [batchError, setBatchError] = useState('')
+```
+
+2b. After the closing brace of `handleShift` and before
+`const q = query.trim().toLowerCase().replace(/^@/, '')` add:
+```ts
+  const clearSelection = () => {
+    setSelectedIds(new Set())
+    setBatchError('')
+  }
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+    setBatchError('')
+  }
+
+  const runBatch = async (
+    payload: { status?: Application['status']; assignedShift?: 'dusk' | 'dawn' },
+    label: string,
+  ) => {
+    const ids = [...selectedIds]
+    if (ids.length === 0) return
+    if (!window.confirm(`Apply "${label}" to ${ids.length} application${ids.length === 1 ? '' : 's'}?`)) return
+    setBatchLoading(true)
+    setBatchError('')
+    const res = await fetch('/api/admin/wayfinder', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ applicationIds: ids, ...payload }),
+    })
+    if (!res.ok) {
+      const json = await res.json().catch(() => ({}))
+      setBatchError(json.error ?? 'Could not apply that change. Nothing was updated.')
+      setBatchLoading(false)
+      return
+    }
+    await fetchApplications()
+    setSelectedIds(new Set())
+    setBatchLoading(false)
+  }
+```
+
+2c. Directly after the `const filtered = ...` assignment (whatever its
+current form — §8.61 may have made it multi-line) add:
+```ts
+  const allVisibleSelected = filtered.length > 0 && filtered.every((a) => selectedIds.has(a.id))
+```
+
+2d. Clear selection from the five controls that change the visible set.
+Replace `onClick={() => setActiveTab(tab)}` with:
+```tsx
+            onClick={() => { setActiveTab(tab); clearSelection() }}
+```
+Replace `onChange={(e) => setQuery(e.target.value)}` with:
+```tsx
+              onChange={(e) => { setQuery(e.target.value); clearSelection() }}
+```
+Replace `onChange={(e) => setGenderFilter(e.target.value)}` with:
+```tsx
+            onChange={(e) => { setGenderFilter(e.target.value); clearSelection() }}
+```
+Replace `onChange={(e) => setLevelFilter(e.target.value)}` with:
+```tsx
+            onChange={(e) => { setLevelFilter(e.target.value); clearSelection() }}
+```
+Replace `onChange={(e) => setShiftFilter(e.target.value)}` with:
+```tsx
+            onChange={(e) => { setShiftFilter(e.target.value); clearSelection() }}
+```
+
+2e. The batch bar. Inside the `{!loading && applications.length > 0 && (<>…</>)}`
+fragment, insert this as the LAST child — after the export toolbar `</div>`
+and immediately before the closing `</>`:
+```tsx
+          {filtered.length > 0 && (
+            <div className="flex gap-2 mb-6 flex-wrap items-center rounded-2xl px-4 py-3" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
+              <label className="flex items-center gap-2 text-sm cursor-pointer" style={{ color: 'rgba(255,255,255,0.65)', touchAction: 'manipulation' }}>
+                <input
+                  type="checkbox"
+                  checked={allVisibleSelected}
+                  onChange={() => setSelectedIds(allVisibleSelected ? new Set() : new Set(filtered.map((a) => a.id)))}
+                  style={{ accentColor: 'var(--accent-magenta)', width: 16, height: 16, touchAction: 'manipulation' }}
+                />
+                Select all {filtered.length}
+              </label>
+              {selectedIds.size > 0 && (
+                <>
+                  <span className="text-sm" style={{ color: '#fff' }}>{selectedIds.size} selected</span>
+                  {STATUS_TABS.filter((s) => s !== activeTab).map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => runBatch({ status: s }, s)}
+                      disabled={batchLoading}
+                      className="text-xs px-3 py-1.5 rounded-full cursor-pointer font-semibold capitalize"
+                      style={{ background: STATUS_STYLE[s].bg, border: STATUS_STYLE[s].border, color: STATUS_STYLE[s].color, touchAction: 'manipulation' }}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                  {(['dusk', 'dawn'] as const).map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => runBatch({ assignedShift: s }, `assign ${SHIFT_LABEL[s]}`)}
+                      disabled={batchLoading}
+                      className="text-xs px-3 py-1.5 rounded-full cursor-pointer"
+                      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', color: 'rgba(255,255,255,0.65)', touchAction: 'manipulation' }}
+                    >
+                      assign {SHIFT_LABEL[s]}
+                    </button>
+                  ))}
+                  <button
+                    onClick={clearSelection}
+                    disabled={batchLoading}
+                    className="text-xs px-3 py-1.5 rounded-full cursor-pointer"
+                    style={{ background: 'transparent', border: '1px solid var(--border)', color: 'rgba(255,255,255,0.5)', touchAction: 'manipulation' }}
+                  >
+                    clear
+                  </button>
+                </>
+              )}
+              {batchLoading && <span className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>working…</span>}
+              {batchError && <span className="text-xs" style={{ color: '#e24b4a' }}>{batchError}</span>}
+            </div>
+          )}
+```
+
+2f. The per-card checkbox. Inside each card's header, as the FIRST child of
+`<div className="flex items-center gap-3 flex-wrap">` — directly before the
+`{app.reference_code}` span — insert:
+```tsx
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(app.id)}
+                      onChange={() => toggleSelected(app.id)}
+                      aria-label={`Select ${app.reference_code}`}
+                      style={{ accentColor: 'var(--accent-magenta)', width: 16, height: 16, touchAction: 'manipulation' }}
+                    />
+```
+
+#### Noted, not fixed here — stale level labels in the filter dropdown
+
+§8.60 relabelled `LEVEL_LABEL` in `wayfinderExport.ts` believing the shared
+map covered every admin surface. It does not: the level FILTER `<select>` in
+`WayfinderTab.tsx` carries its own hardcoded option text, so it still reads
+"Final-year undergraduate" and "HSC / A-level finisher" while the card body
+directly beneath renders the new labels from the map. Cosmetic, wrong, and
+out of scope for a batch-actions amendment. The fix is to replace those two
+option labels with "University student or recent graduate" and "School
+student — SSC, HSC or A-levels". Left for the owner to schedule.
+
+#### Scope fences
+
+- No schema change, no new dependency, no change to the GET handler or its
+  `created_at` ordering.
+- The per-card status and shift buttons, `handleAction`, `handleShift`,
+  `actionLoading`, the export handlers, `wayfinderExport.ts` and the
+  §8.58 filters are untouched.
+- The stale filter labels above are NOT corrected in this amendment.
+- First Pulse, the public Wayfinder form and the public API are untouched.
+
+#### Reversibility
+
+Revert the two API hunks to `applicationId` / `.eq('id', applicationId)`,
+and delete the three state lines, the three helpers, `allVisibleSelected`,
+the batch bar, the card checkbox, and the five `clearSelection()` calls.
+
+#### Verification gates (executor)
+
+- §4: `npx tsc --noEmit`; `npm run lint` (baseline 7 errors / 9 warnings —
+  a NEW `react-hooks/set-state-in-effect` error means the clearing logic
+  was put in an effect instead of the handlers); `npm run build`.
+- Source gates:
+  - `grep -c "applicationIds" src/app/api/admin/wayfinder/route.ts` → **2**
+  - `grep -c "\.in('id', ids)" src/app/api/admin/wayfinder/route.ts` → **1**
+  - `grep -c "eq('id', applicationId)" src/app/api/admin/wayfinder/route.ts` → **0**
+  - `grep -c "clearSelection()" src/app/admin/WayfinderTab.tsx` → **6**
+    (five control handlers plus the bar's own clear button)
+  - `grep -c "runBatch(" src/app/admin/WayfinderTab.tsx` → **3**
+    (the definition plus the two call sites in the bar)
+  - `grep -c "window.confirm" src/app/admin/WayfinderTab.tsx` → **1**
+- `/admin` sits behind `ADMIN_EMAILS`, so the live list cannot be smoke
+  tested in a dev session. Verify the id-normalisation branch in isolation
+  with a throwaway Node script (delete it after; do not commit): run the
+  Edit 1 normalisation over five payloads — `{applicationId: 'a'}`,
+  `{applicationIds: ['a','b']}`, `{}`, `{applicationIds: []}` and
+  `{applicationIds: ['a', 7]}` — and assert the first yields `['a']`, the
+  second `['a','b']`, and the last three are all rejected by the guard.
+- Read the diff and confirm `handleAction` and `handleShift` still send
+  `applicationId` (singular), proving the per-card path is untouched.
