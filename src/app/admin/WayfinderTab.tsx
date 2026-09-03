@@ -39,6 +39,9 @@ export default function WayfinderTab() {
   const [columnSet, setColumnSet] = useState<ColumnSet>('everything')
   const [sortOrder, setSortOrder] = useState<SortOrder>('newest')
   const [copied, setCopied] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [batchLoading, setBatchLoading] = useState(false)
+  const [batchError, setBatchError] = useState('')
 
   const fetchApplications = useCallback(async () => {
     setLoading(true)
@@ -74,6 +77,46 @@ export default function WayfinderTab() {
     setActionLoading(null)
   }
 
+  const clearSelection = () => {
+    setSelectedIds(new Set())
+    setBatchError('')
+  }
+
+  const toggleSelected = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+    setBatchError('')
+  }
+
+  const runBatch = async (
+    payload: { status?: Application['status']; assignedShift?: 'dusk' | 'dawn' },
+    label: string,
+  ) => {
+    const ids = [...selectedIds]
+    if (ids.length === 0) return
+    if (!window.confirm(`Apply "${label}" to ${ids.length} application${ids.length === 1 ? '' : 's'}?`)) return
+    setBatchLoading(true)
+    setBatchError('')
+    const res = await fetch('/api/admin/wayfinder', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ applicationIds: ids, ...payload }),
+    })
+    if (!res.ok) {
+      const json = await res.json().catch(() => ({}))
+      setBatchError(json.error ?? 'Could not apply that change. Nothing was updated.')
+      setBatchLoading(false)
+      return
+    }
+    await fetchApplications()
+    setSelectedIds(new Set())
+    setBatchLoading(false)
+  }
+
   const q = query.trim().toLowerCase().replace(/^@/, '')
   const matchesFilters = (a: Application) => {
     if (q) {
@@ -96,6 +139,7 @@ export default function WayfinderTab() {
       if (Number.isNaN(delta)) return 0
       return sortOrder === 'newest' ? delta : -delta
     })
+  const allVisibleSelected = filtered.length > 0 && filtered.every((a) => selectedIds.has(a.id))
   const filtersActive = q !== '' || genderFilter !== 'any' || levelFilter !== 'any' || shiftFilter !== 'any'
   const counts = Object.fromEntries(STATUS_TABS.map((s) => [s, applications.filter((a) => a.status === s).length]))
   const accepted = applications.filter((a) => a.status === 'accepted')
@@ -145,7 +189,7 @@ export default function WayfinderTab() {
         {STATUS_TABS.map((tab) => (
           <button
             key={tab}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => { setActiveTab(tab); clearSelection() }}
             className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer capitalize"
             style={{
               background: activeTab === tab ? STATUS_STYLE[tab].bg : 'var(--bg-elevated)',
@@ -165,25 +209,25 @@ export default function WayfinderTab() {
           <div className="flex gap-2 mb-3 flex-wrap items-center">
             <input
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => { setQuery(e.target.value); clearSelection() }}
               placeholder="Search name, contact or institution"
               className="text-sm px-4 py-2 rounded-full flex-1"
               style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)', color: '#fff', minWidth: 200, touchAction: 'manipulation' }}
             />
-            <select value={genderFilter} onChange={(e) => setGenderFilter(e.target.value)} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
+            <select value={genderFilter} onChange={(e) => { setGenderFilter(e.target.value); clearSelection() }} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
               <option value="any">Any gender</option>
               <option value="female">Female</option>
               <option value="male">Male</option>
               <option value="prefer_not_to_say">Prefer not to say</option>
               <option value="none">Not stated</option>
             </select>
-            <select value={levelFilter} onChange={(e) => setLevelFilter(e.target.value)} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
+            <select value={levelFilter} onChange={(e) => { setLevelFilter(e.target.value); clearSelection() }} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
               <option value="any">Any level</option>
               <option value="undergraduate_final">Final-year undergraduate</option>
               <option value="hsc_alevel">HSC / A-level finisher</option>
               <option value="other">Other</option>
             </select>
-            <select value={shiftFilter} onChange={(e) => setShiftFilter(e.target.value)} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
+            <select value={shiftFilter} onChange={(e) => { setShiftFilter(e.target.value); clearSelection() }} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
               <option value="any">Any shift</option>
               <option value="dusk">Assigned dusk</option>
               <option value="dawn">Assigned dawn</option>
@@ -213,6 +257,56 @@ export default function WayfinderTab() {
               </span>
             )}
           </div>
+          {filtered.length > 0 && (
+            <div className="flex gap-2 mb-6 flex-wrap items-center rounded-2xl px-4 py-3" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
+              <label className="flex items-center gap-2 text-sm cursor-pointer" style={{ color: 'rgba(255,255,255,0.65)', touchAction: 'manipulation' }}>
+                <input
+                  type="checkbox"
+                  checked={allVisibleSelected}
+                  onChange={() => setSelectedIds(allVisibleSelected ? new Set() : new Set(filtered.map((a) => a.id)))}
+                  style={{ accentColor: 'var(--accent-magenta)', width: 16, height: 16, touchAction: 'manipulation' }}
+                />
+                Select all {filtered.length}
+              </label>
+              {selectedIds.size > 0 && (
+                <>
+                  <span className="text-sm" style={{ color: '#fff' }}>{selectedIds.size} selected</span>
+                  {STATUS_TABS.filter((s) => s !== activeTab).map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => runBatch({ status: s }, s)}
+                      disabled={batchLoading}
+                      className="text-xs px-3 py-1.5 rounded-full cursor-pointer font-semibold capitalize"
+                      style={{ background: STATUS_STYLE[s].bg, border: STATUS_STYLE[s].border, color: STATUS_STYLE[s].color, touchAction: 'manipulation' }}
+                    >
+                      {s}
+                    </button>
+                  ))}
+                  {(['dusk', 'dawn'] as const).map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => runBatch({ assignedShift: s }, `assign ${SHIFT_LABEL[s]}`)}
+                      disabled={batchLoading}
+                      className="text-xs px-3 py-1.5 rounded-full cursor-pointer"
+                      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border)', color: 'rgba(255,255,255,0.65)', touchAction: 'manipulation' }}
+                    >
+                      assign {SHIFT_LABEL[s]}
+                    </button>
+                  ))}
+                  <button
+                    onClick={clearSelection}
+                    disabled={batchLoading}
+                    className="text-xs px-3 py-1.5 rounded-full cursor-pointer"
+                    style={{ background: 'transparent', border: '1px solid var(--border)', color: 'rgba(255,255,255,0.5)', touchAction: 'manipulation' }}
+                  >
+                    clear
+                  </button>
+                </>
+              )}
+              {batchLoading && <span className="text-xs" style={{ color: 'rgba(255,255,255,0.5)' }}>working…</span>}
+              {batchError && <span className="text-xs" style={{ color: '#e24b4a' }}>{batchError}</span>}
+            </div>
+          )}
         </>
       )}
 
@@ -232,6 +326,13 @@ export default function WayfinderTab() {
               <div key={app.id} className="rounded-2xl overflow-hidden" style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border)' }}>
                 <div className="px-5 py-3 flex items-center justify-between flex-wrap gap-2" style={{ background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid var(--border)' }}>
                   <div className="flex items-center gap-3 flex-wrap">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(app.id)}
+                      onChange={() => toggleSelected(app.id)}
+                      aria-label={`Select ${app.reference_code}`}
+                      style={{ accentColor: 'var(--accent-magenta)', width: 16, height: 16, touchAction: 'manipulation' }}
+                    />
                     <span className="font-mono text-xs" style={{ color: 'var(--accent-magenta)' }}>{app.reference_code}</span>
                     <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(255,63,194,0.08)', color: 'rgba(255,255,255,0.65)' }}>
                       {SHIFT_LABEL[app.shift_preference]}

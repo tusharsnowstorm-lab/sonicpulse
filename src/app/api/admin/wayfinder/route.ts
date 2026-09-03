@@ -41,9 +41,13 @@ export async function PATCH(req: NextRequest) {
   const user = await checkAdmin()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { applicationId, status, assignedShift } = await req.json()
+  const { applicationId, applicationIds, status, assignedShift } = await req.json()
 
-  if (!applicationId) {
+  const ids: string[] = Array.isArray(applicationIds)
+    ? applicationIds
+    : applicationId ? [applicationId] : []
+
+  if (ids.length === 0 || ids.length > 200 || ids.some((id) => typeof id !== 'string' || id === '')) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   }
 
@@ -71,7 +75,7 @@ export async function PATCH(req: NextRequest) {
   const { error } = await supabase
     .from('wayfinder_applications')
     .update(update)
-    .eq('id', applicationId)
+    .in('id', ids)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
