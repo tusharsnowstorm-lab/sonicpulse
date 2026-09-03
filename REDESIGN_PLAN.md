@@ -6027,3 +6027,9 @@ the batch bar, the card checkbox, and the five `clearSelection()` calls.
   second `['a','b']`, and the last three are all rejected by the guard.
 - Read the diff and confirm `handleAction` and `handleShift` still send
   `applicationId` (singular), proving the per-card path is untouched.
+
+### 8.63 The plan-amend skill retired from this repo (owner request, 3 Sep 2026)
+
+`.claude/skills/plan-amend/SKILL.md` is deleted. Both this repo and `afterhours` shipped a skill by that name, and a two-repo session could load either one depending on which the harness surfaced — it surfaced this repo's copy at least once, silently shadowing the other project's numbering, laws, and companion-file rules. The owner's fix: one copy only. `afterhours/.claude/skills/plan-amend/SKILL.md` is now the account's sole `plan-amend` skill.
+
+**What this means for future work here:** a "plan amend" request against this repo has no skill to invoke. §8.59's "Doc authority, from today" line above (pointing at the now-deleted file) is superseded by this entry, not edited — this repo's own two-model workflow (Fable plans, Sonnet executes, §8.x numbering, the git-safety rules in that old §8.59 entry) is retired along with the skill. §0.7, §2, §4 and the rest of this plan remain the design/product source of truth exactly as before; only the *planning ritual* — the skill that turned an owner request into an executor-grade `§8.x` spec — is gone from this repo. If planning work resumes here, either re-author a repo-scoped skill or route the request through `afterhours`'s copy by hand.
