@@ -5606,3 +5606,132 @@ change.
 - **Do NOT submit the form** (writes a real Supabase row and sends
   email). The removal of the client gate is verified by grep, not by
   submitting an under-17 date of birth.
+
+### 8.61 Admin Wayfinder — explicit sort control, newest first (added 31 Aug 2026, owner-requested)
+
+Owner asked for a way to sort the admin Wayfinder list by latest added.
+
+**Finding first: the list is already newest-first, and always has been.**
+`src/app/api/admin/wayfinder/route.ts:29` fetches with
+`.order('created_at', { ascending: false })`, the tab applies no client-side
+`.sort()` at all, and `Array.prototype.filter` preserves order — so the
+rendered list is already latest-added-first. `fetchApplications()` re-runs
+after every status and shift change, so the order is re-derived from the
+API each time and never drifts. Nothing is broken.
+
+What is missing is that the ordering is **invisible and fixed**: nothing on
+screen says how the list is ordered, and there is no way to reverse it.
+Oldest-first is the genuinely useful companion — it is the order for working
+a backlog first-come-first-served, which is how a volunteer intake queue is
+normally cleared fairly.
+
+**This amendment changes no default.** On load the control reads
+"Newest first" and the list renders exactly as it does today; the only new
+behaviour is the owner being able to flip it.
+
+**Exports inherit the sort.** `handleDownloadCsv` and `handleCopyJson` both
+build from `filtered` (lines 102 and 106), so sorting `filtered` means the
+CSV and JSON come out in the chosen order too. That is intended — a
+backlog-ordered export is the point of the oldest-first option.
+
+#### Files — one edit, three hunks, all in `src/app/admin/WayfinderTab.tsx`
+
+**Hunk 1 — the type.** Directly after the `SELECT_STYLE` block (currently
+ends line 25), add:
+```ts
+type SortOrder = 'newest' | 'oldest'
+```
+
+**Hunk 2 — the state.** After the `columnSet` state line (currently line 37,
+`const [columnSet, setColumnSet] = useState<ColumnSet>('everything')`), add:
+```ts
+  const [sortOrder, setSortOrder] = useState<SortOrder>('newest')
+```
+
+**Hunk 3 — the sort.** Replace the `filtered` line (currently line 89):
+```ts
+  const filtered = applications.filter((a) => a.status === activeTab && matchesFilters(a))
+```
+with:
+```ts
+  const filtered = applications
+    .filter((a) => a.status === activeTab && matchesFilters(a))
+    .sort((a, b) => {
+      const delta = Date.parse(b.created_at) - Date.parse(a.created_at)
+      if (Number.isNaN(delta)) return 0
+      return sortOrder === 'newest' ? delta : -delta
+    })
+```
+`filter` already returns a fresh array, so sorting it never mutates
+`applications`. `created_at` is typed non-null
+(`wayfinderExport.ts:24`) and the column carries `default now()`, but the
+`Number.isNaN` guard is required anyway: a single unparsable value would
+otherwise make the whole comparator inconsistent and leave the list in an
+arbitrary order rather than merely misplacing one row. Ties keep API order —
+`Array.prototype.sort` is stable in every supported engine.
+
+**Hunk 4 — the control.** In the export toolbar row (the
+`<div className="flex gap-2 mb-6 flex-wrap items-center">` currently at line
+185), insert this as the FIRST child, directly before the existing
+`columnSet` select:
+```tsx
+            <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value as SortOrder)} className="text-sm px-3 py-2 rounded-full cursor-pointer" style={SELECT_STYLE}>
+              <option value="newest">Newest first</option>
+              <option value="oldest">Oldest first</option>
+            </select>
+```
+It reuses `SELECT_STYLE` and the exact class list of the three existing
+filter selects, so it needs no new styling and inherits `touchAction:
+'manipulation'` per §1.
+
+#### Scope fences
+
+- `src/app/api/admin/wayfinder/route.ts` is untouched — the API keeps its
+  `created_at` descending order, which remains the source order the
+  "Newest first" default reproduces.
+- `src/app/admin/wayfinderExport.ts` is untouched: sorting happens on
+  `filtered` before `exportRows` is called, so no export code changes.
+- The §8.58 search, gender/level/shift filters, column sets, status tabs and
+  the accepted-shift counters are untouched.
+- No sort by name, institution or age is added (see rejected, below).
+- No schema change, no API change, no new dependency.
+
+#### Considered and rejected
+
+- **Sorting by name, age or institution.** A general multi-key sort is a
+  bigger control and a different request; the owner asked for latest-added.
+  Recorded for a future amendment if the queue grows enough to need it.
+- **Sorting inside the API instead.** The order would then be fixed per
+  fetch and every toggle would round-trip to Supabase; the list is already
+  fully client-side filtered, so sorting belongs in the same place.
+- **A sort toggle button instead of a select.** The toolbar already speaks
+  in selects (column set, gender, level, shift); a lone toggle button would
+  read as an action, not a state.
+
+#### Reversibility
+
+Delete the `SortOrder` type, the `sortOrder` state line and the new
+`<select>`, and restore the one-line `filtered` assignment.
+
+#### Verification gates (executor)
+
+- §4: `npx tsc --noEmit`; `npm run lint` (baseline 7 errors / 9 warnings);
+  `npm run build`.
+- Source gates:
+  - `grep -c "type SortOrder" src/app/admin/WayfinderTab.tsx` → **1**
+  - `grep -c "Newest first" src/app/admin/WayfinderTab.tsx` → **1**
+  - `grep -c "Oldest first" src/app/admin/WayfinderTab.tsx` → **1**
+  - `grep -c "order('created_at', { ascending: false })" src/app/api/admin/wayfinder/route.ts` → **1**
+    (the API ordering must remain untouched)
+- `/admin` is behind `ADMIN_EMAILS` auth, so a browser smoke test of the
+  live list is NOT possible in a dev session without credentials. Verify the
+  comparator in isolation instead, with a throwaway Node script (delete it
+  afterwards; do not commit it): build an array of four objects whose
+  `created_at` values are `2026-09-01T10:00:00Z`, `2026-09-04T09:00:00Z`,
+  `2026-09-02T12:00:00Z` and an unparsable `"not-a-date"`, apply the Hunk 3
+  comparator with `sortOrder = 'newest'` and assert the three valid dates
+  come out 4 Sep, 2 Sep, 1 Sep; repeat with `'oldest'` and assert 1 Sep,
+  2 Sep, 4 Sep; in both runs assert the array still has four entries and no
+  exception is thrown.
+- Confirm by reading the diff that the export handlers were not edited and
+  still call `exportRows(filtered, columnSet)`.
