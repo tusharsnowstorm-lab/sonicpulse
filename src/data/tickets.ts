@@ -28,6 +28,7 @@ export const TICKETS_LIVE = false
 export const AFTERHOURS_TICKETS_LIVE = true
 export const AFTERHOURS_EVENT_URL = 'https://www.onlyafterhours.com/events/sonicpulse-festival-26'
 export const AFTERHOURS_SIGNIN_URL = 'https://www.onlyafterhours.com/tonight?auth=1'
+export const AFTERHOURS_REGISTER_URL = `${AFTERHOURS_EVENT_URL}?apply=1`
 export const TICKETS_CTA_LIVE = TICKETS_LIVE || AFTERHOURS_TICKETS_LIVE
 
 export const ticketTiers: TicketTier[] = [

@@ -43,7 +43,7 @@ export const faqs: FAQItem[] = [
     id: 'where-to-buy',
     category: 'Tickets & Registration',
     question: 'Where do I buy tickets?',
-    answer: 'Tickets are sold only through Afterhours at onlyafterhours.com. Sign up with Google, Apple, or an email magic link, pick your tier, and pay by bKash on the site — the Afterhours app is coming soon. Tier announcements land on @sonicpulsefestival first.',
+    answer: 'Tickets are sold only through Afterhours at onlyafterhours.com. Sign in with Google, Apple, or an email code, register once — photo, name, phone, Instagram, ID — and once you\'re verified, pay by card or mobile banking. The Afterhours app is coming soon. Tier announcements land on @sonicpulsefestival first.',
   },
   {
     id: 'why-nid',
