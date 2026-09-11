@@ -6045,3 +6045,129 @@ Spec, copy, acceptance and the harness live in `afterhours/plan-afterhours.md` �
 Owner-ratified, 4 Sep: the registration post's link is **`sonicpulsefestival.com/register`**, a `next.config.ts` redirect (307, alongside §8.64's `/creators`) to `https://www.onlyafterhours.com/events/sonicpulse-festival-26?apply=1` — the event page with sign-in already open, and Afterhours opening its registration sheet itself the moment sign-in lands. §8.49's partner-post CTA (`register at sonicpulsefestival.com/tickets`) is **unchanged** for partner creative; this is SP's own post, and one fewer screen is the point.
 
 Four more files, copy and one constant only — every sentence still describing the retired manual flow goes: `src/data/tickets.ts` gains `AFTERHOURS_REGISTER_URL` (`${AFTERHOURS_EVENT_URL}?apply=1`); `src/app/(main)/tickets/page.tsx` and `src/components/ui/AppPromoBand.tsx` point their buttons at it and stop saying "magic link" (Afterhours §5.173 makes the email sign-in a 6-digit code) and "pay by bKash"/"verify your ID before the gate" (EPS is the rail; verification happens before payment, usually the same day); `src/data/faq.ts`'s `where-to-buy` answer says the real sequence. Exact strings, the build order (Afterhours first, this repo second) and the acceptance greps (`magic link` ×0, `bKash` ×0 in the two pages) live in `afterhours/plan-afterhours.md` §5.173.9/§5.173.11. Build task: Afterhours #414. The change touches `next.config.ts`, the four files above, and this entry.
+
+### 8.66 Lineup — Daniella da Silva joins as the international headline act (added 11 Sep 2026, owner-requested)
+
+Owner supplied the artist poster and the published Instagram caption
+(sonicpulsefestival, 3 Sep) and asked for the lineup to carry the
+international artist. There is no "international artist" placeholder
+anywhere in `src/data/lineup.ts` or the components, so this is an
+**addition** — a new `Act` and a new timetable row — not a replacement.
+Nothing existing is removed.
+
+**Asset — pre-staged by the planner, committed with this amendment.**
+`public/images/artists/daniella-da-silva-poster.webp` — 1200×1489 WEBP,
+q82, ~89 KB, matching the other artist posters in dimensions and weight
+(peers 91–132 KB). Source was 1084×1350 (ratio 0.803 vs poster ratio
+0.806); scaled up 10.7% to 1200 wide and centre-cropped 5 px of height.
+The DANIELLA DA SILVA name and the SONIC PULSE wordmark are both fully
+intact. No bio card was supplied — the caption screenshot is copy, not a
+card — so `bioCard` is `null`.
+
+**Planner judgment calls, made now (owner: override any of these with a
+one-line follow-up amendment; each is a single string change):**
+- **Name is `Daniella da Silva`** — lowercase "da", the form the owner's
+  published caption uses (the poster is all-caps and does not decide
+  casing).
+- **Slot is `12:30 – 3:00 AM`, tag `Headline`, Main Stage.** The caption
+  gives no time. §8.0's timetable reserves `11:30 PM – 3:00 AM` for
+  Night Rituals with "resident selectors between" — unnamed time after
+  the midnight Burn and before Psytaraa's 3:00 AM peak. An international
+  headliner who "takes control of the Sonic Pulse main rig" takes exactly
+  that space. Night Rituals therefore becomes `11:30 PM – 12:30 AM`
+  (Ember Rites peak and the Great Burn at midnight both still fall
+  inside it). **§8.0's chronology table is superseded on that one row.**
+  Every other row and time is unchanged; the "Main Stage runs until
+  4:30 AM" footnote in `NightTimetable.tsx` stays true.
+- **Slider position is first.** `acts` is "owner-approved mockup order,
+  not chronology" (its own comment); the international headline act
+  leads the slider and, through `ArtistTeaser`'s `acts.filter(a =>
+  a.poster)`, the home-page poster grid. Psytaraa moves to second slide;
+  nothing else reorders.
+- **Hook** is the caption's own opener, set with the house `·`
+  separator instead of `//`: `South African-born · Barcelona-based ·
+  Unapologetically direct`. The slider uppercases it via CSS.
+- **Bio** is the caption body, set in house voice to match the peer
+  bios (one paragraph, third person). Four edits from the source, all
+  punctuation/grammar, no words changed in meaning: "of '90s" → "of the
+  '90s"; the semicolon construction "Her signature edge; her own written
+  and performed vocals cuts…" → em-dash parenthetical; "punchy kicks,
+  and hypnotic" loses the serial comma to match peers; "Now, she" →
+  "Now she". The caption's sign-off "The transmission is locked." is kept
+  as the closing sentence, matching how peer bios end on a short line.
+- **`placeholder: true`** — same reasoning as §8.51/§8.52: the flag
+  marks "no bio card yet", is read by no component, and flips to `false`
+  when a card lands.
+
+**File 1 — `src/data/lineup.ts`, three edits.**
+
+Edit 1 — insert this object as the **first** element of `acts`, before
+the `psytaraa` entry:
+
+```ts
+  {
+    id: 'daniella-da-silva',
+    name: 'Daniella da Silva',
+    time: '12:30 – 3:00 AM',
+    tag: 'Headline',
+    hook: 'South African-born · Barcelona-based · Unapologetically direct',
+    bio: "Daniella da Silva takes control of the Sonic Pulse main rig. Fusing the raw nerve of the '90s with early-2000s euphoria, she commands the room with hard-driving techno, punchy kicks and hypnotic rhythms. Her signature edge — her own written and performed vocals — cuts through the heavy bass, balancing deep emotion with pure dancefloor impact. From Berlin's cult HÖR to the stages of ULTRA, she operates with absolute precision. Now she brings the frequency to the open field. The transmission is locked.",
+    poster: '/images/artists/daniella-da-silva-poster.webp',
+    bioCard: null,
+    placeholder: true,
+  },
+```
+
+Edit 2 — in `timetableRows`, the Night Rituals row becomes:
+
+```ts
+  { time: '11:30 PM – 12:30 AM', name: 'Night Rituals', sub: 'Ember Rites peak · The Great Burn at midnight', tag: 'Ritual', href: '/activities', ritual: true },
+```
+
+Edit 3 — insert directly after that row, before the Psytaraa row:
+
+```ts
+  { time: '12:30 – 3:00 AM', name: 'Daniella da Silva', tag: 'Headline', href: '/lineup#daniella-da-silva' },
+```
+
+The `Act` type, `ARTIST_COUNT` (`acts.length + 1` — now evaluates to
+**9**, and the `/lineup` header, its metadata description and the home
+`StatsBar` update on their own), `TimetableRow` and every other entry
+are UNCHANGED. All en dashes in the time strings are the same U+2013 the
+file already uses.
+
+**No other file is edited.** `ArtistSlider.tsx` renders the new slide
+through the existing `act.poster` branch and gives it `id="daniella-da-
+silva"` (the `act.href ? undefined : act.id` rule), so the timetable
+row's `#daniella-da-silva` anchor resolves. Its dot overlay (§8.53)
+renders `acts.length` = **8** dots now — §8.53's "slide count is 7"
+note is superseded by this entry, and the code needs no change because
+it never hard-coded 7. `NightTimetable.tsx` keys rows on `row.time`; the
+new times are unique. The home JSON-LD in `src/app/(main)/page.tsx` has
+no performer list and gains none here.
+
+**Scope fences.** First Pulse, Fly on the Wall, activities, tickets,
+Wayfinder and admin are unaffected. No copy anywhere else says "8
+artists" (verified: the only occurrence is §8.53's note in this plan).
+Do not add a bio card, a Sunrise Stage mention, or any venue text.
+
+**Reversibility.** Delete the `acts` object and the new timetable row,
+restore the Night Rituals row's `11:30 PM – 3:00 AM` time and its
+`resident selectors between` sub, delete the webp. To move her slot,
+change the two `time` strings and the Night Rituals end time only.
+
+**Verification gates (executor).**
+- §4.1: `npx tsc --noEmit`; `npm run lint` (pre-existing baseline only —
+  7 errors / 9 warnings); `npm run build`.
+- Greps on `src/data/lineup.ts`: `daniella-da-silva` **3** (id, poster
+  path, href); `Daniella da Silva` **2** (act name, timetable name);
+  `Headline` **2**; `resident selectors` **0**; `11:30 PM – 12:30 AM`
+  **1**.
+- Local dev on port 3100: `/lineup` → `daniella-da-silva-poster.webp`
+  ≥1, `Daniella da Silva` ≥2, `12:30` ≥2, `9 artists` ≥1,
+  `resident selectors` **0**, `Night Rituals` ≥1. `/` →
+  `daniella-da-silva-poster.webp` ≥1.
+- Playwright at 1280×800 and 375×812: `scrollWidth - clientWidth === 0`
+  on `/lineup` and `/`; on `/lineup` the first slide's `<h3>` reads
+  `Daniella da Silva` and the poster `<img>` has loaded
+  (`naturalWidth > 0`).
