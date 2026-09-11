@@ -14,6 +14,17 @@ export type Act = {
 /** Slider order — matches the owner-approved mockup, not strict chronology. */
 export const acts: Act[] = [
   {
+    id: 'daniella-da-silva',
+    name: 'Daniella da Silva',
+    time: '12:30 – 3:00 AM',
+    tag: 'Headline',
+    hook: 'South African-born · Barcelona-based · Unapologetically direct',
+    bio: "Daniella da Silva takes control of the Sonic Pulse main rig. Fusing the raw nerve of the '90s with early-2000s euphoria, she commands the room with hard-driving techno, punchy kicks and hypnotic rhythms. Her signature edge — her own written and performed vocals — cuts through the heavy bass, balancing deep emotion with pure dancefloor impact. From Berlin's cult HÖR to the stages of ULTRA, she operates with absolute precision. Now she brings the frequency to the open field. The transmission is locked.",
+    poster: '/images/artists/daniella-da-silva-poster.webp',
+    bioCard: null,
+    placeholder: true,
+  },
+  {
     id: 'psytaraa',
     name: 'Psytaraa',
     time: '3:00 – 4:30 AM',
@@ -105,7 +116,8 @@ export const timetableRows: TimetableRow[] = [
   { time: '7:00 – 8:30 PM', name: 'Fly on the Wall', tag: 'Dusk' },
   { time: '8:30 – 10:00 PM', name: 'Izhaqo', tag: 'Night', href: '/lineup#izhaqo' },
   { time: '10:00 – 11:30 PM', name: 'Vampbetch', tag: 'Night', href: '/lineup#vampbetch' },
-  { time: '11:30 PM – 3:00 AM', name: 'Night Rituals', sub: 'Ember Rites peak · The Great Burn at midnight · resident selectors between', tag: 'Ritual', href: '/activities', ritual: true },
+  { time: '11:30 PM – 12:30 AM', name: 'Night Rituals', sub: 'Ember Rites peak · The Great Burn at midnight', tag: 'Ritual', href: '/activities', ritual: true },
+  { time: '12:30 – 3:00 AM', name: 'Daniella da Silva', tag: 'Headline', href: '/lineup#daniella-da-silva' },
   { time: '3:00 – 4:30 AM', name: 'Psytaraa', tag: 'Peak', href: '/lineup#psytaraa' },
   { time: '4:30 – 6:30 AM', name: 'Starside Hours', sub: 'Guided stargazing over an ambient bridge set · Cloud Nine at its best', tag: 'Drift', href: '/activities', ritual: true },
   { time: '6:30 – 8:00 AM', name: 'Drip', tag: 'Sunrise', href: '/lineup#drip' },
