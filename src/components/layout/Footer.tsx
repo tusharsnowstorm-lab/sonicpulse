@@ -3,6 +3,7 @@ import Image from 'next/image'
 import { TICKETS_CTA_LIVE } from '@/data/tickets'
 import { SIGNIN_LIVE } from '@/data/auth'
 import { WAYFINDER_LIVE } from '@/data/wayfinder'
+import { VENDORS_LIVE } from '@/data/vendors'
 
 function InstagramIcon() {
   return (
@@ -41,6 +42,7 @@ const eventLinks = [
 const supportLinks = [
   { href: '/first-pulse', label: 'First Pulse' },
   ...(WAYFINDER_LIVE ? [{ href: '/wayfinder', label: 'Wayfinder' }] : []),
+  ...(VENDORS_LIVE ? [{ href: '/vendors', label: 'Vendors' }] : []),
   { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },
   { href: '/policy', label: 'Policy' },

@@ -109,6 +109,13 @@ export const faqs: FAQItem[] = [
     answer: 'Yes. Multiple food stalls and drink counters run throughout the night — street food, late-night biryani, a full vegetarian line, iced chai, and hot chai at sunrise. Sonic Pulse is an alcohol-free event: alcohol, narcotics and illegal substances are not permitted anywhere on the premises.',
   },
   {
+    id: 'vendor-stalls',
+    category: 'At the Event',
+    question: 'Can I run a stall at Sonic Pulse?',
+    answer: 'Yes. Marketplace stalls and food stalls are open to vendors on three packages, paid in full by bank transfer, with one agreement covering the night. Applications and the agreement are on the Vendors page.',
+    link: { href: '/vendors', label: 'Apply for a stall →' },
+  },
+  {
     id: 'alcohol-free',
     category: 'At the Event',
     question: 'Is alcohol served at the event?',
