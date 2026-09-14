@@ -6171,3 +6171,985 @@ change the two `time` strings and the Night Rituals end time only.
   on `/lineup` and `/`; on `/lineup` the first slide's `<h3>` reads
   `Daniella da Silva` and the poster `<img>` has loaded
   (`naturalWidth > 0`).
+
+### 8.67 Vendor stall applications — `/vendors`, three packages, bank transfer, receipt upload, admin (added 14 Sep 2026, owner-requested)
+
+Owner request, verbatim intent: a section for vendor applications with
+three tiers — marketplace stall BDT 10,000, food stall in a basic
+location BDT 20,000, food stall in a premium location BDT 25,000 — built
+to the contracts session's context file
+(`SONIC_PULSE_VENDOR_PORTAL_CONTEXT_v1.md`, 14 Sep 2026), paying by bank
+transfer, with a section to upload pictures of the payment proof, and
+**submitting the application is the vendor's agreement to the
+contract**. This amendment is self-contained: the executor does not have
+the context file, so every fact and every word of contract text it needs
+is reproduced below.
+
+**⚠ Owner input still missing — bank details.** The request says "use
+the following bank information" but no account details were attached.
+The build does not wait for them: the account name, bank/branch and
+account number are read from three Vercel environment variables (File 3)
+and every surface degrades to "bank details follow by email" while they
+are unset. The owner must add `VENDOR_BANK_ACCOUNT_NAME`,
+`VENDOR_BANK_BRANCH` and `VENDOR_BANK_ACCOUNT_NUMBER` in Vercel and
+redeploy; nothing in the repo ever carries the numbers (context file §8).
+
+#### 8.67.1 Planner decisions (owner may overrule any with a one-line amendment)
+
+1. **Payment deadline becomes 20 September 2026; contract version
+   `v2026-09-14`.** The executed text (`v2026-09-10`) says 15 September,
+   which is tomorrow — a portal launched on that text would lapse every
+   application a day after opening. The context file (§3.3, §6) allows a
+   revised version with a new date. Only the two deadline sentences
+   change; every other word of the three agreements is reproduced
+   verbatim. 20 September is already the contract's own cut-off for staff
+   names and electrical declarations, so one date now governs everything.
+2. **Submission is the signature (owner's rule).** The context file's
+   drawn/typed signature pad (§5) is superseded: the vendor types the
+   signatory's name and designation, ticks the five clause
+   acknowledgements the execution clause names (3, 4, 5, 7, 9) plus one
+   "I am authorised, submitting is my signature" box, and presses
+   **Sign and submit**. Timestamp, IP, user agent and the SHA-256 of the
+   exact merged contract text are still captured (§5). No signed PDF is
+   generated — out of scope, flagged in §8.67.9; the email carries the
+   version and hash and points at the page where the full text lives.
+3. **Status model collapses `applied` and `contract_signed`.** Because
+   submitting signs, an application is born `awaiting_payment`. The
+   remaining states are exactly the context file's:
+   `paid_pending_verification`, `confirmed`, `lapsed`, `rejected`,
+   `cancelled_by_organiser`. Signing never shows as confirmed (§3.1).
+4. **Receipt upload is a second, self-service step** on the same page:
+   the vendor enters agreement reference + email and attaches up to
+   three JPG/PNG/PDF files (5 MB each). It appears inline on the success
+   card (prefilled) and as a standalone section for vendors coming back
+   later. Upload moves `awaiting_payment` → `paid_pending_verification`;
+   an admin marks funds cleared. No vendor login is introduced.
+5. **Countersignature = confirmation.** From the admin tab, "Confirm —
+   funds cleared" requires the countersigner's name and designation,
+   stamps `confirmed_at`, and sends the "Booking confirmed" email — that
+   email is the Clause 1 written confirmation.
+6. **Agreement reference `SP/VEND/2026/<CODE>-<NNN>`** is allocated
+   server-side per package code (next running number, zero-padded to
+   three digits, retried on collision).
+7. **No navbar entry.** Both `navLinks` arrays are at capacity at 1024px
+   (§8.57 measured 48px of slack before Policy was added). Discovery is
+   the footer Support column (gated by `VENDORS_LIVE`), a new FAQ entry,
+   and the direct URL for Instagram. Adding a nav item later is a
+   two-file, one-line-each change (§8.57 pattern).
+8. **Fees and stalls.** Stall Fee = stalls × unit fee, computed
+   server-side from the package table and stored at signing. Stalls are
+   capped at 10 per application (safety cap, not a contract term). A
+   business may submit more than one application (different packages);
+   no uniqueness on email.
+9. **Venue wording.** §8.43 ("venue stays TBA") governs promotional
+   copy. The agreement's Venue row — "Gazipur, Bangladesh. The exact
+   venue, access route and stall plan are notified to confirmed Vendors
+   by the Organiser." — is owner-executed legal text and is reproduced
+   as-is inside the agreement only. The page's own copy never names
+   Gazipur.
+10. **Contact address is `contact@sonicpulsefestival.com`** everywhere
+    on this surface (the contract's address), not `hello@`.
+11. **Heading artefact fixed, nothing else.** The source has
+    "Organiser'S Right To Change" / "Vendor'S Obligations" (a title-case
+    artefact from the DOCX generator); rendered as "Organiser's Right to
+    Change" and "Vendor's Obligations". Clause bodies are untouched.
+
+#### 8.67.2 Fixed facts (use exactly)
+
+| Item | Value |
+|---|---|
+| Organiser | Dhaka Music Festival, a music event production company operating in Dhaka, Bangladesh (the "Organiser") |
+| Event | Sonic Pulse, Friday 25 September 2026, 4:00 PM to Saturday 26 September 2026, 9:30 AM (the "Event") |
+| Venue (agreement only) | Gazipur, Bangladesh. The exact venue, access route and stall plan are notified to confirmed Vendors by the Organiser. |
+| Contact | contact@sonicpulsefestival.com |
+| Payment deadline | 20 September 2026 (decision 1) |
+| Staff names / electrical declarations due | 20 September 2026 |
+| Trading-ready | at least one hour before gates, i.e. by 3:00 PM on 25 September 2026 |
+| Contract version | `v2026-09-14` |
+| Packages | `MKT-B` Marketplace Stall — Basic, BDT 10,000 · `FS-B` Food Stall — Basic, BDT 20,000 · `FS-P` Food Stall — Premium, BDT 25,000 (per stall) |
+| Payment reference the vendor must use | `SP/VEND/2026/<CODE>` + Vendor business name, e.g. `SP/VEND/2026/FS-B Rooftop Biryani` |
+
+#### 8.67.3 Files — create/edit list
+
+New: `src/data/vendors.ts`, `src/data/vendor-contract.ts`,
+`src/lib/vendor-bank.ts`, `src/lib/vendor-email.ts`,
+`src/app/(main)/vendors/page.tsx`, `src/components/vendors/VendorPortal.tsx`,
+`src/components/vendors/ContractText.tsx`,
+`src/components/vendors/ReceiptUpload.tsx`, `src/app/api/vendors/route.ts`,
+`src/app/api/vendors/receipt/route.ts`, `src/app/api/admin/vendors/route.ts`,
+`src/app/api/admin/vendors/receipt-url/route.ts`, `src/app/admin/VendorsTab.tsx`,
+`supabase-vendors.sql`.
+
+Edit: `src/app/admin/AdminClient.tsx`, `src/components/layout/Footer.tsx`,
+`src/data/faq.ts`.
+
+Untouched: Navbar, MobileMenu, tickets, First Pulse, Wayfinder, policy,
+`email.ts`, `FileUpload.tsx`, `nid-url` route, middleware/proxy.
+
+#### 8.67.4 File 1 — `src/data/vendors.ts` (new, verbatim)
+
+```ts
+/**
+ * Vendor stall applications — see REDESIGN_PLAN.md §8.67.
+ *
+ * VENDORS_LIVE: master switch for the public /vendors application form
+ * and the footer link. Flip to false to close applications; the page
+ * then shows the closed card, and the receipt-upload section stays up
+ * so paid vendors can still send proof.
+ */
+export const VENDORS_LIVE = true
+
+export const CONTRACT_VERSION = 'v2026-09-14'
+export const PAYMENT_DEADLINE = '20 September 2026'
+export const VENDOR_CONTACT_EMAIL = 'contact@sonicpulsefestival.com'
+export const MAX_STALLS = 10
+export const MAX_RECEIPT_FILES = 3
+export const MAX_RECEIPT_MB = 5
+
+export type PackageCode = 'MKT-B' | 'FS-B' | 'FS-P'
+
+export type VendorPackage = {
+  code: PackageCode
+  name: string          // as printed in the agreement
+  shortName: string     // card title, sentence case
+  fee: number           // BDT per stall
+  feeWords: string      // as printed in Clause 3
+  food: boolean
+  zoneBullet: string    // Clause 2, third bullet
+  zoneName: string      // Clause 5 staff-zone bullet
+  blurb: string         // card copy
+  extra: string | null  // card: what this package adds
+}
+
+export const vendorPackages: VendorPackage[] = [
+  {
+    code: 'MKT-B',
+    name: 'Marketplace Stall — Basic',
+    shortName: 'Marketplace stall',
+    fee: 10000,
+    feeWords: 'ten thousand',
+    food: false,
+    zoneBullet: 'A position within the marketplace zone, allocated by the Organiser.',
+    zoneName: 'the marketplace',
+    blurb: 'A covered 10 × 10 stall in the marketplace zone for merchandise, crafts and everything that is not food.',
+    extra: null,
+  },
+  {
+    code: 'FS-B',
+    name: 'Food Stall — Basic',
+    shortName: 'Food stall — basic',
+    fee: 20000,
+    feeWords: 'twenty thousand',
+    food: true,
+    zoneBullet: 'A position within the food court, allocated by the Organiser.',
+    zoneName: 'the food court',
+    blurb: 'A covered 10 × 10 stall in the food court. Cook on site with the equipment you declare.',
+    extra: null,
+  },
+  {
+    code: 'FS-P',
+    name: 'Food Stall — Premium',
+    shortName: 'Food stall — premium',
+    fee: 25000,
+    feeWords: 'twenty-five thousand',
+    food: true,
+    zoneBullet: 'A premium position within the food court, in a higher-footfall location selected and allocated by the Organiser.',
+    zoneName: 'the food court',
+    blurb: 'The same food stall in a higher-footfall position, chosen and allocated by the organiser.',
+    extra: 'Premium higher-footfall position in the food court',
+  },
+]
+
+export const packageByCode = (code: string) =>
+  vendorPackages.find((p) => p.code === code) ?? null
+
+export const bdt = (n: number) => `BDT ${n.toLocaleString('en-US')}`
+
+export const stallFee = (pkg: VendorPackage, stalls: number) => pkg.fee * stalls
+
+export const paymentReference = (code: PackageCode, businessName: string) =>
+  `SP/VEND/2026/${code} ${businessName.trim()}`
+
+/** Every package includes these; the card lists them under "Included". */
+export const commonIncludes = [
+  "10' × 10' canopy tent, supplied and erected by the organiser",
+  'One electrical connection point for lighting and light loads',
+  'Position allocated by the organiser',
+  'Three named, non-transferable staff passes per stall',
+  'Listing in the on-site vendor directory, where one is produced',
+]
+
+export const excludedNote =
+  'Everything else — tables, chairs, counters, signage, cords, cooking and serving kit, refrigeration, stock, packaging, staff, transport, insurance and cleaning — is the vendor\'s own cost.'
+
+export type VendorStatus =
+  | 'awaiting_payment'
+  | 'paid_pending_verification'
+  | 'confirmed'
+  | 'lapsed'
+  | 'rejected'
+  | 'cancelled_by_organiser'
+
+export const VENDOR_STATUSES: VendorStatus[] = [
+  'awaiting_payment', 'paid_pending_verification', 'confirmed', 'lapsed', 'rejected', 'cancelled_by_organiser',
+]
+
+export const STATUS_LABEL: Record<VendorStatus, string> = {
+  awaiting_payment: 'Awaiting payment',
+  paid_pending_verification: 'Paid — pending verification',
+  confirmed: 'Confirmed',
+  lapsed: 'Lapsed',
+  rejected: 'Rejected',
+  cancelled_by_organiser: 'Cancelled by organiser',
+}
+```
+
+#### 8.67.5 File 2 — `src/data/vendor-contract.ts` (new, verbatim)
+
+This module is the contract. It is pure (no React, no Node APIs) so the
+page renders it live with the vendor's fields merged in and the API
+hashes the identical text. **Every clause string below is the executed
+text; type it exactly.** Only `PAYMENT_DEADLINE` differs from
+`v2026-09-10` (decision 1).
+
+```ts
+import {
+  type VendorPackage, CONTRACT_VERSION, PAYMENT_DEADLINE, VENDOR_CONTACT_EMAIL, bdt, stallFee,
+} from './vendors'
+
+export type BankDetails = { accountName: string; bankBranch: string; accountNumber: string }
+
+export type ContractFields = {
+  agreementRef: string          // '' until allocated
+  businessName: string
+  contactPerson: string
+  phone: string
+  email: string
+  businessAddress: string
+  tradeLicence: string
+  stalls: number
+  signatoryName: string
+  signatoryDesignation: string
+  signedAt: string              // '' until signed; display string after
+  bank: BankDetails | null
+}
+
+export type ContractBlock =
+  | { type: 'title'; text: string }
+  | { type: 'heading'; text: string }
+  | { type: 'p'; text: string }
+  | { type: 'table'; rows: [string, string][] }
+  | { type: 'list'; items: string[] }
+
+const BLANK = '________________________________'
+const v = (s: string) => (s.trim() ? s.trim() : BLANK)
+
+export function buildContract(pkg: VendorPackage, f: ContractFields): ContractBlock[] {
+  const total = stallFee(pkg, f.stalls)
+  const ref = f.agreementRef || `SP/VEND/2026/${pkg.code}-____`
+  const bank: [string, string][] = f.bank
+    ? [['Account name', f.bank.accountName], ['Bank / branch', f.bank.bankBranch], ['Account number', f.bank.accountNumber]]
+    : [['Account name', BLANK], ['Bank / branch', BLANK], ['Account number', BLANK]]
+
+  const staffZone = `Staff to remain in the vendor zone. Vendor staff are admitted for the purpose of trading only. For the duration of the Event they must remain within ${pkg.zoneName} and the areas designated for vendors, and are not permitted to leave that zone to enter the audience, stage, camping or other Event areas, or to leave and re-enter the venue, except with the Organiser's permission or for a genuine emergency. A vendor pass is not an Event ticket. Any staff member found outside the vendor zone may be removed from the venue and the Vendor's trading suspended under Clause 8.`
+
+  const tailBullets = pkg.food
+    ? [
+        'Food and hygiene. Prepare, store, handle and serve food in compliance with the Bangladesh Safe Food Act and applicable hygiene standards; keep raw and cooked food separated; maintain safe temperatures; provide hand-washing or sanitising facilities for staff; and ensure all staff handling food are in clean attire with hair covered.',
+        'Cooking and fire. Cooking is permitted only within the stall using equipment declared to the Organiser in advance. LPG cylinders must be regulator-fitted, upright, secured and kept away from heat sources; a minimum of one serviceable fire extinguisher and a fire blanket must be at the stall at all times. No open fires, charcoal or wood burning outside a proper contained appliance. The Organiser may stop any cooking it considers unsafe.',
+        "Water, oil and waste. Bring the Vendor's own potable water for food preparation. Used cooking oil, grease and food waste must be contained and removed by the Vendor; nothing may be poured onto the ground or into drains.",
+        "Serve in disposable or take-away packaging of the Vendor's own supply; where the Organiser designates eco-friendly or non-plastic packaging as a requirement, the Vendor shall comply.",
+      ]
+    : [
+        'Marketplace goods. Display and sell only lawful, genuine merchandise. Handmade and locally produced goods are encouraged. No food or drink may be sold from a marketplace stall.',
+      ]
+
+  return [
+    { type: 'title', text: 'SONIC PULSE PRESENTED BY DHAKA MUSIC FESTIVAL' },
+    { type: 'title', text: 'STALL VENDOR AGREEMENT' },
+    { type: 'title', text: `${pkg.name.toUpperCase()} — ${bdt(pkg.fee).toUpperCase()} PER STALL` },
+    { type: 'table', rows: [
+      ['Agreement reference', ref],
+      ['Organiser', 'Dhaka Music Festival, a music event production company operating in Dhaka, Bangladesh (the "Organiser")'],
+      ['Vendor — business name', v(f.businessName)],
+      ['Contact person', v(f.contactPerson)],
+      ['Phone / email', `${v(f.phone)} / ${v(f.email)}`],
+      ['Business address', v(f.businessAddress)],
+      ['Trade licence no. (if any)', v(f.tradeLicence)],
+      ['Package', pkg.name],
+      ['Number of stalls', `${f.stalls}  ×  ${bdt(pkg.fee)}  =  ${bdt(total)} (the "Stall Fee")`],
+      ['Event', 'Sonic Pulse, Friday 25 September 2026, 4:00 PM to Saturday 26 September 2026, 9:30 AM (the "Event")'],
+      ['Venue', 'Gazipur, Bangladesh. The exact venue, access route and stall plan are notified to confirmed Vendors by the Organiser.'],
+      ['Payment deadline', `Full Stall Fee by ${PAYMENT_DEADLINE}, by bank transfer only (Clause 3)`],
+      ['Contact', VENDOR_CONTACT_EMAIL],
+      ['Agreement version', CONTRACT_VERSION],
+    ] },
+
+    { type: 'heading', text: 'Clause 1 — The Engagement' },
+    { type: 'p', text: 'The Organiser grants the Vendor a licence to occupy and trade from the stall(s) stated above at the Event, on the terms of this Agreement. This is a licence to trade for the duration of the Event only; it creates no tenancy, no interest in the venue and no right to occupy beyond the times in Clause 6.' },
+    { type: 'p', text: "The Vendor's booking is not confirmed, and no stall is reserved for the Vendor, until the Organiser has received the full Stall Fee in cleared funds and has issued a written confirmation (email or message) to the Vendor. Stalls are limited and are allocated in the order in which full payment is received." },
+
+    { type: 'heading', text: 'Clause 2 — Package — What Is Included' },
+    { type: 'p', text: `The ${pkg.name} package includes:` },
+    { type: 'list', items: [
+      "One (1) stall space of ten feet by ten feet (10' × 10') covered by a canopy tent supplied and erected by the Organiser.",
+      'One (1) electrical connection point at the stall for lighting and light equipment. Any appliance with a heavy or continuous load must be declared to the Organiser in writing before 20 September 2026 and may be refused or made subject to a separate charge.',
+      pkg.zoneBullet,
+      "Listing of the Vendor's business name in the Organiser's on-site vendor directory where one is produced.",
+      'Three (3) vendor staff access passes per stall, in the form notified by the Organiser. Passes are issued in the names of the staff notified by the Vendor and are not transferable.',
+    ] },
+    { type: 'p', text: "Everything not listed above is excluded and is the Vendor's own responsibility and cost — including tables, chairs, counters, shelving, signage, lighting fixtures, extension cords, cooking and serving equipment, refrigeration, stock, packaging, staff, transport, insurance and cleaning of the stall." },
+
+    { type: 'heading', text: 'Clause 3 — Stall Fee And Payment' },
+    { type: 'table', rows: [
+      ['PARTICULARS', 'AMOUNT (BDT)'],
+      [`${pkg.name} — per stall`, pkg.fee.toLocaleString('en-US')],
+      [`STALL FEE PER STALL (BDT ${pkg.feeWords})`, pkg.fee.toLocaleString('en-US')],
+    ] },
+    { type: 'p', text: "The full Stall Fee for all stalls booked is payable in advance, in one payment, by bank transfer only to the Organiser's account below. No cash, cheque or mobile-money payment is accepted, and no part-payment, deposit or instalment secures a booking." },
+    { type: 'table', rows: [...bank, ['Payment reference', `SP/VEND/2026/${pkg.code} + Vendor business name`]] },
+    { type: 'p', text: `Payment must be received in cleared funds by ${PAYMENT_DEADLINE}. The Vendor shall send the transfer receipt to ${VENDOR_CONTACT_EMAIL} on the day of payment. A booking for which full payment has not been received by that date lapses automatically and the stall may be offered to another vendor without notice to the Vendor.` },
+    { type: 'p', text: "The Stall Fee is non-refundable and non-transferable once the booking is confirmed, except as stated in Clause 9. The Stall Fee does not include any tax, levy or charge payable by the Vendor on its own sales, which remain the Vendor's responsibility." },
+
+    { type: 'heading', text: "Clause 4 — Organiser's Right to Change" },
+    { type: 'p', text: 'The Vendor acknowledges that the Event is a live production and agrees that the Organiser may, at its sole discretion and without prior notice to or consent of the Vendor: (a) change the location, position, orientation or layout of any stall, zone or the food court; (b) change the Event timings, run of show, gate times, set-up and breakdown times; (c) change, substitute or withdraw any item of the package in Clause 2 where an equivalent or alternative is provided, or where the change is required by the venue, the authorities, weather or safety; (d) change the venue; (e) change the vendor rules, site rules and operating guidelines from time to time; and (f) postpone the Event to a later date.' },
+    { type: 'p', text: 'No change under this Clause 4 entitles the Vendor to a refund, reduction of the Stall Fee, compensation or any claim against the Organiser. Where the Organiser makes a change it will inform the Vendor as soon as reasonably practicable, but failure to do so does not affect the validity of the change or of this Agreement.' },
+
+    { type: 'heading', text: "Clause 5 — Vendor's Obligations" },
+    { type: 'list', items: [
+      "Trade only in the goods or services described in the Vendor's booking. The Organiser may refuse or remove any item it considers unsuitable, unsafe, offensive, counterfeit or in conflict with an Event sponsor or partner.",
+      'Not sell, serve, display or promote alcohol, tobacco or vaping products, drugs, weapons, fireworks or any item prohibited by law or by the venue.',
+      'Display prices clearly, sell only at displayed prices, and trade fairly and courteously with guests.',
+      'Bring, set up, staff, secure, clean and remove everything the Vendor uses at the stall. Keep the stall and the area around it clean throughout the Event and remove all waste to the points designated by the Organiser.',
+      'Use only the electrical connection provided, with sound equipment and cabling. No generators, no tampering with distribution boards, and no connection to any other supply. Loads must be declared under Clause 2.',
+      "Staff limit. No more than three (3) staff per stall, including the Vendor's owner or contact person, are permitted on site. Their names and phone numbers must be given to the Organiser in writing by 20 September 2026. No additional or substitute staff will be admitted on the day without the Organiser's written permission.",
+      staffZone,
+      "Staff the stall continuously from gates opening until the Organiser announces close of trading. Do not dismantle or vacate the stall before then without the Organiser's permission.",
+      "Obtain and hold any licence, permit or registration required by law for the Vendor's business and produce it on request.",
+      'Comply with all instructions of the Organiser, its site management and security, and with the venue rules, at all times.',
+      "Use the Sonic Pulse and Dhaka Music Festival names, logos and artwork only with the Organiser's prior written permission, and only in the form approved.",
+      ...tailBullets,
+    ] },
+
+    { type: 'heading', text: 'Clause 6 — Set-Up, Trading And Breakdown' },
+    { type: 'p', text: 'Set-up: the Vendor may access the venue to set up from the time notified by the Organiser on 25 September 2026 and must be fully set up and ready to trade at least one (1) hour before gates open at 4:00 PM. Vehicles are permitted only in the areas and at the times notified by the Organiser and must be removed from the site before gates open.' },
+    { type: 'p', text: "Trading: from gates opening until the Organiser announces close of trading. Breakdown: after close of trading and in any case by the time notified by the Organiser on 26 September 2026, leaving the stall space clean and clear. Anything left behind may be disposed of by the Organiser at the Vendor's cost." },
+    { type: 'p', text: 'The Organiser may vary any of these times under Clause 4.' },
+
+    { type: 'heading', text: 'Clause 7 — Security, Risk And Liability' },
+    { type: 'p', text: "The Vendor is responsible for the security of its own goods, cash, equipment and staff at all times, including overnight. The Organiser provides general event security only and is not liable for loss, theft or damage to the Vendor's property, however caused." },
+    { type: 'p', text: "The Vendor is responsible for, and shall indemnify the Organiser against, any loss, damage, injury, claim, fine or cost arising from the Vendor's goods, food, equipment, staff, conduct, or breach of this Agreement or of any law, including any claim by a guest relating to goods or food sold by the Vendor." },
+    { type: 'p', text: "The Organiser's total liability to the Vendor under or in connection with this Agreement, whatever the cause, shall not exceed the Stall Fee actually paid by the Vendor. The Organiser is not liable for the Vendor's loss of sales, profit or opportunity, or for the level of attendance at the Event." },
+
+    { type: 'heading', text: 'Clause 8 — Conduct And Removal' },
+    { type: 'p', text: "The Organiser may, without refund or compensation, suspend the Vendor's trading, close the stall or remove the Vendor and its staff from the venue if the Vendor breaches this Agreement, trades in prohibited items, behaves in a manner the Organiser considers unsafe, offensive or damaging to the Event, or fails to follow an instruction of the Organiser or security. The Vendor remains liable for the full Stall Fee and for any loss caused." },
+
+    { type: 'heading', text: 'Clause 9 — Cancellation And Postponement' },
+    { type: 'p', text: "By the Vendor: the Vendor may not cancel after the booking is confirmed; the Stall Fee is not refundable and the stall may not be transferred, sub-let or shared with another trader without the Organiser's written consent." },
+    { type: 'p', text: "By the Organiser: if the Organiser cancels the Event entirely for a reason within its control and does not reschedule, it will refund the Stall Fee paid, without interest, within thirty (30) working days, and that refund is the Vendor's only remedy. If the Event is postponed, this Agreement applies to the rescheduled date and no refund is due. If the Event is cancelled, shortened or interrupted because of weather, an act of any authority, a security threat, an epidemic, a hartal, a strike, a failure of utilities or any other cause beyond the Organiser's reasonable control, the Organiser is not liable to the Vendor and any refund is at the Organiser's discretion." },
+
+    { type: 'heading', text: 'Clause 10 — General' },
+    { type: 'p', text: "This Agreement, together with the Organiser's vendor rules as issued and updated from time to time, is the entire agreement between the Parties for the stall(s) and replaces any earlier discussion. It may be amended only by the Organiser under Clause 4 or in writing signed by both Parties. If any provision is unenforceable the rest continues in force. This Agreement is governed by the laws of the People's Republic of Bangladesh, and the courts of Dhaka have jurisdiction. It is executed in English; any Bangla translation is for convenience only." },
+
+    { type: 'heading', text: 'Clause 11 — Execution' },
+    { type: 'p', text: 'By signing below, each Party confirms that it has read and understood this Agreement and agrees to be bound by it. The Vendor confirms in particular that it has read Clauses 3, 4, 5 (staff limit and staff to remain in the vendor zone), 7 and 9.' },
+    { type: 'table', rows: [
+      ['FOR THE ORGANISER — DHAKA MUSIC FESTIVAL', 'Countersigned electronically on receipt of the full Stall Fee in cleared funds. Name, designation and date are stated in the written confirmation.'],
+      ['FOR THE VENDOR', `Signed electronically by ${v(f.signatoryName)}, ${v(f.signatoryDesignation)}, on ${f.signedAt || 'submission of this application'}.`],
+    ] },
+  ]
+}
+
+/** Canonical plain text — hashed server-side; identical input gives identical output. */
+export function contractPlainText(pkg: VendorPackage, f: ContractFields): string {
+  return buildContract(pkg, f)
+    .map((b) => {
+      if (b.type === 'table') return b.rows.map(([k, val]) => `${k}: ${val}`).join('\n')
+      if (b.type === 'list') return b.items.map((i) => `- ${i}`).join('\n')
+      return b.text
+    })
+    .join('\n\n')
+}
+```
+
+#### 8.67.6 File 3 — `src/lib/vendor-bank.ts` (new, verbatim, server-only)
+
+```ts
+import 'server-only'
+import type { BankDetails } from '@/data/vendor-contract'
+
+/** Organiser settlement account, from Vercel env — never in the repo (§8.67). */
+export function vendorBankDetails(): BankDetails | null {
+  const accountName = process.env.VENDOR_BANK_ACCOUNT_NAME?.trim()
+  const bankBranch = process.env.VENDOR_BANK_BRANCH?.trim()
+  const accountNumber = process.env.VENDOR_BANK_ACCOUNT_NUMBER?.trim()
+  if (!accountName || !bankBranch || !accountNumber) return null
+  return { accountName, bankBranch, accountNumber }
+}
+```
+
+If `server-only` is not already a dependency (`grep server-only package.json`
+returns 0), install it: `npm i server-only`. It is a Next-blessed
+zero-size guard.
+
+#### 8.67.7 File 4 — `supabase-vendors.sql` (new, verbatim)
+
+```sql
+-- ================================================================
+-- SONIC PULSE — Vendor stall applications (REDESIGN_PLAN.md §8.67)
+--
+-- Run this entire file in the Supabase SQL editor of the project whose
+-- ref is  ytgwocaresxghgyiwikr  — the project that holds user_profiles
+-- and wayfinder_applications (see §8.19 for what happens otherwise).
+-- Safe to re-run.
+-- ================================================================
+
+create table if not exists public.vendor_applications (
+  id                       uuid primary key default gen_random_uuid(),
+  agreement_ref            text unique not null,      -- SP/VEND/2026/FS-P-007
+  package_code             text not null check (package_code in ('MKT-B','FS-B','FS-P')),
+  stalls                   integer not null check (stalls between 1 and 10),
+  stall_fee                integer not null,          -- BDT, stalls × unit fee at signing
+  business_name            text not null,
+  contact_person           text not null,
+  phone                    text not null,
+  email                    text not null,
+  business_address         text not null,
+  trade_licence            text,
+  goods_description        text not null check (char_length(goods_description) <= 1000),
+  electrical_loads         text,
+  cooking_equipment        text,
+  staff_list               text,
+  signatory_name           text not null,
+  signatory_designation    text not null,
+  signed_at                timestamptz not null default now(),
+  signed_ip                text,
+  signed_user_agent        text,
+  contract_version         text not null,
+  contract_hash            text not null,             -- sha256 hex of contractPlainText()
+  acknowledged_clauses     text[] not null default '{}',
+  status                   text not null default 'awaiting_payment'
+                           check (status in ('awaiting_payment','paid_pending_verification','confirmed','lapsed','rejected','cancelled_by_organiser')),
+  receipt_paths            text[] not null default '{}',
+  receipt_uploaded_at      timestamptz,
+  countersigned_by         text,
+  countersigned_designation text,
+  confirmed_at             timestamptz,
+  admin_note               text,
+  created_at               timestamptz default now()
+);
+
+create index if not exists vendor_applications_package_idx
+  on public.vendor_applications (package_code, created_at desc);
+
+alter table public.vendor_applications enable row level security;
+
+create policy "public can insert vendor applications"
+  on public.vendor_applications for insert
+  with check (true);
+
+create policy "admins can read vendor applications"
+  on public.vendor_applications for select
+  using (auth.role() = 'authenticated');
+
+create policy "admins can update vendor applications"
+  on public.vendor_applications for update
+  using (auth.role() = 'authenticated');
+
+-- Private bucket for transfer receipts. Uploads and signed URLs both go
+-- through the service-role key, so no storage policies are needed.
+-- If this insert is refused, create the bucket by hand:
+-- Storage → New bucket → name "vendor-receipts" → Public: NO.
+insert into storage.buckets (id, name, public)
+  values ('vendor-receipts', 'vendor-receipts', false)
+  on conflict (id) do nothing;
+```
+
+The owner runs this file; until it has run, the public API returns
+`503 not_open` and the admin tab shows its not-ready card (patterns
+below). The file is committed by the executor with the code.
+
+#### 8.67.8 File 5 — `src/lib/vendor-email.ts` (new)
+
+Three functions, each using the `Resend` pattern from
+`src/app/api/wayfinder/route.ts` (dynamic `import('resend')`, `from`
+built from `EMAIL_FROM_NAME`/`EMAIL_FROM` with the same defaults, every
+send wrapped in try/catch that only `console.error`s). All three send
+`to: vendorEmail` and `cc: 'contact@sonicpulsefestival.com'` — the
+context file wants the organiser copied. Dark HTML container identical
+to the Wayfinder email (`background:#050508`, magenta H1, `#6B6B7E` sub,
+the `#0D0D14` reference box). Dates are rendered with
+`new Date(iso).toLocaleString('en-GB', { timeZone: 'Asia/Dhaka', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + ' BST'`.
+
+`sendVendorReceivedEmail(app, pkg, bank)` — subject
+`Stall application received — <agreement_ref>`. Body, in order:
+
+- H1 `Application received.` · sub `Stall vendor agreement — Sonic Pulse, 25 September 2026`
+- `Hi <contact_person>,`
+- `We've received <business_name>'s application for <stalls> × <pkg.name> at Sonic Pulse. By submitting the application you signed the Stall Vendor Agreement (version v2026-09-14) on behalf of the Vendor.`
+- Bold: `Your booking is not confirmed and no stall is reserved until the full Stall Fee has been received in cleared funds and Dhaka Music Festival sends written confirmation.`
+- Reference box: label `Agreement reference` · value `<agreement_ref>`
+- Two-column rows: `Stall Fee` → `<stalls> × BDT <fee> = BDT <stall_fee>`; `Payment deadline` → `20 September 2026`; `Payment reference` → `SP/VEND/2026/<code> <business_name>`
+- If `bank` set, rows: `Account name`, `Bank / branch`, `Account number`. If null, one line: `Bank details follow in a separate email from contact@sonicpulsefestival.com.`
+- `Bank transfer only, in one payment. No cash, cheque, bKash, Nagad or card, and no deposit or part-payment holds a stall.`
+- `Once you've transferred, upload the receipt at sonicpulsefestival.com/vendors using your agreement reference and this email address. Stalls are allocated in the order full payment is received.`
+- Small footer: `The full agreement text you accepted (version v2026-09-14, SHA-256 <contract_hash>) is shown for your package at sonicpulsefestival.com/vendors. Keep this email. Questions: contact@sonicpulsefestival.com. Sonic Pulse is organised by Dhaka Music Festival — @dhakamusicfestival.`
+
+`sendVendorReceiptEmail(app, fileCount)` — subject
+`Receipt received — <agreement_ref>`. Body: H1 `Receipt received.` ·
+`Hi <contact_person>, we've received <fileCount> file(s) against
+<agreement_ref>. We'll check the transfer against the account and email
+written confirmation once the funds have cleared. Until then the booking
+is not confirmed.` · reference box · footer line as above without the
+hash sentence.
+
+`sendVendorConfirmedEmail(app, pkg)` — subject
+`Booking confirmed — <agreement_ref>`. Body: H1 `Booking confirmed.` ·
+`Hi <contact_person>, Dhaka Music Festival has received the full Stall
+Fee in cleared funds for <business_name>. This email is the written
+confirmation under Clause 1 of Stall Vendor Agreement <agreement_ref>.`
+· `Countersigned for the Organiser by <countersigned_by>,
+<countersigned_designation>, on <confirmed_at BST>.` · reference box ·
+rows `Package` → `<stalls> × <pkg.name>`; `Stall Fee received` →
+`BDT <stall_fee>` · heading `What happens next` with three lines:
+`The venue, access route, stall plan, your stall position and the
+set-up and breakdown times follow by email before the event.` ·
+`Names and phone numbers for your staff (up to three per stall) must
+reach contact@sonicpulsefestival.com by 20 September 2026. Passes are
+issued in those names only.` · `Be set up and trading-ready by 3:00 PM
+on 25 September 2026, one hour before gates.` · footer line.
+
+#### 8.67.9 File 6 — `src/app/api/vendors/route.ts` (new) — POST, JSON
+
+Structure mirrors `src/app/api/wayfinder/route.ts` (service-role client,
+`try/catch`, `Response.json`). Steps:
+
+1. Read and trim: `packageCode`, `stalls` (parseInt), `businessName`,
+   `contactPerson`, `phone`, `email`, `businessAddress`, `tradeLicence`,
+   `goodsDescription`, `electricalLoads`, `cookingEquipment`,
+   `staffList`, `signatoryName`, `signatoryDesignation`,
+   `acknowledged` (array of strings).
+2. Validation, each failing with `400` and the message shown:
+   - package unknown → `Choose a package.`
+   - stalls not an integer 1–`MAX_STALLS` → `Number of stalls must be between 1 and 10.`
+   - any of businessName, contactPerson, phone, email, businessAddress,
+     goodsDescription, signatoryName, signatoryDesignation empty →
+     `All required fields must be filled in.`
+   - `goodsDescription.length > 1000` → `Describe what you'll sell in 1000 characters or fewer.`
+   - package is food and `cookingEquipment` empty → `List the cooking equipment and any LPG you will bring.`
+   - staffList non-empty lines (split on `\n`, trimmed, filtered) exceed `3 * stalls` → `Up to three staff per stall — that is <3*stalls> for this application.`
+   - `acknowledged` must contain exactly the six ids `clause3, clause4, clause5, clause7, clause9, signature` → `Tick every acknowledgement to sign.`
+3. `fields: ContractFields` = the inputs with `agreementRef: ''`,
+   `signedAt: ''`, `bank: vendorBankDetails()`; `text = contractPlainText(pkg, fields)`;
+   `hash = createHash('sha256').update(text).digest('hex')` (`node:crypto`).
+   The hash deliberately covers the text before the reference and
+   timestamp are merged, so the same wording always hashes the same.
+4. Allocate the reference: `select agreement_ref from vendor_applications where package_code = <code> order by created_at desc limit 1`; parse `/-(\d{3})$/` → `n` (0 if none); `ref = SP/VEND/2026/<code>-<String(n+1).padStart(3,'0')>`. Insert. On `23505` (duplicate ref) increment and retry, at most three attempts; then `500`.
+5. Insert row: all fields, `stall_fee: stallFee(pkg, stalls)`,
+   `signed_ip: req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null`,
+   `signed_user_agent: req.headers.get('user-agent')`, `contract_version: CONTRACT_VERSION`,
+   `contract_hash: hash`, `acknowledged_clauses: acknowledged`, `status: 'awaiting_payment'`.
+   Missing table (`42P01`/`PGRST205`) → `503 { error: 'not_open', message: 'Applications open soon.' }`.
+   Other DB error → log; `500` with `Something went wrong on our end. Try again in a minute, or email your application to contact@sonicpulsefestival.com.`
+6. `sendVendorReceivedEmail(row, pkg, bank)`.
+7. `201 { success: true, agreementRef, stallFee, paymentReference, bank }` — `bank` is the object or `null`.
+
+#### 8.67.10 File 7 — `src/app/api/vendors/receipt/route.ts` (new) — POST, multipart
+
+Pattern from `src/app/api/register/route.ts` (`req.formData()`, storage
+upload with the service-role key).
+
+1. `agreementRef` = trimmed, uppercased; `email` = trimmed, lowercased;
+   `files` = `formData.getAll('files')` filtered to `File` with `size > 0`.
+2. Validation (`400`): no files → `Attach at least one receipt.`; more
+   than 3 → `Up to three files.`; any type not in
+   `image/jpeg, image/png, application/pdf` → `Receipts must be JPG, PNG or PDF.`;
+   any file over 5 MB → `Each file must be under 5 MB.`
+3. Look up `select id, email, status, receipt_paths from vendor_applications where agreement_ref = <ref> limit 1`.
+   Missing table → `503 not_open`. No row, or `lower(row.email) !== email` →
+   `404 { error: "We couldn't match that reference and email. Check both against your confirmation email." }`.
+   Status in `lapsed, rejected, cancelled_by_organiser` →
+   `409 { error: "This booking is closed. Email contact@sonicpulsefestival.com if you think that's wrong." }`.
+4. Upload each file to bucket `vendor-receipts` at
+   `<ref with '/' replaced by '_'>/<Date.now()>-<random base36>.<ext>`
+   (`contentType`, `upsert: false`). Any upload error → `500`
+   `Upload failed. Try again in a minute.`
+5. Update: `receipt_paths = [...existing, ...new]`, `receipt_uploaded_at = now`,
+   and `status = 'paid_pending_verification'` **only if** current status
+   is `awaiting_payment` (confirmed stays confirmed).
+6. `sendVendorReceiptEmail(row, files.length)`; `200 { success: true, count }`.
+
+#### 8.67.11 Files 8–9 — admin API
+
+`src/app/api/admin/vendors/route.ts` — copy the shape of
+`src/app/api/admin/wayfinder/route.ts` (same `ADMIN_EMAILS`,
+`adminClient()`, `checkAdmin()`).
+
+- `GET`: `select * from vendor_applications order by created_at desc`;
+  missing table → `{ applications: [], notReady: true }`; else
+  `{ applications }`.
+- `PATCH` body `{ applicationId, status?, countersignName?, countersignDesignation?, adminNote? }`.
+  `applicationId` non-empty string required. `status`, if present, must
+  be one of `VENDOR_STATUSES`. If `status === 'confirmed'`:
+  `countersignName` and `countersignDesignation` must be non-empty
+  (`400 Countersigner name and designation are required to confirm.`);
+  update also sets `countersigned_by`, `countersigned_designation`,
+  `confirmed_at: new Date().toISOString()`. `adminNote`, if present
+  (string, may be empty), sets `admin_note` (empty → `null`). Empty
+  update → `400`. After a successful update to `confirmed`, `select` the
+  row and call `sendVendorConfirmedEmail(row, packageByCode(row.package_code))`.
+  Return `{ success: true }`.
+
+`src/app/api/admin/vendors/receipt-url/route.ts` — `GET ?path=` →
+copy `src/app/api/admin/nid-url/route.ts` minus the gate-staff branch
+(admins only), bucket `vendor-receipts`, 10-minute signed URL.
+
+#### 8.67.12 File 10 — `src/app/(main)/vendors/page.tsx` (new, server component)
+
+```ts
+import type { Metadata } from 'next'
+import PageHeader from '@/components/ui/PageHeader'
+import VendorPortal from '@/components/vendors/VendorPortal'
+import { vendorBankDetails } from '@/lib/vendor-bank'
+import { VENDORS_LIVE } from '@/data/vendors'
+
+export const metadata: Metadata = {
+  title: 'Vendors — Sonic Pulse',
+  description: 'Marketplace and food stalls at Sonic Pulse 2026. Three packages, one agreement, bank transfer only.',
+}
+
+export default function VendorsPage() {
+  return (
+    <div className="max-w-[1200px] mx-auto px-4" style={{ padding: '64px 6vw 100px' }}>
+      <PageHeader eyebrow="Stall vendor applications" title="Vendors" sub="Trade the night, gates to sunrise." />
+      <VendorPortal live={VENDORS_LIVE} bank={vendorBankDetails()} />
+    </div>
+  )
+}
+```
+
+#### 8.67.13 File 11 — `src/components/vendors/ContractText.tsx` (new, client-safe)
+
+Props `{ blocks: ContractBlock[] }`. Renders, in order: `title` →
+`<p>` centred, 13px, weight 800, letter-spacing 0.12em, `#fff`;
+`heading` → `<h4>` 14px weight 700 `#fff`, margin-top 22; `p` → `<p>`
+13.5px, `var(--text-dim)`, line-height 1.7; `table` → a two-column
+`<table>` (first column 11px uppercase tracked `var(--text-label-muted)`
+weight 700, 38% width; second column 13px `#fff`; rows separated by
+`1px solid var(--border)`; `wordBreak: 'break-word'`); `list` → `<ul>`
+with `—` markers in `var(--accent-magenta)` (the FAQ/tier-card pattern),
+13.5px, `var(--text-dim)`. No other styling. It is imported by the
+portal only.
+
+#### 8.67.14 File 12 — `src/components/vendors/ReceiptUpload.tsx` (new, client)
+
+Props `{ agreementRef?: string; email?: string; locked?: boolean; compact?: boolean }`.
+State: `ref`, `email` (initialised from props), `files: File[]`,
+`status: 'idle'|'uploading'|'success'|'error'`, `errorMsg`, `count`.
+Uses the `fieldStyle` / `labelStyle` constants copied from
+`WayfinderForm.tsx` (same values; declare them locally — do not export
+from the Wayfinder file).
+
+Markup, top to bottom (ids prefixed `rc-`):
+
+- Unless `compact`: eyebrow `Already applied?` (11px tracked uppercase,
+  `var(--text-label-muted)`), title `Upload your transfer receipt`
+  (20px, 700, `#fff`), lede `Enter your agreement reference and the
+  email you applied with, then attach a photo or PDF of the bank
+  transfer receipt. Up to three files — JPG, PNG or PDF, 5 MB each.`
+- `Agreement reference` input, placeholder `SP/VEND/2026/FS-B-001`,
+  required, `readOnly` when `locked`.
+- `Email` input type email, required, `readOnly` when `locked`.
+- File picker: a dashed drop zone styled like `FileUpload.tsx`'s empty
+  state (border `2px dashed var(--border)`, magenta on hover/drag,
+  border-radius 12) with copy `Drag & drop or browse` and
+  `JPG, PNG or PDF — up to 3 files, 5 MB each`; hidden
+  `<input type="file" multiple accept=".jpg,.jpeg,.png,.pdf">`. Chosen
+  files list beneath as rows: name, size in MB, an `×` remove button
+  (`aria-label="Remove file"`). Client validation mirrors the server's
+  messages exactly.
+- Button (`PillButton`, full width): `Upload receipt →` /
+  `Uploading…`. Disabled when no files or uploading.
+- Under the button, 11.5px `var(--text-label-muted)`, centred:
+  `Uploading a receipt does not confirm the booking. Confirmation is
+  sent once the funds have cleared.`
+- `success` replaces the form with the card pattern from
+  `WayfinderForm` (border `var(--accent-soft)`): title `Receipt
+  received.`, body `We'll check the transfer and email written
+  confirmation once the funds have cleared.`
+- `error` shows `errorMsg` in `#e24b4a` above the button, `aria-live="polite"`.
+  Network failure message: `Something went wrong on our end. Try again
+  in a minute, or email the receipt to contact@sonicpulsefestival.com.`
+
+Submit: `FormData` with `agreementRef`, `email`, and each file appended
+as `files`; `fetch('/api/vendors/receipt', { method: 'POST', body })`.
+`503 not_open` → error `Uploads open soon.` Other non-OK → `json.error`.
+
+#### 8.67.15 File 13 — `src/components/vendors/VendorPortal.tsx` (new, client)
+
+Props `{ live: boolean; bank: BankDetails | null }`. Imports
+`vendorPackages, packageByCode, bdt, stallFee, paymentReference,
+commonIncludes, excludedNote, MAX_STALLS, PAYMENT_DEADLINE,
+CONTRACT_VERSION, VENDOR_CONTACT_EMAIL` from `@/data/vendors`,
+`buildContract` + types from `@/data/vendor-contract`, `ContractText`,
+`ReceiptUpload`, `PillButton`. Reuse the `fieldStyle`, `labelStyle`,
+`cardStyle`, `Required` definitions from `WayfinderForm.tsx` verbatim
+(declared locally).
+
+State: `form` (strings: `packageCode, stalls ('1'), businessName,
+contactPerson, phone, email, businessAddress, tradeLicence,
+goodsDescription, electricalLoads, cookingEquipment, staffList,
+signatoryName, signatoryDesignation`), `acks: Record<AckId, boolean>`
+for the six ids, `status: 'idle'|'submitting'|'success'|'not_open'|'error'`,
+`errorMsg`, `result` (`{ agreementRef, stallFee, paymentReference, bank }`).
+
+Layout, top to bottom, each block a `<section>` with `marginTop: 56`
+(first: 0):
+
+**A. How it works** — eyebrow `How it works`; four numbered cards in a
+responsive grid (`repeat(auto-fit, minmax(220px, 1fr))`, gap 14), each
+`var(--bg-elevated)`, `1px solid var(--border)`, radius
+`var(--radius-card)`, padding 22; number in magenta 11px tracked, title
+15px 700 `#fff`, body 13.5px `var(--text-dim)`:
+
+1. `Choose a package and apply` — `Fill in the form, read the agreement for your package and submit. Submitting is your signature.`
+2. `Transfer the full stall fee` — `Bank transfer only, in one payment, by 20 September 2026. Use the payment reference on your confirmation.`
+3. `Upload your receipt` — `Attach a photo or PDF of the transfer receipt on this page. We check it against the account.`
+4. `Get confirmed` — `Once funds clear, Dhaka Music Festival countersigns and emails your written confirmation. Stalls go in the order full payment arrives.`
+
+**B. Packages** — eyebrow `Three packages`; three cards (same grid,
+`minmax(260px, 1fr)`), one per `vendorPackages` entry. Card: shortName
+as 11px tracked uppercase label; price line `bdt(fee)` at 30px weight
+800 `#fff` with ` per stall` 13px `var(--text-dim)`; blurb 13.5px; then
+label `Included`, a `—` list of `commonIncludes` plus `extra` when set
+(the extra item first, in `#fff`); a `PillButton` `variant="outline"`
+full width: `Apply — <shortName> →` which sets `packageCode` and calls
+`document.getElementById('apply')?.scrollIntoView({ behavior: 'smooth' })`.
+The selected card gets `border: 1px solid var(--accent-soft)`. Under the
+grid, 12.5px `var(--text-label-muted)`: `excludedNote`.
+
+**C. Closed state** — if `!live`: instead of D–F render the card
+`Stall applications are closed.` / `Email contact@sonicpulsefestival.com
+for late enquiries.` (WayfinderForm closed-card pattern), then still
+render G.
+
+**D. Application form** — `<form id="apply" onSubmit>`, styled as the
+Wayfinder form (elevated card, gap 14). Heading line (the Wayfinder
+centred label) `Apply for a stall`.
+
+Fields, in order (ids prefixed `vd-`; `<Required />` on required labels):
+
+- `Package` — `<select required>`: `Select a package`, then one option
+  per package: `<name> — <bdt(fee)> per stall`.
+- `Number of stalls` — `<input type="number" min=1 max=10 required>`.
+  Directly beneath, when a package is selected, 13px `#fff`:
+  `Stall Fee: <stalls> × <bdt(fee)> = <bdt(total)> — payable in full, by
+  bank transfer, by 20 September 2026.`
+- `Business name` — placeholder `As it should appear on the agreement`.
+- `Contact person` — placeholder `Who we call about this booking`.
+- `Phone` — `inputMode="tel"`, placeholder `01XXXXXXXXX`.
+- `Email` — type email, placeholder `you@business.com`.
+- `Business address` — textarea, min-height 70.
+- `Trade licence number` (optional) — hint `Leave blank if you don't have one.`
+- `Goods or menu you will sell` — textarea, `maxLength 1000`, counter
+  `<n>/1000` in the label (Wayfinder motivation pattern), hint
+  `You may only trade in what you describe here (Clause 5).`
+- `Heavy or continuous electrical loads` (optional) — textarea, hint
+  `Fridges, grills, heaters — anything that runs continuously. Declare
+  before 20 September 2026; it may be refused or charged (Clause 2).`
+- `Cooking equipment and LPG on site` — rendered only when the selected
+  package is a food package; required then; hint `List every cooking
+  appliance and any LPG cylinders. Cooking is permitted only with
+  declared equipment (Clause 5).`
+- `Stall staff — up to three per stall` (optional) — textarea,
+  placeholder `One per line: Name — phone`, hint `Passes are issued in
+  these names and are not transferable. Names must reach us by 20
+  September 2026; email additions to contact@sonicpulsefestival.com.`
+
+**E. The agreement** — inside the same form, after the fields: eyebrow
+`The agreement`, line 12.5px `var(--text-label-muted)`:
+`Version v2026-09-14. Read it in full — you sign it by submitting.` If no
+package: a dashed card `Choose a package above to read its agreement.`
+Else: `<div id="agreement">` with `maxHeight: 460, overflowY: 'auto'`,
+`background: var(--bg-surface)`, `1px solid var(--border)`, radius 16,
+padding 22, rendering `<ContractText blocks={buildContract(pkg, fields)} />`
+where `fields` are the live form values (`stalls` parsed, min 1),
+`agreementRef: ''`, `signedAt: ''`, `bank` from props.
+
+Then the six checkboxes (Wayfinder checkbox row style, each `required`),
+labels verbatim:
+
+- `clause3` — `Clause 3 — I understand the full Stall Fee is payable in advance by bank transfer only, that no deposit or part-payment holds a stall, and that the fee is non-refundable and non-transferable once the booking is confirmed.`
+- `clause4` — `Clause 4 — I understand the Organiser may change stall position, layout, timings, package items, venue rules or the venue, or postpone the Event, without prior notice and with no refund or claim.`
+- `clause5` — `Clause 5 — I understand no more than three staff per stall are admitted, that their names are due by 20 September 2026, and that staff must remain in the vendor zone. A vendor pass is not an Event ticket.`
+- `clause7` — `Clause 7 — I understand the Vendor bears its own security, that the Organiser's liability is capped at the Stall Fee paid, and that the Vendor indemnifies the Organiser.`
+- `clause9` — `Clause 9 — I understand the Vendor cannot cancel after the booking is confirmed, and the cancellation and postponement terms.`
+- `signature` — `I am authorised to sign for the Vendor. Submitting this application is my signature on the Stall Vendor Agreement above, version v2026-09-14.`
+
+Then `Signatory name (print)` (required) and `Designation` (required,
+placeholder `Owner, proprietor, manager…`).
+
+Submit `PillButton` full width: `Sign and submit application →` /
+`Signing…`; `disabled` while submitting **or while any of the six
+boxes is unchecked**. Beneath, 11.5px centred `var(--text-label-muted)`:
+`Your booking is confirmed only when the full Stall Fee has cleared and
+Dhaka Music Festival sends written confirmation.`
+
+`error` → `errorMsg` in `#e24b4a` above the button. `not_open` →
+replaces the form with the Wayfinder `Applications open soon.` card
+(`Check back shortly, or email contact@sonicpulsefestival.com.`).
+
+**F. Success card** (replaces D–E when `status === 'success'`, border
+`var(--accent-soft)`, `aria-live="polite"`):
+
+- `Application signed.` (20px 700 `#fff`)
+- `Agreement reference` label + `result.agreementRef` in monospace 20px magenta.
+- `Stall Fee` label + `bdt(result.stallFee)` 16px `#fff`.
+- `Pay by bank transfer, in one payment, by 20 September 2026.` 14px `var(--text-dim)`.
+- Bank block, a two-column table like ContractText's: `Account name`,
+  `Bank / branch`, `Account number`, `Payment reference` (→
+  `result.paymentReference`) when `result.bank`; otherwise one line
+  `Bank details are on their way by email from
+  contact@sonicpulsefestival.com.` followed by the `Payment reference` row.
+- `Your booking is not confirmed and no stall is reserved until the full
+  Stall Fee has cleared and Dhaka Music Festival emails written
+  confirmation. Stalls go in the order full payment arrives.`
+- `We've emailed a copy of this to <form.email>.` 12.5px.
+- Divider, then heading `Paid already? Upload your receipt` (15px 700)
+  and `<ReceiptUpload agreementRef={result.agreementRef} email={form.email} locked compact />`.
+
+**G. Standalone receipt section** — `<section id="receipt">` always
+rendered: `<ReceiptUpload />` with no props, inside an elevated card.
+
+**H. Contact line** — 12.5px centred `var(--text-label-muted)`:
+`Questions before you apply? Email contact@sonicpulsefestival.com.`
+
+Submit handler: `fetch('/api/vendors', { method: 'POST', headers: JSON,
+body: JSON.stringify({ ...form, stalls: Number(form.stalls),
+acknowledged: Object.keys(acks).filter((k) => acks[k]) }) })`; `503
+not_open` → `not_open`; non-OK → `errorMsg = json.error` (fallback text
+as in File 6 step 5); OK → `result = json`, `status = 'success'`,
+`window.scrollTo({ top: 0, behavior: 'smooth' })`.
+
+#### 8.67.16 File 14 — `src/app/admin/VendorsTab.tsx` (new, client)
+
+Model on `WayfinderTab.tsx` (fetch-on-mount with the same
+`eslint-disable-next-line react-hooks/set-state-in-effect` comment,
+`STATUS_STYLE`, `SELECT_STYLE`, tab pills with counts, not-ready card,
+search box). Type `VendorApplication` mirrors the SQL columns.
+
+- Not-ready card copy: `Vendor table not created yet.` / `Run
+  supabase-vendors.sql in the Supabase SQL editor (project
+  ytgwocaresxghgyiwikr), then reload.`
+- Header: `Vendor stalls` / `Applications, payments and countersignature. Confirming sends the Clause 1 written confirmation.`
+- Status tabs, in `VENDOR_STATUSES` order, labelled by `STATUS_LABEL`,
+  colours: awaiting_payment magenta, paid_pending_verification
+  `#eab308`, confirmed `#22c55e`, the three closed states `#e24b4a`.
+- Search input placeholder `Search reference, business, email` matching
+  `agreement_ref`, `business_name`, `email`, `contact_person`
+  (case-insensitive substring). Sort newest first.
+- Summary line above the list: `<n> applications · <m> stalls · BDT <sum of stall_fee for confirmed> confirmed`.
+- Card per application (elevated, header row with `agreement_ref` in
+  magenta mono, package `name`, `<stalls> × bdt(fee) = bdt(stall_fee)`
+  pill, signed date `dd Mon yyyy`): grid of label/value pairs —
+  `Business`, `Contact`, `Phone`, `Email` (mailto), `Address`, `Trade
+  licence` (`—` if null), `Sells`, `Electrical loads`, `Cooking / LPG`,
+  `Staff` (pre-wrap), `Signed` (`signatory_name, signatory_designation ·
+  <signed_at BST> · <signed_ip>`), `Agreement` (`contract_version ·
+  <first 12 chars of hash>…`). Receipts row: `Receipts` → one button per
+  path `View receipt <i>` calling `/api/admin/vendors/receipt-url?path=`
+  and opening the signed URL in a new tab (the `getNidUrl` pattern);
+  `None uploaded` when empty. `Admin note` textarea + `Save note`
+  button (PATCH `adminNote`).
+- Actions (PATCH `status`), by current status:
+  - `awaiting_payment`: `Mark paid — pending verification`, `Lapse`, `Reject`.
+  - `paid_pending_verification`: `Confirm — funds cleared` (reveals two
+    inputs `Countersigner name`, `Designation` and a `Countersign and
+    confirm` button; `window.confirm('Confirm <agreement_ref> and send
+    the written confirmation email?')` before PATCH), `Back to awaiting
+    payment`, `Reject`.
+  - `confirmed`: `Cancel booking (organiser)` with
+    `window.confirm('Cancel <agreement_ref>? This does not email the vendor.')`.
+  - `lapsed` / `rejected` / `cancelled_by_organiser`: `Reopen — awaiting payment`.
+  Button styling: green for confirm, red for lapse/reject/cancel,
+  neutral outline for the rest (AdminClient TicketRow palette).
+- No CSV export in this amendment (noted, not built).
+
+`AdminClient.tsx` edits: surface union gains `'vendors'`; the switcher
+array becomes `['tickets', 'first-pulse', 'wayfinder', 'vendors']` with
+label `Vendors`; render `<VendorsTab />` for it; import it.
+
+#### 8.67.17 Files 15–16 — footer and FAQ
+
+`src/components/layout/Footer.tsx`: `import { VENDORS_LIVE } from '@/data/vendors'`;
+in `supportLinks`, after the Wayfinder line:
+`...(VENDORS_LIVE ? [{ href: '/vendors', label: 'Vendors' }] : []),`.
+
+`src/data/faq.ts`: insert after the `food-drinks` item:
+
+```ts
+  {
+    id: 'vendor-stalls',
+    category: 'At the Event',
+    question: 'Can I run a stall at Sonic Pulse?',
+    answer: 'Yes. Marketplace stalls and food stalls are open to vendors on three packages, paid in full by bank transfer, with one agreement covering the night. Applications and the agreement are on the Vendors page.',
+    link: { href: '/vendors', label: 'Apply for a stall →' },
+  },
+```
+
+#### 8.67.18 Scope fences and reversibility
+
+Navbar and MobileMenu are untouched (decision 7). Tickets, First Pulse,
+Wayfinder, policy, `email.ts`, `FileUpload.tsx`, `nid-url` and the
+middleware are untouched. No prices appear on any social creative — this
+is a site page. Close applications with `VENDORS_LIVE = false` (form
+and footer link go; receipt section and admin stay). Full removal:
+delete the new files, revert the three edits, drop the table and bucket.
+
+#### 8.67.19 Owner to-do before launch (only the owner can do these)
+
+1. Run `supabase-vendors.sql` in project `ytgwocaresxghgyiwikr`.
+2. Add `VENDOR_BANK_ACCOUNT_NAME`, `VENDOR_BANK_BRANCH`,
+   `VENDOR_BANK_ACCOUNT_NUMBER` in Vercel → redeploy. Until then every
+   surface says bank details follow by email, and the owner must send
+   them by hand.
+3. Confirm the 20 September 2026 payment deadline (decision 1) — or say
+   the date and the executor changes one constant.
+4. Stall inventory per package (context file §9.3) is not enforced; the
+   admin decides by hand. Say the numbers if a cap should be built.
+
+#### 8.67.20 Verification gates (executor)
+
+- §4.1: `npx tsc --noEmit`; `npm run lint` (baseline only — 7 errors /
+  9 warnings); `npm run build` (route list must show `○ /vendors`,
+  `ƒ /api/vendors`, `ƒ /api/vendors/receipt`, `ƒ /api/admin/vendors`,
+  `ƒ /api/admin/vendors/receipt-url`).
+- Greps: `grep -c "VENDORS_LIVE" src/components/layout/Footer.tsx` **2**;
+  `grep -c "/vendors" src/data/faq.ts` **1**;
+  `grep -c "PAYMENT_DEADLINE" src/data/vendor-contract.ts` ≥3;
+  `grep -c "No food or drink may be sold from a marketplace stall" src/data/vendor-contract.ts` **1**;
+  `grep -c "Bangladesh Safe Food Act" src/data/vendor-contract.ts` **1**;
+  `grep -c "15 September" src/data/vendor-contract.ts src/data/vendors.ts src/components/vendors/*.tsx src/lib/vendor-email.ts` → every file **0**;
+  `grep -rc "hello@sonicpulsefestival" src/components/vendors src/lib/vendor-email.ts src/app/api/vendors` → every file **0**;
+  `grep -c "'vendors'" src/app/admin/AdminClient.tsx` ≥2.
+- Local dev on port 3100, curl greps: `/vendors` → `Marketplace stall`
+  ≥1, `BDT 25,000` ≥1, `Choose a package above` ≥1, `Upload your
+  transfer receipt` ≥1, `Submitting is your signature` ≥1, `Gazipur`
+  **0** (the agreement is client-rendered after selection, so the SSR
+  HTML must not carry it); `/faq` → `Can I run a stall` ≥1; `/` →
+  `href="/vendors"` ≥1.
+- Playwright at 1280×800 and 375×812, `scrollWidth - clientWidth === 0`
+  on `/vendors`, `/faq`, `/`. On `/vendors` at 1280×800: select
+  `FS-P` in the package select → `#agreement` text contains
+  `FOOD STALL — PREMIUM — BDT 25,000 PER STALL`, `Clause 11 — Execution`
+  and `Bangladesh Safe Food Act`; select `MKT-B` → contains `No food or
+  drink may be sold from a marketplace stall` and not `Safe Food Act`;
+  the cooking-equipment field is absent for `MKT-B` and present for
+  `FS-B`; type `Rooftop Biryani` into business name → `#agreement`
+  contains `Vendor — business name: Rooftop Biryani` (or the two cells
+  adjacent); the submit button is `disabled` with all boxes unchecked
+  and enabled after all six are checked. **Never submit the form or the
+  receipt upload in a smoke test** — both write real rows and send real
+  email; validate with `form.checkValidity()`.
+- Admin is auth-gated: verify `VendorsTab.tsx` by `tsc`/build and by
+  grepping the six `STATUS_LABEL` strings render in the file (≥1 each).
