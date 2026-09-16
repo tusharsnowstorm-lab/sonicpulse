@@ -3,6 +3,7 @@ import { useState } from 'react'
 import PillButton from '@/components/ui/PillButton'
 import ContractText from './ContractText'
 import ReceiptUpload from './ReceiptUpload'
+import BankDetailsCard from './BankDetailsCard'
 import {
   vendorPackages, packageByCode, bdt, stallFee,
   commonIncludes, excludedNote, MAX_STALLS, VENDOR_CONTACT_EMAIL,
@@ -249,6 +250,18 @@ export default function VendorPortal({ live, bank }: { live: boolean; bank: Bank
         <p style={{ fontSize: 12.5, color: 'var(--text-label-muted)', marginTop: 16, lineHeight: 1.6 }}>{excludedNote}</p>
       </section>
 
+      {/* B2. How to pay — the account details, in the open (§8.68) */}
+      <section id="pay" style={{ marginTop: 56 }}>
+        <p style={{ fontSize: 11, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'var(--text-label-muted)', fontWeight: 700, marginBottom: 16 }}>
+          How to pay
+        </p>
+        <BankDetailsCard
+          bank={bank}
+          paymentReference={`SP/VEND/2026/${selectedPkg ? selectedPkg.code : '<package code>'} + your business name`}
+          note="Transfer after you have submitted the application below — your confirmation email carries the exact reference to use. Stalls are allocated in the order full payment arrives."
+        />
+      </section>
+
       {!live ? (
         <section style={{ marginTop: 56 }}>
           <div style={cardStyle}>
@@ -267,38 +280,9 @@ export default function VendorPortal({ live, bank }: { live: boolean; bank: Bank
             <p style={{ ...labelStyle, marginBottom: 4 }}>Stall Fee</p>
             <p style={{ fontSize: 16, color: '#fff', marginBottom: 16 }}>{bdt(result.stallFee)}</p>
 
-            <p style={{ fontSize: 14, color: 'var(--text-dim)', marginBottom: 16 }}>Pay by bank transfer, in one payment, by 20 September 2026.</p>
-
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: 16 }}>
-              <tbody>
-                {result.bank ? (
-                  <>
-                    <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                      <td style={{ fontSize: 11, textTransform: 'uppercase', color: 'var(--text-label-muted)', fontWeight: 700, padding: '8px 10px 8px 0', width: '38%' }}>Account name</td>
-                      <td style={{ fontSize: 13, color: '#fff', padding: '8px 0' }}>{result.bank.accountName}</td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                      <td style={{ fontSize: 11, textTransform: 'uppercase', color: 'var(--text-label-muted)', fontWeight: 700, padding: '8px 10px 8px 0' }}>Bank / branch</td>
-                      <td style={{ fontSize: 13, color: '#fff', padding: '8px 0' }}>{result.bank.bankBranch}</td>
-                    </tr>
-                    <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                      <td style={{ fontSize: 11, textTransform: 'uppercase', color: 'var(--text-label-muted)', fontWeight: 700, padding: '8px 10px 8px 0' }}>Account number</td>
-                      <td style={{ fontSize: 13, color: '#fff', padding: '8px 0' }}>{result.bank.accountNumber}</td>
-                    </tr>
-                  </>
-                ) : (
-                  <tr style={{ borderBottom: '1px solid var(--border)' }}>
-                    <td colSpan={2} style={{ fontSize: 13, color: 'var(--text-dim)', padding: '8px 0' }}>
-                      Bank details are on their way by email from contact@sonicpulsefestival.com.
-                    </td>
-                  </tr>
-                )}
-                <tr>
-                  <td style={{ fontSize: 11, textTransform: 'uppercase', color: 'var(--text-label-muted)', fontWeight: 700, padding: '8px 10px 8px 0' }}>Payment reference</td>
-                  <td style={{ fontSize: 13, color: '#fff', padding: '8px 0' }}>{result.paymentReference}</td>
-                </tr>
-              </tbody>
-            </table>
+            <div style={{ marginBottom: 16 }}>
+              <BankDetailsCard bank={result.bank} paymentReference={result.paymentReference} />
+            </div>
 
             <p style={{ fontSize: 13.5, color: 'var(--text-dim)', lineHeight: 1.6, marginBottom: 8 }}>
               Your booking is not confirmed and no stall is reserved until the full Stall Fee has cleared and Dhaka Music Festival emails written confirmation. Stalls go in the order full payment arrives.

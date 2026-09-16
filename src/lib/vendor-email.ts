@@ -79,20 +79,21 @@ export async function sendVendorReceivedEmail(
   pkg: VendorPackage,
   bank: BankDetails | null
 ) {
-  const bankRows: [string, string][] = bank
-    ? [
-        ['Stall Fee', `${app.stalls} × ${bdt(pkg.fee)} = ${bdt(app.stall_fee)}`],
-        ['Payment deadline', '20 September 2026'],
-        ['Payment reference', paymentReference(pkg.code, app.business_name)],
-        ['Account name', bank.accountName],
-        ['Bank / branch', bank.bankBranch],
-        ['Account number', bank.accountNumber],
-      ]
-    : [
-        ['Stall Fee', `${app.stalls} × ${bdt(pkg.fee)} = ${bdt(app.stall_fee)}`],
-        ['Payment deadline', '20 September 2026'],
-        ['Payment reference', paymentReference(pkg.code, app.business_name)],
-      ]
+  const feeRows: [string, string][] = [
+    ['Stall Fee', `${app.stalls} × ${bdt(pkg.fee)} = ${bdt(app.stall_fee)}`],
+    ['Payment deadline', '20 September 2026'],
+  ]
+  const bankBlock = bank
+    ? `<p style="margin:24px 0 8px;font-size:12px;color:#FF3FC2;letter-spacing:0.2em;text-transform:uppercase;font-weight:bold;">Pay by bank transfer</p>
+    ${detailsTable([
+      ['Account name', bank.accountName],
+      ['Bank / branch', bank.bankBranch],
+      ['Account number', bank.accountNumber],
+      ['Payment reference', paymentReference(pkg.code, app.business_name)],
+    ])}`
+    : `<p style="margin:24px 0 8px;font-size:12px;color:#FF3FC2;letter-spacing:0.2em;text-transform:uppercase;font-weight:bold;">Pay by bank transfer</p>
+    <p style="margin:0 0 8px;">Bank details follow in a separate email from contact@sonicpulsefestival.com.</p>
+    ${detailsTable([['Payment reference', paymentReference(pkg.code, app.business_name)]])}`
 
   const html = wrap(`
     <h1 style="color:#FF3FC2;font-size:28px;margin:0 0 8px;">Application received.</h1>
@@ -101,12 +102,8 @@ export async function sendVendorReceivedEmail(
     <p style="margin:0 0 16px;">We've received <strong>${app.business_name}</strong>'s application for ${app.stalls} × ${pkg.name} at Sonic Pulse. By submitting the application you signed the Stall Vendor Agreement (version v2026-09-14) on behalf of the Vendor.</p>
     <p style="margin:0 0 16px;"><strong>Your booking is not confirmed and no stall is reserved until the full Stall Fee has been received in cleared funds and Dhaka Music Festival sends written confirmation.</strong></p>
     ${referenceBox('Agreement reference', app.agreement_ref)}
-    ${detailsTable(bankRows)}
-    ${
-      bank
-        ? ''
-        : '<p style="margin:0 0 16px;">Bank details follow in a separate email from contact@sonicpulsefestival.com.</p>'
-    }
+    ${detailsTable(feeRows)}
+    ${bankBlock}
     <p style="margin:0 0 16px;">Bank transfer only, in one payment. No cash, cheque, bKash, Nagad or card, and no deposit or part-payment holds a stall.</p>
     <p style="margin:0 0 16px;">Once you've transferred, upload the receipt at sonicpulsefestival.com/vendors using your agreement reference and this email address. Stalls are allocated in the order full payment is received.</p>
     <p style="margin:24px 0 0;font-size:12px;color:#6B6B7E;">The full agreement text you accepted (version v2026-09-14, SHA-256 ${app.contract_hash}) is shown for your package at sonicpulsefestival.com/vendors. Keep this email. Questions: contact@sonicpulsefestival.com. Sonic Pulse is organised by Dhaka Music Festival — @dhakamusicfestival.</p>

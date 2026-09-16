@@ -7153,3 +7153,50 @@ delete the new files, revert the three edits, drop the table and bucket.
   email; validate with `form.checkValidity()`.
 - Admin is auth-gated: verify `VendorsTab.tsx` by `tsc`/build and by
   grepping the six `STATUS_LABEL` strings render in the file (≥1 each).
+
+### 8.68 Vendors — bank transfer details brought into the open (added 16 Sep 2026, owner-requested, planner-executed)
+
+Owner: "Make the bank transfer details more obvious, not buried inside
+a clause in an agreement." In §8.67 the account details appeared only in
+Clause 3 of the agreement (visible after a package was chosen, inside a
+scrolling box), in the success card's small table, and in the email's
+detail rows. Planner executed the fix in the same pass — the change is
+presentational and the copy is short.
+
+**New component — `src/components/vendors/BankDetailsCard.tsx`.** A
+magenta-bordered card (`1px solid var(--accent-soft)`, card radius):
+eyebrow `Pay by bank transfer`; lede `Full Stall Fee in one payment, by
+20 September 2026. Bank transfer only — no cash, cheque, bKash, Nagad or
+card. No deposit or part-payment holds a stall.`; rows `Account name`,
+`Bank and branch`, `Account number` (22px monospace with a copy button,
+the `ContactDetails` copy pattern) and `Payment reference` (monospace,
+copy button). Unset bank (env vars missing) → `Bank details are sent by
+email as soon as you apply.` / `They come from
+contact@sonicpulsefestival.com with your agreement reference.`, and the
+payment-reference row still renders. Optional `note` line beneath.
+
+**`VendorPortal.tsx` — two placements.** (1) New section `#pay`,
+eyebrow `How to pay`, directly after the package cards and before the
+form, so the account is visible before anyone reads a clause. Its
+payment reference reads `SP/VEND/2026/<package code> + your business
+name` — the literal `<package code>` until a package is selected, then
+the real code. Note: `Transfer after you have submitted the application
+below — your confirmation email carries the exact reference to use.
+Stalls are allocated in the order full payment arrives.` (2) The success
+card's bank table and its "Pay by bank transfer, in one payment…" line
+are replaced by the same card with the allocated reference.
+
+**`vendor-email.ts` — received email.** The bank rows leave the fee
+table and get their own magenta `PAY BY BANK TRANSFER` heading above a
+four-row table (account name, bank / branch, account number, payment
+reference); the unset case keeps the "follow in a separate email" line
+under the same heading with the payment-reference row beneath.
+
+Clause 3 of the agreement is unchanged — the contract text and its hash
+are exactly §8.67's. Nothing else touched.
+
+**Verification.** §4.1 (tsc, lint baseline 7/9, build). `/vendors` SSR
+→ `How to pay` ≥1, `Pay by bank transfer` ≥1, `Copy account number` 0
+when env unset (the row only renders with details) and
+`Bank details are sent by email` ≥1 when unset. Playwright
+`scrollWidth - clientWidth === 0` on `/vendors` at 1280×800 and 375×812.
