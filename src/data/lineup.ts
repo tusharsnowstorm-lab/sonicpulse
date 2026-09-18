@@ -25,6 +25,17 @@ export const acts: Act[] = [
     placeholder: true,
   },
   {
+    id: 'lara-klart',
+    name: 'Lara Klart',
+    time: 'Set time TBA',
+    tag: 'International',
+    hook: 'Ecuador-born · Miami-based · Hybrid by design',
+    bio: "Lara Klart is a hybrid by design. Ecuador-born and Miami-based, she was the first woman from her country to take techno onto the world's stages, and she did it by refusing to pick a lane — psytrance, hard techno and hard-trance textures folded into sets that turn without warning. Raised in a family of singers, she builds from melody outward, then drives it with kicks made for open air. From Dreamfields Mexico to Resistance, and her own label Janus Rekordz, the underground has never left her sound. Now she brings it to the field.",
+    poster: '/images/artists/lara-klart-poster.webp',
+    bioCard: null,
+    placeholder: true,
+  },
+  {
     id: 'psytaraa',
     name: 'Psytaraa',
     time: '3:00 – 4:30 AM',

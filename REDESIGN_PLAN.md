@@ -7200,3 +7200,48 @@ are exactly §8.67's. Nothing else touched.
 when env unset (the row only renders with details) and
 `Bank details are sent by email` ≥1 when unset. Playwright
 `scrollWidth - clientWidth === 0` on `/vendors` at 1280×800 and 375×812.
+
+### 8.69 Lineup — Lara Klart joins as the second international act (added 18 Sep 2026, owner-requested, planner-executed)
+
+Owner supplied the artist poster and asked for Lara Klart to be added
+"in a similar style to the other artist" (§8.66). Executed in the same
+pass: one data entry and one asset, same shape as §8.66.
+
+**Asset.** `public/images/artists/lara-klart-poster.webp` — 1200×1489
+WEBP, q82, ~96 KB, from the owner's 1080×1350 source (scaled 11%,
+centre-cropped 11 px). Name and SONIC PULSE wordmark intact. No bio
+card supplied → `bioCard: null`, `placeholder: true`.
+
+**Bio source.** No caption was supplied this time. The bio is written in
+house voice from the artist's published profile (Resident Advisor and
+Insomniac artist pages): born in Manabí, Ecuador; Miami-based; the
+first woman DJ from Ecuador to reach international stages; a hybrid
+DJ/producer across psytrance, techno and hard-trance techno; raised in
+a family of singers; played Dreamfields Mexico (2018) and Resistance
+(San José, 2019); runs her own label Janus Rekordz. Nothing in the bio
+goes beyond those facts.
+
+**Judgment calls (owner may overrule with a one-line follow-up):**
+- **Slot is not set.** The owner gave no time and every Main Stage hour
+  from 7 PM to 4:30 AM is already allocated (§8.66 filled the last
+  gap). Rather than cut Daniella da Silva's or Psytaraa's set on a
+  guess, the act carries `time: 'Set time TBA'`, `tag: 'International'`,
+  and **no timetable row**. When the owner names the slot, the change
+  is: the `time` string, a `timetableRows` entry with
+  `href: '/lineup#lara-klart'`, and the neighbouring row's end time.
+- **Slider position is second**, after Daniella and before Psytaraa,
+  so the two international acts lead the slider and the home poster
+  grid. `ARTIST_COUNT` now evaluates to **10**; the slider renders 9
+  dots.
+- **Hook** `Ecuador-born · Miami-based · Hybrid by design`, the §8.66
+  pattern.
+
+**File — `src/data/lineup.ts`, one insertion** (the `lara-klart`
+object between `daniella-da-silva` and `psytaraa`). Nothing else edited;
+§8.66's timetable is unchanged.
+
+**Verification.** §4.1 passed (tsc, lint 7/9 baseline, build). `/lineup`
+→ `lara-klart-poster.webp` ≥1, `Lara Klart` ≥2, `10 artists` ≥1;
+`/` → `lara-klart-poster.webp` ≥1. Playwright `scrollWidth - clientWidth
+=== 0` on `/lineup` and `/` at 1280×800 and 375×812; second slide `<h3>`
+reads `Lara Klart`.
