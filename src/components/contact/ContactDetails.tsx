@@ -46,15 +46,15 @@ export default function ContactDetails() {
           WhatsApp
         </h3>
         <a
-          href="https://wa.me/8801700000000"
+          href="https://wa.me/8801687438577"
           target="_blank"
           rel="noopener noreferrer"
           className="text-sm transition-colors"
           style={{ color: 'var(--accent-magenta)' }}
         >
-          +880 1700 000 000 →
+          +880 1687-438577 →
         </a>
-        <p className="mt-1 text-xs text-[var(--text-muted)]">For quick questions only.</p>
+        <p className="mt-1 text-xs text-[var(--text-muted)]">For help or anything else.</p>
       </div>
 
       <div>
