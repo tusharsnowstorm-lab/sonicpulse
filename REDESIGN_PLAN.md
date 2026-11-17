@@ -7245,3 +7245,9 @@ object between `daniella-da-silva` and `psytaraa`). Nothing else edited;
 `/` → `lara-klart-poster.webp` ≥1. Playwright `scrollWidth - clientWidth
 === 0` on `/lineup` and `/` at 1280×800 and 375×812; second slide `<h3>`
 reads `Lara Klart`.
+
+### 8.70 Contact — the real support number replaces the WhatsApp placeholder (Afterhours §5.242 HOTLINE, 17 Nov 2026)
+
+Owner, 17 Nov: "Set the contact number for help or anything else to +880 1687-438577." `/contact`'s WhatsApp slot (`src/components/contact/ContactDetails.tsx`) still carried the build-time placeholder `+880 1700 000 000` / `wa.me/8801700000000` — the number a festival-goer saw rang nobody. One file changes: the link becomes `https://wa.me/8801687438577`, its text `+880 1687-438577 →`, and the sub-line `For help or anything else.` The heading stays `WhatsApp` (owner veto if the number is not on WhatsApp: heading `Phone`, link `tel:+8801687438577`).
+
+Spec, exact JSX, copy and acceptance live in `afterhours/plan-afterhours.md` §5.242.3 and §5.242.6; build task is Afterhours #597, Afterhours `main` first, then this repo. Gates here: §4.1 (tsc, lint at baseline, build); `grep -rn "1700 000 000\|8801700000000" src` → 0; `grep -rn "8801687438577" src` → 1; `grep -rn "1687-438577" src` → 1; `/contact` at 375×812 shows the new link with `scrollWidth - clientWidth === 0`. Vendor, First Pulse and Wayfinder error lines stay email-only (they ask for a document). Nothing else in this repo changes.
